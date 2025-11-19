@@ -1,0 +1,60 @@
+# =============================================================================
+# SIMPLIFIED VERCEL DEPLOYMENT - NO POSTGRES NEEDED!
+# =============================================================================
+# You can use Convex as your only database - no Postgres required!
+# Copy these into: Vercel Dashboard → Settings → Environment Variables
+# =============================================================================
+
+# Authentication (NextAuth.js) - REQUIRED
+AUTH_SECRET=ONHeIQHjG7f6PvZEHitgrembBs5iBlMPL7TydQNv2jI=
+AUTH_TRUST_HOST=true
+
+# Convex (Already deployed ✅) - REQUIRED
+CONVEX_DEPLOYMENT=prod:insightful-retriever-956
+NEXT_PUBLIC_CONVEX_URL=https://insightful-retriever-956.convex.cloud
+
+# =============================================================================
+# AFTER YOUR FIRST DEPLOY: Update these with your Vercel URL
+# =============================================================================
+# Go to Vercel → Your Project → Settings → Environment Variables → Edit
+
+NEXTAUTH_URL=https://YOUR-VERCEL-URL.vercel.app
+NEXT_PUBLIC_APP_URL=https://YOUR-VERCEL-URL.vercel.app
+
+# =============================================================================
+# DATABASE (OPTIONAL - Only if you want to use Postgres)
+# =============================================================================
+# By default, you can use Convex for everything
+# Only add this if you want to use Vercel Postgres:
+
+# DATABASE_URL=postgresql://user:password@host:5432/database
+
+# =============================================================================
+# GOOGLE OAUTH (OPTIONAL - Only for Google sign-in)
+# =============================================================================
+# Only add these if you want Google OAuth:
+
+# AUTH_GOOGLE_ID=your-client-id.apps.googleusercontent.com
+# AUTH_GOOGLE_SECRET=your-client-secret  
+# NEXT_PUBLIC_GOOGLE_OAUTH_ENABLED=true
+
+# =============================================================================
+# QUICK START:
+# =============================================================================
+# 1. Copy the REQUIRED variables above into Vercel
+# 2. Click Deploy
+# 3. After deployment, get your Vercel URL
+# 4. Update NEXTAUTH_URL and NEXT_PUBLIC_APP_URL with your URL
+# 5. Redeploy (or push to GitHub to auto-deploy)
+# 6. Done! ✅
+# =============================================================================
+
+# =============================================================================
+# YOUR DEPLOYMENT IS NOW FIXED:
+# =============================================================================
+# ✅ Convex generated files are now included
+# ✅ Build should succeed on Vercel
+# ✅ No Postgres required (using Convex as database)
+# ✅ Every push to GitHub auto-deploys
+# =============================================================================
+

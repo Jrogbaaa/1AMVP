@@ -16,19 +16,16 @@ export const SignInForm = () => {
     setError("");
 
     try {
-      const result = await signIn("email", {
+      await signIn("email", {
         email,
         redirect: true,
         callbackUrl: "/feed",
       });
-      
-      if (result?.error) {
-        setError("Failed to sign in. Please try again.");
-      }
+      // If redirect: true, the function will navigate away
+      // If we reach here, it means sign in failed
     } catch (err) {
       setError("Failed to sign in. Please try again.");
       console.error(err);
-    } finally {
       setIsLoading(false);
     }
   };

@@ -27,11 +27,12 @@ providers.push(
     async authorize(credentials) {
       // In development, allow any email to sign in
       // In production, you'd validate against your database
-      if (credentials?.email) {
+      if (credentials?.email && typeof credentials.email === 'string') {
+        const email = credentials.email as string;
         return {
-          id: credentials.email,
-          email: credentials.email,
-          name: credentials.email.split('@')[0],
+          id: email,
+          email: email,
+          name: email.split('@')[0],
         };
       }
       return null;

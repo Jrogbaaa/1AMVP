@@ -5,6 +5,33 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2024-11-19
+
+### ✨ Added
+- **Vercel Deployment Documentation**
+  - `VERCEL_DEPLOYMENT_GUIDE.md` - Complete step-by-step deployment guide
+  - `VERCEL_ENV_VARIABLES.md` - Environment variables quick reference
+  - Automatic deployment on GitHub push instructions
+  - Production environment configuration guide
+  - Convex production deployment steps
+  - Database setup for production (Vercel Postgres)
+  - Google OAuth redirect URI configuration
+  - Post-deployment testing checklist
+  - Troubleshooting common deployment issues
+
+### 🐛 Fixed
+- **HeartScore Component Fill Animation**
+  - Fixed heart fill to properly fill from bottom to top using `clip-path`
+  - Removed incorrect `rounded-full` class that was clipping heart in circular shape
+  - Heart now fills proportionally based on exact percentage (55% fills exactly 55% of heart)
+  - Maintains proper heart outline shape during fill animation
+  - Smooth transition animation preserved
+  - Color-coded thresholds still working (Green ≥70%, Yellow ≥40%, Red <40%)
+
+### 🔧 Changed
+- Updated README.md with Vercel deployment instructions and automatic deployment information
+- Enhanced deployment section with links to comprehensive guides
+
 ## [1.1.0] - 2024-11-19
 
 ### ✨ Added

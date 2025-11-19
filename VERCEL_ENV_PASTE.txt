@@ -1,0 +1,59 @@
+# =============================================================================
+# COPY AND PASTE THESE INTO VERCEL DASHBOARD
+# =============================================================================
+# Go to: vercel.com → Your Project → Settings → Environment Variables
+# Add each variable below for "Production" environment
+# =============================================================================
+
+# Authentication (NextAuth.js) - REQUIRED
+AUTH_SECRET=ONHeIQHjG7f6PvZEHitgrembBs5iBlMPL7TydQNv2jI=
+AUTH_TRUST_HOST=true
+
+# IMPORTANT: Update this after Vercel gives you your URL
+# Format: https://your-project-name.vercel.app
+NEXTAUTH_URL=https://YOUR-VERCEL-URL-HERE.vercel.app
+
+# Database - REQUIRED
+# Get this from Vercel Postgres after you create it
+# Go to: Vercel → Storage → Create Database → Postgres
+# Format: postgresql://user:pass@host:5432/database
+DATABASE_URL=postgresql://user:password@host:5432/database
+
+# Convex Production - REQUIRED ✅ ALREADY DEPLOYED
+CONVEX_DEPLOYMENT=prod:insightful-retriever-956
+NEXT_PUBLIC_CONVEX_URL=https://insightful-retriever-956.convex.cloud
+
+# App URL - REQUIRED
+# Update this after Vercel gives you your URL
+NEXT_PUBLIC_APP_URL=https://YOUR-VERCEL-URL-HERE.vercel.app
+
+# Google OAuth - OPTIONAL (only if you want Google sign-in)
+# Get from: https://console.cloud.google.com/
+# AUTH_GOOGLE_ID=your-client-id.apps.googleusercontent.com
+# AUTH_GOOGLE_SECRET=your-client-secret
+# NEXT_PUBLIC_GOOGLE_OAUTH_ENABLED=true
+
+# =============================================================================
+# NEXT STEPS:
+# =============================================================================
+# 1. ✅ Convex is deployed (prod:insightful-retriever-956)
+# 2. Create Vercel Postgres database
+# 3. Update NEXTAUTH_URL and NEXT_PUBLIC_APP_URL with your Vercel URL
+# 4. Update DATABASE_URL with your Postgres connection string
+# 5. Copy all variables to Vercel dashboard
+# 6. Deploy!
+# =============================================================================
+
+# =============================================================================
+# QUICK VERCEL DATABASE SETUP:
+# =============================================================================
+# 1. In Vercel dashboard → Storage → Create Database → Postgres
+# 2. After creation, click on the database
+# 3. Click "Connect" tab → Copy the DATABASE_URL
+# 4. Go to "Data" tab → "Query" section
+# 5. Run these SQL commands:
+#
+# First, copy contents of db/schema.sql and run it
+# Then, copy contents of db/seed.sql and run it
+# =============================================================================
+

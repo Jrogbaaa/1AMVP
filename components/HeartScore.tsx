@@ -23,10 +23,8 @@ export const HeartScore = ({ score, className, showMessage = false }: HeartScore
   const colorClass = getColorClass(clampedScore);
   const message = getHealthScoreMessage(clampedScore);
   
-  // Calculate fill from bottom to top
-  // At 0%, the heart is empty (top: 100%)
-  // At 100%, the heart is full (top: 0%)
-  const fillFromTop = `${100 - clampedScore}%`;
+  // Calculate fill percentage (inverted for clip-path from bottom)
+  const fillPercentage = clampedScore;
 
   return (
     <div className={cn("flex items-center gap-2", className)}>
@@ -38,23 +36,19 @@ export const HeartScore = ({ score, className, showMessage = false }: HeartScore
           fill="none"
         />
         
-        {/* Container for filled portion with overflow hidden */}
-        <div className="absolute inset-0 overflow-hidden rounded-full">
-          {/* Filled heart that slides up from bottom */}
-          <div 
-            className="absolute inset-0 transition-all duration-500 ease-out"
-            style={{ 
-              top: fillFromTop,
-              height: '100%'
-            }}
-          >
-            <Heart
-              className={cn("w-12 h-12 drop-shadow-lg transition-colors duration-500", colorClass)}
-              fill="currentColor"
-              stroke="currentColor"
-              strokeWidth={2}
-            />
-          </div>
+        {/* Filled heart with clip-path for bottom-to-top fill */}
+        <div 
+          className="absolute inset-0 transition-all duration-500 ease-out"
+          style={{ 
+            clipPath: `inset(${100 - fillPercentage}% 0 0 0)`
+          }}
+        >
+          <Heart
+            className={cn("w-12 h-12 drop-shadow-lg transition-colors duration-500", colorClass)}
+            fill="currentColor"
+            stroke="currentColor"
+            strokeWidth={2}
+          />
         </div>
         
         {/* Score text overlay */}

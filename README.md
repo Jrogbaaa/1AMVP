@@ -312,32 +312,59 @@ Score factors:
 
 ## 🚀 Deployment
 
+### Quick Deploy to Vercel (Recommended)
+
+**Automatic deployments on every push to GitHub!** 🎉
+
+See the comprehensive deployment guides:
+- **[VERCEL_DEPLOYMENT_GUIDE.md](./VERCEL_DEPLOYMENT_GUIDE.md)** - Complete step-by-step instructions
+- **[VERCEL_ENV_VARIABLES.md](./VERCEL_ENV_VARIABLES.md)** - Environment variables quick reference
+
+### Quick Start:
+
+```bash
+# 1. Deploy Convex to production
+npx convex deploy --prod
+
+# 2. Commit and push to GitHub
+git add .
+git commit -m "Ready for Vercel deployment"
+git push origin main
+
+# 3. Connect GitHub to Vercel
+# Go to vercel.com → Import from GitHub
+# Add environment variables from VERCEL_ENV_VARIABLES.md
+# Click Deploy!
+```
+
+Once connected, **every push to `main` automatically deploys** to production! ✅
+
+### Environment Variables (Production)
+
+Required variables for Vercel (see [VERCEL_ENV_VARIABLES.md](./VERCEL_ENV_VARIABLES.md)):
+
+```env
+# Authentication
+AUTH_SECRET=ONHeIQHjG7f6PvZEHitgrembBs5iBlMPL7TydQNv2jI=
+AUTH_TRUST_HOST=true
+NEXTAUTH_URL=https://your-vercel-url.vercel.app
+
+# Database (Vercel Postgres recommended)
+DATABASE_URL=postgresql://user:pass@host/db
+
+# Convex (run: npx convex deploy --prod)
+CONVEX_DEPLOYMENT=prod:your-deployment-name
+NEXT_PUBLIC_CONVEX_URL=https://your-deployment.convex.cloud
+
+# App URL
+NEXT_PUBLIC_APP_URL=https://your-vercel-url.vercel.app
+```
+
 ### Build for Production
 
 ```bash
 npm run build
 npm start
-```
-
-### Environment Variables (Production)
-
-Update `.env.production` with production values:
-
-```env
-DATABASE_URL=your-production-db-url
-CONVEX_DEPLOYMENT=your-production-deployment
-NEXT_PUBLIC_CONVEX_URL=https://your-production.convex.cloud
-NEXT_PUBLIC_APP_URL=https://your-domain.com
-```
-
-### Deploy to Vercel (Recommended)
-
-```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel
 ```
 
 ## 📝 API Endpoints

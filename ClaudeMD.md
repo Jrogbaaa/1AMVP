@@ -39,11 +39,17 @@ Styling:     tailwindcss + autoprefixer (Tailwind v3)
 ✅ TypeScript 5.6        → Strict mode enabled
 ```
 
+**Latest Updates (v1.1.1 - Nov 19, 2024):**
+- ✅ **Vercel deployment guides** with automatic GitHub deployment
+- ✅ **HeartScore fill animation fixed** - proper proportional fill with clip-path
+- ✅ **Production deployment documentation** complete
+- ✅ **Environment variables guide** for Vercel
+
 **Recent Updates (v1.1.0 - Nov 19, 2024):**
-- ✅ **Authentication system** with magic link + Google OAuth
+- ✅ **Authentication system** with NextAuth.js (magic link + Google OAuth)
 - ✅ **Protected routes** for Feed, Library, and Account
 - ✅ **User menu** with sign-out functionality
-- ✅ **Convex Auth** integration with session management
+- ✅ **Session management** with JWT tokens
 
 **Previous Updates (v1.0.2 - Nov 18, 2024):**
 - ✅ Share button added to all videos
@@ -984,6 +990,97 @@ useEffect(() => {
 const url = new URL(window.location.href);
 const patientId = url.searchParams.get("p");
 ```
+
+## 🚀 Production Deployment
+
+### Vercel Deployment (Recommended)
+
+**Automatic deployments on every push to GitHub!**
+
+See comprehensive guides:
+- **[VERCEL_DEPLOYMENT_GUIDE.md](./VERCEL_DEPLOYMENT_GUIDE.md)** - Complete deployment walkthrough
+- **[VERCEL_ENV_VARIABLES.md](./VERCEL_ENV_VARIABLES.md)** - Environment variables quick reference
+
+### Quick Deployment Steps:
+
+```bash
+# 1. Deploy Convex to production
+npx convex deploy --prod
+
+# 2. Push to GitHub
+git push origin main
+
+# 3. Connect GitHub to Vercel
+# - Go to vercel.com → Import from GitHub
+# - Add environment variables (see VERCEL_ENV_VARIABLES.md)
+# - Deploy!
+```
+
+### Production Environment Variables:
+
+```env
+# Authentication (NextAuth.js)
+AUTH_SECRET=ONHeIQHjG7f6PvZEHitgrembBs5iBlMPL7TydQNv2jI=
+AUTH_TRUST_HOST=true
+NEXTAUTH_URL=https://your-vercel-url.vercel.app
+
+# Database (Vercel Postgres or other)
+DATABASE_URL=postgresql://user:pass@host/db
+
+# Convex Production
+CONVEX_DEPLOYMENT=prod:your-deployment-name
+NEXT_PUBLIC_CONVEX_URL=https://your-deployment.convex.cloud
+
+# App URL
+NEXT_PUBLIC_APP_URL=https://your-vercel-url.vercel.app
+
+# Google OAuth (Optional)
+AUTH_GOOGLE_ID=your-client-id.apps.googleusercontent.com
+AUTH_GOOGLE_SECRET=your-client-secret
+NEXT_PUBLIC_GOOGLE_OAUTH_ENABLED=true
+```
+
+### Post-Deployment Checklist:
+
+- [ ] Convex production deployment complete
+- [ ] Database schema and seed data loaded
+- [ ] All environment variables set in Vercel
+- [ ] Google OAuth redirect URIs updated (if using)
+- [ ] Authentication flow tested
+- [ ] Protected routes working
+- [ ] Video playback functional
+- [ ] Mobile responsiveness verified
+- [ ] Lighthouse audit passed
+- [ ] Monitoring/logging configured
+
+### Automatic Deployments:
+
+Once connected to Vercel:
+- **Push to `main`** → Production deployment
+- **Push to other branches** → Preview deployment
+- **Pull requests** → Automatic preview with unique URL
+
+### Troubleshooting Deployment:
+
+**Build fails:**
+- Check Vercel deployment logs
+- Verify `npm run build` works locally
+- Ensure all dependencies in package.json
+
+**Auth not working:**
+- Verify `NEXTAUTH_URL` uses `https://`
+- Check `AUTH_SECRET` is set
+- Confirm `AUTH_TRUST_HOST=true`
+
+**Database connection fails:**
+- Verify `DATABASE_URL` is correct
+- Run schema.sql and seed.sql on production database
+- Check database is accessible from Vercel
+
+**Convex errors:**
+- Ensure `CONVEX_DEPLOYMENT` starts with `prod:`
+- Verify `NEXT_PUBLIC_CONVEX_URL` is correct
+- Confirm `npx convex deploy --prod` was run
 
 ## 📚 Additional Resources
 

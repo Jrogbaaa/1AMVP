@@ -1,8 +1,8 @@
 # 🚀 Deployment Status - 1Another MVP
 
 **Last Updated:** November 19, 2024  
-**Version:** 1.1.0  
-**Status:** ✅ Production Ready
+**Version:** 1.1.2  
+**Status:** ✅ Production Ready & Deployed
 
 ---
 
@@ -10,11 +10,14 @@
 
 ### Core Features
 - ✅ **TikTok-Style Feed** - Vertical scroll, auto-play, engagement tracking
+- ✅ **Feed Navigation Buttons** - Quick access to Library and Calendar scheduling
 - ✅ **Video Library** - Browse, search, filter educational content
 - ✅ **Patient Account** - Profile, doctor info, health score
 - ✅ **Chat Onboarding** - Doctor-guided 4-step flow
-- ✅ **Health Score System** - Heart icon with visual fill effect
+- ✅ **Floating Message Button** - Contact doctor from Library and Account pages
+- ✅ **Health Score System** - Heart icon with proportional fill animation
 - ✅ **Appointment Scheduling** - Date/time picker, request submission
+- ✅ **Medical-Themed Images** - Professional doctor photos and health thumbnails
 
 ### Authentication (NextAuth.js)
 - ✅ **Email Sign-In** - Simple credentials-based (any email in dev)

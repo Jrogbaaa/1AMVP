@@ -5,6 +5,45 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] - 2024-11-19
+
+### ✨ Added
+- **Floating Message Button** on Library and Account pages
+  - Primary blue circular button in bottom-right corner
+  - Opens ChatOnboarding modal to message doctor directly
+  - MessageCircle icon with smooth hover animations
+  - Positioned above mobile navigation on mobile devices (bottom-20)
+  - Desktop positioning at bottom-8
+  - Accessible with aria-labels
+  - Consistent UX across all main pages for doctor communication
+
+- **Navigation Buttons on Feed Page**
+  - Library button with book icon - navigates to video library
+  - Calendar button with calendar icon - navigates to account page for scheduling
+  - Positioned on left side, vertically centered
+  - White rounded buttons with backdrop blur effect
+  - Smooth scale and color transitions on hover
+  - Fully accessible with keyboard navigation
+
+### 🎨 Changed
+- **Replaced All Placeholder Images with Medical-Themed Images**
+  - Doctor avatars now show professional medical personnel in uniform (Unsplash)
+  - Feed video thumbnails feature medical equipment and healthcare settings
+  - Library video thumbnails show health activities and wellness themes
+  - Account page doctor photo updated to professional medical image
+  - All images optimized and sourced from Unsplash for consistency
+
+### 🚀 Deployment
+- **Convex Generated Files** now committed to repository
+  - Fixed Vercel build error with missing `convex/_generated` files
+  - Build now succeeds on Vercel without additional configuration
+  - Temporary solution until proper build-time generation is configured
+
+- **Simplified Environment Variables Guide**
+  - Created `VERCEL_ENV_PASTE_SIMPLE.txt` for quick deployment
+  - Clarified that PostgreSQL is optional (Convex handles database)
+  - Streamlined setup process for faster deployment
+
 ## [1.1.1] - 2024-11-19
 
 ### ✨ Added

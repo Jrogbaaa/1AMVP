@@ -58,8 +58,15 @@ A mobile-first patient communication and education platform that puts **the doct
     └── images/            # Static assets
 ```
 
-## ✨ Latest Updates (v1.1.0 - Nov 19, 2024)
+## ✨ Latest Updates (v1.1.2 - Nov 19, 2024)
 
+- **💬 Floating Message Button**: Message your doctor from Library and Account pages
+- **🧭 Feed Navigation**: Quick access buttons to Library and Schedule appointments
+- **🎨 Medical-Themed Images**: Professional doctor photos and health-related thumbnails
+- **🚀 Vercel Deployment Ready**: Complete guides and auto-deploy on GitHub push
+- **❤️ Fixed Heart Animation**: Proportional fill based on exact health score percentage
+
+**Previous Updates (v1.1.0):**
 - **🔐 NextAuth.js Authentication**: Simple email + Google OAuth sign-in
 - **🛡️ Protected Routes**: Feed, Library, and Account require authentication
 - **👤 User Menu**: Sign-out functionality in all protected pages
@@ -73,7 +80,7 @@ A mobile-first patient communication and education platform that puts **the doct
 - ✅ JWT sessions (no database needed)
 - ✅ Protected routes with Next.js 16 proxy
 
-See [FINAL_FIX.md](./FINAL_FIX.md) for complete setup details.
+See [VERCEL_DEPLOYMENT_GUIDE.md](./VERCEL_DEPLOYMENT_GUIDE.md) for deployment details.
 
 ## 🚀 Getting Started
 

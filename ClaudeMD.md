@@ -39,7 +39,14 @@ Styling:     tailwindcss + autoprefixer (Tailwind v3)
 ✅ TypeScript 5.6        → Strict mode enabled
 ```
 
-**Latest Updates (v1.1.1 - Nov 19, 2024):**
+**Latest Updates (v1.1.2 - Nov 19, 2024):**
+- ✅ **Floating message button** on Library and Account pages
+- ✅ **Navigation buttons on Feed** - Library and Calendar quick access
+- ✅ **Medical-themed images** - Professional doctor photos and health thumbnails
+- ✅ **Convex generated files** committed for Vercel build success
+- ✅ **Simplified deployment guide** - No Postgres required
+
+**Recent Updates (v1.1.1 - Nov 19, 2024):**
 - ✅ **Vercel deployment guides** with automatic GitHub deployment
 - ✅ **HeartScore fill animation fixed** - proper proportional fill with clip-path
 - ✅ **Production deployment documentation** complete

@@ -38,7 +38,7 @@ const MOCK_DOCTOR: Doctor = {
   id: "550e8400-e29b-41d4-a716-446655440001",
   name: "Sarah Johnson",
   specialty: "Cardiology",
-  avatarUrl: "/images/doctors/dr-johnson.jpg",
+  avatarUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop&q=80",
   clinicName: "Heart Health Clinic",
   clinicAddress: "123 Medical Center Dr, Boston, MA 02115",
   phone: "(617) 555-0100",

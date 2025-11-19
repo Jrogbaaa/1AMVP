@@ -5,7 +5,6 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "npx convex deploy --yes --typecheck disable || echo 'Skipping Convex deploy'",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

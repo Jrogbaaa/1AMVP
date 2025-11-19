@@ -2,12 +2,14 @@
 
 import { useEffect, useState, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { VideoCard } from "@/components/VideoCard";
 import { RateLimitMessage } from "@/components/RateLimitMessage";
 import { ChatOnboarding } from "@/components/ChatOnboarding";
 import { HeartScore } from "@/components/HeartScore";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { UserMenu } from "@/components/UserMenu";
+import { Library, Calendar } from "lucide-react";
 import type { Video, Doctor, FeedItem } from "@/lib/types";
 
 // Mock data - in production, this would come from your database
@@ -15,7 +17,7 @@ const MOCK_DOCTOR: Doctor = {
   id: "550e8400-e29b-41d4-a716-446655440001",
   name: "Sarah Johnson",
   specialty: "Cardiology",
-  avatarUrl: "https://i.pravatar.cc/150?img=5", // Female doctor avatar placeholder
+  avatarUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop&q=80",
   clinicName: "Heart Health Clinic",
   createdAt: new Date().toISOString(),
 };
@@ -26,8 +28,8 @@ const MOCK_VIDEOS: Video[] = [
     title: "Your Follow-Up from Dr. Johnson",
     description: "Here's your personalized follow-up about your recent visit and next steps for your care.",
     videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-    thumbnailUrl: "https://picsum.photos/seed/doctor1/720/1280", // Medical theme
-    posterUrl: "https://picsum.photos/seed/doctor1/720/1280",
+    thumbnailUrl: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=720&h=1280&fit=crop&q=80",
+    posterUrl: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=720&h=1280&fit=crop&q=80",
     duration: 120,
     category: "Follow-Up",
     tags: ["personalized", "follow-up", "cardiology"],
@@ -40,7 +42,7 @@ const MOCK_VIDEOS: Video[] = [
     title: "Understanding Blood Pressure",
     description: "Learn what blood pressure numbers mean and how to monitor your heart health.",
     videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-    thumbnailUrl: "https://picsum.photos/seed/bp123/720/1280", // Blood pressure theme
+    thumbnailUrl: "https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=720&h=1280&fit=crop&q=80",
     duration: 180,
     category: "Education",
     tags: ["blood pressure", "heart health", "basics"],
@@ -52,7 +54,7 @@ const MOCK_VIDEOS: Video[] = [
     title: "Heart-Healthy Diet Tips",
     description: "Simple and practical nutrition tips for maintaining a healthy heart.",
     videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-    thumbnailUrl: "https://picsum.photos/seed/diet456/720/1280", // Diet theme
+    thumbnailUrl: "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=720&h=1280&fit=crop&q=80",
     duration: 240,
     category: "Education",
     tags: ["nutrition", "diet", "heart health"],
@@ -64,7 +66,7 @@ const MOCK_VIDEOS: Video[] = [
     title: "Medication Reminders",
     description: "Why taking your medication on schedule is crucial for your health.",
     videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-    thumbnailUrl: "https://picsum.photos/seed/meds789/720/1280", // Medication theme
+    thumbnailUrl: "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=720&h=1280&fit=crop&q=80",
     duration: 150,
     category: "Education",
     tags: ["medication", "compliance", "tips"],
@@ -76,7 +78,7 @@ const MOCK_VIDEOS: Video[] = [
     title: "Exercise for Heart Health",
     description: "Safe and effective exercises to strengthen your cardiovascular system.",
     videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-    thumbnailUrl: "https://picsum.photos/seed/exercise321/720/1280", // Exercise theme
+    thumbnailUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=720&h=1280&fit=crop&q=80",
     duration: 200,
     category: "Education",
     tags: ["exercise", "cardio", "fitness"],
@@ -157,6 +159,26 @@ const FeedContent = () => {
         {/* Heart score in top right */}
         <div className="absolute top-4 right-4 z-40">
           <HeartScore score={healthScore} />
+        </div>
+
+        {/* Navigation buttons - left side */}
+        <div className="absolute left-4 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-3">
+          <Link
+            href="/library"
+            className="flex items-center justify-center w-14 h-14 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white hover:scale-110 transition-all duration-200 group"
+            aria-label="Browse Library"
+            tabIndex={0}
+          >
+            <Library className="w-6 h-6 text-primary-600 group-hover:text-primary-700" />
+          </Link>
+          <Link
+            href="/account"
+            className="flex items-center justify-center w-14 h-14 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white hover:scale-110 transition-all duration-200 group"
+            aria-label="Schedule Follow-Up"
+            tabIndex={0}
+          >
+            <Calendar className="w-6 h-6 text-primary-600 group-hover:text-primary-700" />
+          </Link>
         </div>
 
         {/* Rate limit warning */}

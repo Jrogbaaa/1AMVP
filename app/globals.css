@@ -1,0 +1,167 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-inter: 'Inter', system-ui, sans-serif;
+}
+
+body {
+  background-color: white;
+  color: #111827;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--font-inter);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Mobile-first centered viewport for feed */
+.feed-container {
+  max-width: 28rem;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: black;
+  height: 100vh;
+  height: 100dvh;
+}
+
+/* Snap scroll for TikTok-style feed */
+.snap-container {
+  height: 100%;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.snap-container::-webkit-scrollbar {
+  display: none;
+}
+
+.snap-item {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  height: 100vh;
+  height: 100dvh;
+}
+
+/* Video card styles */
+.video-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: black;
+}
+
+.video-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent, rgba(0,0,0,0.2));
+  pointer-events: none;
+}
+
+/* Dashboard styles */
+.dashboard-container {
+  max-width: 80rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+/* Button styles */
+.btn-primary {
+  padding: 0.75rem 1.5rem;
+  background-color: #0284c7;
+  color: white;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  transition: background-color 200ms;
+}
+
+.btn-primary:hover {
+  background-color: #0369a1;
+}
+
+.btn-secondary {
+  padding: 0.75rem 1.5rem;
+  background-color: white;
+  color: #0284c7;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  border: 2px solid #0284c7;
+  transition: background-color 200ms;
+}
+
+.btn-secondary:hover {
+  background-color: #f0f9ff;
+}
+
+.btn-ghost {
+  padding: 0.5rem 1rem;
+  color: #374151;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  transition: background-color 200ms;
+}
+
+.btn-ghost:hover {
+  background-color: #f3f4f6;
+}
+
+/* Card styles */
+.card {
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+  border: 1px solid #f3f4f6;
+}
+
+/* Input styles */
+.input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+}
+
+.input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #0ea5e9;
+  border-color: transparent;
+}
+
+/* Medical trust badge */
+.trust-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #0369a1;
+  background-color: #eff6ff;
+  padding: 0.5rem 0.75rem;
+  border-radius: 9999px;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+

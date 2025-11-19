@@ -1,0 +1,31 @@
+# Allow all AI crawlers and search engines
+User-agent: *
+Allow: /
+
+# Allow specific AI crawlers
+User-agent: Googlebot
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+# Disallow admin and private areas
+User-agent: *
+Disallow: /api/admin
+Disallow: /api/private
+
+# Sitemap location
+Sitemap: https://1another.com/sitemap.xml
+

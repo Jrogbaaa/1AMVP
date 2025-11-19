@@ -52,14 +52,14 @@ export const calculateHealthScore = (metrics: {
 };
 
 export const getHealthScoreColor = (score: number): string => {
-  if (score > 90) return "text-green-500";
-  if (score >= 50) return "text-yellow-500";
+  if (score >= 70) return "text-green-500";
+  if (score >= 40) return "text-yellow-500";
   return "text-red-500";
 };
 
 export const getHealthScoreMessage = (score: number): string => {
-  if (score > 90) return "You're healthy and compliant!";
-  if (score >= 50) return "In progress - keep going!";
+  if (score >= 70) return "Great progress!";
+  if (score >= 40) return "In progress - keep going!";
   return "Critical follow-ups needed";
 };
 

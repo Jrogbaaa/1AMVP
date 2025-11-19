@@ -1,14 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Filter, Play } from "lucide-react";
+import { Search, Filter, Play, MessageCircle } from "lucide-react";
 import { HeartScore } from "@/components/HeartScore";
 import { TrustBadge } from "@/components/TrustBadge";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { UserMenu } from "@/components/UserMenu";
+import { ChatOnboarding } from "@/components/ChatOnboarding";
 import Image from "next/image";
 import Link from "next/link";
-import type { Video } from "@/lib/types";
+import type { Video, Doctor } from "@/lib/types";
 
 // Mock data
 const MOCK_VIDEOS: Video[] = [
@@ -82,10 +83,28 @@ const MOCK_VIDEOS: Video[] = [
 
 const CATEGORIES = ["All", "Heart Health", "Nutrition", "Medication", "Exercise", "Mental Health", "Wellness"];
 
+const MOCK_DOCTOR: Doctor = {
+  id: "550e8400-e29b-41d4-a716-446655440001",
+  name: "Sarah Johnson",
+  specialty: "Cardiology",
+  avatarUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop&q=80",
+  clinicName: "Heart Health Clinic",
+  createdAt: new Date().toISOString(),
+};
+
 export default function LibraryPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const healthScore = 55;
+
+  const handleOpenChat = () => {
+    setIsChatOpen(true);
+  };
+
+  const handleCloseChat = () => {
+    setIsChatOpen(false);
+  };
 
   const filteredVideos = MOCK_VIDEOS.filter((video) => {
     const matchesSearch =
@@ -256,6 +275,15 @@ export default function LibraryPage() {
         </div>
       </main>
 
+      {/* Floating message button */}
+      <button
+        onClick={handleOpenChat}
+        className="fixed bottom-20 md:bottom-8 right-4 md:right-8 flex items-center justify-center w-14 h-14 bg-primary-600 rounded-full shadow-lg hover:bg-primary-700 hover:scale-110 transition-all duration-200 z-40"
+        aria-label="Message your doctor"
+      >
+        <MessageCircle className="w-6 h-6 text-white" />
+      </button>
+
       {/* Mobile navigation */}
       <nav className="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 z-30">
         <div className="flex items-center justify-around py-3">
@@ -273,6 +301,15 @@ export default function LibraryPage() {
           </Link>
         </div>
       </nav>
+
+      {/* Chat onboarding */}
+      <ChatOnboarding
+        isOpen={isChatOpen}
+        onClose={handleCloseChat}
+        doctor={MOCK_DOCTOR}
+        patientName="Dave"
+        userId="demo-user"
+      />
       </div>
     </ProtectedRoute>
   );

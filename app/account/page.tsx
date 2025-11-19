@@ -4,6 +4,7 @@ import { useState } from "react";
 import { HeartScore } from "@/components/HeartScore";
 import { TrustBadge } from "@/components/TrustBadge";
 import { ScheduleAppointment } from "@/components/ScheduleAppointment";
+import { ChatOnboarding } from "@/components/ChatOnboarding";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { UserMenu } from "@/components/UserMenu";
 import { signOut } from "next-auth/react";
@@ -18,6 +19,7 @@ import {
   Play,
   Search,
   ChevronRight,
+  MessageCircle,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -48,10 +50,19 @@ const MOCK_DOCTOR: Doctor = {
 
 export default function AccountPage() {
   const [isScheduleOpen, setIsScheduleOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const healthScore = 55;
 
   const handleScheduleAppointment = () => {
     setIsScheduleOpen(true);
+  };
+
+  const handleOpenChat = () => {
+    setIsChatOpen(true);
+  };
+
+  const handleCloseChat = () => {
+    setIsChatOpen(false);
   };
 
   const handleSignOut = async () => {
@@ -286,6 +297,15 @@ export default function AccountPage() {
         </div>
       </main>
 
+      {/* Floating message button */}
+      <button
+        onClick={handleOpenChat}
+        className="fixed bottom-20 md:bottom-8 right-4 md:right-8 flex items-center justify-center w-14 h-14 bg-primary-600 rounded-full shadow-lg hover:bg-primary-700 hover:scale-110 transition-all duration-200 z-40"
+        aria-label="Message your doctor"
+      >
+        <MessageCircle className="w-6 h-6 text-white" />
+      </button>
+
       {/* Mobile navigation */}
       <nav className="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 z-30">
         <div className="flex items-center justify-around py-3">
@@ -309,6 +329,15 @@ export default function AccountPage() {
         isOpen={isScheduleOpen}
         onClose={() => setIsScheduleOpen(false)}
         doctor={MOCK_DOCTOR}
+        userId={MOCK_USER.id}
+      />
+
+      {/* Chat onboarding */}
+      <ChatOnboarding
+        isOpen={isChatOpen}
+        onClose={handleCloseChat}
+        doctor={MOCK_DOCTOR}
+        patientName={MOCK_USER.name}
         userId={MOCK_USER.id}
       />
       </div>

@@ -1,8 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { Heart, MessageCircle, Bookmark, Play, Pause, Share2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Play, Pause, Share2, Heart } from "lucide-react";
 import type { Video, Doctor } from "@/lib/types";
 import Image from "next/image";
 
@@ -14,10 +13,10 @@ interface VideoCardProps {
   onPlay?: () => void;
   onPause?: () => void;
   onComplete?: () => void;
-  onLike?: () => void;
-  onSave?: () => void;
   onMessage?: () => void;
+  onHeartClick?: () => void;
   isActive: boolean;
+  healthScore?: number;
 }
 
 export const VideoCard = ({
@@ -28,25 +27,54 @@ export const VideoCard = ({
   onPlay,
   onPause,
   onComplete,
-  onLike,
-  onSave,
   onMessage,
+  onHeartClick,
   isActive,
+  healthScore,
 }: VideoCardProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [liked, setLiked] = useState(false);
-  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    if (isActive && videoRef.current) {
-      videoRef.current.play();
-      setIsPlaying(true);
-      onPlay?.();
-    } else if (videoRef.current) {
-      videoRef.current.pause();
-      setIsPlaying(false);
-    }
+    const video = videoRef.current;
+    if (!video) return;
+
+    let mounted = true;
+
+    const playVideo = async () => {
+      if (!mounted || !video) return;
+      
+      if (isActive) {
+        try {
+          // Check if video is still connected to DOM
+          if (video.isConnected) {
+            await video.play();
+            if (mounted) {
+              setIsPlaying(true);
+              onPlay?.();
+            }
+          }
+        } catch (error) {
+          // Ignore if play was interrupted
+          if (mounted) {
+            console.log("Video play interrupted:", error);
+          }
+        }
+      } else {
+        if (video.isConnected) {
+          video.pause();
+        }
+        if (mounted) {
+          setIsPlaying(false);
+        }
+      }
+    };
+
+    playVideo();
+
+    return () => {
+      mounted = false;
+    };
   }, [isActive, onPlay]);
 
   const handlePlayPause = () => {
@@ -66,16 +94,6 @@ export const VideoCard = ({
   const handleVideoEnd = () => {
     setIsPlaying(false);
     onComplete?.();
-  };
-
-  const handleLike = () => {
-    setLiked(!liked);
-    onLike?.();
-  };
-
-  const handleSave = () => {
-    setSaved(!saved);
-    onSave?.();
   };
 
   const handleShare = async () => {
@@ -118,6 +136,7 @@ export const VideoCard = ({
         className="absolute inset-0 w-full h-full object-cover"
         poster={video.posterUrl || video.thumbnailUrl}
         playsInline
+        muted
         loop={!isPersonalized}
         onEnded={handleVideoEnd}
       >
@@ -129,15 +148,8 @@ export const VideoCard = ({
 
       {/* Content overlay */}
       <div className="absolute inset-0 flex flex-col justify-between p-6 pointer-events-none">
-        {/* Top section - Personalized greeting */}
+        {/* Top section - Empty for cleaner look */}
         <div className="flex justify-between items-start pointer-events-auto">
-          {isPersonalized && patientName && doctor && (
-            <div className="flex-1 bg-gradient-to-r from-black/40 to-transparent backdrop-blur-sm rounded-2xl p-4 pr-8">
-              <h2 className="text-white text-3xl font-bold drop-shadow-lg">
-                {patientName}, thanks for coming in today ❤️
-              </h2>
-            </div>
-          )}
         </div>
 
         {/* Middle section - Play/Pause button */}
@@ -156,31 +168,37 @@ export const VideoCard = ({
         </div>
 
         {/* Bottom section */}
-        <div className="flex justify-between items-end pointer-events-auto">
+        <div className="flex justify-between items-center pointer-events-auto pb-8">
           {/* Left side - Video info */}
-          <div className="flex-1 pr-4 mb-2">
-            {!isPersonalized && (
-              <h3 className="text-white font-bold text-xl mb-2 drop-shadow-lg">
-                {video.title}
+          <div className="flex-1 pr-4">
+            {isPersonalized && patientName ? (
+              <h3 className="text-white font-bold text-2xl drop-shadow-lg">
+                Hey {patientName}, thanks for coming in today!
               </h3>
-            )}
-            {video.description && (
-              <p className="text-white/90 text-base line-clamp-2 drop-shadow-md">
-                {video.description}
-              </p>
+            ) : (
+              <>
+                <h3 className="text-white font-bold text-xl mb-2 drop-shadow-lg">
+                  {video.title}
+                </h3>
+                {video.description && (
+                  <p className="text-white/90 text-base line-clamp-2 drop-shadow-md">
+                    {video.description}
+                  </p>
+                )}
+              </>
             )}
           </div>
 
           {/* Right side - Actions */}
-          <div className="flex flex-col gap-4 items-center">
+          <div className="flex flex-col gap-6 items-center">
             {/* Doctor avatar */}
             {doctor && (
               <button
                 className="flex flex-col items-center gap-1"
                 onClick={onMessage}
-                aria-label="View doctor profile"
+                aria-label="Message doctor"
               >
-                <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white">
+                <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-lg hover:scale-110 transition-transform">
                   {doctor.avatarUrl ? (
                     <Image
                       src={doctor.avatarUrl}
@@ -200,79 +218,61 @@ export const VideoCard = ({
               </button>
             )}
 
-            {/* Like button */}
-            <button
-              onClick={handleLike}
-              className="flex flex-col items-center gap-1"
-              aria-label={liked ? "Unlike" : "Like"}
-            >
-              <Heart
-                className={cn(
-                  "w-8 h-8",
-                  liked ? "text-red-500 fill-red-500" : "text-white"
-                )}
-              />
-              <span className="text-white text-xs">Like</span>
-            </button>
-
-            {/* Message button */}
-            {onMessage && (
+            {/* Heart score - show above share button */}
+            {healthScore !== undefined && (
               <button
-                onClick={onMessage}
-                className="flex flex-col items-center gap-1"
-                aria-label="Message doctor"
+                onClick={onHeartClick}
+                className="flex flex-col items-center gap-1 hover:scale-110 transition-transform"
+                aria-label="View action items and reminders"
               >
-                <MessageCircle className="w-8 h-8 text-white" />
-                <span className="text-white text-xs">Message</span>
+                <div className="relative w-14 h-14">
+                  {/* Background heart (outline) */}
+                  <Heart
+                    className="absolute inset-0 w-14 h-14 text-gray-300 drop-shadow-lg"
+                    strokeWidth={2}
+                    fill="none"
+                  />
+                  
+                  {/* Filled heart with color coding */}
+                  <div 
+                    className="absolute inset-0 transition-all duration-500 ease-out"
+                    style={{ 
+                      clipPath: `inset(${100 - healthScore}% 0 0 0)`
+                    }}
+                  >
+                    <Heart
+                      className={`w-14 h-14 drop-shadow-lg transition-colors duration-500 ${
+                        healthScore >= 70 ? "text-green-500" : 
+                        healthScore >= 40 ? "text-yellow-500" : 
+                        "text-red-500"
+                      }`}
+                      fill="currentColor"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    />
+                  </div>
+                  
+                  {/* Score text overlay */}
+                  <span className="absolute inset-0 flex items-center justify-center text-sm font-bold text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] z-10">
+                    {healthScore}%
+                  </span>
+                </div>
               </button>
             )}
 
-            {/* Share button */}
-            <button
-              onClick={handleShare}
-              className="flex flex-col items-center gap-1"
-              aria-label="Share video"
-            >
-              <Share2 className="w-8 h-8 text-white" />
-              <span className="text-white text-xs">Share</span>
-            </button>
-
-            {/* Save button */}
-            <button
-              onClick={handleSave}
-              className="flex flex-col items-center gap-1"
-              aria-label={saved ? "Unsave" : "Save"}
-            >
-              <Bookmark
-                className={cn(
-                  "w-8 h-8",
-                  saved ? "text-yellow-500 fill-yellow-500" : "text-white"
-                )}
-              />
-              <span className="text-white text-xs">Save</span>
-            </button>
+            {/* Share button - only show for non-personalized videos */}
+            {!isPersonalized && (
+              <button
+                onClick={handleShare}
+                className="flex flex-col items-center gap-1"
+                aria-label="Share video"
+              >
+                <Share2 className="w-8 h-8 text-white" />
+                <span className="text-white text-xs">Share</span>
+              </button>
+            )}
           </div>
         </div>
-
-        {/* Personalized CTA buttons */}
-        {isPersonalized && (
-          <div className="mt-4 flex flex-col gap-3 pointer-events-auto">
-            {onMessage && (
-              <button
-                onClick={onMessage}
-                className="w-full py-3 bg-white text-primary-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors"
-              >
-                Message your doctor
-              </button>
-            )}
-            <button
-              onClick={() => {/* Will be handled by parent */}}
-              className="w-full py-3 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 transition-colors"
-            >
-              Start onboarding
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );

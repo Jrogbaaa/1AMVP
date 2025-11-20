@@ -5,6 +5,100 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2024-11-20
+
+### ✨ Added
+- **Interactive Action Items Menu**
+  - Click heart score to view daily action items and reminders
+  - Modal overlay with health tasks checklist:
+    - Take morning medication (with time due)
+    - 30-minute walk (daily activity recommendation)
+    - Log blood pressure (morning reading)
+    - Watch educational video
+  - Health score summary card at top of menu
+  - Mobile-responsive design (slides up from bottom on mobile, centered modal on desktop)
+  - Backdrop click to close
+  - Smooth open/close animations
+
+- **Clickable Doctor Avatar on Feed**
+  - Doctor's circular profile image launches messaging
+  - Hover scale effect for better UX
+  - Consistent across all video cards
+  - Accessible with proper aria-labels
+
+- **Local Video Support**
+  - Personalized video now uses `/videoplayback.mp4` from project root
+  - Support for local video assets in addition to external URLs
+  - Maintains external URLs for educational content
+
+### 🎨 Changed
+- **Streamlined Feed Interface**
+  - Removed "Message your doctor" button from bottom CTA
+  - Removed like button from video controls
+  - Removed comment/message button from side actions
+  - Removed save/bookmark button
+  - Removed large "Start onboarding" button
+  - Kept only essential controls: Share button and Calendar button
+
+- **Simplified Video Layout**
+  - Moved personalized greeting text to bottom ("Hey Dave, thanks for coming in today!")
+  - Increased greeting text size (text-2xl) for better readability
+  - Removed top-positioned large greeting banner
+  - Removed description text from personalized videos
+  - Bottom-aligned all content for better mobile UX
+
+- **Navigation Improvements**
+  - Removed Library button (keeping only Calendar button)
+  - Removed UserMenu (person icon) from top left
+  - Moved Calendar button to bottom-left position (bottom-48)
+  - Increased z-index for navigation elements (z-50) to ensure proper layering
+  
+- **Share Button Behavior**
+  - Share button only appears on educational videos
+  - Hidden on personalized doctor videos
+  - Positioned at bottom-right, aligned with text
+
+- **Heart Score Redesign**
+  - Moved from top-right corner to inline with video actions
+  - Positioned above share button on right side
+  - Increased size (w-14 h-14) for better visibility
+  - Added proper color-coded gradient fill:
+    - Green (≥70%): Great progress
+    - Yellow (40-69%): Keep it up
+    - Red (<40%): Let's improve together
+  - Bottom-to-top fill animation using clip-path
+  - Made interactive with click handler
+  - Hover scale effect for clickability indicator
+
+### 🔧 Fixed
+- **Video Playback Error (AbortError)**
+  - Added async/await handling with try-catch for play() method
+  - Implemented cleanup with mounted flag
+  - Added `video.isConnected` checks to prevent DOM removal errors
+  - Added proper useEffect cleanup function
+  - Prevents "play() interrupted by pause()" errors
+  - Prevents "media removed from document" errors
+
+- **Video Autoplay**
+  - Added `muted` attribute to enable autoplay without user interaction
+  - Browsers require videos to be muted for autoplay
+  - Prevents "NotAllowedError: user didn't interact with document" errors
+  - Maintains smooth scroll-to-play experience
+
+### 📦 Dependencies
+- No new dependencies added (all features use existing stack)
+
+### 🎯 UX Improvements
+- Cleaner, more focused feed interface
+- Reduced visual clutter with minimal controls
+- Better mobile ergonomics with bottom-aligned content
+- More intuitive interaction patterns (click doctor to message, click heart for tasks)
+- Consistent action button styling and positioning
+- Improved text readability with proper positioning and sizing
+
+### 🔄 Breaking Changes
+- None (all changes are backwards compatible)
+
 ## [1.1.2] - 2024-11-19
 
 ### ✨ Added

@@ -58,8 +58,18 @@ A mobile-first patient communication and education platform that puts **the doct
     └── images/            # Static assets
 ```
 
-## ✨ Latest Updates (v1.1.2 - Nov 19, 2024)
+## ✨ Latest Updates (v1.2.0 - Nov 20, 2024)
 
+- **📱 Streamlined Feed Interface**: Cleaner video experience with simplified controls
+- **❤️ Interactive Heart Score**: Click to view action items and daily reminders
+- **👨‍⚕️ Clickable Doctor Avatar**: Tap doctor profile to message directly
+- **🎬 Local Video Support**: Personalized videos from local assets (`videoplayback.mp4`)
+- **🔊 Muted Autoplay**: Videos auto-play on scroll without sound (browser-friendly)
+- **🎯 Smart Share Button**: Only shows on educational videos, hidden on personalized content
+- **📍 Optimized Layout**: Bottom-aligned text and action buttons for better mobile UX
+- **✅ Action Items Menu**: View and check off daily health tasks and reminders
+
+**Previous Updates (v1.1.2):**
 - **💬 Floating Message Button**: Message your doctor from Library and Account pages
 - **🧭 Feed Navigation**: Quick access buttons to Library and Schedule appointments
 - **🎨 Medical-Themed Images**: Professional doctor photos and health-related thumbnails
@@ -211,11 +221,17 @@ This will load Dave Thompson's personalized feed from Dr. Sarah Johnson.
 
 ### 1. TikTok-Style Feed (`/feed`)
 
-- **Card #1**: Personalized doctor video with custom greeting
-- **Cards 2+**: AI-curated educational content
+- **Card #1**: Personalized doctor video with custom greeting ("Hey Dave, thanks for coming in today!")
+- **Cards 2+**: AI-curated educational content with doctor explanations
 - Vertical scroll with snap behavior
+- Muted autoplay for browser compatibility
 - Session-based rate limiting (20 videos per 30 minutes)
 - Real-time engagement tracking
+- **Interactive Elements**:
+  - Clickable doctor avatar to message
+  - Clickable heart to view action items
+  - Share button on educational videos
+  - Calendar button for appointment scheduling
 
 ### 2. Chat-Based Onboarding
 
@@ -242,9 +258,17 @@ This will load Dave Thompson's personalized feed from Dr. Sarah Johnson.
 
 ### 5. Heart Health Score
 
-- **Green (>90%)**: Healthy/compliant
-- **Yellow (50-89%)**: In progress
-- **Red (<50%)**: Critical follow-ups needed
+Interactive heart icon with color-coded filling animation:
+- **Green (≥70%)**: Great progress
+- **Yellow (40-69%)**: Keep it up
+- **Red (<40%)**: Let's improve together
+
+**Click the heart to view**:
+- Today's action items and reminders
+- Medication schedules
+- Daily activity goals
+- Health logging tasks
+- Educational video recommendations
 
 Score factors:
 - Watched doctor video (30%)

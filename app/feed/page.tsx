@@ -7,18 +7,39 @@ import { VideoCard } from "@/components/VideoCard";
 import { RateLimitMessage } from "@/components/RateLimitMessage";
 import { ChatOnboarding } from "@/components/ChatOnboarding";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import { Calendar, Heart } from "lucide-react";
+import { Calendar, Heart, ArrowLeft, Play } from "lucide-react";
 import type { Video, Doctor } from "@/lib/types";
+import Image from "next/image";
 
-// Mock data - in production, this would come from your database
-const MOCK_DOCTOR: Doctor = {
-  id: "550e8400-e29b-41d4-a716-446655440001",
-  name: "Sarah Johnson",
-  specialty: "Cardiology",
-  avatarUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop&q=80",
-  clinicName: "Heart Health Clinic",
-  createdAt: new Date().toISOString(),
+// Mock doctors data
+const MOCK_DOCTORS: Record<string, Doctor> = {
+  "550e8400-e29b-41d4-a716-446655440001": {
+    id: "550e8400-e29b-41d4-a716-446655440001",
+    name: "Sarah Johnson",
+    specialty: "Cardiology",
+    avatarUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop&q=80",
+    clinicName: "Heart Health Clinic",
+    createdAt: new Date().toISOString(),
+  },
+  "550e8400-e29b-41d4-a716-446655440002": {
+    id: "550e8400-e29b-41d4-a716-446655440002",
+    name: "Michael Chen",
+    specialty: "Cardiology",
+    avatarUrl: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&h=400&fit=crop&q=80",
+    clinicName: "Boston Cardiology Center",
+    createdAt: new Date().toISOString(),
+  },
+  "550e8400-e29b-41d4-a716-446655440003": {
+    id: "550e8400-e29b-41d4-a716-446655440003",
+    name: "Emily Rodriguez",
+    specialty: "Cardiology",
+    avatarUrl: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=400&h=400&fit=crop&q=80",
+    clinicName: "Advanced Heart Care",
+    createdAt: new Date().toISOString(),
+  },
 };
+
+const MOCK_DOCTOR = MOCK_DOCTORS["550e8400-e29b-41d4-a716-446655440001"];
 
 const MOCK_VIDEOS: Video[] = [
   {
@@ -45,6 +66,7 @@ const MOCK_VIDEOS: Video[] = [
     duration: 180,
     category: "Education",
     tags: ["blood pressure", "heart health", "basics"],
+    doctorId: "550e8400-e29b-41d4-a716-446655440001",
     isPersonalized: false,
     createdAt: new Date().toISOString(),
   },
@@ -58,6 +80,7 @@ const MOCK_VIDEOS: Video[] = [
     duration: 240,
     category: "Education",
     tags: ["nutrition", "diet", "heart health"],
+    doctorId: "550e8400-e29b-41d4-a716-446655440001",
     isPersonalized: false,
     createdAt: new Date().toISOString(),
   },
@@ -71,6 +94,7 @@ const MOCK_VIDEOS: Video[] = [
     duration: 150,
     category: "Education",
     tags: ["medication", "compliance", "tips"],
+    doctorId: "550e8400-e29b-41d4-a716-446655440002",
     isPersonalized: false,
     createdAt: new Date().toISOString(),
   },
@@ -84,6 +108,7 @@ const MOCK_VIDEOS: Video[] = [
     duration: 200,
     category: "Education",
     tags: ["exercise", "cardio", "fitness"],
+    doctorId: "550e8400-e29b-41d4-a716-446655440003",
     isPersonalized: false,
     createdAt: new Date().toISOString(),
   },
@@ -92,7 +117,7 @@ const MOCK_VIDEOS: Video[] = [
 const FeedContent = () => {
   const searchParams = useSearchParams();
   const patientId = searchParams.get("p");
-  const doctorId = searchParams.get("d");
+  const doctorFilter = searchParams.get("doctor");
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [healthScore, setHealthScore] = useState(55); // Start at 55%
@@ -101,6 +126,13 @@ const FeedContent = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Filter videos by doctor if specified
+  const filteredVideos = doctorFilter
+    ? MOCK_VIDEOS.filter((video) => video.doctorId === doctorFilter)
+    : MOCK_VIDEOS;
+
+  const selectedDoctor = doctorFilter ? MOCK_DOCTORS[doctorFilter] : MOCK_DOCTOR;
 
   const maxScrolls = 20;
   const remainingScrolls = Math.max(0, maxScrolls - scrollCount);
@@ -114,7 +146,7 @@ const FeedContent = () => {
       const itemHeight = container.clientHeight;
       const newIndex = Math.round(scrollTop / itemHeight);
 
-      if (newIndex !== currentIndex && newIndex < MOCK_VIDEOS.length) {
+      if (newIndex !== currentIndex && newIndex < filteredVideos.length) {
         setCurrentIndex(newIndex);
         setScrollCount((prev) => {
           const newCount = prev + 1;
@@ -128,7 +160,7 @@ const FeedContent = () => {
 
     container.addEventListener("scroll", handleScroll);
     return () => container.removeEventListener("scroll", handleScroll);
-  }, [currentIndex]);
+  }, [currentIndex, filteredVideos.length]);
 
   const handleOpenChat = () => {
     setIsChatOpen(true);
@@ -162,10 +194,46 @@ const FeedContent = () => {
   return (
     <>
       <div className="feed-container relative">
+        {/* Doctor filter header */}
+        {doctorFilter && selectedDoctor && (
+          <div className="absolute top-4 left-4 right-4 z-50 flex items-center gap-3 bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-3 shadow-lg">
+            <Link
+              href="/feed"
+              className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100 transition-colors"
+              aria-label="Back to all videos"
+            >
+              <ArrowLeft className="w-5 h-5 text-gray-700" />
+            </Link>
+            <div className="flex items-center gap-3 flex-1">
+              <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                {selectedDoctor.avatarUrl ? (
+                  <Image
+                    src={selectedDoctor.avatarUrl}
+                    alt={selectedDoctor.name}
+                    width={48}
+                    height={48}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-primary-600 flex items-center justify-center">
+                    <span className="text-white font-bold text-xl">
+                      {selectedDoctor.name.charAt(0)}
+                    </span>
+                  </div>
+                )}
+              </div>
+              <div>
+                <h2 className="font-bold text-gray-900">Dr. {selectedDoctor.name}</h2>
+                <p className="text-sm text-gray-600">{selectedDoctor.specialty}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Navigation buttons - left side */}
         <div className="absolute left-4 bottom-48 z-50 flex flex-col gap-3">
           <Link
-            href="/account"
+            href="/my-heart"
             className="flex items-center justify-center w-14 h-14 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white hover:scale-110 transition-all duration-200 group"
             aria-label="Schedule Follow-Up"
             tabIndex={0}
@@ -182,32 +250,55 @@ const FeedContent = () => {
         {/* Feed container */}
         {!isRateLimited ? (
           <div ref={containerRef} className="snap-container">
-            {MOCK_VIDEOS.map((video, index) => (
-              <div key={video.id} className="snap-item">
-                <VideoCard
-                  video={video}
-                  doctor={index === 0 ? MOCK_DOCTOR : undefined}
-                  isPersonalized={index === 0}
-                  patientName="Dave"
-                  isActive={currentIndex === index}
-                  onComplete={handleVideoComplete}
-                  onMessage={handleOpenChat}
-                  onHeartClick={handleHeartClick}
-                  healthScore={healthScore}
-                />
-              </div>
-            ))}
+            {filteredVideos.map((video, index) => {
+              const videoDoctor = video.doctorId ? MOCK_DOCTORS[video.doctorId] : MOCK_DOCTOR;
+              return (
+                <div key={video.id} className="snap-item">
+                  <VideoCard
+                    video={video}
+                    doctor={videoDoctor}
+                    isPersonalized={video.isPersonalized}
+                    patientName="Dave"
+                    isActive={currentIndex === index}
+                    onComplete={handleVideoComplete}
+                    onMessage={handleOpenChat}
+                    onHeartClick={handleHeartClick}
+                    healthScore={healthScore}
+                  />
+                </div>
+              );
+            })}
           </div>
         ) : (
           <RateLimitMessage />
         )}
+
+        {/* Mobile navigation */}
+        <nav className="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 z-30">
+          <div className="flex items-center justify-around py-3">
+            <Link href="/feed" className="flex flex-col items-center gap-1 text-primary-600">
+              <Play className="w-6 h-6" fill="currentColor" />
+              <span className="text-xs font-medium">My Feed</span>
+            </Link>
+            <Link href="/discover" className="flex flex-col items-center gap-1 text-gray-600">
+              <div className="w-6 h-6 rounded-full border-2 border-gray-600 flex items-center justify-center">
+                <Play className="w-3 h-3" />
+              </div>
+              <span className="text-xs font-medium">Discover</span>
+            </Link>
+            <Link href="/my-heart" className="flex flex-col items-center gap-1 text-gray-600">
+              <Heart className="w-6 h-6" />
+              <span className="text-xs font-medium">My Heart</span>
+            </Link>
+          </div>
+        </nav>
       </div>
 
       {/* Chat onboarding */}
       <ChatOnboarding
         isOpen={isChatOpen}
         onClose={handleCloseChat}
-        doctor={MOCK_DOCTOR}
+        doctor={selectedDoctor}
         patientName="Dave"
         userId={patientId || "demo-user"}
       />
@@ -344,4 +435,3 @@ export default function FeedPage() {
     </ProtectedRoute>
   );
 }
-

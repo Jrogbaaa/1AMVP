@@ -53,24 +53,24 @@ export default async function HomePage({
             </Link>
             
             <Link
-              href="/library"
+              href="/discover"
               className="group px-6 py-4 bg-white text-primary-600 font-bold rounded-xl hover:bg-gray-50 transition-all shadow-md hover:shadow-xl border-2 border-primary-600 hover:scale-105 duration-200"
             >
               <div className="flex flex-col items-center gap-2">
-                <span className="text-2xl">📚</span>
-                <span className="text-lg">Browse Library</span>
-                <span className="text-xs text-gray-500">Video collection</span>
+                <span className="text-2xl">🔍</span>
+                <span className="text-lg">Discover</span>
+                <span className="text-xs text-gray-500">Find doctors</span>
               </div>
             </Link>
             
             <Link
-              href="/account"
+              href="/my-heart"
               className="group px-6 py-4 bg-white text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition-all shadow-md hover:shadow-xl border-2 border-gray-300 hover:scale-105 duration-200"
             >
               <div className="flex flex-col items-center gap-2">
-                <span className="text-2xl">👤</span>
-                <span className="text-lg">View Account</span>
-                <span className="text-xs text-gray-500">Patient profile</span>
+                <span className="text-2xl">❤️</span>
+                <span className="text-lg">My Heart</span>
+                <span className="text-xs text-gray-500">Health profile</span>
               </div>
             </Link>
           </div>

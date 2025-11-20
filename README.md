@@ -7,8 +7,9 @@ A mobile-first patient communication and education platform that puts **the doct
 1. **The doctor is the product** - Patients always see their doctor's personalized video first
 2. **Personal link = identity** - Unique magic links contain patient + doctor identity
 3. **My Feed = engagement** - TikTok-style feed for active viewing and learning
-4. **Dashboard = browsing** - Clean, calm UI for Library and Account pages
-5. **Simplicity above all** - Remove complexity unless it adds compounding advantage
+4. **Discover = exploration** - Instagram-style doctor profiles and educational content
+5. **My Heart = health actions** - Daily reminders and health tracking
+6. **Simplicity above all** - Remove complexity unless it adds compounding advantage
 
 ## 🏗️ Tech Stack
 
@@ -24,9 +25,9 @@ A mobile-first patient communication and education platform that puts **the doct
 ```
 1A-MVP/
 ├── app/
-│   ├── feed/              # TikTok-style vertical feed
-│   ├── library/           # Video browsing dashboard
-│   ├── account/           # Patient profile & settings
+│   ├── feed/              # TikTok-style vertical feed with doctor filtering
+│   ├── discover/          # Instagram-style doctor profiles & content
+│   ├── my-heart/          # Health dashboard with reminders & profile
 │   ├── content/           # SEO-optimized content pages
 │   ├── api/               # API endpoints
 │   ├── layout.tsx         # Root layout
@@ -58,8 +59,37 @@ A mobile-first patient communication and education platform that puts **the doct
     └── images/            # Static assets
 ```
 
-## ✨ Latest Updates (v1.2.0 - Nov 20, 2024)
+## ✨ Latest Updates (v1.3.0 - Nov 20, 2024)
 
+### Major Navigation & Feature Overhaul
+
+**🎨 New Navigation Structure:**
+- **My Feed** - Your personalized video feed (formerly "Feed")
+- **Discover** - Instagram-style doctor profiles & educational content (formerly "Library")
+- **My Heart** - Health dashboard with daily reminders & profile (formerly "Account")
+
+**🔍 Discover Page (New!):**
+- Instagram-style doctor profile carousel with gradient rings
+- 12+ mock doctor profiles for exploration
+- Click any doctor to view their video feed
+- Featured educational content cards
+- "NEW" badges for featured doctors
+
+**👨‍⚕️ Doctor Filtering:**
+- Filter feed by specific doctors
+- Doctor header shows who you're watching
+- Back button to return to all videos
+- Deep linking support (`/feed?doctor=<id>`)
+
+**❤️ My Heart Page Redesign:**
+- Interactive daily health reminders (6 tasks)
+- Real-time progress tracking (X of 6 completed)
+- Check-off animations with visual feedback
+- Doctor scheduling in sidebar (secondary)
+- Account information moved below reminders
+- Health score prominently displayed
+
+**Previous Updates (v1.2.0):**
 - **📱 Streamlined Feed Interface**: Cleaner video experience with simplified controls
 - **❤️ Interactive Heart Score**: Click to view action items and daily reminders
 - **👨‍⚕️ Clickable Doctor Avatar**: Tap doctor profile to message directly
@@ -78,7 +108,7 @@ A mobile-first patient communication and education platform that puts **the doct
 
 **Previous Updates (v1.1.0):**
 - **🔐 NextAuth.js Authentication**: Simple email + Google OAuth sign-in
-- **🛡️ Protected Routes**: Feed, Library, and Account require authentication
+- **🛡️ Protected Routes**: My Feed, Discover, and My Heart require authentication
 - **👤 User Menu**: Sign-out functionality in all protected pages
 - **✅ Vercel-Ready**: Perfect for Vercel deployment
 - **⚡ No Database Required**: Credentials provider for easy testing
@@ -178,9 +208,9 @@ Visit [http://localhost:3000/auth](http://localhost:3000/auth)
 - You're signed in! ✅
 
 Then visit protected routes:
-- `/feed` - TikTok-style video feed
-- `/library` - Video library
-- `/account` - User profile
+- `/feed` - My Feed - TikTok-style video feed
+- `/discover` - Discover - Instagram-style doctor profiles & content
+- `/my-heart` - My Heart - Health dashboard with daily reminders
 
 ### Optional: Run Convex for Real-Time Features
 
@@ -219,10 +249,11 @@ This will load Dave Thompson's personalized feed from Dr. Sarah Johnson.
 
 ## 🎨 Key Features
 
-### 1. TikTok-Style Feed (`/feed`)
+### 1. My Feed (`/feed`)
 
 - **Card #1**: Personalized doctor video with custom greeting ("Hey Dave, thanks for coming in today!")
 - **Cards 2+**: AI-curated educational content with doctor explanations
+- **Doctor Filtering**: View videos from specific doctors via URL parameter
 - Vertical scroll with snap behavior
 - Muted autoplay for browser compatibility
 - Session-based rate limiting (20 videos per 30 minutes)
@@ -232,29 +263,39 @@ This will load Dave Thompson's personalized feed from Dr. Sarah Johnson.
   - Clickable heart to view action items
   - Share button on educational videos
   - Calendar button for appointment scheduling
+  - Doctor header with back navigation when filtered
 
-### 2. Chat-Based Onboarding
+### 2. Discover (`/discover`)
+
+- **Instagram-Style Doctor Profiles**: Circular avatars with gradient rings
+- 12+ doctor profiles to explore
+- Click any doctor to filter feed by their videos
+- Featured educational content cards
+- "NEW" badges for featured doctors
+- Clean dashboard interface with SEO-optimized content
+
+### 3. My Heart (`/my-heart`)
+
+- **Daily Health Reminders**: Interactive checklist with 6 daily tasks
+  - Take morning medication
+  - 30-minute walk
+  - Log blood pressure
+  - Watch educational video
+  - Drink water
+  - Get adequate sleep
+- **Real-time Progress Tracking**: X of 6 completed counter
+- **Check-off Animations**: Visual feedback with green highlights and strikethrough
+- **Doctor Scheduling**: Quick access in sidebar
+- **Patient Profile**: Account information and settings
+- **Health Score Display**: Heart-based health indicator
+- Quick navigation to other sections
+
+### 4. Chat-Based Onboarding
 
 - Triggered from CTA on first video card
 - Doctor avatar as assistant
 - Lightweight, non-blocking experience
 - Stores progress in Convex
-
-### 3. Video Library (`/library`)
-
-- Clean dashboard interface
-- Search functionality
-- Category filters
-- Video grid with thumbnails
-- SEO-optimized content pages
-
-### 4. Patient Account (`/account`)
-
-- Patient profile information
-- Doctor information and contact
-- Heart-based health score
-- Appointment scheduling
-- Quick actions and navigation
 
 ### 5. Heart Health Score
 

@@ -5,6 +5,156 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2024-11-20
+
+### 🎨 Major Navigation & Feature Overhaul
+
+**Navigation Restructure:**
+- Renamed "Feed" → **"My Feed"** - Personalized video feed
+- Renamed "Library" → **"Discover"** - Instagram-style doctor exploration
+- Renamed "Account" → **"My Heart"** - Health dashboard and reminders
+- Updated all internal links, routes, and navigation across entire app
+- Updated protected route middleware (`/feed`, `/discover`, `/my-heart`)
+- Updated sitemap and SEO configurations
+
+### ✨ Added - Discover Page (Instagram-Style)
+
+**Doctor Profile Carousel:**
+- 12 mock doctor profiles with professional images
+- Instagram-style circular avatars with gradient rings (primary → pink → yellow)
+- Horizontal scrollable carousel with smooth animations
+- "NEW" badges for featured doctors (first 3 profiles)
+- Click any doctor to filter feed by their videos
+- Hover scale effects for better UX
+
+**Featured Content Section:**
+- 3 featured educational video cards
+- High-quality medical imagery
+- Play button overlays on hover
+- Duration badges
+- Category tags
+- Direct links to feed
+
+**Design Elements:**
+- Clean dashboard interface
+- Professional medical imagery
+- Mobile-responsive carousel
+- Trust badge at bottom
+- Consistent with brand design system
+
+### ✨ Added - Doctor Filtering System
+
+**Feed Filtering:**
+- URL parameter support: `/feed?doctor=<doctorId>`
+- Filter videos by specific doctors
+- Doctor header shows current doctor when filtered
+- Back button to return to all videos
+- Mock doctor data mapped to video content
+
+**Doctor Header:**
+- Shows when viewing filtered content
+- Doctor's profile image and name
+- Specialty display
+- Back navigation with arrow icon
+- White card with backdrop blur effect
+- Mobile-responsive design
+
+### ✨ Added - My Heart Page Redesign
+
+**Priority Reorganization:**
+- **Left Column (2/3 width) - PRIMARY:**
+  - Health score summary card with gradient background
+  - Daily action items checklist (6 tasks)
+  - Quick actions menu
+- **Right Column (1/3 width) - SECONDARY:**
+  - Your doctor card (compact)
+  - Schedule follow-up button
+  - Trust badge
+- **Bottom Row (full width):**
+  - Account information card
+  - Profile details in grid layout
+  - Sign out button
+
+**Interactive Health Reminders:**
+- 6 daily health tasks with checkboxes:
+  - Take morning medication (with time)
+  - 30-minute walk
+  - Log blood pressure (with target)
+  - Watch educational video
+  - Drink 8 glasses of water
+  - Get 7-8 hours of sleep
+- Real-time progress tracking: "X of 6 completed"
+- Click to check/uncheck items
+- Visual feedback with animations:
+  - Green background when completed
+  - Checkmark icon fill
+  - Strikethrough text
+  - Border highlight
+- Smooth state transitions
+- Persistent state during session
+
+**Visual Improvements:**
+- Gradient health score card (primary-50 to blue-50)
+- Status badge with color coding
+- Cleaner doctor card layout
+- Grid-based contact information
+- Better visual hierarchy
+- Mobile-optimized layout
+
+### 🔧 Changed
+
+**Folder Structure:**
+- Moved `app/library/` → `app/discover/`
+- Moved `app/account/` → `app/my-heart/`
+- Updated all import paths
+
+**Navigation Updates:**
+- Updated mobile bottom navigation (all pages)
+- Updated desktop header navigation (all pages)
+- Updated landing page demo links
+- Updated content page breadcrumbs
+- New icons: Heart icon for My Heart tab
+
+**Route Protection:**
+- Updated proxy middleware for new routes
+- Updated sitemap generation
+- Updated SEO metadata
+
+**Documentation:**
+- Updated README.md with new structure
+- Updated CHANGELOG.md with all changes
+- Updated project philosophy
+- Updated features documentation
+- Updated getting started guide
+
+### 🎯 UX Improvements
+
+**Discover Page:**
+- More engaging doctor discovery experience
+- Visual similarity to Instagram stories
+- Clear call-to-action (click to view videos)
+- Professional medical branding
+
+**My Heart Page:**
+- Action-oriented layout prioritizes daily health tasks
+- Visual gamification with progress tracking
+- Immediate feedback on task completion
+- Less cluttered, more focused interface
+- Account info easily accessible but not primary
+
+**My Feed:**
+- Context-aware with doctor filtering
+- Easy navigation between all videos and doctor-specific
+- Visual consistency with doctor profiles
+
+### 📦 Dependencies
+- No new dependencies added (all features use existing stack)
+
+### 🔄 Breaking Changes
+- URLs changed: `/library` → `/discover`, `/account` → `/my-heart`
+- Bookmark/saved links to old routes will need updating
+- API routes remain unchanged
+
 ## [1.2.0] - 2024-11-20
 
 ### ✨ Added

@@ -24,7 +24,7 @@ const howToSteps = [
 
 const breadcrumbs = [
   { name: "Home", url: "https://1another.com" },
-  { name: "Library", url: "https://1another.com/library" },
+  { name: "Discover", url: "https://1another.com/discover" },
   { name: "Chest Health Tips", url: "https://1another.com/content/chest-health" },
 ];
 
@@ -39,9 +39,9 @@ export default function ChestHealthPage() {
         <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
           <div className="dashboard-container">
             <div className="flex items-center justify-between py-4">
-              <Link href="/library" className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
+              <Link href="/discover" className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
                 <ArrowLeft className="w-5 h-5" />
-                <span className="font-medium">Back to Library</span>
+                <span className="font-medium">Back to Discover</span>
               </Link>
               <HeartScore score={55} />
             </div>
@@ -127,7 +127,7 @@ export default function ChestHealthPage() {
                   Your healthcare provider can create a personalized plan for maintaining optimal chest health
                   based on your individual needs and medical history.
                 </p>
-                <Link href="/account" className="btn-primary inline-block">
+                <Link href="/my-heart" className="btn-primary inline-block">
                   Schedule an Appointment
                 </Link>
               </div>

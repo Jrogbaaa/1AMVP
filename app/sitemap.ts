@@ -17,13 +17,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/library`,
+      url: `${baseUrl}/discover`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/account`,
+      url: `${baseUrl}/my-heart`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.7,

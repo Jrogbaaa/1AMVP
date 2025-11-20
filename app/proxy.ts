@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 
 export default auth((req) => {
   const isLoggedIn = !!req.auth;
-  const isProtectedRoute = ["/feed", "/library", "/account"].some(path => 
+  const isProtectedRoute = ["/feed", "/discover", "/my-heart"].some(path => 
     req.nextUrl.pathname.startsWith(path)
   );
 
@@ -13,6 +13,6 @@ export default auth((req) => {
 });
 
 export const config = {
-  matcher: ["/feed/:path*", "/library/:path*", "/account/:path*"],
+  matcher: ["/feed/:path*", "/discover/:path*", "/my-heart/:path*"],
 };
 

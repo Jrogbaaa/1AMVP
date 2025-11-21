@@ -121,13 +121,15 @@ export const VideoCard = ({
   return (
     <div className="video-card">
       {/* Doctor Photo */}
-      <Image
-        src={video.posterUrl || video.thumbnailUrl}
-        alt={video.title}
-        fill
-        className="absolute inset-0 object-cover"
-        priority={isActive}
-      />
+      {(video.posterUrl || video.thumbnailUrl) && (
+        <Image
+          src={video.posterUrl || video.thumbnailUrl}
+          alt={video.title}
+          fill
+          className="absolute inset-0 object-cover"
+          priority={isActive}
+        />
+      )}
 
       {/* Overlay gradient */}
       <div className="video-overlay" />

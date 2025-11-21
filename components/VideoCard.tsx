@@ -1,9 +1,10 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { Play, Pause, Share2, Heart } from "lucide-react";
+import { Play, Pause, Share2, Heart, Search } from "lucide-react";
 import type { Video, Doctor } from "@/lib/types";
 import Image from "next/image";
+import Link from "next/link";
 
 interface VideoCardProps {
   video: Video;
@@ -119,29 +120,14 @@ export const VideoCard = ({
 
   return (
     <div className="video-card">
-      {/* Poster/Thumbnail background */}
-      {video.posterUrl && (
-        <Image
-          src={video.posterUrl}
-          alt={video.title}
-          fill
-          className="absolute inset-0 object-cover"
-          priority={isActive}
-        />
-      )}
-      
-      {/* Video */}
-      <video
-        ref={videoRef}
-        className="absolute inset-0 w-full h-full object-cover"
-        poster={video.posterUrl || video.thumbnailUrl}
-        playsInline
-        muted
-        loop={!isPersonalized}
-        onEnded={handleVideoEnd}
-      >
-        <source src={video.videoUrl} type="video/mp4" />
-      </video>
+      {/* Doctor Photo */}
+      <Image
+        src={video.posterUrl || video.thumbnailUrl}
+        alt={video.title}
+        fill
+        className="absolute inset-0 object-cover"
+        priority={isActive}
+      />
 
       {/* Overlay gradient */}
       <div className="video-overlay" />
@@ -152,19 +138,8 @@ export const VideoCard = ({
         <div className="flex justify-between items-start pointer-events-auto">
         </div>
 
-        {/* Middle section - Play/Pause button */}
+        {/* Middle section - Empty (no play button for static images) */}
         <div className="flex items-center justify-center pointer-events-auto">
-          <button
-            onClick={handlePlayPause}
-            className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/30 transition-colors"
-            aria-label={isPlaying ? "Pause video" : "Play video"}
-          >
-            {isPlaying ? (
-              <Pause className="w-8 h-8 text-white" fill="white" />
-            ) : (
-              <Play className="w-8 h-8 text-white ml-1" fill="white" />
-            )}
-          </button>
         </div>
 
         {/* Bottom section */}
@@ -191,6 +166,16 @@ export const VideoCard = ({
 
           {/* Right side - Actions */}
           <div className="flex flex-col gap-6 items-center">
+            {/* Discover button */}
+            <Link
+              href="/discover"
+              className="flex items-center justify-center w-12 h-12 bg-white/50 backdrop-blur-sm rounded-full shadow-lg hover:bg-white/70 hover:scale-110 transition-all duration-200"
+              aria-label="Discover Doctors"
+              tabIndex={0}
+            >
+              <Search className="w-5 h-5 text-gray-700" />
+            </Link>
+
             {/* Doctor avatar */}
             {doctor && (
               <button

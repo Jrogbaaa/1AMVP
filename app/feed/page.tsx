@@ -7,7 +7,7 @@ import { VideoCard } from "@/components/VideoCard";
 import { RateLimitMessage } from "@/components/RateLimitMessage";
 import { ChatOnboarding } from "@/components/ChatOnboarding";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import { Calendar, Heart, ArrowLeft, Play } from "lucide-react";
+import { Calendar, Heart, ArrowLeft, Play, Search } from "lucide-react";
 import type { Video, Doctor } from "@/lib/types";
 import Image from "next/image";
 
@@ -47,8 +47,8 @@ const MOCK_VIDEOS: Video[] = [
     title: "Your Follow-Up from Dr. Johnson",
     description: "Here's your personalized follow-up about your recent visit and next steps for your care.",
     videoUrl: "/videoplayback.mp4",
-    thumbnailUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=720&h=1280&fit=crop&q=80",
-    posterUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=720&h=1280&fit=crop&q=80",
+    thumbnailUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=720&h=1280&fit=crop&q=80&sat=-100",
+    posterUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=720&h=1280&fit=crop&q=80&sat=-100",
     duration: 120,
     category: "Follow-Up",
     tags: ["personalized", "follow-up", "cardiology"],
@@ -59,28 +59,28 @@ const MOCK_VIDEOS: Video[] = [
   {
     id: "750e8400-e29b-41d4-a716-446655440002",
     title: "Understanding Blood Pressure",
-    description: "Dr. Sarah explains what blood pressure numbers mean and how to monitor your heart health.",
+    description: "Dr. Chen explains what blood pressure numbers mean and how to monitor your heart health.",
     videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-    thumbnailUrl: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=720&h=1280&fit=crop&q=80",
-    posterUrl: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=720&h=1280&fit=crop&q=80",
+    thumbnailUrl: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=720&h=1280&fit=crop&q=80",
+    posterUrl: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=720&h=1280&fit=crop&q=80",
     duration: 180,
     category: "Education",
     tags: ["blood pressure", "heart health", "basics"],
-    doctorId: "550e8400-e29b-41d4-a716-446655440001",
+    doctorId: "550e8400-e29b-41d4-a716-446655440002",
     isPersonalized: false,
     createdAt: new Date().toISOString(),
   },
   {
     id: "750e8400-e29b-41d4-a716-446655440003",
     title: "Heart-Healthy Diet Tips",
-    description: "Dr. Johnson shares simple and practical nutrition tips for maintaining a healthy heart.",
+    description: "Dr. Rodriguez shares simple and practical nutrition tips for maintaining a healthy heart.",
     videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-    thumbnailUrl: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=720&h=1280&fit=crop&q=80",
-    posterUrl: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=720&h=1280&fit=crop&q=80",
+    thumbnailUrl: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=720&h=1280&fit=crop&q=80",
+    posterUrl: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=720&h=1280&fit=crop&q=80",
     duration: 240,
     category: "Education",
     tags: ["nutrition", "diet", "heart health"],
-    doctorId: "550e8400-e29b-41d4-a716-446655440001",
+    doctorId: "550e8400-e29b-41d4-a716-446655440003",
     isPersonalized: false,
     createdAt: new Date().toISOString(),
   },
@@ -94,21 +94,21 @@ const MOCK_VIDEOS: Video[] = [
     duration: 150,
     category: "Education",
     tags: ["medication", "compliance", "tips"],
-    doctorId: "550e8400-e29b-41d4-a716-446655440002",
+    doctorId: "550e8400-e29b-41d4-a716-446655440001",
     isPersonalized: false,
     createdAt: new Date().toISOString(),
   },
   {
     id: "750e8400-e29b-41d4-a716-446655440005",
     title: "Exercise for Heart Health",
-    description: "Dr. Chen demonstrates safe and effective exercises to strengthen your cardiovascular system.",
+    description: "Dr. Kim demonstrates safe and effective exercises to strengthen your cardiovascular system.",
     videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-    thumbnailUrl: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=720&h=1280&fit=crop&q=80",
-    posterUrl: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=720&h=1280&fit=crop&q=80",
+    thumbnailUrl: "https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=720&h=1280&fit=crop&q=80",
+    posterUrl: "https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=720&h=1280&fit=crop&q=80",
     duration: 200,
     category: "Education",
     tags: ["exercise", "cardio", "fitness"],
-    doctorId: "550e8400-e29b-41d4-a716-446655440003",
+    doctorId: "550e8400-e29b-41d4-a716-446655440002",
     isPersonalized: false,
     createdAt: new Date().toISOString(),
   },
@@ -229,18 +229,6 @@ const FeedContent = () => {
             </div>
           </div>
         )}
-
-        {/* Navigation buttons - left side */}
-        <div className="absolute left-4 bottom-48 z-50 flex flex-col gap-3">
-          <Link
-            href="/my-heart"
-            className="flex items-center justify-center w-14 h-14 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white hover:scale-110 transition-all duration-200 group"
-            aria-label="Schedule Follow-Up"
-            tabIndex={0}
-          >
-            <Calendar className="w-6 h-6 text-primary-600 group-hover:text-primary-700" />
-          </Link>
-        </div>
 
         {/* Rate limit warning */}
         {remainingScrolls <= 5 && remainingScrolls > 0 && !isRateLimited && (
@@ -376,32 +364,32 @@ const FeedContent = () => {
                   <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <input type="checkbox" className="mt-1 w-4 h-4 text-primary-600 rounded" />
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900">Take morning medication</p>
-                      <p className="text-sm text-gray-500">Due at 9:00 AM</p>
+                      <p className="font-medium text-gray-900">Schedule Colonoscopy</p>
+                      <p className="text-sm text-gray-500">Book your appointment</p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <input type="checkbox" className="mt-1 w-4 h-4 text-primary-600 rounded" />
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900">30-minute walk</p>
-                      <p className="text-sm text-gray-500">Recommended daily activity</p>
+                      <p className="font-medium text-gray-900">Schedule Blood Test</p>
+                      <p className="text-sm text-gray-500">Book your lab work</p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <input type="checkbox" className="mt-1 w-4 h-4 text-primary-600 rounded" />
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900">Log blood pressure</p>
-                      <p className="text-sm text-gray-500">Morning reading</p>
+                      <p className="font-medium text-gray-900">Schedule Follow-Up Visit</p>
+                      <p className="text-sm text-gray-500">Book your next appointment</p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <input type="checkbox" className="mt-1 w-4 h-4 text-primary-600 rounded" />
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900">Watch educational video</p>
-                      <p className="text-sm text-gray-500">Learn about heart-healthy diet</p>
+                      <p className="font-medium text-gray-900">Schedule Stress Test</p>
+                      <p className="text-sm text-gray-500">Book your cardiac screening</p>
                     </div>
                   </div>
                 </div>

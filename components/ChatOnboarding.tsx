@@ -144,37 +144,45 @@ export const ChatOnboarding = ({
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm animate-fade-in">
       <div className="w-full max-w-md h-[80vh] bg-white rounded-t-3xl shadow-2xl flex flex-col animate-slide-up">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full overflow-hidden">
-              {doctor.avatarUrl ? (
-                <Image
-                  src={doctor.avatarUrl}
-                  alt={doctor.name}
-                  width={40}
-                  height={40}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full bg-primary-600 flex items-center justify-center">
-                  <span className="text-white font-bold">
-                    {doctor.name.charAt(0)}
-                  </span>
-                </div>
-              )}
+        <div className="border-b border-gray-200">
+          <div className="flex items-center justify-between p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full overflow-hidden">
+                {doctor.avatarUrl ? (
+                  <Image
+                    src={doctor.avatarUrl}
+                    alt={doctor.name}
+                    width={40}
+                    height={40}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-primary-600 flex items-center justify-center">
+                    <span className="text-white font-bold">
+                      {doctor.name.charAt(0)}
+                    </span>
+                  </div>
+                )}
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900">Dr. {doctor.name}</h3>
+                <p className="text-sm text-gray-500">{doctor.specialty}</p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-semibold text-gray-900">Dr. {doctor.name}</h3>
-              <p className="text-sm text-gray-500">{doctor.specialty}</p>
-            </div>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              aria-label="Close chat"
+            >
+              <X className="w-5 h-5 text-gray-500" />
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-            aria-label="Close chat"
-          >
-            <X className="w-5 h-5 text-gray-500" />
-          </button>
+          {/* Schedule Follow-Up Button */}
+          <div className="px-4 pb-3">
+            <button className="w-full py-2 px-4 bg-primary-600 text-white text-sm font-semibold rounded-lg hover:bg-primary-700 transition-colors">
+              Schedule Follow-Up
+            </button>
+          </div>
         </div>
 
         {/* Messages */}

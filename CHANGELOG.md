@@ -5,6 +5,119 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2024-11-21
+
+### 🏥 Added - Hospital Group Integration
+
+**Kaiser Permanente Branding:**
+- Kaiser Permanente logo displayed in Discover page header
+- Professional branded background color (#003A70)
+- Multi-organization branding support ready
+- Logo image at `/public/images/kaiser-logo.png`
+
+### ✨ Enhanced - Discover Page
+
+**Page Restructure:**
+- Page title changed from "Discover Doctors" → **"Your Doctors"**
+- Subtitle updated to: "Explore content from your experts"
+- Content organized into two main sections:
+  - **Cardiology** section (heart health content)
+  - **Nutrition and Exercise** section (wellness content)
+
+**Filtering System:**
+- Category filter buttons: All, Cardiology, Nutrition and Exercise
+- Cardiology topic filters:
+  - All Topics
+  - Blood Pressure
+  - Heart Disease
+  - Arrhythmia
+  - Cholesterol
+- Topics appear when Cardiology category is selected
+- Active filter styling with primary color highlighting
+
+**Doctor Discovery:**
+- Green "+" button appears on doctors not yet added
+- Button positioned at bottom-right corner of avatar (subtle, doesn't cover face)
+- First three doctors pre-added to user's network
+- Click "+" to add doctor to your feed
+- White border on add button for visual clarity
+
+### 🎨 Changed - Feed Page
+
+**Static Doctor Photos:**
+- Replaced video playback with static doctor portrait photos
+- Removed play/pause button (no longer needed)
+- Faster page load with image-only display
+- High-quality doctor portraits using Unsplash images
+- Grayscale filter on first doctor for professional look
+
+**Discover Icon Redesign:**
+- Moved from floating position to integrated in each VideoCard
+- Positioned just above doctor profile photo in action column
+- No longer fixed/floating on scroll
+- Moves naturally with each card
+- Improved transparency (bg-white/50)
+- Better alignment with other action buttons
+- Search icon with 6-unit gap spacing
+
+### 🔔 Updated - Action Items & Reminders
+
+**Reminder Naming:**
+- All reminders now include "Schedule" prefix for clarity:
+  - Schedule Colonoscopy (replaces "Take morning medication")
+  - Schedule Blood Test (replaces "30-minute walk")
+  - Schedule Follow-Up Visit (replaces "Log blood pressure")
+  - Schedule Stress Test (replaces "Watch educational video")
+- More actionable and clear for patients
+- Consistent terminology across the app
+
+### 💬 Enhanced - Chat Messaging
+
+**Schedule Follow-Up Button:**
+- New button added at top of ChatOnboarding component
+- Positioned directly below doctor header
+- Full-width primary button
+- Quick access to scheduling without leaving chat
+- Maintains conversation context while scheduling
+
+### 🔧 Technical Changes
+
+**Component Updates:**
+- `VideoCard.tsx`: Removed video element, added discover icon, static images
+- `ChatOnboarding.tsx`: Added schedule button in header
+- `feed/page.tsx`: Updated mock video data with doctor photos
+- `discover/page.tsx`: Added filters, hospital branding, add buttons
+
+**Image Assets:**
+- Added Kaiser Permanente logo to `/public/images/`
+- Updated doctor portrait URLs for better visual consistency
+- Removed video URLs (using poster images as static content)
+
+### 🎯 UX Improvements
+
+**Discover Page:**
+- More intuitive navigation with clear category sections
+- Topic filtering for precise content discovery
+- Visual cues for suggested doctors to add
+- Professional hospital branding builds trust
+
+**Feed Experience:**
+- Faster loading with static images
+- Discover functionality integrated per-card
+- No floating elements that obscure content
+- Cleaner, more focused viewing experience
+
+**Action Clarity:**
+- "Schedule" prefix makes reminders immediately actionable
+- Reduces cognitive load (clear what to do)
+- Aligns with healthcare appointment terminology
+
+### 📦 Dependencies
+- No new dependencies added
+
+### 🔄 Breaking Changes
+- None (all changes are backwards compatible)
+
 ## [1.3.0] - 2024-11-20
 
 ### 🎨 Major Navigation & Feature Overhaul

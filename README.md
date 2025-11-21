@@ -59,16 +59,50 @@ A mobile-first patient communication and education platform that puts **the doct
     └── images/            # Static assets
 ```
 
-## ✨ Latest Updates (v1.3.0 - Nov 20, 2024)
+## ✨ Latest Updates (v1.4.0 - Nov 21, 2024)
 
-### Major Navigation & Feature Overhaul
+### UI Refinements & Hospital Branding
 
-**🎨 New Navigation Structure:**
+**🏥 Hospital Group Integration:**
+- Kaiser Permanente branding in Discover page header
+- Professional logo display with branded background
+- Multi-organization support ready
+
+**🎯 Enhanced Discover Page:**
+- Page title changed to "Your Doctors"
+- Subtitle: "Explore content from your experts"
+- Organized content sections: "Cardiology" and "Nutrition and Exercise"
+- Filter by category: All, Cardiology, Nutrition and Exercise
+- Cardiology topic filters: Blood Pressure, Heart Disease, Arrhythmia, Cholesterol
+- Green "+" button for suggested doctors to add
+- First three doctors pre-added to user's network
+
+**📱 Feed Page Improvements:**
+- Static doctor photos instead of videos (faster loading)
+- Discover icon integrated into each VideoCard (no longer floating)
+- Discover icon positioned above profile photo
+- Improved icon transparency and positioning
+- All videos now display high-quality doctor portraits
+
+**🔔 Action Items & Reminders:**
+- All reminders now use "Schedule" prefix for clarity
+- Schedule Colonoscopy
+- Schedule Blood Test
+- Schedule Follow-Up Visit
+- Schedule Stress Test
+
+**💬 Chat Messaging Enhancement:**
+- "Schedule Follow-Up" button added to top of doctor messaging
+- Quick access to appointment scheduling within chat
+
+### Previous Updates (v1.3.0 - Nov 20, 2024)
+
+**🎨 Navigation Structure:**
 - **My Feed** - Your personalized video feed (formerly "Feed")
 - **Discover** - Instagram-style doctor profiles & educational content (formerly "Library")
 - **My Heart** - Health dashboard with daily reminders & profile (formerly "Account")
 
-**🔍 Discover Page (New!):**
+**🔍 Discover Page:**
 - Instagram-style doctor profile carousel with gradient rings
 - 12+ mock doctor profiles for exploration
 - Click any doctor to view their video feed

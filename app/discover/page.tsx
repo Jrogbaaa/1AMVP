@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Play, MessageCircle, Heart } from "lucide-react";
+import { Play, MessageCircle, Heart, Filter } from "lucide-react";
 import { HeartScore } from "@/components/HeartScore";
 import { TrustBadge } from "@/components/TrustBadge";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
@@ -114,7 +114,20 @@ const MOCK_DOCTORS: Doctor[] = [
 export default function DiscoverPage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedTopic, setSelectedTopic] = useState<string>("all");
+  // Initialize with first three doctors already added
+  const [addedDoctors, setAddedDoctors] = useState<Set<string>>(
+    new Set([
+      "550e8400-e29b-41d4-a716-446655440001",
+      "550e8400-e29b-41d4-a716-446655440002", 
+      "550e8400-e29b-41d4-a716-446655440003"
+    ])
+  );
   const healthScore = 55;
+
+  const categories = ["all", "cardiology", "nutrition-exercise"];
+  const cardiologyTopics = ["all", "blood-pressure", "heart-disease", "arrhythmia", "cholesterol"];
 
   const handleOpenChat = () => {
     setIsChatOpen(true);
@@ -126,6 +139,13 @@ export default function DiscoverPage() {
 
   const handleDoctorClick = (doctor: Doctor) => {
     setSelectedDoctor(doctor);
+    setAddedDoctors((prev) => new Set(prev).add(doctor.id));
+  };
+
+  const handleAddDoctor = (e: React.MouseEvent, doctorId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setAddedDoctors((prev) => new Set(prev).add(doctorId));
   };
 
   return (
@@ -152,6 +172,15 @@ export default function DiscoverPage() {
                 </nav>
               </div>
               <div className="flex items-center gap-3">
+                <div className="hidden md:flex items-center px-4 py-2 bg-[#003A70] rounded-lg">
+                  <Image
+                    src="/images/kaiser-logo.png"
+                    alt="Kaiser Permanente"
+                    width={150}
+                    height={40}
+                    className="h-6 w-auto"
+                  />
+                </div>
                 <HeartScore score={healthScore} showMessage />
                 <UserMenu />
               </div>
@@ -164,66 +193,142 @@ export default function DiscoverPage() {
         {/* Page title */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Discover Doctors
+            Your Doctors
           </h1>
           <p className="text-gray-600 text-lg">
-            Explore content from leading cardiologists
+            Explore content from your experts
           </p>
         </div>
 
         {/* Instagram-style doctor profiles */}
         <div className="mb-8">
           <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
-            {MOCK_DOCTORS.map((doctor) => (
-              <Link
-                key={doctor.id}
-                href={`/feed?doctor=${doctor.id}`}
-                className="flex flex-col items-center gap-2 flex-shrink-0 group cursor-pointer"
-                onClick={() => handleDoctorClick(doctor)}
-              >
-                <div className="relative">
-                  {/* Gradient ring */}
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-primary-500 via-pink-500 to-yellow-500 p-[3px] group-hover:scale-110 transition-transform duration-200">
-                    <div className="w-full h-full rounded-full bg-white p-[3px]">
-                      <div className="relative w-full h-full rounded-full overflow-hidden">
-                        {doctor.avatarUrl ? (
-                          <Image
-                            src={doctor.avatarUrl}
-                            alt={doctor.name}
-                            fill
-                            className="object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center">
-                            <span className="text-white text-2xl font-bold">
-                              {doctor.name.charAt(0)}
-                            </span>
-                          </div>
-                        )}
+            {MOCK_DOCTORS.map((doctor) => {
+              const isAdded = addedDoctors.has(doctor.id);
+              return (
+                <Link
+                  key={doctor.id}
+                  href={`/feed?doctor=${doctor.id}`}
+                  className="flex flex-col items-center gap-2 flex-shrink-0 group cursor-pointer"
+                  onClick={() => handleDoctorClick(doctor)}
+                >
+                  <div className="relative">
+                    {/* Gradient ring */}
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-primary-500 via-pink-500 to-yellow-500 p-[3px] group-hover:scale-110 transition-transform duration-200">
+                      <div className="w-full h-full rounded-full bg-white p-[3px]">
+                        <div className="relative w-full h-full rounded-full overflow-hidden">
+                          {doctor.avatarUrl ? (
+                            <Image
+                              src={doctor.avatarUrl}
+                              alt={doctor.name}
+                              fill
+                              className="object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center">
+                              <span className="text-white text-2xl font-bold">
+                                {doctor.name.charAt(0)}
+                              </span>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
+                    {/* Add button for doctors not added yet - positioned at bottom right */}
+                    {!isAdded && (
+                      <button
+                        onClick={(e) => handleAddDoctor(e, doctor.id)}
+                        className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-sm hover:bg-green-600 transition-colors shadow-md border-2 border-white"
+                        aria-label={`Add Dr. ${doctor.name}`}
+                      >
+                        +
+                      </button>
+                    )}
+                    {/* New badge for featured doctors */}
+                    {parseInt(doctor.id.slice(-1)) <= 3 && (
+                      <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 bg-primary-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                        NEW
+                      </div>
+                    )}
                   </div>
-                  {/* New badge for featured doctors */}
-                  {parseInt(doctor.id.slice(-1)) <= 3 && (
-                    <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 bg-primary-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-                      NEW
-                    </div>
-                  )}
-                </div>
-                <div className="text-center">
-                  <p className="text-xs font-medium text-gray-900 max-w-[80px] truncate">
-                    Dr. {doctor.name.split(' ')[1]}
-                  </p>
-                </div>
-              </Link>
-            ))}
+                  <div className="text-center">
+                    <p className="text-xs font-medium text-gray-900 max-w-[80px] truncate">
+                      Dr. {doctor.name.split(' ')[1]}
+                    </p>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
 
-        {/* Featured content section */}
+        {/* Filter section */}
+        <div className="mb-6">
+          <div className="flex flex-wrap gap-4 items-center">
+            <div className="flex items-center gap-2">
+              <Filter className="w-5 h-5 text-gray-500" />
+              <span className="text-sm font-medium text-gray-700">Filter by:</span>
+            </div>
+            
+            {/* Category filter */}
+            <div className="flex gap-2">
+              <button
+                onClick={() => setSelectedCategory("all")}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  selectedCategory === "all"
+                    ? "bg-primary-600 text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                All
+              </button>
+              <button
+                onClick={() => setSelectedCategory("cardiology")}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  selectedCategory === "cardiology"
+                    ? "bg-primary-600 text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                Cardiology
+              </button>
+              <button
+                onClick={() => setSelectedCategory("nutrition-exercise")}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  selectedCategory === "nutrition-exercise"
+                    ? "bg-primary-600 text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                Nutrition and Exercise
+              </button>
+            </div>
+          </div>
+
+          {/* Cardiology topics filter */}
+          {selectedCategory === "cardiology" && (
+            <div className="mt-4 flex flex-wrap gap-2 pl-8">
+              {cardiologyTopics.map((topic) => (
+                <button
+                  key={topic}
+                  onClick={() => setSelectedTopic(topic)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                    selectedTopic === topic
+                      ? "bg-primary-100 text-primary-700 border border-primary-300"
+                      : "bg-white text-gray-600 border border-gray-300 hover:border-gray-400"
+                  }`}
+                >
+                  {topic === "all" ? "All Topics" : topic.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Featured content section - Cardiology */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            Featured Educational Content
+            Cardiology
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Featured video cards */}
@@ -293,6 +398,15 @@ export default function DiscoverPage() {
               </div>
             </Link>
 
+          </div>
+        </div>
+
+        {/* Nutrition and Exercise section */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            Nutrition and Exercise
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <Link
               href="/feed"
               className="card hover:shadow-lg transition-shadow cursor-pointer group"

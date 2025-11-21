@@ -118,12 +118,14 @@ export const VideoCard = ({
     }
   };
 
+  const imageSrc = video.posterUrl || video.thumbnailUrl || '';
+
   return (
     <div className="video-card">
       {/* Doctor Photo */}
-      {(video.posterUrl || video.thumbnailUrl) && (
+      {imageSrc && (
         <Image
-          src={video.posterUrl || video.thumbnailUrl}
+          src={imageSrc}
           alt={video.title}
           fill
           className="absolute inset-0 object-cover"

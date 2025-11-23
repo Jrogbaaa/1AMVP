@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Play, MessageCircle, Heart, Filter } from "lucide-react";
+import { Play, MessageCircle, Heart, Filter, Check } from "lucide-react";
 import { HeartScore } from "@/components/HeartScore";
 import { TrustBadge } from "@/components/TrustBadge";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
@@ -116,6 +116,7 @@ export default function DiscoverPage() {
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedTopic, setSelectedTopic] = useState<string>("all");
+  const [selectedSpecialty, setSelectedSpecialty] = useState<string>("all");
   // Initialize with first three doctors already added
   const [addedDoctors, setAddedDoctors] = useState<Set<string>>(
     new Set([
@@ -128,6 +129,7 @@ export default function DiscoverPage() {
 
   const categories = ["all", "cardiology", "nutrition-exercise"];
   const cardiologyTopics = ["all", "blood-pressure", "heart-disease", "arrhythmia", "cholesterol"];
+  const specialties = ["all", "cardiology", "primary-care", "endocrinology", "gastroenterology", "pulmonology"];
 
   const handleOpenChat = () => {
     setIsChatOpen(true);
@@ -155,9 +157,13 @@ export default function DiscoverPage() {
         <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
           <div className="dashboard-container">
             <div className="flex items-center justify-between py-4">
+              {/* Left: Logo and Nav */}
               <div className="flex items-center gap-4">
-                <Link href="/feed" className="text-2xl font-bold text-primary-600">
-                  1Another
+                <Link href="/feed" className="text-2xl font-bold text-primary-600 flex items-center gap-2">
+                  <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center text-white text-sm font-bold">
+                    1A
+                  </div>
+                  <span className="hidden sm:inline">1Another</span>
                 </Link>
                 <nav className="hidden md:flex items-center gap-6">
                   <Link href="/feed" className="text-gray-600 hover:text-gray-900 font-medium">
@@ -166,13 +172,15 @@ export default function DiscoverPage() {
                   <Link href="/discover" className="text-primary-600 font-semibold border-b-2 border-primary-600 pb-1">
                     Discover
                   </Link>
-                  <Link href="/my-heart" className="text-gray-600 hover:text-gray-900 font-medium">
-                    My Heart
+                  <Link href="/my-health" className="text-gray-600 hover:text-gray-900 font-medium">
+                    My Health
                   </Link>
                 </nav>
               </div>
+
+              {/* Right: Kaiser Logo (desktop), Heart Score, User Menu */}
               <div className="flex items-center gap-3">
-                <div className="hidden md:flex items-center px-4 py-2 bg-[#003A70] rounded-lg">
+                <div className="hidden lg:flex items-center px-4 py-2 bg-[#003A70] rounded-lg">
                   <Image
                     src="/images/kaiser-logo.png"
                     alt="Kaiser Permanente"
@@ -181,7 +189,9 @@ export default function DiscoverPage() {
                     className="h-6 w-auto"
                   />
                 </div>
-                <HeartScore score={healthScore} showMessage />
+                <div className="hidden sm:block">
+                  <HeartScore score={healthScore} showMessage />
+                </div>
                 <UserMenu />
               </div>
             </div>
@@ -195,15 +205,24 @@ export default function DiscoverPage() {
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             Your Doctors
           </h1>
-          <p className="text-gray-600 text-lg">
+          <p className="text-gray-600 text-lg mb-4">
             Explore content from your experts
           </p>
+          <div className="bg-primary-50 border-l-4 border-primary-600 p-4 rounded-lg">
+            <p className="text-gray-900 font-medium">
+              Hey Dave, here are some other videos I recommend you take a look at:
+            </p>
+          </div>
         </div>
 
         {/* Instagram-style doctor profiles */}
         <div className="mb-8">
           <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
-            {MOCK_DOCTORS.map((doctor) => {
+            {MOCK_DOCTORS.filter((doctor) => {
+              // Filter doctors by specialty
+              if (selectedSpecialty === "all") return true;
+              return doctor.specialty.toLowerCase() === selectedSpecialty.replace("-", " ");
+            }).map((doctor) => {
               const isAdded = addedDoctors.has(doctor.id);
               return (
                 <Link
@@ -234,21 +253,21 @@ export default function DiscoverPage() {
                         </div>
                       </div>
                     </div>
-                    {/* Add button for doctors not added yet - positioned at bottom right */}
+                    {/* Checkmark badge for added doctors */}
+                    {isAdded && (
+                      <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center shadow-md border-2 border-white">
+                        <Check className="w-4 h-4 text-white" strokeWidth={3} />
+                      </div>
+                    )}
+                    {/* Add button for doctors not added yet */}
                     {!isAdded && (
                       <button
                         onClick={(e) => handleAddDoctor(e, doctor.id)}
-                        className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-sm hover:bg-green-600 transition-colors shadow-md border-2 border-white"
+                        className="absolute -bottom-1 -right-1 w-6 h-6 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-sm hover:bg-primary-600 transition-colors shadow-md border-2 border-white"
                         aria-label={`Add Dr. ${doctor.name}`}
                       >
                         +
                       </button>
-                    )}
-                    {/* New badge for featured doctors */}
-                    {parseInt(doctor.id.slice(-1)) <= 3 && (
-                      <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 bg-primary-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-                        NEW
-                      </div>
                     )}
                   </div>
                   <div className="text-center">
@@ -262,52 +281,41 @@ export default function DiscoverPage() {
           </div>
         </div>
 
-        {/* Filter section */}
+        {/* Specialty Filter - Horizontal scroll on mobile */}
         <div className="mb-6">
-          <div className="flex flex-wrap gap-4 items-center">
-            <div className="flex items-center gap-2">
-              <Filter className="w-5 h-5 text-gray-500" />
-              <span className="text-sm font-medium text-gray-700">Filter by:</span>
-            </div>
-            
-            {/* Category filter */}
-            <div className="flex gap-2">
+          <div className="flex items-center gap-3 mb-3">
+            <Filter className="w-5 h-5 text-gray-500" />
+            <span className="text-sm font-medium text-gray-700">Filter by Specialty:</span>
+          </div>
+          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+            {specialties.map((specialty) => (
               <button
-                onClick={() => setSelectedCategory("all")}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  selectedCategory === "all"
+                key={specialty}
+                onClick={() => {
+                  setSelectedSpecialty(specialty);
+                  // When selecting a specialty, update category too
+                  if (specialty === "cardiology") {
+                    setSelectedCategory("cardiology");
+                  } else if (specialty !== "all") {
+                    setSelectedCategory("all");
+                  }
+                }}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
+                  selectedSpecialty === specialty
                     ? "bg-primary-600 text-white"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
-                All
+                {specialty === "all" 
+                  ? "All" 
+                  : specialty.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
               </button>
-              <button
-                onClick={() => setSelectedCategory("cardiology")}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  selectedCategory === "cardiology"
-                    ? "bg-primary-600 text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
-              >
-                Cardiology
-              </button>
-              <button
-                onClick={() => setSelectedCategory("nutrition-exercise")}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  selectedCategory === "nutrition-exercise"
-                    ? "bg-primary-600 text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
-              >
-                Nutrition and Exercise
-              </button>
-            </div>
+            ))}
           </div>
 
           {/* Cardiology topics filter */}
-          {selectedCategory === "cardiology" && (
-            <div className="mt-4 flex flex-wrap gap-2 pl-8">
+          {selectedSpecialty === "cardiology" && (
+            <div className="mt-4 flex flex-wrap gap-2">
               {cardiologyTopics.map((topic) => (
                 <button
                   key={topic}
@@ -326,11 +334,12 @@ export default function DiscoverPage() {
         </div>
 
         {/* Featured content section - Cardiology */}
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            Cardiology
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {(selectedSpecialty === "all" || selectedSpecialty === "cardiology") && (
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              Cardiology
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Featured video cards */}
             <Link
               href="/feed"
@@ -398,15 +407,17 @@ export default function DiscoverPage() {
               </div>
             </Link>
 
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Nutrition and Exercise section */}
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            Nutrition and Exercise
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {(selectedSpecialty === "all" || selectedSpecialty === "primary-care") && (
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              Nutrition and Exercise
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <Link
               href="/feed"
               className="card hover:shadow-lg transition-shadow cursor-pointer group"
@@ -439,8 +450,43 @@ export default function DiscoverPage() {
                 </p>
               </div>
             </Link>
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* Other Specialties sections */}
+        {selectedSpecialty === "endocrinology" && (
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              Endocrinology
+            </h2>
+            <div className="p-8 bg-gray-50 rounded-xl text-center">
+              <p className="text-gray-600">Content coming soon for Endocrinology</p>
+            </div>
+          </div>
+        )}
+
+        {selectedSpecialty === "gastroenterology" && (
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              Gastroenterology
+            </h2>
+            <div className="p-8 bg-gray-50 rounded-xl text-center">
+              <p className="text-gray-600">Content coming soon for Gastroenterology</p>
+            </div>
+          </div>
+        )}
+
+        {selectedSpecialty === "pulmonology" && (
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              Pulmonology
+            </h2>
+            <div className="p-8 bg-gray-50 rounded-xl text-center">
+              <p className="text-gray-600">Content coming soon for Pulmonology</p>
+            </div>
+          </div>
+        )}
 
         {/* Trust badge */}
         <div className="mt-12 flex justify-center">
@@ -470,9 +516,9 @@ export default function DiscoverPage() {
             </div>
             <span className="text-xs font-medium">Discover</span>
           </Link>
-          <Link href="/my-heart" className="flex flex-col items-center gap-1 text-gray-600">
+          <Link href="/my-health" className="flex flex-col items-center gap-1 text-gray-600">
             <Heart className="w-6 h-6" />
-            <span className="text-xs font-medium">My Heart</span>
+            <span className="text-xs font-medium">My Health</span>
           </Link>
         </div>
       </nav>

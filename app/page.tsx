@@ -64,12 +64,12 @@ export default async function HomePage({
             </Link>
             
             <Link
-              href="/my-heart"
+              href="/my-health"
               className="group px-6 py-4 bg-white text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition-all shadow-md hover:shadow-xl border-2 border-gray-300 hover:scale-105 duration-200"
             >
               <div className="flex flex-col items-center gap-2">
                 <span className="text-2xl">❤️</span>
-                <span className="text-lg">My Heart</span>
+                <span className="text-lg">My Health</span>
                 <span className="text-xs text-gray-500">Health profile</span>
               </div>
             </Link>

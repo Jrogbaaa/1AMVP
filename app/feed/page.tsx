@@ -274,9 +274,9 @@ const FeedContent = () => {
               </div>
               <span className="text-xs font-medium">Discover</span>
             </Link>
-            <Link href="/my-heart" className="flex flex-col items-center gap-1 text-gray-600">
+            <Link href="/my-health" className="flex flex-col items-center gap-1 text-gray-600">
               <Heart className="w-6 h-6" />
-              <span className="text-xs font-medium">My Heart</span>
+              <span className="text-xs font-medium">My Health</span>
             </Link>
           </div>
         </nav>

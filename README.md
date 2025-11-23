@@ -8,7 +8,7 @@ A mobile-first patient communication and education platform that puts **the doct
 2. **Personal link = identity** - Unique magic links contain patient + doctor identity
 3. **My Feed = engagement** - TikTok-style feed for active viewing and learning
 4. **Discover = exploration** - Instagram-style doctor profiles and educational content
-5. **My Heart = health actions** - Daily reminders and health tracking
+5. **My Health = health actions** - Time-based reminders and healthcare provider tracking
 6. **Simplicity above all** - Remove complexity unless it adds compounding advantage
 
 ## 🏗️ Tech Stack
@@ -27,7 +27,7 @@ A mobile-first patient communication and education platform that puts **the doct
 ├── app/
 │   ├── feed/              # TikTok-style vertical feed with doctor filtering
 │   ├── discover/          # Instagram-style doctor profiles & content
-│   ├── my-heart/          # Health dashboard with reminders & profile
+│   ├── my-health/         # Health dashboard with reminders & profile
 │   ├── content/           # SEO-optimized content pages
 │   ├── api/               # API endpoints
 │   ├── layout.tsx         # Root layout
@@ -59,7 +59,64 @@ A mobile-first patient communication and education platform that puts **the doct
     └── images/            # Static assets
 ```
 
-## ✨ Latest Updates (v1.4.0 - Nov 21, 2024)
+## ✨ Latest Updates (v1.5.0 - Nov 23, 2024)
+
+### Major UI/UX Improvements & Consistency Updates
+
+**🎨 Professional Heart Score Design:**
+- Unified heart design across all pages (Feed, Discover, My Health)
+- Enhanced with elegant gradient fills:
+  - Emerald to Green gradient (70%+) for excellent health
+  - Amber to Orange gradient (40-69%) for moderate health
+  - Rose to Red gradient (<40%) for needs attention
+- Professional drop shadows and subtle outer ring
+- Better text contrast with enhanced drop shadows
+- Smooth animations and transitions (500ms ease-out)
+
+**🎯 Video Feed Improvements:**
+- Added "1A" watermark to all video cards (top-left corner)
+- Personalized greeting: "Hey Dave, good to see you today!"
+- Appointment reminder: "📅 Reminder: Schedule your follow-up visit in 3 months"
+- Cleaner video description area
+
+**🔍 Discover Page Enhancements:**
+- Moved recommended videos message to Discover page
+- Added prominent banner: "Hey Dave, here are some other videos I recommend you take a look at"
+- Working specialty filters: Cardiology, Primary Care, Endocrinology, Gastroenterology, Pulmonology
+- Content sections dynamically show/hide based on selected specialty
+- Doctor profiles filtered by specialty in real-time
+- Checkmark badges (✓) for doctors you've already added
+- Blue add button (+) for new doctors
+
+**🏥 My Health Dashboard (formerly My Heart):**
+- Renamed from "My Heart" to "My Health" throughout the app
+- Time-based action organization:
+  - 📅 **This Day** - Daily tasks (medication, blood pressure, walk)
+  - 📆 **This Week** - Weekly goals (videos, hydration tracking)
+  - 📅 **This Year** - Annual checkups with "Add to Calendar" and "Schedule" buttons
+    - Annual Physical Exam (March 2025)
+    - Cholesterol Screening (June 2025)
+    - Flu Vaccination (October 2025)
+- Healthcare provider cards:
+  - **Your Doctors** - Connected physicians with avatars and specialties
+  - **Hospital Groups** - Medical facilities with addresses
+  - **Your Insurer** - Kaiser Permanente card with member details
+
+**💬 Chat & Scheduling Integration:**
+- Schedule Follow-Up button now fully functional in chat
+- Opens appointment calendar modal with date/time selection
+- Seamless flow: Feed → Doctor Profile → Chat → Schedule Follow-Up → Calendar
+
+**📱 Mobile Header Improvements:**
+- Added 1A logo box in navigation (blue square with white "1A" text)
+- Responsive logo display (icon on mobile, full "1Another" on desktop)
+- Better spacing and cleaner layout
+- Heart score hidden on very small screens to reduce clutter
+- Kaiser logo only visible on large screens (lg+ breakpoint)
+
+---
+
+## Previous Updates (v1.4.0 - Nov 21, 2024)
 
 ### UI Refinements & Hospital Branding
 

@@ -5,6 +5,7 @@ import { Send, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Doctor } from "@/lib/types";
 import Image from "next/image";
+import { ScheduleAppointment } from "./ScheduleAppointment";
 
 interface ChatMessage {
   id: string;
@@ -55,7 +56,16 @@ export const ChatOnboarding = ({
   const [input, setInput] = useState("");
   const [currentStep, setCurrentStep] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [isScheduleOpen, setIsScheduleOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const handleScheduleClick = () => {
+    setIsScheduleOpen(true);
+  };
+
+  const handleScheduleClose = () => {
+    setIsScheduleOpen(false);
+  };
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
@@ -141,7 +151,8 @@ export const ChatOnboarding = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm animate-fade-in">
+    <>
+      <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm animate-fade-in">
       <div className="w-full max-w-md h-[80vh] bg-white rounded-t-3xl shadow-2xl flex flex-col animate-slide-up">
         {/* Header */}
         <div className="border-b border-gray-200">
@@ -179,7 +190,10 @@ export const ChatOnboarding = ({
           </div>
           {/* Schedule Follow-Up Button */}
           <div className="px-4 pb-3">
-            <button className="w-full py-2 px-4 bg-primary-600 text-white text-sm font-semibold rounded-lg hover:bg-primary-700 transition-colors">
+            <button 
+              onClick={handleScheduleClick}
+              className="w-full py-2 px-4 bg-primary-600 text-white text-sm font-semibold rounded-lg hover:bg-primary-700 transition-colors"
+            >
               Schedule Follow-Up
             </button>
           </div>
@@ -235,6 +249,15 @@ export const ChatOnboarding = ({
         )}
       </div>
     </div>
+
+    {/* Schedule Appointment Modal */}
+    <ScheduleAppointment
+      isOpen={isScheduleOpen}
+      onClose={handleScheduleClose}
+      doctor={doctor}
+      userId={userId}
+    />
+    </>
   );
 };
 

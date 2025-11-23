@@ -108,10 +108,17 @@ export default function MyHealthPage() {
 
               {/* Right: Heart Score, User Menu */}
               <div className="flex items-center gap-3">
+                {/* Heart Score - always visible on mobile, with message on desktop */}
+                <div className="block sm:hidden">
+                  <HeartScore score={healthScore} />
+                </div>
                 <div className="hidden sm:block">
                   <HeartScore score={healthScore} showMessage />
                 </div>
-                <UserMenu />
+                {/* User Menu - hidden on mobile, visible on desktop */}
+                <div className="hidden sm:block">
+                  <UserMenu />
+                </div>
               </div>
             </div>
           </div>

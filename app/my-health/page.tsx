@@ -589,25 +589,25 @@ export default function MyHealthPage() {
               Your Insurers
             </h3>
             <div className="space-y-3">
-              <div className="p-4 bg-[#003A70] rounded-lg">
-                <div className="flex items-center gap-4">
+              <div className="p-4 bg-[#003A70] rounded-lg overflow-hidden">
+                <div className="flex flex-wrap items-center gap-4 mb-3">
                   <Image
                     src="/images/kaiser-logo.png"
                     alt="Kaiser Permanente"
-                    width={150}
-                    height={40}
-                    className="h-8 w-auto"
+                    width={140}
+                    height={36}
+                    className="h-7 w-auto flex-shrink-0"
                   />
-                  <div className="w-px h-8 bg-white/30" />
+                  <div className="w-px h-6 bg-white/30 hidden sm:block" />
                   <Image
                     src="/images/united-healthcare-logo-white.svg"
                     alt="UnitedHealthcare"
-                    width={180}
-                    height={40}
-                    className="h-8 w-auto"
+                    width={160}
+                    height={36}
+                    className="h-7 w-auto flex-shrink-0"
                   />
                 </div>
-                <div className="mt-3 text-white/90 text-xs space-y-1">
+                <div className="text-white/90 text-xs space-y-1">
                   <p>Member ID: KP-123456789</p>
                   <p>Group: 98765</p>
                   <p>Plan: PPO Gold</p>

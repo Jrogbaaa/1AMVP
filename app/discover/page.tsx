@@ -158,12 +158,16 @@ export default function DiscoverPage() {
           <div className="dashboard-container">
             <div className="flex items-center justify-between py-4">
               {/* Left: Logo and Nav */}
-              <div className="flex items-center gap-4">
-                <Link href="/feed" className="text-2xl font-bold text-primary-600 flex items-center gap-2">
-                  <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center text-white text-sm font-bold">
-                    1A
-                  </div>
-                  <span className="hidden sm:inline">1Another</span>
+              <div className="flex items-center gap-6">
+                <Link href="/feed" className="flex items-center">
+                  <Image
+                    src="/images/1another-logo.png"
+                    alt="1Another - Intelligent Health"
+                    width={280}
+                    height={80}
+                    className="h-16 w-auto"
+                    priority
+                  />
                 </Link>
                 <nav className="hidden md:flex items-center gap-6">
                   <Link href="/feed" className="text-gray-600 hover:text-gray-900 font-medium">

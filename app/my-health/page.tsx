@@ -49,11 +49,28 @@ const MOCK_DOCTOR: Doctor = {
   createdAt: new Date().toISOString(),
 };
 
+// Score values for each action item
+const ACTION_SCORES: Record<string, number> = {
+  med1: 2,
+  bp: 3,
+  walk: 5,
+  video: 5,
+  water: 3,
+};
+
 export default function MyHealthPage() {
   const [isScheduleOpen, setIsScheduleOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
-  const healthScore = 55;
+  const [isHeartAnimating, setIsHeartAnimating] = useState(false);
+  const [floatingCheck, setFloatingCheck] = useState<{id: string; active: boolean} | null>(null);
+  
+  // Calculate health score based on completed items
+  const baseScore = 55;
+  const completedScore = Object.entries(checkedItems)
+    .filter(([_, checked]) => checked)
+    .reduce((sum, [id]) => sum + (ACTION_SCORES[id] || 0), 0);
+  const healthScore = Math.min(baseScore + completedScore, 100);
 
   const handleScheduleAppointment = () => {
     setIsScheduleOpen(true);
@@ -72,10 +89,29 @@ export default function MyHealthPage() {
   };
 
   const handleCheckboxChange = (id: string) => {
+    const isNowChecked = !checkedItems[id];
+    
     setCheckedItems((prev) => ({
       ...prev,
-      [id]: !prev[id],
+      [id]: isNowChecked,
     }));
+    
+    // Trigger animations when checking an item
+    if (isNowChecked) {
+      // Show floating check animation
+      setFloatingCheck({ id, active: true });
+      
+      // Trigger heart pulse after a delay
+      setTimeout(() => {
+        setIsHeartAnimating(true);
+        setFloatingCheck(null);
+      }, 400);
+      
+      // Reset heart animation
+      setTimeout(() => {
+        setIsHeartAnimating(false);
+      }, 900);
+    }
   };
 
   return (
@@ -86,12 +122,16 @@ export default function MyHealthPage() {
           <div className="dashboard-container">
             <div className="flex items-center justify-between py-4">
               {/* Left: Logo and Nav */}
-              <div className="flex items-center gap-4">
-                <Link href="/feed" className="text-2xl font-bold text-primary-600 flex items-center gap-2">
-                  <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center text-white text-sm font-bold">
-                    1A
-                  </div>
-                  <span className="hidden sm:inline">1Another</span>
+              <div className="flex items-center gap-6">
+                <Link href="/feed" className="flex items-center">
+                  <Image
+                    src="/images/1another-logo.png"
+                    alt="1Another - Intelligent Health"
+                    width={280}
+                    height={80}
+                    className="h-16 w-auto"
+                    priority
+                  />
                 </Link>
                 <nav className="hidden md:flex items-center gap-6">
                   <Link href="/feed" className="text-gray-600 hover:text-gray-900 font-medium">
@@ -110,10 +150,10 @@ export default function MyHealthPage() {
               <div className="flex items-center gap-3">
                 {/* Heart Score - always visible on mobile, with message on desktop */}
                 <div className="block sm:hidden">
-                  <HeartScore score={healthScore} />
+                  <HeartScore score={healthScore} isAnimating={isHeartAnimating} />
                 </div>
                 <div className="hidden sm:block">
-                  <HeartScore score={healthScore} showMessage />
+                  <HeartScore score={healthScore} showMessage isAnimating={isHeartAnimating} />
                 </div>
                 {/* User Menu - hidden on mobile, visible on desktop */}
                 <div className="hidden sm:block">
@@ -139,7 +179,7 @@ export default function MyHealthPage() {
                   </h1>
                   <p className="text-gray-600">Keep track of your health actions</p>
                 </div>
-                <HeartScore score={healthScore} className="scale-125" />
+                <HeartScore score={healthScore} className="scale-125" isAnimating={isHeartAnimating} />
               </div>
               
               <div className="flex items-center gap-2 text-sm">
@@ -161,143 +201,19 @@ export default function MyHealthPage() {
                 Action Items & Reminders
               </h2>
 
-              {/* This Day */}
-              <div className="mb-8">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    📅 This Day
-                  </h3>
-                  <span className="text-sm text-gray-500">
-                    {Object.values(checkedItems).filter(Boolean).length} of 3 completed
-                  </span>
-                </div>
-              
-                <div className="space-y-3">
-                  <div 
-                    className={`flex items-start gap-4 p-4 rounded-lg transition-all cursor-pointer ${
-                      checkedItems['med1'] ? 'bg-green-50 border-2 border-green-200' : 'bg-gray-50 hover:bg-gray-100'
-                    }`}
-                    onClick={() => handleCheckboxChange('med1')}
-                  >
-                    <div className="mt-0.5">
-                      {checkedItems['med1'] ? (
-                        <CheckCircle2 className="w-6 h-6 text-green-600" fill="currentColor" />
-                      ) : (
-                        <div className="w-6 h-6 rounded-full border-2 border-gray-300" />
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <p className={`font-semibold ${checkedItems['med1'] ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
-                        Take morning medication
-                      </p>
-                      <p className="text-sm text-gray-500 mt-1">Due at 9:00 AM · Aspirin 81mg</p>
-                    </div>
-                  </div>
-
-                  <div 
-                    className={`flex items-start gap-4 p-4 rounded-lg transition-all cursor-pointer ${
-                      checkedItems['bp'] ? 'bg-green-50 border-2 border-green-200' : 'bg-gray-50 hover:bg-gray-100'
-                    }`}
-                    onClick={() => handleCheckboxChange('bp')}
-                  >
-                    <div className="mt-0.5">
-                      {checkedItems['bp'] ? (
-                        <CheckCircle2 className="w-6 h-6 text-green-600" fill="currentColor" />
-                      ) : (
-                        <div className="w-6 h-6 rounded-full border-2 border-gray-300" />
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <p className={`font-semibold ${checkedItems['bp'] ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
-                        Log blood pressure
-                      </p>
-                      <p className="text-sm text-gray-500 mt-1">Morning reading · Target: 120/80</p>
-                    </div>
-                  </div>
-
-                  <div 
-                    className={`flex items-start gap-4 p-4 rounded-lg transition-all cursor-pointer ${
-                      checkedItems['walk'] ? 'bg-green-50 border-2 border-green-200' : 'bg-gray-50 hover:bg-gray-100'
-                    }`}
-                    onClick={() => handleCheckboxChange('walk')}
-                  >
-                    <div className="mt-0.5">
-                      {checkedItems['walk'] ? (
-                        <CheckCircle2 className="w-6 h-6 text-green-600" fill="currentColor" />
-                      ) : (
-                        <div className="w-6 h-6 rounded-full border-2 border-gray-300" />
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <p className={`font-semibold ${checkedItems['walk'] ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
-                        30-minute walk
-                      </p>
-                      <p className="text-sm text-gray-500 mt-1">Recommended daily activity</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* This Week */}
+              {/* Annual Reminders (This Year) - FIRST */}
               <div className="mb-8">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  📆 This Week
+                  🗓️ Annual Reminders
                 </h3>
                 <div className="space-y-3">
-                  <div 
-                    className={`flex items-start gap-4 p-4 rounded-lg transition-all cursor-pointer ${
-                      checkedItems['video'] ? 'bg-green-50 border-2 border-green-200' : 'bg-gray-50 hover:bg-gray-100'
-                    }`}
-                    onClick={() => handleCheckboxChange('video')}
-                  >
-                    <div className="mt-0.5">
-                      {checkedItems['video'] ? (
-                        <CheckCircle2 className="w-6 h-6 text-green-600" fill="currentColor" />
-                      ) : (
-                        <div className="w-6 h-6 rounded-full border-2 border-gray-300" />
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <p className={`font-semibold ${checkedItems['video'] ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
-                        Watch educational videos
-                      </p>
-                      <p className="text-sm text-gray-500 mt-1">Complete 3 videos on heart-healthy living</p>
-                    </div>
-                  </div>
-
-                  <div 
-                    className={`flex items-start gap-4 p-4 rounded-lg transition-all cursor-pointer ${
-                      checkedItems['water'] ? 'bg-green-50 border-2 border-green-200' : 'bg-gray-50 hover:bg-gray-100'
-                    }`}
-                    onClick={() => handleCheckboxChange('water')}
-                  >
-                    <div className="mt-0.5">
-                      {checkedItems['water'] ? (
-                        <CheckCircle2 className="w-6 h-6 text-green-600" fill="currentColor" />
-                      ) : (
-                        <div className="w-6 h-6 rounded-full border-2 border-gray-300" />
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <p className={`font-semibold ${checkedItems['water'] ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
-                        Track daily water intake
-                      </p>
-                      <p className="text-sm text-gray-500 mt-1">8 glasses per day for 7 days</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* This Year */}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  📅 This Year
-                </h3>
-                <div className="space-y-3">
-                  <div className="p-4 rounded-lg bg-blue-50 border-2 border-blue-200">
+                  <div className="p-4 rounded-lg bg-gradient-to-r from-primary-50 to-blue-50 border-2 border-primary-200">
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
-                        <p className="font-semibold text-gray-900">Annual Physical Exam</p>
+                        <div className="flex items-center gap-2">
+                          <p className="font-semibold text-gray-900">Annual Physical Exam</p>
+                          <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">+15%</span>
+                        </div>
                         <p className="text-sm text-gray-500 mt-1">Due: March 2025</p>
                       </div>
                       <div className="flex gap-2">
@@ -314,10 +230,13 @@ export default function MyHealthPage() {
                     </div>
                   </div>
 
-                  <div className="p-4 rounded-lg bg-blue-50 border-2 border-blue-200">
+                  <div className="p-4 rounded-lg bg-gradient-to-r from-primary-50 to-blue-50 border-2 border-primary-200">
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
-                        <p className="font-semibold text-gray-900">Cholesterol Screening</p>
+                        <div className="flex items-center gap-2">
+                          <p className="font-semibold text-gray-900">Cholesterol Screening</p>
+                          <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">+10%</span>
+                        </div>
                         <p className="text-sm text-gray-500 mt-1">Due: June 2025</p>
                       </div>
                       <div className="flex gap-2">
@@ -334,10 +253,13 @@ export default function MyHealthPage() {
                     </div>
                   </div>
 
-                  <div className="p-4 rounded-lg bg-blue-50 border-2 border-blue-200">
+                  <div className="p-4 rounded-lg bg-gradient-to-r from-primary-50 to-blue-50 border-2 border-primary-200">
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
-                        <p className="font-semibold text-gray-900">Flu Vaccination</p>
+                        <div className="flex items-center gap-2">
+                          <p className="font-semibold text-gray-900">Flu Vaccination</p>
+                          <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">+5%</span>
+                        </div>
                         <p className="text-sm text-gray-500 mt-1">Due: October 2025</p>
                       </div>
                       <div className="flex gap-2">
@@ -351,6 +273,148 @@ export default function MyHealthPage() {
                           Schedule
                         </button>
                       </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Today */}
+              <div className="mb-8">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    📅 Today
+                  </h3>
+                  <span className="text-sm text-gray-500">
+                    {Object.values(checkedItems).filter(Boolean).length} of 3 completed
+                  </span>
+                </div>
+              
+                <div className="space-y-3">
+                  <div 
+                    className={`flex items-start gap-4 p-4 rounded-lg transition-all cursor-pointer ${
+                      checkedItems['med1'] ? 'bg-green-50 border-2 border-green-200' : 'bg-gray-50 hover:bg-gray-100'
+                    }`}
+                    onClick={() => handleCheckboxChange('med1')}
+                  >
+                    <div className="mt-0.5 relative">
+                      {checkedItems['med1'] ? (
+                        <CheckCircle2 className="w-6 h-6 text-green-600 animate-check-complete" fill="currentColor" />
+                      ) : (
+                        <div className="w-6 h-6 rounded-full border-2 border-gray-300" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <p className={`font-semibold ${checkedItems['med1'] ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
+                          Take morning medication
+                        </p>
+                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">+2%</span>
+                      </div>
+                      <p className="text-sm text-gray-500 mt-1">Due at 9:00 AM · Aspirin 81mg</p>
+                    </div>
+                  </div>
+
+                  <div 
+                    className={`flex items-start gap-4 p-4 rounded-lg transition-all cursor-pointer ${
+                      checkedItems['bp'] ? 'bg-green-50 border-2 border-green-200' : 'bg-gray-50 hover:bg-gray-100'
+                    }`}
+                    onClick={() => handleCheckboxChange('bp')}
+                  >
+                    <div className="mt-0.5 relative">
+                      {checkedItems['bp'] ? (
+                        <CheckCircle2 className="w-6 h-6 text-green-600 animate-check-complete" fill="currentColor" />
+                      ) : (
+                        <div className="w-6 h-6 rounded-full border-2 border-gray-300" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <p className={`font-semibold ${checkedItems['bp'] ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
+                          Log blood pressure
+                        </p>
+                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">+3%</span>
+                      </div>
+                      <p className="text-sm text-gray-500 mt-1">Morning reading · Target: 120/80</p>
+                    </div>
+                  </div>
+
+                  <div 
+                    className={`flex items-start gap-4 p-4 rounded-lg transition-all cursor-pointer ${
+                      checkedItems['walk'] ? 'bg-green-50 border-2 border-green-200' : 'bg-gray-50 hover:bg-gray-100'
+                    }`}
+                    onClick={() => handleCheckboxChange('walk')}
+                  >
+                    <div className="mt-0.5 relative">
+                      {checkedItems['walk'] ? (
+                        <CheckCircle2 className="w-6 h-6 text-green-600 animate-check-complete" fill="currentColor" />
+                      ) : (
+                        <div className="w-6 h-6 rounded-full border-2 border-gray-300" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <p className={`font-semibold ${checkedItems['walk'] ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
+                          30-minute walk
+                        </p>
+                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">+5%</span>
+                      </div>
+                      <p className="text-sm text-gray-500 mt-1">Recommended daily activity</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* This Week */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  📆 This Week
+                </h3>
+                <div className="space-y-3">
+                  <div 
+                    className={`flex items-start gap-4 p-4 rounded-lg transition-all cursor-pointer ${
+                      checkedItems['video'] ? 'bg-green-50 border-2 border-green-200' : 'bg-gray-50 hover:bg-gray-100'
+                    }`}
+                    onClick={() => handleCheckboxChange('video')}
+                  >
+                    <div className="mt-0.5 relative">
+                      {checkedItems['video'] ? (
+                        <CheckCircle2 className="w-6 h-6 text-green-600 animate-check-complete" fill="currentColor" />
+                      ) : (
+                        <div className="w-6 h-6 rounded-full border-2 border-gray-300" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <p className={`font-semibold ${checkedItems['video'] ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
+                          Watch educational videos
+                        </p>
+                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">+5%</span>
+                      </div>
+                      <p className="text-sm text-gray-500 mt-1">Complete 3 videos on heart-healthy living</p>
+                    </div>
+                  </div>
+
+                  <div 
+                    className={`flex items-start gap-4 p-4 rounded-lg transition-all cursor-pointer ${
+                      checkedItems['water'] ? 'bg-green-50 border-2 border-green-200' : 'bg-gray-50 hover:bg-gray-100'
+                    }`}
+                    onClick={() => handleCheckboxChange('water')}
+                  >
+                    <div className="mt-0.5 relative">
+                      {checkedItems['water'] ? (
+                        <CheckCircle2 className="w-6 h-6 text-green-600 animate-check-complete" fill="currentColor" />
+                      ) : (
+                        <div className="w-6 h-6 rounded-full border-2 border-gray-300" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <p className={`font-semibold ${checkedItems['water'] ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
+                          Track daily water intake
+                        </p>
+                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">+3%</span>
+                      </div>
+                      <p className="text-sm text-gray-500 mt-1">8 glasses per day for 7 days</p>
                     </div>
                   </div>
                 </div>

@@ -91,7 +91,7 @@ A mobile-first patient communication and education platform that puts **the doct
 **🏥 My Health Dashboard (formerly My Heart):**
 - Renamed from "My Heart" to "My Health" throughout the app
 - Time-based action organization:
-  - 📅 **This Day** - Daily tasks (medication, blood pressure, walk)
+  - 📅 **Today** - Daily tasks (medication, blood pressure, walk)
   - 📆 **This Week** - Weekly goals (videos, hydration tracking)
   - 📅 **This Year** - Annual checkups with "Add to Calendar" and "Schedule" buttons
     - Annual Physical Exam (March 2025)

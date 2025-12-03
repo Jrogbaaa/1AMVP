@@ -5,6 +5,84 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2024-12-03
+
+### 🎨 Added - Brand Logo Integration
+
+**1A Icon on Videos:**
+- Added 1A brand icon watermark to top-left of all video cards
+- Subtle opacity (50%) with drop shadow for visibility
+- Stays with each video as you scroll (not floating)
+- Located at `/public/images/1a-icon.png`
+
+**1Another Full Logo:**
+- Full "1Another - Intelligent Health" wordmark in dashboard headers
+- Displayed on Discover and My Health pages
+- Larger size (h-16) for better visibility
+- Located at `/public/images/1another-logo.png`
+
+### 🖥️ Added - TikTok-Style Desktop Layout
+
+**Desktop Left Sidebar:**
+- Full navigation sidebar on large screens (lg+)
+- Shows 1Another logo at top
+- Navigation links: For You, Discover, My Health
+- "Your Doctors" section with all doctor avatars
+- User profile section at bottom
+- Fixed position, always visible
+
+**Desktop Video Layout:**
+- Video centered with 9:16 aspect ratio
+- Rounded corners and shadow on desktop
+- Action buttons in sidebar to the right of video
+- Buttons include: Discover, Doctor avatar, Health score, Share
+- Each button has icon + label below
+
+**Mobile Unchanged:**
+- Action buttons remain inside video on mobile
+- Bottom navigation bar preserved
+- Full-screen video experience maintained
+
+### ✨ Enhanced - Health Score Animations
+
+**100% Score Special Treatment:**
+- Custom 1A brand gradient (teal to cyan) when health score reaches 100%
+- Glowing animation effect on heart icon
+- Special celebration message: "Perfect! You're at 100%! 🎉"
+- SVG gradient fills for brand consistency
+
+**Action Item Badges:**
+- Each action item now shows potential score increase
+- Green badges: "+10%", "+8%", "+15%", "+12%"
+- Helps users understand impact of completing tasks
+
+### 🔧 Changed
+
+**Terminology Update:**
+- Changed "This Day" → "Today" in My Health page
+- More natural language for daily tasks section
+
+**Navigation Tabs Restored:**
+- Desktop header now shows: My Feed, Discover, My Health tabs
+- Active tab highlighted with underline
+- Consistent navigation across all dashboard pages
+
+**Removed Navigation Text from Feed:**
+- Feed page on desktop uses sidebar instead of header tabs
+- Cleaner video viewing experience
+
+### 🐛 Fixed
+
+- Removed duplicate logo display on videos (was showing twice)
+- Fixed desktop layout not centering video properly
+- Fixed action buttons overlapping video content on desktop
+
+### 📦 Dependencies
+- No new dependencies added
+
+### 🔄 Breaking Changes
+- None (all changes are backwards compatible)
+
 ## [1.4.0] - 2024-11-21
 
 ### 🏥 Added - Hospital Group Integration

@@ -18,6 +18,7 @@ interface VideoCardProps {
   onHeartClick?: () => void;
   isActive: boolean;
   healthScore?: number;
+  showDesktopActions?: boolean; // For rendering actions outside video on desktop
 }
 
 export const VideoCard = ({
@@ -32,6 +33,7 @@ export const VideoCard = ({
   onHeartClick,
   isActive,
   healthScore,
+  showDesktopActions = false,
 }: VideoCardProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -136,11 +138,16 @@ export const VideoCard = ({
       {/* Overlay gradient */}
       <div className="video-overlay" />
 
-      {/* 1A Watermark */}
-      <div className="absolute top-6 left-6 z-10 pointer-events-none">
-        <div className="text-white/40 text-2xl font-bold drop-shadow-lg">
-          1A
-        </div>
+      {/* 1A Logo Watermark */}
+      <div className="absolute top-5 left-5 z-10 pointer-events-none">
+        <Image
+          src="/images/1a-icon.png"
+          alt="1Another"
+          width={44}
+          height={44}
+          className="opacity-50 drop-shadow-lg"
+          style={{ mixBlendMode: 'multiply' }}
+        />
       </div>
 
       {/* Content overlay */}
@@ -180,8 +187,8 @@ export const VideoCard = ({
             )}
           </div>
 
-          {/* Right side - Actions */}
-          <div className="flex flex-col gap-6 items-center">
+          {/* Right side - Actions (mobile only, hidden on desktop) */}
+          <div className="flex flex-col gap-6 items-center md:hidden">
             {/* Discover button */}
             <Link
               href="/discover"

@@ -141,12 +141,12 @@ export const VideoCard = ({
       {/* 1A Logo Watermark */}
       <div className="absolute top-5 left-5 z-10 pointer-events-none">
         <Image
-          src="/images/1a-icon.png"
+          src="/images/1a-icon.png?v=2"
           alt="1Another"
           width={44}
           height={44}
-          className="opacity-50 drop-shadow-lg"
-          style={{ mixBlendMode: 'multiply' }}
+          className="drop-shadow-lg"
+          unoptimized
         />
       </div>
 

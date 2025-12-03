@@ -8,6 +8,7 @@ import { RateLimitMessage } from "@/components/RateLimitMessage";
 import { ChatOnboarding } from "@/components/ChatOnboarding";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { Calendar, Heart, ArrowLeft, Play, Search, Share2 } from "lucide-react";
+import { HeartScore } from "@/components/HeartScore";
 import type { Video, Doctor } from "@/lib/types";
 import Image from "next/image";
 
@@ -197,14 +198,14 @@ const FeedContent = () => {
         {/* Desktop Left Sidebar */}
         <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-gray-200 h-screen fixed left-0 top-0 z-40">
           {/* Logo */}
-          <div className="p-4 border-b border-gray-100">
-            <Link href="/feed" className="flex items-center">
+          <div className="p-6 border-b border-gray-100">
+            <Link href="/feed" className="flex items-center justify-center">
               <Image
                 src="/images/1another-logo.png"
                 alt="1Another - Intelligent Health"
-                width={180}
-                height={50}
-                className="h-10 w-auto"
+                width={280}
+                height={80}
+                className="h-16 w-auto"
                 priority
               />
             </Link>
@@ -414,31 +415,7 @@ const FeedContent = () => {
                         className="flex flex-col items-center gap-2 hover:scale-110 transition-transform"
                         aria-label="View action items and reminders"
                       >
-                        <div className={`relative w-14 h-14 ${healthScore >= 100 ? 'heart-glow-100' : ''}`}>
-                          <Heart
-                            className={`w-14 h-14 transition-colors ${
-                              healthScore >= 100 ? "text-transparent" :
-                              healthScore >= 70 ? "text-green-500" : 
-                              healthScore >= 40 ? "text-amber-500" : 
-                              "text-red-500"
-                            }`}
-                            fill={healthScore >= 100 ? "url(#heart-gradient-1a)" : "currentColor"}
-                          />
-                          {/* SVG gradient definition for 100% heart */}
-                          <svg width="0" height="0" className="absolute">
-                            <defs>
-                              <linearGradient id="heart-gradient-1a" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stopColor="#00BFA6" />
-                                <stop offset="100%" stopColor="#00A6CE" />
-                              </linearGradient>
-                            </defs>
-                          </svg>
-                          <span className={`absolute inset-0 flex items-center justify-center text-sm font-bold text-white ${
-                            healthScore >= 100 ? 'drop-shadow-[0_0_8px_rgba(0,191,166,0.8)]' : 'drop-shadow-lg'
-                          }`}>
-                            {healthScore}%
-                          </span>
-                        </div>
+                        <HeartScore score={healthScore} className="scale-125" />
                         <span className="text-xs text-gray-700 font-medium">My Heart</span>
                       </button>
 
@@ -543,44 +520,8 @@ const FeedContent = () => {
                   ? 'bg-gradient-to-r from-[#00BFA6]/10 to-[#00A6CE]/10 border border-[#00BFA6]/30' 
                   : 'bg-gradient-to-r from-primary-50 to-primary-100'
               }`}>
-                <div className="flex items-center gap-3">
-                  <div className={`relative w-16 h-16 ${healthScore >= 100 ? 'heart-glow-100' : ''}`}>
-                    <Heart
-                      className="absolute inset-0 w-16 h-16 text-gray-300"
-                      strokeWidth={2}
-                      fill="none"
-                    />
-                    <div 
-                      className="absolute inset-0"
-                      style={{ clipPath: `inset(${100 - healthScore}% 0 0 0)` }}
-                    >
-                      <Heart
-                        className={`w-16 h-16 ${
-                          healthScore >= 100 ? "text-transparent" :
-                          healthScore >= 70 ? "text-green-500" : 
-                          healthScore >= 40 ? "text-yellow-500" : 
-                          "text-red-500"
-                        }`}
-                        fill={healthScore >= 100 ? "url(#heart-gradient-popup)" : "currentColor"}
-                        stroke={healthScore >= 100 ? "url(#heart-gradient-popup)" : "currentColor"}
-                        strokeWidth={2}
-                      />
-                      {/* SVG gradient definition */}
-                      <svg width="0" height="0" className="absolute">
-                        <defs>
-                          <linearGradient id="heart-gradient-popup" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#00BFA6" />
-                            <stop offset="100%" stopColor="#00A6CE" />
-                          </linearGradient>
-                        </defs>
-                      </svg>
-                    </div>
-                    <span className={`absolute inset-0 flex items-center justify-center text-sm font-bold text-white ${
-                      healthScore >= 100 ? 'drop-shadow-[0_0_8px_rgba(0,191,166,0.8)]' : 'drop-shadow-lg'
-                    }`}>
-                      {healthScore}%
-                    </span>
-                  </div>
+                <div className="flex items-center gap-4">
+                  <HeartScore score={healthScore} className="scale-150" />
                   <div>
                     <h3 className="font-semibold text-gray-900">Heart Health Score</h3>
                     <p className="text-sm text-gray-600">

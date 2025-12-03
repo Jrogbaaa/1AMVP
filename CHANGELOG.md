@@ -5,6 +5,42 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] - 2024-12-03
+
+### 🎨 UI Improvements - Feed Page
+
+**Logo Improvements:**
+- Increased sidebar logo size from `h-10` to `h-16` (matching dashboard)
+- Logo now centrally aligned in the sidebar with `justify-center`
+- Increased padding from `p-4` to `p-6` for better visual spacing
+
+**My Heart Component Fix:**
+- Fixed "My Heart" indicator to show partial fill based on actual score
+- Heart at 55% now correctly shows ~55% filled (was incorrectly showing full)
+- Replaced inline Heart icon with reusable `HeartScore` component
+- Consistent design with My Health dashboard page
+- Both sidebar button and popup modal now use `HeartScore` component
+
+**1A Icon Watermark Fix:**
+- Updated `1a-icon.png` to new transparent version (no white background)
+- Added cache-busting query parameter (`?v=2`) to force browser refresh
+- Added `unoptimized` attribute to bypass Next.js image caching
+- Removed `opacity-50` and `mixBlendMode: 'multiply'` for cleaner display
+
+### 🔧 Technical Changes
+
+**Component Updates:**
+- `app/feed/page.tsx`: Imported and used `HeartScore` component, updated logo sizing
+- `components/VideoCard.tsx`: Fixed 1A icon display with cache-busting
+
+### 📦 Dependencies
+- No new dependencies added
+
+### 🔄 Breaking Changes
+- None (all changes are backwards compatible)
+
+---
+
 ## [1.6.0] - 2024-12-03
 
 ### 🎨 Major UI Overhaul - Clean White Design

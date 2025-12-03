@@ -59,60 +59,72 @@ A mobile-first patient communication and education platform that puts **the doct
     └── images/            # Static assets
 ```
 
-## ✨ Latest Updates (v1.5.0 - Nov 23, 2024)
+## ✨ Latest Updates (v1.6.0 - Dec 3, 2024)
 
-### Major UI/UX Improvements & Consistency Updates
+### Major UI Overhaul - Clean White Design
+
+**🖥️ Desktop Left Sidebar (TikTok-Style):**
+- Persistent left sidebar on desktop (lg+ breakpoint)
+- Clean white background with subtle gray borders
+- Full 1Another logo at top
+- Navigation: My Feed, Discover, My Health
+- "Your Doctors" section with avatars
+- User profile at bottom
+- Custom icons (not TikTok's):
+  - My Feed: 4-square grid
+  - Discover: Compass
+  - My Health: ECG line
+
+**🎨 White Theme Throughout:**
+- Entire feed page uses white background
+- Sidebar, main content, and action buttons all white
+- Text colors optimized for light background
+
+**💚 Heart Score Enhancements:**
+- "+X%" badges on all action items showing score increase
+- Green check animation flows into heart on completion
+- Heart pulses when score increases
+- **100% Score Special Effect:**
+  - 1A brand teal-cyan gradient glow
+  - Animated glowing effect
+  - "Perfect! 🎉" celebration message
+
+**📋 My Health Improvements:**
+- Annual Reminders moved to FIRST position
+- Each action shows potential score increase:
+  - Annual Physical: +15%
+  - Cholesterol Screening: +10%
+  - Daily tasks: +2% to +5%
+- Dynamic score calculation based on completed items
+
+**🔤 Label Updates:**
+- "For You" → "My Feed"
+- "Health" → "My Heart" (under heart icon)
+- "Doctor" → actual doctor name (e.g., "Dr. Sarah")
+
+---
+
+### Previous Updates (v1.5.0 - Dec 3, 2024)
 
 **🎨 Professional Heart Score Design:**
-- Unified heart design across all pages (Feed, Discover, My Health)
-- Enhanced with elegant gradient fills:
-  - Emerald to Green gradient (70%+) for excellent health
-  - Amber to Orange gradient (40-69%) for moderate health
-  - Rose to Red gradient (<40%) for needs attention
-- Professional drop shadows and subtle outer ring
-- Better text contrast with enhanced drop shadows
-- Smooth animations and transitions (500ms ease-out)
+- Unified heart design across all pages
+- Elegant gradient fills by score level
+- Professional drop shadows and animations
 
 **🎯 Video Feed Improvements:**
-- Added "1A" watermark to all video cards (top-left corner)
-- Personalized greeting: "Hey Dave, good to see you today!"
-- Appointment reminder: "📅 Reminder: Schedule your follow-up visit in 3 months"
-- Cleaner video description area
+- 1A watermark on all videos
+- Personalized greetings
+- Appointment reminders
 
 **🔍 Discover Page Enhancements:**
-- Moved recommended videos message to Discover page
-- Added prominent banner: "Hey Dave, here are some other videos I recommend you take a look at"
-- Working specialty filters: Cardiology, Primary Care, Endocrinology, Gastroenterology, Pulmonology
-- Content sections dynamically show/hide based on selected specialty
-- Doctor profiles filtered by specialty in real-time
-- Checkmark badges (✓) for doctors you've already added
-- Blue add button (+) for new doctors
+- Working specialty filters
+- Doctor profile filtering
+- Add/checkmark badges for doctors
 
-**🏥 My Health Dashboard (formerly My Heart):**
-- Renamed from "My Heart" to "My Health" throughout the app
-- Time-based action organization:
-  - 📅 **Today** - Daily tasks (medication, blood pressure, walk)
-  - 📆 **This Week** - Weekly goals (videos, hydration tracking)
-  - 📅 **This Year** - Annual checkups with "Add to Calendar" and "Schedule" buttons
-    - Annual Physical Exam (March 2025)
-    - Cholesterol Screening (June 2025)
-    - Flu Vaccination (October 2025)
-- Healthcare provider cards:
-  - **Your Doctors** - Connected physicians with avatars and specialties
-  - **Hospital Groups** - Medical facilities with addresses
-  - **Your Insurer** - Kaiser Permanente card with member details
-
-**💬 Chat & Scheduling Integration:**
-- Schedule Follow-Up button now fully functional in chat
-- Opens appointment calendar modal with date/time selection
-- Seamless flow: Feed → Doctor Profile → Chat → Schedule Follow-Up → Calendar
-
-**📱 Mobile Header Improvements:**
-- Added 1A logo box in navigation (blue square with white "1A" text)
-- Responsive logo display (icon on mobile, full "1Another" on desktop)
-- Better spacing and cleaner layout
-- Heart score hidden on very small screens to reduce clutter
-- Kaiser logo only visible on large screens (lg+ breakpoint)
+**🏥 My Health Dashboard:**
+- Time-based action organization (Today, This Week, This Year)
+- Healthcare provider cards
+- Kaiser Permanente integration
 
 ---
 

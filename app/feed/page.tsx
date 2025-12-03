@@ -7,7 +7,7 @@ import { VideoCard } from "@/components/VideoCard";
 import { RateLimitMessage } from "@/components/RateLimitMessage";
 import { ChatOnboarding } from "@/components/ChatOnboarding";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import { Calendar, Heart, ArrowLeft, Play, Search, Share2, Home, Compass } from "lucide-react";
+import { Calendar, Heart, ArrowLeft, Play, Search, Share2 } from "lucide-react";
 import type { Video, Doctor } from "@/lib/types";
 import Image from "next/image";
 
@@ -194,7 +194,7 @@ const FeedContent = () => {
   return (
     <>
       <div className="feed-wrapper">
-        {/* Desktop Left Sidebar - TikTok Style */}
+        {/* Desktop Left Sidebar */}
         <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-gray-200 h-screen fixed left-0 top-0 z-40">
           {/* Logo */}
           <div className="p-4 border-b border-gray-100">
@@ -204,7 +204,7 @@ const FeedContent = () => {
                 alt="1Another - Intelligent Health"
                 width={180}
                 height={50}
-                className="h-12 w-auto"
+                className="h-10 w-auto"
                 priority
               />
             </Link>
@@ -214,23 +214,33 @@ const FeedContent = () => {
           <nav className="flex-1 p-4 space-y-1">
             <Link
               href="/feed"
-              className="flex items-center gap-3 px-4 py-3 rounded-lg bg-gray-100 text-gray-900 font-semibold transition-colors"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl bg-gray-100 text-gray-900 font-semibold transition-all"
             >
-              <Home className="w-6 h-6" />
-              <span>For You</span>
+              <svg className="w-6 h-6 text-[#00BFA6]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="3" width="7" height="7" rx="1" />
+                <rect x="3" y="14" width="7" height="7" rx="1" />
+                <rect x="14" y="14" width="7" height="7" rx="1" />
+              </svg>
+              <span>My Feed</span>
             </Link>
             <Link
               href="/discover"
-              className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
             >
-              <Compass className="w-6 h-6" />
+              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M16.24 7.76l-2.12 6.36-6.36 2.12 2.12-6.36 6.36-2.12z" />
+              </svg>
               <span>Discover</span>
             </Link>
             <Link
               href="/my-health"
-              className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
             >
-              <Heart className="w-6 h-6" />
+              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+              </svg>
               <span>My Health</span>
             </Link>
             
@@ -240,13 +250,13 @@ const FeedContent = () => {
                 <Link
                   key={doctor.id}
                   href={`/feed?doctor=${doctor.id}`}
-                  className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors ${
+                  className={`flex items-center gap-3 px-4 py-2 rounded-xl transition-colors ${
                     doctorFilter === doctor.id 
-                      ? 'bg-primary-50 text-primary-700' 
+                      ? 'bg-[#00BFA6]/10 text-[#00BFA6]' 
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                   }`}
                 >
-                  <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                  <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-gray-100">
                     {doctor.avatarUrl ? (
                       <Image
                         src={doctor.avatarUrl}
@@ -256,7 +266,7 @@ const FeedContent = () => {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full bg-primary-600 flex items-center justify-center">
+                      <div className="w-full h-full bg-gradient-to-br from-[#00BFA6] to-[#00A6CE] flex items-center justify-center">
                         <span className="text-white text-xs font-bold">{doctor.name.charAt(0)}</span>
                       </div>
                     )}
@@ -271,9 +281,9 @@ const FeedContent = () => {
           <div className="p-4 border-t border-gray-100">
             <Link
               href="/my-health"
-              className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
             >
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#00BFA6] to-[#00A6CE] flex items-center justify-center">
                 <span className="text-white font-bold text-sm">D</span>
               </div>
               <div className="flex-1">
@@ -362,7 +372,7 @@ const FeedContent = () => {
                         <div className="flex items-center justify-center w-14 h-14 bg-gray-100 rounded-full shadow-md hover:bg-gray-200 hover:scale-110 transition-all duration-200">
                           <Search className="w-6 h-6 text-gray-700" />
                         </div>
-                        <span className="text-xs text-gray-600 font-medium">Discover</span>
+                        <span className="text-xs text-gray-700 font-medium">Discover</span>
                       </Link>
 
                       {/* Doctor avatar */}
@@ -394,7 +404,7 @@ const FeedContent = () => {
                               +
                             </div>
                           </div>
-                          <span className="text-xs text-gray-600 font-medium max-w-[70px] truncate">Dr. {videoDoctor.name.split(' ')[0]}</span>
+                          <span className="text-xs text-gray-700 font-medium max-w-[70px] truncate">Dr. {videoDoctor.name.split(' ')[0]}</span>
                         </button>
                       )}
 
@@ -429,7 +439,7 @@ const FeedContent = () => {
                             {healthScore}%
                           </span>
                         </div>
-                        <span className="text-xs text-gray-600 font-medium">Health</span>
+                        <span className="text-xs text-gray-700 font-medium">My Heart</span>
                       </button>
 
                       {/* Share button */}
@@ -457,7 +467,7 @@ const FeedContent = () => {
                           <div className="flex items-center justify-center w-14 h-14 bg-gray-100 rounded-full shadow-md hover:bg-gray-200 hover:scale-110 transition-all duration-200">
                             <Share2 className="w-6 h-6 text-gray-700" />
                           </div>
-                          <span className="text-xs text-gray-600 font-medium">Share</span>
+                          <span className="text-xs text-gray-700 font-medium">Share</span>
                         </button>
                       )}
                     </div>

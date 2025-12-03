@@ -23,7 +23,7 @@ html {
   display: flex;
   min-height: 100vh;
   min-height: 100dvh;
-  background-color: black;
+  background-color: white;
 }
 
 /* Mobile-first centered viewport for feed */
@@ -31,7 +31,7 @@ html {
   max-width: 28rem;
   margin-left: auto;
   margin-right: auto;
-  background-color: black;
+  background-color: white;
   height: 100vh;
   height: 100dvh;
   flex: 1;
@@ -41,7 +41,7 @@ html {
 @media (min-width: 768px) {
   .feed-container {
     max-width: 100%;
-    background-color: #000;
+    background-color: white;
     display: flex;
     align-items: center;
     justify-content: center;

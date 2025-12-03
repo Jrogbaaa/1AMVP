@@ -5,6 +5,91 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2024-12-03
+
+### 🎨 Major UI Overhaul - Clean White Design
+
+**Desktop Left Sidebar:**
+- Added TikTok-style persistent left sidebar on desktop (lg+ breakpoint)
+- Clean white background with subtle gray borders
+- Full 1Another logo at top (1another-logo.png)
+- Navigation links: My Feed (active), Discover, My Health
+- "Your Doctors" section with doctor avatars and names
+- User profile section at bottom (Dave Thompson)
+- Custom icons distinct from TikTok:
+  - My Feed: 4-square grid icon
+  - Discover: Compass with inner pointer
+  - My Health: ECG/heartbeat line
+
+**White Theme Throughout:**
+- Entire feed page now uses white background
+- Left sidebar: white with gray-100 borders
+- Main content area: white background
+- Right sidebar: white with dark text
+- Text colors adjusted for visibility on light background
+
+**My Feed Navigation:**
+- Changed "For You" → "My Feed"
+- Active state with light gray background
+- Teal accent color on icons (1A brand)
+
+**Right Sidebar Updates:**
+- Changed "Health" → "My Heart" under heart icon
+- Changed "Doctor" → actual doctor's first name (e.g., "Dr. Sarah")
+- Darker text colors (gray-700) for white background
+
+### ✨ Enhanced - My Health Page
+
+**Annual Reminders First:**
+- Moved annual reminders (This Year) to top of action items
+- New section header: "🗓️ Annual Reminders"
+- Gradient background (primary-50 to blue-50)
+- Each reminder shows heart score increase:
+  - Annual Physical Exam: +15%
+  - Cholesterol Screening: +10%
+  - Flu Vaccination: +5%
+
+**Heart Score Increase Labels:**
+- All action items now show "+X%" badges
+- Daily tasks: +2% to +5%
+- Weekly tasks: +3% to +5%
+- Annual reminders: +5% to +15%
+- Green badge styling (emerald-100 background)
+
+**Check Animation:**
+- Green checkmark scales in with spring animation
+- Heart pulses when items are completed
+- Dynamic score calculation based on completed items
+
+### 💎 Enhanced - Heart Score at 100%
+
+**1A Brand Glow Effect:**
+- Special teal-cyan gradient glow when score reaches 100%
+- Animated glow effect (heart-glow-1a keyframes)
+- Colors: #00BFA6 (teal) → #00A6CE (cyan)
+- Enhanced drop shadows for celebration effect
+- Special message: "Perfect! 🎉"
+
+**CSS Animations Added:**
+- `animate-check-complete`: Green check scale animation
+- `animate-heart-pulse`: Heart pulse on score increase
+- `heart-glow-100`: Glowing effect for 100% score
+- `heart-gradient-1a`: 1A brand gradient fill
+
+### 🔧 Changed
+
+- "This Day" → "Today" in My Health page
+- Removed black sidebar theme in favor of clean white
+- Updated all sidebar text colors for light theme
+
+### 📦 Dependencies
+- No new dependencies added
+
+### 🔄 Breaking Changes
+- None (all changes are backwards compatible)
+
+---
+
 ## [1.5.0] - 2024-12-03
 
 ### 🎨 Added - Brand Logo Integration

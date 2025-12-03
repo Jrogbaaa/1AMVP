@@ -182,24 +182,29 @@ export default function DiscoverPage() {
                 </nav>
               </div>
 
-              {/* Right: Kaiser Logo (desktop), Heart Score, User Menu */}
-              <div className="flex items-center gap-3">
-                <div className="hidden lg:flex items-center px-4 py-2 bg-[#003A70] rounded-lg">
+              {/* Right: Insurance Logos, Heart Score, User Menu */}
+              <div className="flex items-center gap-4">
+                {/* Insurance Logos - hidden on mobile */}
+                <div className="hidden md:flex items-center gap-2">
+                  <div className="bg-[#003A70] rounded px-2 py-1">
+                    <Image
+                      src="/images/kaiser-logo.png"
+                      alt="Kaiser Permanente"
+                      width={80}
+                      height={22}
+                      className="h-5 w-auto"
+                    />
+                  </div>
                   <Image
-                    src="/images/kaiser-logo.png"
-                    alt="Kaiser Permanente"
-                    width={150}
-                    height={40}
+                    src="/images/united-healthcare-logo.svg"
+                    alt="UnitedHealthcare"
+                    width={120}
+                    height={28}
                     className="h-6 w-auto"
                   />
                 </div>
-                {/* Heart Score - always visible on mobile, with message on desktop */}
-                <div className="block sm:hidden">
-                  <HeartScore score={healthScore} />
-                </div>
-                <div className="hidden sm:block">
-                  <HeartScore score={healthScore} showMessage />
-                </div>
+                {/* Heart Score - always visible */}
+                <HeartScore score={healthScore} />
                 {/* User Menu - hidden on mobile, visible on desktop */}
                 <div className="hidden sm:block">
                   <UserMenu />

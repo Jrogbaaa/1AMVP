@@ -25,7 +25,7 @@ interface ChatOnboardingProps {
 const ONBOARDING_QUESTIONS = [
   {
     step: 1,
-    question: "What medications are you currently taking? (If none, just say 'none')",
+    question: "Reminder to schedule your colonoscopy!",
     field: "medications",
   },
   {

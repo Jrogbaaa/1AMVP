@@ -59,7 +59,7 @@ export const getHealthScoreColor = (score: number): string => {
 
 export const getHealthScoreMessage = (score: number): string => {
   if (score >= 70) return "Great progress!";
-  if (score >= 40) return "In progress - keep going!";
+  if (score >= 40) return "Keep it up!";
   return "Critical follow-ups needed";
 };
 

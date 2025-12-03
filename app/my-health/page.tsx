@@ -146,15 +146,29 @@ export default function MyHealthPage() {
                 </nav>
               </div>
 
-              {/* Right: Heart Score, User Menu */}
-              <div className="flex items-center gap-3">
-                {/* Heart Score - always visible on mobile, with message on desktop */}
-                <div className="block sm:hidden">
-                  <HeartScore score={healthScore} isAnimating={isHeartAnimating} />
+              {/* Right: Insurance Logos, Heart Score, User Menu */}
+              <div className="flex items-center gap-4">
+                {/* Insurance Logos - hidden on mobile */}
+                <div className="hidden md:flex items-center gap-2">
+                  <div className="bg-[#003A70] rounded px-2 py-1">
+                    <Image
+                      src="/images/kaiser-logo.png"
+                      alt="Kaiser Permanente"
+                      width={80}
+                      height={22}
+                      className="h-5 w-auto"
+                    />
+                  </div>
+                  <Image
+                    src="/images/united-healthcare-logo.svg"
+                    alt="UnitedHealthcare"
+                    width={120}
+                    height={28}
+                    className="h-6 w-auto"
+                  />
                 </div>
-                <div className="hidden sm:block">
-                  <HeartScore score={healthScore} showMessage isAnimating={isHeartAnimating} />
-                </div>
+                {/* Heart Score - always visible */}
+                <HeartScore score={healthScore} isAnimating={isHeartAnimating} />
                 {/* User Menu - hidden on mobile, visible on desktop */}
                 <div className="hidden sm:block">
                   <UserMenu />
@@ -182,17 +196,6 @@ export default function MyHealthPage() {
                 <HeartScore score={healthScore} className="scale-125" isAnimating={isHeartAnimating} />
               </div>
               
-              <div className="flex items-center gap-2 text-sm">
-                <div className={`px-3 py-1 rounded-full font-semibold ${
-                  healthScore >= 70 ? "bg-green-100 text-green-700" : 
-                  healthScore >= 40 ? "bg-yellow-100 text-yellow-700" : 
-                  "bg-red-100 text-red-700"
-                }`}>
-                  {healthScore >= 70 ? "Great progress!" : 
-                   healthScore >= 40 ? "Keep it up!" : 
-                   "Let's improve together"}
-                </div>
-              </div>
             </div>
 
             {/* Action Items & Reminders - Time-based Sections */}
@@ -583,20 +586,32 @@ export default function MyHealthPage() {
           {/* Insurance */}
           <div className="card">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Your Insurer
+              Your Insurers
             </h3>
-            <div className="p-4 bg-[#003A70] rounded-lg">
-              <Image
-                src="/images/kaiser-logo.png"
-                alt="Kaiser Permanente"
-                width={150}
-                height={40}
-                className="h-8 w-auto"
-              />
-              <div className="mt-3 text-white/90 text-xs space-y-1">
-                <p>Member ID: KP-123456789</p>
-                <p>Group: 98765</p>
-                <p>Plan: PPO Gold</p>
+            <div className="space-y-3">
+              <div className="p-4 bg-[#003A70] rounded-lg">
+                <div className="flex items-center gap-4">
+                  <Image
+                    src="/images/kaiser-logo.png"
+                    alt="Kaiser Permanente"
+                    width={150}
+                    height={40}
+                    className="h-8 w-auto"
+                  />
+                  <div className="w-px h-8 bg-white/30" />
+                  <Image
+                    src="/images/united-healthcare-logo-white.svg"
+                    alt="UnitedHealthcare"
+                    width={180}
+                    height={40}
+                    className="h-8 w-auto"
+                  />
+                </div>
+                <div className="mt-3 text-white/90 text-xs space-y-1">
+                  <p>Member ID: KP-123456789</p>
+                  <p>Group: 98765</p>
+                  <p>Plan: PPO Gold</p>
+                </div>
               </div>
             </div>
           </div>

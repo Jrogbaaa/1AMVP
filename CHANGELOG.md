@@ -5,6 +5,54 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] - 2024-12-03
+
+### 🏥 Insurance Branding - Header Integration
+
+**Dual Insurance Logos in Header:**
+- Added **Kaiser Permanente** logo (in dark blue badge) to dashboard headers
+- Added **UnitedHealthcare** logo with shield icon to dashboard headers
+- Both logos appear on **Discover** and **My Health** pages
+- Consistent positioning: top-right, before heart score and user menu
+- Kaiser logo wrapped in dark blue container for visibility on white background
+
+**Insurance Card Section:**
+- Both insurance logos displayed in "Your Insurers" card on My Health page
+- Dark blue (#003A70) background with member details
+- Kaiser and UnitedHealthcare logos side by side with divider
+
+### 🎨 UI Cleanup
+
+**Removed "Keep it up!" Text:**
+- Removed status message from HeartScore component across all pages
+- Removed progress badge from My Health summary card
+- Cleaner interface with just the heart score percentage
+
+**Chat Message Update:**
+- Changed onboarding first question to "Reminder to schedule your colonoscopy!"
+- More actionable healthcare messaging
+
+### 📁 New Assets
+
+- `/public/images/united-healthcare-logo.svg` - Blue version (for light backgrounds)
+- `/public/images/united-healthcare-logo-white.svg` - White version (for dark backgrounds)
+
+### 🔧 Technical Changes
+
+**Files Updated:**
+- `app/my-health/page.tsx` - Added dual logos to header, insurance card, removed progress badge
+- `app/discover/page.tsx` - Added dual logos to header, removed showMessage from HeartScore
+- `components/ChatOnboarding.tsx` - Updated first onboarding question
+- `lib/utils.ts` - Changed "In progress - keep going!" to "Keep it up!"
+
+### 📦 Dependencies
+- No new dependencies added
+
+### 🔄 Breaking Changes
+- None (all changes are backwards compatible)
+
+---
+
 ## [1.7.0] - 2024-12-03
 
 ### 🎨 UI Improvements - Feed Page

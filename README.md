@@ -59,7 +59,24 @@ A mobile-first patient communication and education platform that puts **the doct
     └── images/            # Static assets
 ```
 
-## ✨ Latest Updates (v1.6.0 - Dec 3, 2024)
+## ✨ Latest Updates (v1.8.0 - Dec 3, 2024)
+
+### Insurance Branding & UI Cleanup
+
+**🏥 Dual Insurance Logos:**
+- Added **Kaiser Permanente** and **UnitedHealthcare** logos in dashboard headers
+- Both logos visible on Discover and My Health pages
+- Kaiser logo in dark blue badge, UnitedHealthcare with shield icon
+- Insurance card section on My Health shows both providers
+
+**🎨 UI Cleanup:**
+- Removed "Keep it up!" status text from headers
+- Cleaner HeartScore display (percentage only)
+- Updated chat onboarding message to colonoscopy reminder
+
+---
+
+### Previous Updates (v1.6.0 - Dec 3, 2024)
 
 ### Major UI Overhaul - Clean White Design
 

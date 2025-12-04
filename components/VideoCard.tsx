@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { Play, Pause, Share2, Heart, Search } from "lucide-react";
+import { Play, Pause, Share2, Heart, Search, Volume2, VolumeX } from "lucide-react";
 import type { Video, Doctor } from "@/lib/types";
 import Image from "next/image";
 import Link from "next/link";
@@ -37,6 +37,7 @@ export const VideoCard = ({
 }: VideoCardProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -51,6 +52,8 @@ export const VideoCard = ({
         try {
           // Check if video is still connected to DOM
           if (video.isConnected) {
+            // Restart video from beginning when becoming active
+            video.currentTime = 0;
             await video.play();
             if (mounted) {
               setIsPlaying(true);
@@ -94,6 +97,15 @@ export const VideoCard = ({
     }
   };
 
+  const handleToggleMute = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!videoRef.current) return;
+    
+    const newMutedState = !isMuted;
+    videoRef.current.muted = newMutedState;
+    setIsMuted(newMutedState);
+  };
+
   const handleVideoEnd = () => {
     setIsPlaying(false);
     onComplete?.();
@@ -124,8 +136,23 @@ export const VideoCard = ({
 
   return (
     <div className="video-card">
-      {/* Doctor Photo */}
-      {imageSrc && (
+      {/* Video Element */}
+      {video.videoUrl && (
+        <video
+          ref={videoRef}
+          src={video.videoUrl}
+          poster={imageSrc}
+          className="absolute inset-0 w-full h-full object-cover"
+          loop
+          muted={isMuted}
+          playsInline
+          onEnded={handleVideoEnd}
+          onClick={handlePlayPause}
+        />
+      )}
+
+      {/* Fallback to poster image if no video */}
+      {!video.videoUrl && imageSrc && (
         <Image
           src={imageSrc}
           alt={video.title}
@@ -133,6 +160,19 @@ export const VideoCard = ({
           className="absolute inset-0 object-cover"
           priority={isActive}
         />
+      )}
+
+      {/* Play/Pause indicator */}
+      {video.videoUrl && !isPlaying && (
+        <button
+          onClick={handlePlayPause}
+          className="absolute inset-0 flex items-center justify-center z-10 bg-black/20 transition-opacity hover:bg-black/30"
+          aria-label={isPlaying ? "Pause video" : "Play video"}
+        >
+          <div className="w-20 h-20 rounded-full bg-white/90 flex items-center justify-center shadow-xl">
+            <Play className="w-8 h-8 text-gray-800 ml-1" fill="currentColor" />
+          </div>
+        </button>
       )}
 
       {/* Overlay gradient */}
@@ -149,6 +189,21 @@ export const VideoCard = ({
           unoptimized
         />
       </div>
+
+      {/* Volume Toggle Button */}
+      {video.videoUrl && (
+        <button
+          onClick={handleToggleMute}
+          className="absolute top-5 right-5 z-20 flex items-center justify-center w-10 h-10 bg-black/40 backdrop-blur-sm rounded-full hover:bg-black/60 transition-all duration-200"
+          aria-label={isMuted ? "Unmute video" : "Mute video"}
+        >
+          {isMuted ? (
+            <VolumeX className="w-5 h-5 text-white" />
+          ) : (
+            <Volume2 className="w-5 h-5 text-white" />
+          )}
+        </button>
+      )}
 
       {/* Content overlay */}
       <div className="absolute inset-0 flex flex-col justify-between p-6 pointer-events-none">

@@ -59,9 +59,38 @@ A mobile-first patient communication and education platform that puts **the doct
     └── images/            # Static assets
 ```
 
-## ✨ Latest Updates (v1.8.0 - Dec 3, 2024)
+## ✨ Latest Updates (v1.9.0 - Dec 4, 2024)
 
-### Insurance Branding & UI Cleanup
+### Dr. Jack Ellis & Video Player Enhancements
+
+**👨‍⚕️ New Doctor - Dr. Jack Ellis:**
+- Added Dr. Jack Ellis as the 4th cardiologist on the platform
+- 3 custom videos with local video file support
+- Full integration with doctor filtering and sidebar
+
+**🔊 Volume Toggle:**
+- Added mute/unmute button to all video cards
+- Top-right positioning with sleek dark backdrop
+- Videos start muted (required for autoplay)
+- Click to enable audio playback
+
+**🔄 Video Restart on Scroll:**
+- Videos automatically restart from beginning when scrolling back
+- Fresh viewing experience each time you return to a video
+
+**🗑️ Removed Rate Limiting:**
+- Removed session limits from feed
+- Users can scroll through unlimited videos
+- Cleaner, uninterrupted browsing experience
+
+**🎨 Cleaner Video UI:**
+- Removed large overlapping doctor header bar
+- Videos now take full card space
+- Selected doctor shown in sidebar (highlighted in teal)
+
+---
+
+### Previous Updates (v1.8.0 - Dec 3, 2024)
 
 **🏥 Dual Insurance Logos:**
 - Added **Kaiser Permanente** and **UnitedHealthcare** logos in dashboard headers
@@ -353,9 +382,9 @@ npx convex dev  # In a separate terminal
 
 ### Sample Data Included
 
-- **Doctors**: Dr. Sarah Johnson (Cardiology), Dr. Michael Chen (Primary Care)
+- **Doctors**: Dr. Sarah Johnson, Dr. Michael Chen, Dr. Emily Rodriguez, Dr. Jack Ellis (all Cardiology)
 - **Patient**: Dave Thompson (dave@example.com)
-- **Videos**: 5 videos (1 personalized + 4 educational)
+- **Videos**: 8 videos (1 personalized + 4 educational + 3 Dr. Jack videos)
 
 ### Magic Link Access
 

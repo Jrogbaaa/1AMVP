@@ -5,6 +5,76 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.0] - 2024-12-04
+
+### 👨‍⚕️ Added - Dr. Jack Ellis (New Doctor)
+
+**New Doctor Profile:**
+- Added **Dr. Jack Ellis** as 4th doctor in the platform
+- Specialty: Cardiology
+- Clinic: 1Another Cardiology
+- Profile photo at `/public/images/doctors/doctor-jack.jpg`
+
+**3 New Videos:**
+- "Understanding Your Heart Rhythm" - Heart rhythm basics
+- "Managing Cholesterol Levels" - Cholesterol management strategies
+- "Signs of Heart Disease to Watch" - Early warning signs
+
+**Video Files:**
+- `/public/videos/doctor-jack-video-1.mp4`
+- `/public/videos/doctor-jack-video-2.mp4`
+- `/public/videos/doctor-jack-video-3.mp4`
+
+### 🔊 Added - Volume Toggle Button
+
+**Video Player Controls:**
+- Added mute/unmute button to top-right of all video cards
+- Icon changes between VolumeX (muted) and Volume2 (unmuted)
+- Click to toggle audio on/off
+- Videos start muted for browser autoplay compatibility
+- Sleek circular button with dark backdrop blur
+
+### 🔄 Added - Video Restart on Scroll
+
+**Video Behavior:**
+- Videos now restart from beginning when scrolling back
+- `video.currentTime = 0` called when video becomes active
+- Ensures fresh viewing experience each time
+
+### 🗑️ Removed - Rate Limiting
+
+**Session Limits Removed:**
+- Removed 20-video-per-session rate limiting
+- Removed `RateLimitMessage` component import from feed
+- Removed `scrollCount` and `isRateLimited` state
+- Removed `remainingScrolls` calculations
+- Users can now scroll through unlimited videos
+
+### 🎨 Removed - Doctor Filter Header Bar
+
+**UI Cleanup:**
+- Removed large overlapping header bar when filtering by doctor
+- Video now takes full card space without obstruction
+- Sidebar still indicates selected doctor (highlighted in teal)
+- Cleaner, less cluttered video viewing experience
+
+### 🔧 Technical Changes
+
+**Files Modified:**
+- `app/feed/page.tsx` - Added Dr. Jack, removed rate limiting, removed header bar
+- `components/VideoCard.tsx` - Added volume toggle, video restart, video element
+
+**New Imports:**
+- `Volume2`, `VolumeX` from lucide-react in VideoCard
+
+### 📦 Dependencies
+- No new dependencies added
+
+### 🔄 Breaking Changes
+- None (all changes are backwards compatible)
+
+---
+
 ## [1.8.0] - 2024-12-03
 
 ### 🏥 Insurance Branding - Header Integration

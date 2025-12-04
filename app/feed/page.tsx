@@ -4,7 +4,6 @@ import { useEffect, useState, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { VideoCard } from "@/components/VideoCard";
-import { RateLimitMessage } from "@/components/RateLimitMessage";
 import { ChatOnboarding } from "@/components/ChatOnboarding";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { Calendar, Heart, ArrowLeft, Play, Search, Share2 } from "lucide-react";
@@ -36,6 +35,14 @@ const MOCK_DOCTORS: Record<string, Doctor> = {
     specialty: "Cardiology",
     avatarUrl: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=400&h=400&fit=crop&q=80",
     clinicName: "Advanced Heart Care",
+    createdAt: new Date().toISOString(),
+  },
+  "550e8400-e29b-41d4-a716-446655440004": {
+    id: "550e8400-e29b-41d4-a716-446655440004",
+    name: "Jack Ellis",
+    specialty: "Cardiology",
+    avatarUrl: "/images/doctors/doctor-jack.jpg",
+    clinicName: "1Another Cardiology",
     createdAt: new Date().toISOString(),
   },
 };
@@ -113,6 +120,49 @@ const MOCK_VIDEOS: Video[] = [
     isPersonalized: false,
     createdAt: new Date().toISOString(),
   },
+  // Doctor Jack's Videos
+  {
+    id: "750e8400-e29b-41d4-a716-446655440006",
+    title: "Understanding Your Heart Rhythm",
+    description: "Dr. Jack explains the basics of heart rhythm and what to look for in your daily heart health.",
+    videoUrl: "/videos/doctor-jack-video-1.mp4",
+    thumbnailUrl: "/images/doctors/doctor-jack.jpg",
+    posterUrl: "/images/doctors/doctor-jack.jpg",
+    duration: 180,
+    category: "Education",
+    tags: ["heart rhythm", "cardiology", "basics"],
+    doctorId: "550e8400-e29b-41d4-a716-446655440004",
+    isPersonalized: false,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: "750e8400-e29b-41d4-a716-446655440007",
+    title: "Managing Cholesterol Levels",
+    description: "Dr. Jack discusses effective strategies for managing cholesterol and protecting your heart.",
+    videoUrl: "/videos/doctor-jack-video-2.mp4",
+    thumbnailUrl: "/images/doctors/doctor-jack.jpg",
+    posterUrl: "/images/doctors/doctor-jack.jpg",
+    duration: 210,
+    category: "Education",
+    tags: ["cholesterol", "prevention", "heart health"],
+    doctorId: "550e8400-e29b-41d4-a716-446655440004",
+    isPersonalized: false,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: "750e8400-e29b-41d4-a716-446655440008",
+    title: "Signs of Heart Disease to Watch",
+    description: "Dr. Jack outlines the early warning signs of heart disease and when to seek medical attention.",
+    videoUrl: "/videos/doctor-jack-video-3.mp4",
+    thumbnailUrl: "/images/doctors/doctor-jack.jpg",
+    posterUrl: "/images/doctors/doctor-jack.jpg",
+    duration: 240,
+    category: "Education",
+    tags: ["warning signs", "heart disease", "prevention"],
+    doctorId: "550e8400-e29b-41d4-a716-446655440004",
+    isPersonalized: false,
+    createdAt: new Date().toISOString(),
+  },
 ];
 
 const FeedContent = () => {
@@ -122,8 +172,6 @@ const FeedContent = () => {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [healthScore, setHealthScore] = useState(55); // Start at 55%
-  const [scrollCount, setScrollCount] = useState(0);
-  const [isRateLimited, setIsRateLimited] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -134,9 +182,6 @@ const FeedContent = () => {
     : MOCK_VIDEOS;
 
   const selectedDoctor = doctorFilter ? MOCK_DOCTORS[doctorFilter] : MOCK_DOCTOR;
-
-  const maxScrolls = 20;
-  const remainingScrolls = Math.max(0, maxScrolls - scrollCount);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -149,13 +194,6 @@ const FeedContent = () => {
 
       if (newIndex !== currentIndex && newIndex < filteredVideos.length) {
         setCurrentIndex(newIndex);
-        setScrollCount((prev) => {
-          const newCount = prev + 1;
-          if (newCount >= maxScrolls) {
-            setIsRateLimited(true);
-          }
-          return newCount;
-        });
       }
     };
 
@@ -296,49 +334,7 @@ const FeedContent = () => {
         </aside>
 
         <div className="feed-container relative lg:ml-64">
-          {/* Doctor filter header */}
-          {doctorFilter && selectedDoctor && (
-            <div className="absolute top-4 left-4 right-4 z-50 flex items-center gap-3 bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-3 shadow-lg">
-              <Link
-                href="/feed"
-                className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100 transition-colors"
-                aria-label="Back to all videos"
-              >
-                <ArrowLeft className="w-5 h-5 text-gray-700" />
-              </Link>
-              <div className="flex items-center gap-3 flex-1">
-                <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
-                  {selectedDoctor.avatarUrl ? (
-                    <Image
-                      src={selectedDoctor.avatarUrl}
-                      alt={selectedDoctor.name}
-                      width={48}
-                      height={48}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-primary-600 flex items-center justify-center">
-                      <span className="text-white font-bold text-xl">
-                        {selectedDoctor.name.charAt(0)}
-                      </span>
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <h2 className="font-bold text-gray-900">Dr. {selectedDoctor.name}</h2>
-                  <p className="text-sm text-gray-600">{selectedDoctor.specialty}</p>
-                </div>
-              </div>
-            </div>
-          )}
-
-        {/* Rate limit warning */}
-        {remainingScrolls <= 5 && remainingScrolls > 0 && !isRateLimited && (
-          <RateLimitMessage remainingScrolls={remainingScrolls} />
-        )}
-
-        {/* Feed container */}
-        {!isRateLimited ? (
+          {/* Feed container */}
           <div ref={containerRef} className="snap-container">
             {filteredVideos.map((video, index) => {
               const videoDoctor = video.doctorId ? MOCK_DOCTORS[video.doctorId] : MOCK_DOCTOR;
@@ -453,9 +449,6 @@ const FeedContent = () => {
               );
             })}
           </div>
-        ) : (
-          <RateLimitMessage />
-        )}
 
           {/* Mobile navigation */}
           <nav className="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 z-30">

@@ -264,39 +264,38 @@ export default function MyHealthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
+    <div className="min-h-screen bg-gray-100">
+      {/* Compact Mobile Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
-        <div className="dashboard-container">
-          <div className="flex items-center justify-between py-4">
-            {/* Left: Logo and Nav */}
-            <div className="flex items-center gap-6">
-              <Link href="/feed" className="flex items-center">
-                <Image
-                  src="/images/1another-logo.png"
-                  alt="1Another - Intelligent Health"
-                  width={280}
-                  height={80}
-                  className="h-16 w-auto"
-                  priority
-                />
+        <div className="px-3 md:px-6">
+          <div className="flex items-center justify-between py-2 md:py-4">
+            {/* Left: Logo */}
+            <Link href="/feed" className="flex items-center">
+              <Image
+                src="/images/1another-logo.png"
+                alt="1Another"
+                width={140}
+                height={40}
+                className="h-8 md:h-12 w-auto"
+                priority
+              />
+            </Link>
+            
+            {/* Desktop Nav */}
+            <nav className="hidden md:flex items-center gap-6">
+              <Link href="/feed" className="text-gray-600 hover:text-gray-900 font-medium">
+                My Feed
               </Link>
-              <nav className="hidden md:flex items-center gap-6">
-                <Link href="/feed" className="text-gray-600 hover:text-gray-900 font-medium">
-                  My Feed
-                </Link>
-                <Link href="/discover" className="text-gray-600 hover:text-gray-900 font-medium">
-                  Discover
-                </Link>
-                <Link href="/my-health" className="text-primary-600 font-semibold border-b-2 border-primary-600 pb-1">
-                  My Health
-                </Link>
-              </nav>
-            </div>
+              <Link href="/discover" className="text-gray-600 hover:text-gray-900 font-medium">
+                Discover
+              </Link>
+              <Link href="/my-health" className="text-primary-600 font-semibold border-b-2 border-primary-600 pb-1">
+                My Health
+              </Link>
+            </nav>
 
-            {/* Right: Insurance Logos, Heart Score, User Menu */}
-            <div className="flex items-center gap-4">
-              {/* Insurance Logos - hidden on mobile */}
+            {/* Right: Heart Score + Menu */}
+            <div className="flex items-center gap-2 md:gap-4">
               <div className="hidden md:flex items-center gap-2">
                 <div className="bg-[#003A70] rounded px-2 py-1">
                   <Image
@@ -315,9 +314,7 @@ export default function MyHealthPage() {
                   className="h-6 w-auto"
                 />
               </div>
-              {/* Heart Score - always visible */}
               <HeartScore score={healthScore} isAnimating={isHeartAnimating} />
-              {/* User Menu - hidden on mobile, visible on desktop */}
               <div className="hidden sm:block">
                 <UserMenu />
               </div>
@@ -326,54 +323,53 @@ export default function MyHealthPage() {
         </div>
       </header>
 
-      {/* Main content */}
-      <main className="dashboard-container py-8">
-        {/* Top row - Reminders & Doctor */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          {/* Left column - Health Actions & Reminders (PRIMARY) */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Health Score Summary Card */}
-            <div className="card bg-gradient-to-br from-primary-50 to-blue-50">
-              <div className="flex items-center justify-between mb-6">
+      {/* Main content - tighter padding on mobile */}
+      <main className="px-3 md:px-6 py-3 md:py-6 pb-16 max-w-7xl mx-auto">
+        {/* Top row */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 mb-3">
+          {/* Left column */}
+          <div className="lg:col-span-2 space-y-3">
+            {/* Health Score Summary - Modular Card */}
+            <div className="bg-gradient-to-r from-emerald-50 to-sky-50 rounded-2xl p-4 shadow-sm border border-emerald-100">
+              <div className="flex items-center justify-between">
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-900 mb-1">
+                  <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-0.5">
                     My Health
                   </h1>
-                  <p className="text-gray-600">Keep track of your health actions</p>
+                  <p className="text-gray-600 text-sm">Track your health actions</p>
                 </div>
-                <HeartScore score={healthScore} className="scale-125" isAnimating={isHeartAnimating} />
+                <HeartScore score={healthScore} className="scale-110" isAnimating={isHeartAnimating} />
               </div>
-              
             </div>
 
-            {/* Action Items & Reminders - Time-based Sections */}
-            <div className="card">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            {/* Action Items - Modular Card */}
+            <div className="bg-white rounded-2xl p-3 md:p-4 shadow-sm">
+              <h2 className="text-base md:text-lg font-bold text-gray-900 mb-3">
                 Action Items & Reminders
               </h2>
 
-              {/* Annual Reminders (This Year) - FIRST */}
-              <div className="mb-8">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  🗓️ Annual Reminders
+              {/* Annual Reminders */}
+              <div className="mb-4">
+                <h3 className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-1.5">
+                  <span>📅</span> Annual Reminders
                 </h3>
-                <div className="space-y-3">
-                  <div className="p-4 rounded-lg bg-gradient-to-r from-primary-50 to-blue-50 border-2 border-primary-200">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <p className="font-semibold text-gray-900">Annual Physical Exam</p>
-                          <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">+15%</span>
+                <div className="space-y-2">
+                  <div className="p-3 rounded-xl bg-sky-50 border border-sky-100">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <p className="font-semibold text-gray-900 text-sm">Annual Physical</p>
+                          <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-lg">+15%</span>
                         </div>
-                        <p className="text-sm text-gray-500 mt-1">Due: March 2025</p>
+                        <p className="text-xs text-gray-500 mt-0.5">Due: March 2025</p>
                       </div>
-                      <div className="flex gap-2">
-                        <button className="px-3 py-1.5 bg-white text-primary-600 text-sm font-medium rounded-lg border border-primary-600 hover:bg-primary-50 transition-colors">
-                          📅 Add to Calendar
+                      <div className="flex gap-1.5 flex-shrink-0">
+                        <button className="px-2 py-1 bg-white text-primary-600 text-[10px] font-medium rounded-lg border border-primary-200 hover:bg-primary-50 transition-colors">
+                          📅 Add
                         </button>
                         <button
                           onClick={handleScheduleAppointment}
-                          className="px-3 py-1.5 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors"
+                          className="px-2 py-1 bg-primary-600 text-white text-[10px] font-medium rounded-lg hover:bg-primary-700 transition-colors"
                         >
                           Schedule
                         </button>
@@ -381,22 +377,22 @@ export default function MyHealthPage() {
                     </div>
                   </div>
 
-                  <div className="p-4 rounded-lg bg-gradient-to-r from-primary-50 to-blue-50 border-2 border-primary-200">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <p className="font-semibold text-gray-900">Cholesterol Screening</p>
-                          <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">+10%</span>
+                  <div className="p-3 rounded-xl bg-sky-50 border border-sky-100">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <p className="font-semibold text-gray-900 text-sm">Cholesterol Screening</p>
+                          <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-lg">+10%</span>
                         </div>
-                        <p className="text-sm text-gray-500 mt-1">Due: June 2025</p>
+                        <p className="text-xs text-gray-500 mt-0.5">Due: June 2025</p>
                       </div>
-                      <div className="flex gap-2">
-                        <button className="px-3 py-1.5 bg-white text-primary-600 text-sm font-medium rounded-lg border border-primary-600 hover:bg-primary-50 transition-colors">
-                          📅 Add to Calendar
+                      <div className="flex gap-1.5 flex-shrink-0">
+                        <button className="px-2 py-1 bg-white text-primary-600 text-[10px] font-medium rounded-lg border border-primary-200 hover:bg-primary-50 transition-colors">
+                          📅 Add
                         </button>
                         <button
                           onClick={handleScheduleAppointment}
-                          className="px-3 py-1.5 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors"
+                          className="px-2 py-1 bg-primary-600 text-white text-[10px] font-medium rounded-lg hover:bg-primary-700 transition-colors"
                         >
                           Schedule
                         </button>
@@ -404,22 +400,22 @@ export default function MyHealthPage() {
                     </div>
                   </div>
 
-                  <div className="p-4 rounded-lg bg-gradient-to-r from-primary-50 to-blue-50 border-2 border-primary-200">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <p className="font-semibold text-gray-900">Flu Vaccination</p>
-                          <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">+5%</span>
+                  <div className="p-3 rounded-xl bg-sky-50 border border-sky-100">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <p className="font-semibold text-gray-900 text-sm">Flu Vaccination</p>
+                          <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-lg">+5%</span>
                         </div>
-                        <p className="text-sm text-gray-500 mt-1">Due: October 2025</p>
+                        <p className="text-xs text-gray-500 mt-0.5">Due: October 2025</p>
                       </div>
-                      <div className="flex gap-2">
-                        <button className="px-3 py-1.5 bg-white text-primary-600 text-sm font-medium rounded-lg border border-primary-600 hover:bg-primary-50 transition-colors">
-                          📅 Add to Calendar
+                      <div className="flex gap-1.5 flex-shrink-0">
+                        <button className="px-2 py-1 bg-white text-primary-600 text-[10px] font-medium rounded-lg border border-primary-200 hover:bg-primary-50 transition-colors">
+                          📅 Add
                         </button>
                         <button
                           onClick={handleScheduleAppointment}
-                          className="px-3 py-1.5 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors"
+                          className="px-2 py-1 bg-primary-600 text-white text-[10px] font-medium rounded-lg hover:bg-primary-700 transition-colors"
                         >
                           Schedule
                         </button>
@@ -430,86 +426,86 @@ export default function MyHealthPage() {
               </div>
 
               {/* Today */}
-              <div className="mb-8">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    📅 Today
+              <div className="mb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-1.5">
+                    <span>✅</span> Today
                   </h3>
-                  <span className="text-sm text-gray-500">
-                    {Object.values(checkedItems).filter(Boolean).length} of 3 completed
+                  <span className="text-[10px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded-lg">
+                    {Object.values(checkedItems).filter(Boolean).length}/3 done
                   </span>
                 </div>
               
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <div 
-                    className={`flex items-start gap-4 p-4 rounded-lg transition-all cursor-pointer ${
-                      checkedItems['med1'] ? 'bg-green-50 border-2 border-green-200' : 'bg-gray-50 hover:bg-gray-100'
+                    className={`flex items-center gap-3 p-3 rounded-xl transition-all cursor-pointer ${
+                      checkedItems['med1'] ? 'bg-green-50 border border-green-200' : 'bg-emerald-50 border border-emerald-100 hover:bg-emerald-100'
                     }`}
                     onClick={() => handleCheckboxChange('med1')}
                   >
-                    <div className="mt-0.5 relative">
+                    <div className="flex-shrink-0">
                       {checkedItems['med1'] ? (
-                        <CheckCircle2 className="w-6 h-6 text-green-600 animate-check-complete" fill="currentColor" />
+                        <CheckCircle2 className="w-5 h-5 text-green-600 animate-check-complete" fill="currentColor" />
                       ) : (
-                        <div className="w-6 h-6 rounded-full border-2 border-gray-300" />
+                        <div className="w-5 h-5 rounded-full border-2 border-gray-300 bg-white" />
                       )}
                     </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <p className={`font-semibold ${checkedItems['med1'] ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <p className={`font-semibold text-sm ${checkedItems['med1'] ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
                           Take morning medication
                         </p>
-                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">+2%</span>
+                        <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-lg">+2%</span>
                       </div>
-                      <p className="text-sm text-gray-500 mt-1">Due at 9:00 AM · Aspirin 81mg</p>
+                      <p className="text-xs text-gray-500 mt-0.5">9:00 AM · Aspirin 81mg</p>
                     </div>
                   </div>
 
                   <div 
-                    className={`flex items-start gap-4 p-4 rounded-lg transition-all cursor-pointer ${
-                      checkedItems['bp'] ? 'bg-green-50 border-2 border-green-200' : 'bg-gray-50 hover:bg-gray-100'
+                    className={`flex items-center gap-3 p-3 rounded-xl transition-all cursor-pointer ${
+                      checkedItems['bp'] ? 'bg-green-50 border border-green-200' : 'bg-emerald-50 border border-emerald-100 hover:bg-emerald-100'
                     }`}
                     onClick={() => handleCheckboxChange('bp')}
                   >
-                    <div className="mt-0.5 relative">
+                    <div className="flex-shrink-0">
                       {checkedItems['bp'] ? (
-                        <CheckCircle2 className="w-6 h-6 text-green-600 animate-check-complete" fill="currentColor" />
+                        <CheckCircle2 className="w-5 h-5 text-green-600 animate-check-complete" fill="currentColor" />
                       ) : (
-                        <div className="w-6 h-6 rounded-full border-2 border-gray-300" />
+                        <div className="w-5 h-5 rounded-full border-2 border-gray-300 bg-white" />
                       )}
                     </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <p className={`font-semibold ${checkedItems['bp'] ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <p className={`font-semibold text-sm ${checkedItems['bp'] ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
                           Log blood pressure
                         </p>
-                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">+3%</span>
+                        <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-lg">+3%</span>
                       </div>
-                      <p className="text-sm text-gray-500 mt-1">Morning reading · Target: 120/80</p>
+                      <p className="text-xs text-gray-500 mt-0.5">Target: 120/80</p>
                     </div>
                   </div>
 
                   <div 
-                    className={`flex items-start gap-4 p-4 rounded-lg transition-all cursor-pointer ${
-                      checkedItems['walk'] ? 'bg-green-50 border-2 border-green-200' : 'bg-gray-50 hover:bg-gray-100'
+                    className={`flex items-center gap-3 p-3 rounded-xl transition-all cursor-pointer ${
+                      checkedItems['walk'] ? 'bg-green-50 border border-green-200' : 'bg-emerald-50 border border-emerald-100 hover:bg-emerald-100'
                     }`}
                     onClick={() => handleCheckboxChange('walk')}
                   >
-                    <div className="mt-0.5 relative">
+                    <div className="flex-shrink-0">
                       {checkedItems['walk'] ? (
-                        <CheckCircle2 className="w-6 h-6 text-green-600 animate-check-complete" fill="currentColor" />
+                        <CheckCircle2 className="w-5 h-5 text-green-600 animate-check-complete" fill="currentColor" />
                       ) : (
-                        <div className="w-6 h-6 rounded-full border-2 border-gray-300" />
+                        <div className="w-5 h-5 rounded-full border-2 border-gray-300 bg-white" />
                       )}
                     </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <p className={`font-semibold ${checkedItems['walk'] ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <p className={`font-semibold text-sm ${checkedItems['walk'] ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
                           30-minute walk
                         </p>
-                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">+5%</span>
+                        <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-lg">+5%</span>
                       </div>
-                      <p className="text-sm text-gray-500 mt-1">Recommended daily activity</p>
+                      <p className="text-xs text-gray-500 mt-0.5">Daily activity</p>
                     </div>
                   </div>
                 </div>
@@ -517,98 +513,98 @@ export default function MyHealthPage() {
 
               {/* This Week */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  📆 This Week
+                <h3 className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-1.5">
+                  <span>📆</span> This Week
                 </h3>
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <div 
-                    className={`flex items-start gap-4 p-4 rounded-lg transition-all cursor-pointer ${
-                      checkedItems['video'] ? 'bg-green-50 border-2 border-green-200' : 'bg-gray-50 hover:bg-gray-100'
+                    className={`flex items-center gap-3 p-3 rounded-xl transition-all cursor-pointer ${
+                      checkedItems['video'] ? 'bg-green-50 border border-green-200' : 'bg-amber-50 border border-amber-100 hover:bg-amber-100'
                     }`}
                     onClick={() => handleCheckboxChange('video')}
                   >
-                    <div className="mt-0.5 relative">
+                    <div className="flex-shrink-0">
                       {checkedItems['video'] ? (
-                        <CheckCircle2 className="w-6 h-6 text-green-600 animate-check-complete" fill="currentColor" />
+                        <CheckCircle2 className="w-5 h-5 text-green-600 animate-check-complete" fill="currentColor" />
                       ) : (
-                        <div className="w-6 h-6 rounded-full border-2 border-gray-300" />
+                        <div className="w-5 h-5 rounded-full border-2 border-gray-300 bg-white" />
                       )}
                     </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <p className={`font-semibold ${checkedItems['video'] ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <p className={`font-semibold text-sm ${checkedItems['video'] ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
                           Watch educational videos
                         </p>
-                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">+5%</span>
+                        <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-lg">+5%</span>
                       </div>
-                      <p className="text-sm text-gray-500 mt-1">Complete 3 videos on heart-healthy living</p>
+                      <p className="text-xs text-gray-500 mt-0.5">3 videos on heart health</p>
                     </div>
                   </div>
 
                   <div 
-                    className={`flex items-start gap-4 p-4 rounded-lg transition-all cursor-pointer ${
-                      checkedItems['water'] ? 'bg-green-50 border-2 border-green-200' : 'bg-gray-50 hover:bg-gray-100'
+                    className={`flex items-center gap-3 p-3 rounded-xl transition-all cursor-pointer ${
+                      checkedItems['water'] ? 'bg-green-50 border border-green-200' : 'bg-amber-50 border border-amber-100 hover:bg-amber-100'
                     }`}
                     onClick={() => handleCheckboxChange('water')}
                   >
-                    <div className="mt-0.5 relative">
+                    <div className="flex-shrink-0">
                       {checkedItems['water'] ? (
-                        <CheckCircle2 className="w-6 h-6 text-green-600 animate-check-complete" fill="currentColor" />
+                        <CheckCircle2 className="w-5 h-5 text-green-600 animate-check-complete" fill="currentColor" />
                       ) : (
-                        <div className="w-6 h-6 rounded-full border-2 border-gray-300" />
+                        <div className="w-5 h-5 rounded-full border-2 border-gray-300 bg-white" />
                       )}
                     </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <p className={`font-semibold ${checkedItems['water'] ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
-                          Track daily water intake
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <p className={`font-semibold text-sm ${checkedItems['water'] ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
+                          Track water intake
                         </p>
-                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">+3%</span>
+                        <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-lg">+3%</span>
                       </div>
-                      <p className="text-sm text-gray-500 mt-1">8 glasses per day for 7 days</p>
+                      <p className="text-xs text-gray-500 mt-0.5">8 glasses/day for 7 days</p>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Quick actions */}
-            <div className="card">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            {/* Quick actions - Modular Card */}
+            <div className="bg-white rounded-2xl p-3 shadow-sm">
+              <h3 className="text-sm font-semibold text-gray-900 mb-2">
                 Quick Actions
               </h3>
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <Link
                   href="/discover"
-                  className="flex items-center justify-between p-4 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex items-center justify-between p-2.5 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-5 h-5 rounded-full border-2 border-gray-400 flex items-center justify-center">
-                      <Play className="w-3 h-3 text-gray-400" />
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 rounded-full border-2 border-gray-400 flex items-center justify-center">
+                      <Play className="w-2 h-2 text-gray-400" />
                     </div>
-                    <span className="font-medium text-gray-900">Browse Discover</span>
+                    <span className="font-medium text-gray-900 text-sm">Browse Discover</span>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                  <ChevronRight className="w-4 h-4 text-gray-400" />
                 </Link>
                 <Link
                   href="/feed"
-                  className="flex items-center justify-between p-4 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex items-center justify-between p-2.5 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors"
                 >
-                  <div className="flex items-center gap-3">
-                    <Play className="w-5 h-5 text-gray-400" />
-                    <span className="font-medium text-gray-900">My Feed</span>
+                  <div className="flex items-center gap-2">
+                    <Play className="w-4 h-4 text-gray-400" />
+                    <span className="font-medium text-gray-900 text-sm">My Feed</span>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                  <ChevronRight className="w-4 h-4 text-gray-400" />
                 </Link>
               </div>
             </div>
           </div>
 
-          {/* Right column - Doctor & Schedule (SECONDARY) */}
-          <div className="space-y-6">
-            {/* Doctor card */}
-            <div className="card">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">
+          {/* Right column - Doctor (SECONDARY) */}
+          <div className="space-y-3">
+            {/* Doctor card - Modular */}
+            <div className="bg-white rounded-2xl p-3 shadow-sm">
+              <h2 className="text-sm font-bold text-gray-900 mb-2">
                 Your Doctor
               </h2>
               <div className="flex items-start gap-3 mb-4">

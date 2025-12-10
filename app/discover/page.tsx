@@ -187,38 +187,38 @@ export default function DiscoverPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
+    <div className="min-h-screen bg-gray-100">
+      {/* Compact Mobile Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
-        <div className="dashboard-container">
-          <div className="flex items-center justify-between py-4">
-            {/* Left: Logo and Nav */}
-            <div className="flex items-center gap-6">
-              <Link href="/feed" className="flex items-center">
-                <Image
-                  src="/images/1another-logo.png"
-                  alt="1Another - Intelligent Health"
-                  width={280}
-                  height={80}
-                  className="h-16 w-auto"
-                  priority
-                />
+        <div className="px-3 md:px-6">
+          <div className="flex items-center justify-between py-2 md:py-4">
+            {/* Left: Logo */}
+            <Link href="/feed" className="flex items-center">
+              <Image
+                src="/images/1another-logo.png"
+                alt="1Another"
+                width={140}
+                height={40}
+                className="h-8 md:h-12 w-auto"
+                priority
+              />
+            </Link>
+            
+            {/* Desktop Nav - hidden on mobile */}
+            <nav className="hidden md:flex items-center gap-6">
+              <Link href="/feed" className="text-gray-600 hover:text-gray-900 font-medium">
+                My Feed
               </Link>
-              <nav className="hidden md:flex items-center gap-6">
-                <Link href="/feed" className="text-gray-600 hover:text-gray-900 font-medium">
-                  My Feed
-                </Link>
-                <Link href="/discover" className="text-primary-600 font-semibold border-b-2 border-primary-600 pb-1">
-                  Discover
-                </Link>
-                <Link href="/my-health" className="text-gray-600 hover:text-gray-900 font-medium">
-                  My Health
-                </Link>
-              </nav>
-            </div>
+              <Link href="/discover" className="text-primary-600 font-semibold border-b-2 border-primary-600 pb-1">
+                Discover
+              </Link>
+              <Link href="/my-health" className="text-gray-600 hover:text-gray-900 font-medium">
+                My Health
+              </Link>
+            </nav>
 
-            {/* Right: Insurance Logos, Heart Score, User Menu */}
-            <div className="flex items-center gap-4">
+            {/* Right: Heart Score + Menu */}
+            <div className="flex items-center gap-2 md:gap-4">
               {/* Insurance Logos - hidden on mobile */}
               <div className="hidden md:flex items-center gap-2">
                 <div className="bg-[#003A70] rounded px-2 py-1">
@@ -238,9 +238,7 @@ export default function DiscoverPage() {
                   className="h-6 w-auto"
                 />
               </div>
-              {/* Heart Score - always visible */}
               <HeartScore score={healthScore} />
-              {/* User Menu or Sign In button */}
               <div className="hidden sm:block">
                 {isAuthenticated ? (
                   <UserMenu />
@@ -250,9 +248,9 @@ export default function DiscoverPage() {
                       setAuthPromptTrigger("save_progress");
                       setShowAuthPrompt(true);
                     }}
-                    className="flex items-center gap-2 px-4 py-2 bg-sky-600 text-white rounded-lg font-medium hover:bg-sky-700 transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-sky-600 text-white rounded-lg text-sm font-medium hover:bg-sky-700 transition-colors"
                   >
-                    <User className="w-4 h-4" />
+                    <User className="w-3.5 h-3.5" />
                     Sign In
                   </button>
                 )}
@@ -262,26 +260,26 @@ export default function DiscoverPage() {
         </div>
       </header>
 
-      {/* Main content */}
-      <main className="dashboard-container py-8">
-        {/* Page title */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+      {/* Main content - tighter padding on mobile */}
+      <main className="px-3 md:px-6 py-3 md:py-6 pb-16 max-w-7xl mx-auto">
+        {/* Header Card - Modular */}
+        <div className="bg-white rounded-2xl p-4 mb-3 shadow-sm">
+          <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-1">
             Your Doctors
           </h1>
-          <p className="text-gray-600 text-lg mb-4">
+          <p className="text-gray-500 text-sm mb-3">
             Explore content from your experts
           </p>
-          <div className="bg-primary-50 border-l-4 border-primary-600 p-4 rounded-lg">
-            <p className="text-gray-900 font-medium">
-              Hey {patientName}, here are some other videos I recommend you take a look at:
+          <div className="bg-gradient-to-r from-emerald-50 to-sky-50 rounded-xl p-3 border border-emerald-100">
+            <p className="text-gray-800 text-sm font-medium">
+              Hey {patientName}, here are some videos I recommend:
             </p>
           </div>
         </div>
 
-        {/* Instagram-style doctor profiles */}
-        <div className="mb-8">
-          <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
+        {/* Doctor Profiles - Modular Card */}
+        <div className="bg-white rounded-2xl p-3 mb-3 shadow-sm">
+          <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
             {MOCK_DOCTORS.filter((doctor) => {
               // Filter doctors by specialty
               if (selectedSpecialty === "all") return true;
@@ -292,13 +290,13 @@ export default function DiscoverPage() {
                 <Link
                   key={doctor.id}
                   href={`/feed?doctor=${doctor.id}`}
-                  className="flex flex-col items-center gap-2 flex-shrink-0 group cursor-pointer"
+                  className="flex flex-col items-center gap-1 flex-shrink-0 group cursor-pointer"
                   onClick={() => handleDoctorClick(doctor)}
                 >
                   <div className="relative">
-                    {/* Gradient ring */}
-                    <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-primary-500 via-pink-500 to-yellow-500 p-[3px] group-hover:scale-110 transition-transform duration-200">
-                      <div className="w-full h-full rounded-full bg-white p-[3px]">
+                    {/* Gradient ring - smaller on mobile */}
+                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-tr from-primary-500 via-pink-500 to-yellow-500 p-[2px] group-hover:scale-105 transition-transform duration-200">
+                      <div className="w-full h-full rounded-full bg-white p-[2px]">
                         <div className="relative w-full h-full rounded-full overflow-hidden">
                           {doctor.avatarUrl ? (
                             <Image
@@ -309,7 +307,7 @@ export default function DiscoverPage() {
                             />
                           ) : (
                             <div className="w-full h-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center">
-                              <span className="text-white text-2xl font-bold">
+                              <span className="text-white text-lg font-bold">
                                 {doctor.name.charAt(0)}
                               </span>
                             </div>
@@ -317,57 +315,54 @@ export default function DiscoverPage() {
                         </div>
                       </div>
                     </div>
-                    {/* Checkmark badge for added doctors */}
+                    {/* Checkmark badge */}
                     {isAdded && (
-                      <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center shadow-md border-2 border-white">
-                        <Check className="w-4 h-4 text-white" strokeWidth={3} />
+                      <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center shadow border-2 border-white">
+                        <Check className="w-3 h-3 text-white" strokeWidth={3} />
                       </div>
                     )}
-                    {/* Add button for doctors not added yet */}
+                    {/* Add button */}
                     {!isAdded && (
                       <button
                         onClick={(e) => handleAddDoctor(e, doctor.id)}
-                        className="absolute -bottom-1 -right-1 w-6 h-6 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-sm hover:bg-primary-600 transition-colors shadow-md border-2 border-white"
+                        className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-xs hover:bg-primary-600 transition-colors shadow border-2 border-white"
                         aria-label={`Add Dr. ${doctor.name}`}
                       >
                         +
                       </button>
                     )}
                   </div>
-                  <div className="text-center">
-                    <p className="text-xs font-medium text-gray-900 max-w-[80px] truncate">
-                      Dr. {doctor.name.split(' ')[1]}
-                    </p>
-                  </div>
+                  <p className="text-[10px] md:text-xs font-medium text-gray-700 max-w-[56px] truncate text-center">
+                    Dr. {doctor.name.split(' ')[1]}
+                  </p>
                 </Link>
               );
             })}
           </div>
         </div>
 
-        {/* Specialty Filter - Horizontal scroll on mobile */}
-        <div className="mb-6">
-          <div className="flex items-center gap-3 mb-3">
-            <Filter className="w-5 h-5 text-gray-500" />
-            <span className="text-sm font-medium text-gray-700">Filter by Specialty:</span>
+        {/* Specialty Filter - Modular Card */}
+        <div className="bg-white rounded-2xl p-3 mb-3 shadow-sm">
+          <div className="flex items-center gap-2 mb-2">
+            <Filter className="w-4 h-4 text-gray-500" />
+            <span className="text-xs font-medium text-gray-600">Filter:</span>
           </div>
-          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+          <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
             {specialties.map((specialty) => (
               <button
                 key={specialty}
                 onClick={() => {
                   setSelectedSpecialty(specialty);
-                  // When selecting a specialty, update category too
                   if (specialty === "cardiology") {
                     setSelectedCategory("cardiology");
                   } else if (specialty !== "all") {
                     setSelectedCategory("all");
                   }
                 }}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
                   selectedSpecialty === specialty
                     ? "bg-primary-600 text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
               >
                 {specialty === "all" 
@@ -379,15 +374,15 @@ export default function DiscoverPage() {
 
           {/* Cardiology topics filter */}
           {selectedSpecialty === "cardiology" && (
-            <div className="mt-4 flex flex-wrap gap-2">
+            <div className="mt-2 flex flex-wrap gap-1.5">
               {cardiologyTopics.map((topic) => (
                 <button
                   key={topic}
                   onClick={() => setSelectedTopic(topic)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                  className={`px-2.5 py-1 rounded-lg text-[10px] font-medium transition-colors ${
                     selectedTopic === topic
-                      ? "bg-primary-100 text-primary-700 border border-primary-300"
-                      : "bg-white text-gray-600 border border-gray-300 hover:border-gray-400"
+                      ? "bg-primary-100 text-primary-700 border border-primary-200"
+                      : "bg-gray-50 text-gray-500 border border-gray-200"
                   }`}
                 >
                   {topic === "all" ? "All Topics" : topic.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
@@ -397,163 +392,157 @@ export default function DiscoverPage() {
           )}
         </div>
 
-        {/* Featured content section - Cardiology */}
+        {/* Cardiology Videos - Modular Card */}
         {(selectedSpecialty === "all" || selectedSpecialty === "cardiology") && (
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          <div className="bg-white rounded-2xl p-3 mb-3 shadow-sm">
+            <h2 className="text-base font-bold text-gray-900 mb-3">
               Cardiology
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Featured video cards */}
-            <Link
-              href="/feed"
-              className="card hover:shadow-lg transition-shadow cursor-pointer group"
-            >
-              <div className="relative aspect-video mb-4 bg-gray-200 rounded-lg overflow-hidden">
-                <Image
-                  src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=720&h=480&fit=crop&q=80"
-                  alt="Understanding Blood Pressure"
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs font-semibold px-2 py-1 rounded">
-                  3:00
-                </div>
-                <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
-                  <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Play className="w-8 h-8 text-primary-600 ml-1" fill="currentColor" />
+            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4">
+              {/* Video Card 1 */}
+              <Link
+                href="/feed"
+                className="flex-shrink-0 w-44 md:w-auto bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
+              >
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=720&h=480&fit=crop&q=80"
+                    alt="Understanding Blood Pressure"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">
+                    3:00
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div>
-                <span className="inline-block px-3 py-1 bg-primary-50 text-primary-700 text-xs font-semibold rounded-full mb-2">
-                  Heart Health
-                </span>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">
-                  Understanding Blood Pressure
-                </h3>
-                <p className="text-gray-600 text-sm line-clamp-2">
-                  Learn what blood pressure numbers mean and how to monitor your heart health.
-                </p>
-              </div>
-            </Link>
-
-            <Link
-              href="/feed"
-              className="card hover:shadow-lg transition-shadow cursor-pointer group"
-            >
-              <div className="relative aspect-video mb-4 bg-gray-200 rounded-lg overflow-hidden">
-                <Image
-                  src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=720&h=480&fit=crop&q=80"
-                  alt="Heart-Healthy Diet"
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs font-semibold px-2 py-1 rounded">
-                  4:00
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-rose-50 text-rose-600 text-[10px] font-semibold rounded-lg mb-1">
+                    Heart Health
+                  </span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">
+                    Understanding Blood Pressure
+                  </h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">
+                    Learn what BP numbers mean
+                  </p>
                 </div>
-                <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
-                  <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Play className="w-8 h-8 text-primary-600 ml-1" fill="currentColor" />
+              </Link>
+
+              {/* Video Card 2 */}
+              <Link
+                href="/feed"
+                className="flex-shrink-0 w-44 md:w-auto bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
+              >
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=720&h=480&fit=crop&q=80"
+                    alt="Heart-Healthy Diet"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">
+                    4:00
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div>
-                <span className="inline-block px-3 py-1 bg-primary-50 text-primary-700 text-xs font-semibold rounded-full mb-2">
-                  Nutrition
-                </span>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">
-                  Heart-Healthy Diet Tips
-                </h3>
-                <p className="text-gray-600 text-sm line-clamp-2">
-                  Simple and practical nutrition tips for maintaining a healthy heart.
-                </p>
-              </div>
-            </Link>
-
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-emerald-50 text-emerald-600 text-[10px] font-semibold rounded-lg mb-1">
+                    Nutrition
+                  </span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">
+                    Heart-Healthy Diet Tips
+                  </h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">
+                    Practical nutrition tips
+                  </p>
+                </div>
+              </Link>
             </div>
           </div>
         )}
 
-        {/* Nutrition and Exercise section */}
+        {/* Nutrition and Exercise - Modular Card */}
         {(selectedSpecialty === "all" || selectedSpecialty === "primary-care") && (
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              Nutrition and Exercise
+          <div className="bg-white rounded-2xl p-3 mb-3 shadow-sm">
+            <h2 className="text-base font-bold text-gray-900 mb-3">
+              Nutrition & Exercise
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Link
-              href="/feed"
-              className="card hover:shadow-lg transition-shadow cursor-pointer group"
-            >
-              <div className="relative aspect-video mb-4 bg-gray-200 rounded-lg overflow-hidden">
-                <Image
-                  src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=720&h=480&fit=crop&q=80"
-                  alt="Exercise for Heart Health"
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs font-semibold px-2 py-1 rounded">
-                  3:20
-                </div>
-                <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
-                  <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Play className="w-8 h-8 text-primary-600 ml-1" fill="currentColor" />
+            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4">
+              <Link
+                href="/feed"
+                className="flex-shrink-0 w-44 md:w-auto bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
+              >
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=720&h=480&fit=crop&q=80"
+                    alt="Exercise for Heart Health"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">
+                    3:20
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div>
-                <span className="inline-block px-3 py-1 bg-primary-50 text-primary-700 text-xs font-semibold rounded-full mb-2">
-                  Exercise
-                </span>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">
-                  Exercise for Heart Health
-                </h3>
-                <p className="text-gray-600 text-sm line-clamp-2">
-                  Safe and effective exercises to strengthen your cardiovascular system.
-                </p>
-              </div>
-            </Link>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-sky-50 text-sky-600 text-[10px] font-semibold rounded-lg mb-1">
+                    Exercise
+                  </span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">
+                    Exercise for Heart Health
+                  </h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">
+                    Safe exercises for your heart
+                  </p>
+                </div>
+              </Link>
             </div>
           </div>
         )}
 
-        {/* Other Specialties sections */}
+        {/* Other Specialties - Modular Cards */}
         {selectedSpecialty === "endocrinology" && (
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              Endocrinology
-            </h2>
-            <div className="p-8 bg-gray-50 rounded-xl text-center">
-              <p className="text-gray-600">Content coming soon for Endocrinology</p>
+          <div className="bg-white rounded-2xl p-3 mb-3 shadow-sm">
+            <h2 className="text-base font-bold text-gray-900 mb-2">Endocrinology</h2>
+            <div className="p-4 bg-gray-50 rounded-xl text-center">
+              <p className="text-gray-500 text-sm">Content coming soon</p>
             </div>
           </div>
         )}
 
         {selectedSpecialty === "gastroenterology" && (
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              Gastroenterology
-            </h2>
-            <div className="p-8 bg-gray-50 rounded-xl text-center">
-              <p className="text-gray-600">Content coming soon for Gastroenterology</p>
+          <div className="bg-white rounded-2xl p-3 mb-3 shadow-sm">
+            <h2 className="text-base font-bold text-gray-900 mb-2">Gastroenterology</h2>
+            <div className="p-4 bg-gray-50 rounded-xl text-center">
+              <p className="text-gray-500 text-sm">Content coming soon</p>
             </div>
           </div>
         )}
 
         {selectedSpecialty === "pulmonology" && (
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              Pulmonology
-            </h2>
-            <div className="p-8 bg-gray-50 rounded-xl text-center">
-              <p className="text-gray-600">Content coming soon for Pulmonology</p>
+          <div className="bg-white rounded-2xl p-3 mb-3 shadow-sm">
+            <h2 className="text-base font-bold text-gray-900 mb-2">Pulmonology</h2>
+            <div className="p-4 bg-gray-50 rounded-xl text-center">
+              <p className="text-gray-500 text-sm">Content coming soon</p>
             </div>
           </div>
         )}
 
         {/* Trust badge */}
-        <div className="mt-12 flex justify-center">
+        <div className="mt-4 flex justify-center">
           <TrustBadge />
         </div>
       </main>

@@ -38,20 +38,21 @@ export const VideoCard = ({
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const [hasVideoError, setHasVideoError] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
+    if (!video || hasVideoError) return;
 
     let mounted = true;
 
     const playVideo = async () => {
-      if (!mounted || !video) return;
+      if (!mounted || !video || hasVideoError) return;
       
       if (isActive) {
         try {
           // Check if video is still connected to DOM
-          if (video.isConnected) {
+          if (video.isConnected && video.readyState >= 1) {
             // Restart video from beginning when becoming active
             video.currentTime = 0;
             await video.play();
@@ -61,9 +62,13 @@ export const VideoCard = ({
             }
           }
         } catch (error) {
-          // Ignore if play was interrupted
+          // Ignore if play was interrupted or video source failed
           if (mounted) {
             console.log("Video play interrupted:", error);
+            // Check if it's a source error
+            if (error instanceof Error && error.name === 'NotSupportedError') {
+              setHasVideoError(true);
+            }
           }
         }
       } else {
@@ -81,7 +86,7 @@ export const VideoCard = ({
     return () => {
       mounted = false;
     };
-  }, [isActive, onPlay]);
+  }, [isActive, onPlay, hasVideoError]);
 
   const handlePlayPause = () => {
     if (!videoRef.current) return;
@@ -134,10 +139,18 @@ export const VideoCard = ({
 
   const imageSrc = video.posterUrl || video.thumbnailUrl || '';
 
+  const handleVideoError = () => {
+    setHasVideoError(true);
+    setIsPlaying(false);
+  };
+
+  // Show video element only if we have a URL and no error
+  const showVideo = video.videoUrl && !hasVideoError;
+
   return (
     <div className="video-card">
       {/* Video Element */}
-      {video.videoUrl && (
+      {showVideo && (
         <video
           ref={videoRef}
           src={video.videoUrl}
@@ -148,11 +161,12 @@ export const VideoCard = ({
           playsInline
           onEnded={handleVideoEnd}
           onClick={handlePlayPause}
+          onError={handleVideoError}
         />
       )}
 
-      {/* Fallback to poster image if no video */}
-      {!video.videoUrl && imageSrc && (
+      {/* Fallback to poster image if no video or video error */}
+      {(!video.videoUrl || hasVideoError) && imageSrc && (
         <Image
           src={imageSrc}
           alt={video.title}
@@ -162,8 +176,8 @@ export const VideoCard = ({
         />
       )}
 
-      {/* Play/Pause indicator */}
-      {video.videoUrl && !isPlaying && (
+      {/* Play/Pause indicator - only show for working videos */}
+      {showVideo && !isPlaying && (
         <button
           onClick={handlePlayPause}
           className="absolute inset-0 flex items-center justify-center z-10 bg-black/20 transition-opacity hover:bg-black/30"
@@ -190,8 +204,8 @@ export const VideoCard = ({
         />
       </div>
 
-      {/* Volume Toggle Button */}
-      {video.videoUrl && (
+      {/* Volume Toggle Button - only show for working videos */}
+      {showVideo && (
         <button
           onClick={handleToggleMute}
           className="absolute top-5 right-5 z-20 flex items-center justify-center w-10 h-10 bg-black/40 backdrop-blur-sm rounded-full hover:bg-black/60 transition-all duration-200"

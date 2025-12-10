@@ -56,7 +56,7 @@ const MOCK_VIDEOS: Video[] = [
     id: "750e8400-e29b-41d4-a716-446655440001",
     title: "Your Follow-Up from Dr. Johnson",
     description: "Here's your personalized follow-up about your recent visit and next steps for your care.",
-    videoUrl: "/videoplayback.mp4",
+    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
     thumbnailUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=720&h=1280&fit=crop&q=80&sat=-100",
     posterUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=720&h=1280&fit=crop&q=80&sat=-100",
     duration: 120,

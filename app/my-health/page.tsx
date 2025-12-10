@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSession, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { HeartScore } from "@/components/HeartScore";
 import { TrustBadge } from "@/components/TrustBadge";
 import { ScheduleAppointment } from "@/components/ScheduleAppointment";
 import { ChatOnboarding } from "@/components/ChatOnboarding";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { AuthPrompt } from "@/components/AuthPrompt";
 import { UserMenu } from "@/components/UserMenu";
-import { signOut } from "next-auth/react";
 import {
   User,
   Mail,
@@ -21,22 +22,14 @@ import {
   ChevronRight,
   MessageCircle,
   CheckCircle2,
+  Lock,
+  Loader2,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Doctor, User as UserType } from "@/lib/types";
 
 // Mock data
-const MOCK_USER: UserType = {
-  id: "650e8400-e29b-41d4-a716-446655440001",
-  name: "Dave Thompson",
-  email: "dave@example.com",
-  phone: "(617) 555-1234",
-  dateOfBirth: "1985-06-15",
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
-};
-
 const MOCK_DOCTOR: Doctor = {
   id: "550e8400-e29b-41d4-a716-446655440001",
   name: "Sarah Johnson",
@@ -58,12 +51,168 @@ const ACTION_SCORES: Record<string, number> = {
   water: 3,
 };
 
+// Unauthenticated view component
+const UnauthenticatedView = () => {
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-100">
+      {/* Header */}
+      <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-30">
+        <div className="dashboard-container">
+          <div className="flex items-center justify-between py-4">
+            <Link href="/feed" className="flex items-center">
+              <Image
+                src="/images/1another-logo.png"
+                alt="1Another - Intelligent Health"
+                width={280}
+                height={80}
+                className="h-16 w-auto"
+                priority
+              />
+            </Link>
+            <nav className="hidden md:flex items-center gap-6">
+              <Link href="/feed" className="text-gray-600 hover:text-gray-900 font-medium">
+                My Feed
+              </Link>
+              <Link href="/discover" className="text-gray-600 hover:text-gray-900 font-medium">
+                Discover
+              </Link>
+              <Link href="/my-health" className="text-primary-600 font-semibold border-b-2 border-primary-600 pb-1">
+                My Health
+              </Link>
+            </nav>
+          </div>
+        </div>
+      </header>
+
+      {/* Main content */}
+      <main className="dashboard-container py-16">
+        <div className="max-w-lg mx-auto text-center">
+          {/* Lock icon */}
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-white shadow-lg mb-6">
+            <Lock className="w-10 h-10 text-sky-600" />
+          </div>
+
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">
+            Your Personal Health Dashboard
+          </h1>
+          
+          <p className="text-gray-600 text-lg mb-8">
+            Sign in to access your health profile, track your progress, set reminders, and stay connected with your doctors.
+          </p>
+
+          {/* Benefits */}
+          <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 text-left">
+            <h2 className="font-semibold text-gray-900 mb-4">What you'll get:</h2>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                <span className="text-gray-700">Track your health score and daily tasks</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                <span className="text-gray-700">Schedule appointments with your doctors</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                <span className="text-gray-700">Get personalized health reminders</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                <span className="text-gray-700">View your insurance and provider info</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Sign in button */}
+          <button
+            onClick={() => setShowAuthPrompt(true)}
+            className="w-full max-w-sm mx-auto flex items-center justify-center gap-2 px-6 py-4 bg-sky-600 text-white rounded-xl font-semibold text-lg hover:bg-sky-700 transition-colors shadow-lg"
+          >
+            Sign In to Continue
+          </button>
+
+          {/* Or browse content */}
+          <p className="mt-6 text-gray-500">
+            Not ready yet?{" "}
+            <Link href="/feed" className="text-sky-600 font-medium hover:underline">
+              Browse health content
+            </Link>
+          </p>
+        </div>
+      </main>
+
+      {/* Mobile navigation */}
+      <nav className="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 z-30">
+        <div className="flex items-center justify-around py-1.5">
+          <Link href="/feed" className="flex flex-col items-center gap-0.5 text-gray-600">
+            <Play className="w-5 h-5" />
+            <span className="text-[10px] font-medium">My Feed</span>
+          </Link>
+          <Link href="/discover" className="flex flex-col items-center gap-0.5 text-gray-600">
+            <div className="w-5 h-5 rounded-full border-2 border-gray-600 flex items-center justify-center">
+              <Play className="w-2.5 h-2.5" />
+            </div>
+            <span className="text-[10px] font-medium">Discover</span>
+          </Link>
+          <Link href="/my-health" className="flex flex-col items-center gap-0.5 text-primary-600">
+            <Heart className="w-5 h-5" fill="currentColor" />
+            <span className="text-[10px] font-medium">My Health</span>
+          </Link>
+        </div>
+      </nav>
+
+      {/* Auth Prompt */}
+      <AuthPrompt
+        isOpen={showAuthPrompt}
+        onClose={() => setShowAuthPrompt(false)}
+        trigger="personalized_content"
+      />
+    </div>
+  );
+};
+
+// Loading view
+const LoadingView = () => (
+  <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="text-center">
+      <Loader2 className="w-12 h-12 animate-spin text-sky-600 mx-auto mb-4" />
+      <p className="text-gray-600">Loading your health dashboard...</p>
+    </div>
+  </div>
+);
+
 export default function MyHealthPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  
   const [isScheduleOpen, setIsScheduleOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
   const [isHeartAnimating, setIsHeartAnimating] = useState(false);
   const [floatingCheck, setFloatingCheck] = useState<{id: string; active: boolean} | null>(null);
+
+  // Show loading state while checking auth
+  if (status === "loading") {
+    return <LoadingView />;
+  }
+
+  // Show unauthenticated view if not signed in
+  if (status === "unauthenticated") {
+    return <UnauthenticatedView />;
+  }
+
+  // Create user object from session
+  const currentUser: UserType = {
+    id: session?.user?.id || "user-id",
+    name: session?.user?.name || "User",
+    email: session?.user?.email || "user@example.com",
+    phone: "(617) 555-1234", // Mock data
+    dateOfBirth: "1985-06-15", // Mock data
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
   
   // Calculate health score based on completed items
   const baseScore = 55;
@@ -115,68 +264,67 @@ export default function MyHealthPage() {
   };
 
   return (
-    <ProtectedRoute>
-      <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
-          <div className="dashboard-container">
-            <div className="flex items-center justify-between py-4">
-              {/* Left: Logo and Nav */}
-              <div className="flex items-center gap-6">
-                <Link href="/feed" className="flex items-center">
-                  <Image
-                    src="/images/1another-logo.png"
-                    alt="1Another - Intelligent Health"
-                    width={280}
-                    height={80}
-                    className="h-16 w-auto"
-                    priority
-                  />
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
+        <div className="dashboard-container">
+          <div className="flex items-center justify-between py-4">
+            {/* Left: Logo and Nav */}
+            <div className="flex items-center gap-6">
+              <Link href="/feed" className="flex items-center">
+                <Image
+                  src="/images/1another-logo.png"
+                  alt="1Another - Intelligent Health"
+                  width={280}
+                  height={80}
+                  className="h-16 w-auto"
+                  priority
+                />
+              </Link>
+              <nav className="hidden md:flex items-center gap-6">
+                <Link href="/feed" className="text-gray-600 hover:text-gray-900 font-medium">
+                  My Feed
                 </Link>
-                <nav className="hidden md:flex items-center gap-6">
-                  <Link href="/feed" className="text-gray-600 hover:text-gray-900 font-medium">
-                    My Feed
-                  </Link>
-                  <Link href="/discover" className="text-gray-600 hover:text-gray-900 font-medium">
-                    Discover
-                  </Link>
-                  <Link href="/my-health" className="text-primary-600 font-semibold border-b-2 border-primary-600 pb-1">
-                    My Health
-                  </Link>
-                </nav>
-              </div>
+                <Link href="/discover" className="text-gray-600 hover:text-gray-900 font-medium">
+                  Discover
+                </Link>
+                <Link href="/my-health" className="text-primary-600 font-semibold border-b-2 border-primary-600 pb-1">
+                  My Health
+                </Link>
+              </nav>
+            </div>
 
-              {/* Right: Insurance Logos, Heart Score, User Menu */}
-              <div className="flex items-center gap-4">
-                {/* Insurance Logos - hidden on mobile */}
-                <div className="hidden md:flex items-center gap-2">
-                  <div className="bg-[#003A70] rounded px-2 py-1">
-                    <Image
-                      src="/images/kaiser-logo.png"
-                      alt="Kaiser Permanente"
-                      width={80}
-                      height={22}
-                      className="h-5 w-auto"
-                    />
-                  </div>
+            {/* Right: Insurance Logos, Heart Score, User Menu */}
+            <div className="flex items-center gap-4">
+              {/* Insurance Logos - hidden on mobile */}
+              <div className="hidden md:flex items-center gap-2">
+                <div className="bg-[#003A70] rounded px-2 py-1">
                   <Image
-                    src="/images/united-healthcare-logo.svg"
-                    alt="UnitedHealthcare"
-                    width={120}
-                    height={28}
-                    className="h-6 w-auto"
+                    src="/images/kaiser-logo.png"
+                    alt="Kaiser Permanente"
+                    width={80}
+                    height={22}
+                    className="h-5 w-auto"
                   />
                 </div>
-                {/* Heart Score - always visible */}
-                <HeartScore score={healthScore} isAnimating={isHeartAnimating} />
-                {/* User Menu - hidden on mobile, visible on desktop */}
-                <div className="hidden sm:block">
-                  <UserMenu />
-                </div>
+                <Image
+                  src="/images/united-healthcare-logo.svg"
+                  alt="UnitedHealthcare"
+                  width={120}
+                  height={28}
+                  className="h-6 w-auto"
+                />
+              </div>
+              {/* Heart Score - always visible */}
+              <HeartScore score={healthScore} isAnimating={isHeartAnimating} />
+              {/* User Menu - hidden on mobile, visible on desktop */}
+              <div className="hidden sm:block">
+                <UserMenu />
               </div>
             </div>
           </div>
-        </header>
+        </div>
+      </header>
 
       {/* Main content */}
       <main className="dashboard-container py-8">
@@ -623,12 +771,12 @@ export default function MyHealthPage() {
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center">
                 <span className="text-white text-2xl font-bold">
-                  {MOCK_USER.name.charAt(0)}
+                  {currentUser.name.charAt(0)}
                 </span>
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">
-                  {MOCK_USER.name}
+                  {currentUser.name}
                 </h2>
                 <p className="text-gray-500">Patient Profile</p>
               </div>
@@ -645,24 +793,24 @@ export default function MyHealthPage() {
               <Mail className="w-5 h-5 text-gray-400" />
               <div>
                 <p className="text-xs text-gray-500 font-medium">Email</p>
-                <span>{MOCK_USER.email}</span>
+                <span>{currentUser.email}</span>
               </div>
             </div>
-            {MOCK_USER.phone && (
+            {currentUser.phone && (
               <div className="flex items-center gap-3 text-gray-700 p-3 bg-gray-50 rounded-lg">
                 <Phone className="w-5 h-5 text-gray-400" />
                 <div>
                   <p className="text-xs text-gray-500 font-medium">Phone</p>
-                  <span>{MOCK_USER.phone}</span>
+                  <span>{currentUser.phone}</span>
                 </div>
               </div>
             )}
-            {MOCK_USER.dateOfBirth && (
+            {currentUser.dateOfBirth && (
               <div className="flex items-center gap-3 text-gray-700 p-3 bg-gray-50 rounded-lg">
                 <Calendar className="w-5 h-5 text-gray-400" />
                 <div>
                   <p className="text-xs text-gray-500 font-medium">Date of Birth</p>
-                  <span>{new Date(MOCK_USER.dateOfBirth).toLocaleDateString()}</span>
+                  <span>{new Date(currentUser.dateOfBirth).toLocaleDateString()}</span>
                 </div>
               </div>
             )}
@@ -670,7 +818,7 @@ export default function MyHealthPage() {
               <User className="w-5 h-5 text-gray-400" />
               <div>
                 <p className="text-xs text-gray-500 font-medium">Patient ID</p>
-                <span className="text-sm font-mono">{MOCK_USER.id.slice(0, 8)}...</span>
+                <span className="text-sm font-mono">{currentUser.id.slice(0, 8)}...</span>
               </div>
             </div>
           </div>
@@ -689,28 +837,28 @@ export default function MyHealthPage() {
       {/* Floating message button */}
       <button
         onClick={handleOpenChat}
-        className="fixed bottom-20 md:bottom-8 right-4 md:right-8 flex items-center justify-center w-14 h-14 bg-primary-600 rounded-full shadow-lg hover:bg-primary-700 hover:scale-110 transition-all duration-200 z-40"
+        className="fixed bottom-14 md:bottom-8 right-4 md:right-8 flex items-center justify-center w-12 h-12 bg-primary-600 rounded-full shadow-lg hover:bg-primary-700 hover:scale-110 transition-all duration-200 z-40"
         aria-label="Message your doctor"
       >
-        <MessageCircle className="w-6 h-6 text-white" />
+        <MessageCircle className="w-5 h-5 text-white" />
       </button>
 
       {/* Mobile navigation */}
       <nav className="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 z-30">
-        <div className="flex items-center justify-around py-3">
-          <Link href="/feed" className="flex flex-col items-center gap-1 text-gray-600">
-            <Play className="w-6 h-6" />
-            <span className="text-xs font-medium">My Feed</span>
+        <div className="flex items-center justify-around py-1.5">
+          <Link href="/feed" className="flex flex-col items-center gap-0.5 text-gray-600">
+            <Play className="w-5 h-5" />
+            <span className="text-[10px] font-medium">My Feed</span>
           </Link>
-          <Link href="/discover" className="flex flex-col items-center gap-1 text-gray-600">
-            <div className="w-6 h-6 rounded-full border-2 border-gray-600 flex items-center justify-center">
-              <Play className="w-3 h-3" />
+          <Link href="/discover" className="flex flex-col items-center gap-0.5 text-gray-600">
+            <div className="w-5 h-5 rounded-full border-2 border-gray-600 flex items-center justify-center">
+              <Play className="w-2.5 h-2.5" />
             </div>
-            <span className="text-xs font-medium">Discover</span>
+            <span className="text-[10px] font-medium">Discover</span>
           </Link>
-          <Link href="/my-health" className="flex flex-col items-center gap-1 text-primary-600">
-            <Heart className="w-6 h-6" fill="currentColor" />
-            <span className="text-xs font-medium">My Health</span>
+          <Link href="/my-health" className="flex flex-col items-center gap-0.5 text-primary-600">
+            <Heart className="w-5 h-5" fill="currentColor" />
+            <span className="text-[10px] font-medium">My Health</span>
           </Link>
         </div>
       </nav>
@@ -720,7 +868,7 @@ export default function MyHealthPage() {
         isOpen={isScheduleOpen}
         onClose={() => setIsScheduleOpen(false)}
         doctor={MOCK_DOCTOR}
-        userId={MOCK_USER.id}
+        userId={currentUser.id}
       />
 
       {/* Chat onboarding */}
@@ -728,10 +876,9 @@ export default function MyHealthPage() {
         isOpen={isChatOpen}
         onClose={handleCloseChat}
         doctor={MOCK_DOCTOR}
-        patientName={MOCK_USER.name}
-        userId={MOCK_USER.id}
+        patientName={currentUser.name}
+        userId={currentUser.id}
       />
-      </div>
-    </ProtectedRoute>
+    </div>
   );
 }

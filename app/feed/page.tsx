@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState, useRef, Suspense } from "react";
+import { useEffect, useState, useRef, Suspense, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { VideoCard } from "@/components/VideoCard";
 import { ChatOnboarding } from "@/components/ChatOnboarding";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
-import { Calendar, Heart, ArrowLeft, Play, Search, Share2 } from "lucide-react";
+import { AuthPrompt } from "@/components/AuthPrompt";
+import { useEngagement } from "@/hooks/useEngagement";
+import { Calendar, Heart, ArrowLeft, Play, Search, Share2, User } from "lucide-react";
 import { HeartScore } from "@/components/HeartScore";
 import type { Video, Doctor } from "@/lib/types";
 import Image from "next/image";
@@ -169,12 +171,32 @@ const FeedContent = () => {
   const searchParams = useSearchParams();
   const patientId = searchParams.get("p");
   const doctorFilter = searchParams.get("doctor");
+  
+  // Auth state
+  const { data: session, status } = useSession();
+  const isAuthenticated = status === "authenticated";
+  
+  // Engagement tracking
+  const {
+    engagement,
+    isLoaded: isEngagementLoaded,
+    trackVideoView,
+    trackVideoComplete,
+    trackWatchTime,
+    trackInteraction,
+    hasEarnedTrust,
+    markAuthPromptDismissed,
+  } = useEngagement();
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [healthScore, setHealthScore] = useState(55); // Start at 55%
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+  const [authPromptTrigger, setAuthPromptTrigger] = useState<"earned_trust" | "save_progress" | "set_reminder" | "personalized_content" | "follow_doctor">("earned_trust");
   const containerRef = useRef<HTMLDivElement>(null);
+  const watchTimeRef = useRef<number>(0);
+  const watchTimeIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Filter videos by doctor if specified
   const filteredVideos = doctorFilter
@@ -182,6 +204,49 @@ const FeedContent = () => {
     : MOCK_VIDEOS;
 
   const selectedDoctor = doctorFilter ? MOCK_DOCTORS[doctorFilter] : MOCK_DOCTOR;
+  const currentVideo = filteredVideos[currentIndex];
+
+  // Get patient name - use session name if authenticated, or default to "there"
+  const patientName = session?.user?.name?.split(" ")[0] || "there";
+
+  // Track watch time while video is playing
+  useEffect(() => {
+    if (currentVideo) {
+      // Start tracking watch time
+      watchTimeIntervalRef.current = setInterval(() => {
+        watchTimeRef.current += 5;
+        if (watchTimeRef.current % 30 === 0) {
+          // Save every 30 seconds of watch time
+          trackWatchTime(30);
+        }
+      }, 5000);
+    }
+
+    return () => {
+      if (watchTimeIntervalRef.current) {
+        clearInterval(watchTimeIntervalRef.current);
+      }
+    };
+  }, [currentVideo, trackWatchTime]);
+
+  // Show auth prompt after earned trust (if not authenticated)
+  useEffect(() => {
+    if (
+      isEngagementLoaded &&
+      hasEarnedTrust &&
+      !isAuthenticated &&
+      !showAuthPrompt &&
+      engagement.videosWatched.length >= 1 &&
+      !engagement.authPromptDismissedAt
+    ) {
+      // Small delay to not interrupt the viewing experience
+      const timer = setTimeout(() => {
+        setAuthPromptTrigger("earned_trust");
+        setShowAuthPrompt(true);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isEngagementLoaded, hasEarnedTrust, isAuthenticated, showAuthPrompt, engagement]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -194,12 +259,24 @@ const FeedContent = () => {
 
       if (newIndex !== currentIndex && newIndex < filteredVideos.length) {
         setCurrentIndex(newIndex);
+        // Track video view when scrolling to a new video
+        const video = filteredVideos[newIndex];
+        if (video) {
+          trackVideoView(video.id);
+        }
       }
     };
 
     container.addEventListener("scroll", handleScroll);
     return () => container.removeEventListener("scroll", handleScroll);
-  }, [currentIndex, filteredVideos.length]);
+  }, [currentIndex, filteredVideos, trackVideoView]);
+
+  // Track first video view on mount
+  useEffect(() => {
+    if (filteredVideos.length > 0) {
+      trackVideoView(filteredVideos[0].id);
+    }
+  }, [filteredVideos, trackVideoView]);
 
   const handleOpenChat = () => {
     setIsChatOpen(true);
@@ -212,6 +289,15 @@ const FeedContent = () => {
   };
 
   const handleHeartClick = () => {
+    trackInteraction();
+    
+    // If not authenticated, prompt to sign in for personalized reminders
+    if (!isAuthenticated) {
+      setAuthPromptTrigger("set_reminder");
+      setShowAuthPrompt(true);
+      return;
+    }
+    
     setIsActionMenuOpen(true);
   };
 
@@ -219,7 +305,12 @@ const FeedContent = () => {
     setIsActionMenuOpen(false);
   };
 
-  const handleVideoComplete = () => {
+  const handleVideoComplete = useCallback(() => {
+    // Track video completion
+    if (currentVideo) {
+      trackVideoComplete(currentVideo.id);
+    }
+    
     // Update health score when video is completed
     if (currentIndex === 0) {
       // Completed doctor's personalized video - big boost!
@@ -227,6 +318,33 @@ const FeedContent = () => {
     } else {
       // Completed educational video - small boost
       setHealthScore((prev) => Math.min(prev + 5, 100));
+    }
+  }, [currentVideo, currentIndex, trackVideoComplete]);
+
+  const handleCloseAuthPrompt = () => {
+    setShowAuthPrompt(false);
+    markAuthPromptDismissed();
+  };
+
+  const handleShare = async () => {
+    trackInteraction();
+    
+    const video = filteredVideos[currentIndex];
+    if (!video) return;
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: video.title,
+          text: video.description || `Check out this video: ${video.title}`,
+          url: window.location.href,
+        });
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        alert("Link copied to clipboard!");
+      }
+    } catch (error) {
+      console.error("Error sharing:", error);
     }
   };
 
@@ -318,18 +436,40 @@ const FeedContent = () => {
 
           {/* User Section */}
           <div className="p-4 border-t border-gray-100">
-            <Link
-              href="/my-health"
-              className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
-            >
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#00BFA6] to-[#00A6CE] flex items-center justify-center">
-                <span className="text-white font-bold text-sm">D</span>
-              </div>
-              <div className="flex-1">
-                <p className="font-medium text-gray-900 text-sm">Dave Thompson</p>
-                <p className="text-xs text-gray-500">View Profile</p>
-              </div>
-            </Link>
+            {isAuthenticated ? (
+              <Link
+                href="/my-health"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+              >
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#00BFA6] to-[#00A6CE] flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">
+                    {session?.user?.name?.charAt(0) || "U"}
+                  </span>
+                </div>
+                <div className="flex-1">
+                  <p className="font-medium text-gray-900 text-sm">
+                    {session?.user?.name || "User"}
+                  </p>
+                  <p className="text-xs text-gray-500">View Profile</p>
+                </div>
+              </Link>
+            ) : (
+              <button
+                onClick={() => {
+                  setAuthPromptTrigger("save_progress");
+                  setShowAuthPrompt(true);
+                }}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors w-full"
+              >
+                <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                  <User className="w-5 h-5 text-gray-500" />
+                </div>
+                <div className="flex-1 text-left">
+                  <p className="font-medium text-gray-900 text-sm">Sign In</p>
+                  <p className="text-xs text-gray-500">Save your progress</p>
+                </div>
+              </button>
+            )}
           </div>
         </aside>
 
@@ -349,7 +489,7 @@ const FeedContent = () => {
                         video={video}
                         doctor={videoDoctor}
                         isPersonalized={video.isPersonalized}
-                        patientName="Dave"
+                        patientName={patientName}
                         isActive={isCurrentVideo}
                         onComplete={handleVideoComplete}
                         onMessage={handleOpenChat}
@@ -418,22 +558,7 @@ const FeedContent = () => {
                       {/* Share button */}
                       {!video.isPersonalized && (
                         <button
-                          onClick={async () => {
-                            try {
-                              if (navigator.share) {
-                                await navigator.share({
-                                  title: video.title,
-                                  text: video.description || `Check out this video: ${video.title}`,
-                                  url: window.location.href,
-                                });
-                              } else {
-                                await navigator.clipboard.writeText(window.location.href);
-                                alert("Link copied to clipboard!");
-                              }
-                            } catch (error) {
-                              console.error("Error sharing:", error);
-                            }
-                          }}
+                          onClick={handleShare}
                           className="flex flex-col items-center gap-2 group"
                           aria-label="Share video"
                         >
@@ -452,20 +577,20 @@ const FeedContent = () => {
 
           {/* Mobile navigation */}
           <nav className="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 z-30">
-            <div className="flex items-center justify-around py-3">
-              <Link href="/feed" className="flex flex-col items-center gap-1 text-primary-600">
-                <Play className="w-6 h-6" fill="currentColor" />
-                <span className="text-xs font-medium">My Feed</span>
+            <div className="flex items-center justify-around py-1.5">
+              <Link href="/feed" className="flex flex-col items-center gap-0.5 text-primary-600">
+                <Play className="w-5 h-5" fill="currentColor" />
+                <span className="text-[10px] font-medium">My Feed</span>
               </Link>
-              <Link href="/discover" className="flex flex-col items-center gap-1 text-gray-600">
-                <div className="w-6 h-6 rounded-full border-2 border-gray-600 flex items-center justify-center">
-                  <Play className="w-3 h-3" />
+              <Link href="/discover" className="flex flex-col items-center gap-0.5 text-gray-600">
+                <div className="w-5 h-5 rounded-full border-2 border-gray-600 flex items-center justify-center">
+                  <Play className="w-2.5 h-2.5" />
                 </div>
-                <span className="text-xs font-medium">Discover</span>
+                <span className="text-[10px] font-medium">Discover</span>
               </Link>
-              <Link href="/my-health" className="flex flex-col items-center gap-1 text-gray-600">
-                <Heart className="w-6 h-6" />
-                <span className="text-xs font-medium">My Health</span>
+              <Link href="/my-health" className="flex flex-col items-center gap-0.5 text-gray-600">
+                <Heart className="w-5 h-5" />
+                <span className="text-[10px] font-medium">My Health</span>
               </Link>
             </div>
           </nav>
@@ -477,8 +602,15 @@ const FeedContent = () => {
         isOpen={isChatOpen}
         onClose={handleCloseChat}
         doctor={selectedDoctor}
-        patientName="Dave"
-        userId={patientId || "demo-user"}
+        patientName={patientName}
+        userId={session?.user?.id || patientId || "anonymous"}
+      />
+
+      {/* Auth Prompt - Shows after earned trust */}
+      <AuthPrompt
+        isOpen={showAuthPrompt}
+        onClose={handleCloseAuthPrompt}
+        trigger={authPromptTrigger}
       />
 
       {/* Action Items / Reminders Menu */}
@@ -595,14 +727,12 @@ const FeedContent = () => {
 
 export default function FeedPage() {
   return (
-    <ProtectedRoute>
-      <Suspense fallback={
-        <div className="feed-container flex items-center justify-center">
-          <div className="text-white text-xl">Loading your personalized feed...</div>
-        </div>
-      }>
-        <FeedContent />
-      </Suspense>
-    </ProtectedRoute>
+    <Suspense fallback={
+      <div className="feed-container flex items-center justify-center">
+        <div className="text-gray-600 text-xl">Loading your personalized feed...</div>
+      </div>
+    }>
+      <FeedContent />
+    </Suspense>
   );
 }

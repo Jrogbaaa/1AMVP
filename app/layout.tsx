@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
+import { Providers } from "@/components/Providers";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -35,9 +36,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn(inter.variable)}>
       <body className="min-h-screen">
-        <ConvexClientProvider>
-          {children}
-        </ConvexClientProvider>
+        <Providers>
+          <ConvexClientProvider>
+            {children}
+          </ConvexClientProvider>
+        </Providers>
       </body>
     </html>
   );

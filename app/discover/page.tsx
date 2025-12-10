@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Play, MessageCircle, Heart, Filter, Check } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { Play, MessageCircle, Heart, Filter, Check, User } from "lucide-react";
 import { HeartScore } from "@/components/HeartScore";
 import { TrustBadge } from "@/components/TrustBadge";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { UserMenu } from "@/components/UserMenu";
 import { ChatOnboarding } from "@/components/ChatOnboarding";
+import { AuthPrompt } from "@/components/AuthPrompt";
+import { useEngagement } from "@/hooks/useEngagement";
 import Image from "next/image";
 import Link from "next/link";
 import type { Doctor } from "@/lib/types";
@@ -112,11 +114,21 @@ const MOCK_DOCTORS: Doctor[] = [
 ];
 
 export default function DiscoverPage() {
+  // Auth state
+  const { data: session, status } = useSession();
+  const isAuthenticated = status === "authenticated";
+  
+  // Engagement tracking
+  const { trackInteraction } = useEngagement();
+  
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedTopic, setSelectedTopic] = useState<string>("all");
   const [selectedSpecialty, setSelectedSpecialty] = useState<string>("all");
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+  const [authPromptTrigger, setAuthPromptTrigger] = useState<"earned_trust" | "save_progress" | "set_reminder" | "personalized_content" | "follow_doctor">("follow_doctor");
+  
   // Initialize with first three doctors already added
   const [addedDoctors, setAddedDoctors] = useState<Set<string>>(
     new Set([
@@ -127,9 +139,11 @@ export default function DiscoverPage() {
   );
   const healthScore = 55;
 
-  const categories = ["all", "cardiology", "nutrition-exercise"];
   const cardiologyTopics = ["all", "blood-pressure", "heart-disease", "arrhythmia", "cholesterol"];
   const specialties = ["all", "cardiology", "primary-care", "endocrinology", "gastroenterology", "pulmonology"];
+
+  // Get patient name for display
+  const patientName = session?.user?.name?.split(" ")[0] || "there";
 
   const handleOpenChat = () => {
     setIsChatOpen(true);
@@ -141,78 +155,112 @@ export default function DiscoverPage() {
 
   const handleDoctorClick = (doctor: Doctor) => {
     setSelectedDoctor(doctor);
+    trackInteraction();
+    
+    // If not authenticated and trying to add a new doctor, prompt to sign in
+    if (!isAuthenticated && !addedDoctors.has(doctor.id)) {
+      setAuthPromptTrigger("follow_doctor");
+      setShowAuthPrompt(true);
+      return;
+    }
+    
     setAddedDoctors((prev) => new Set(prev).add(doctor.id));
   };
 
   const handleAddDoctor = (e: React.MouseEvent, doctorId: string) => {
     e.preventDefault();
     e.stopPropagation();
+    trackInteraction();
+    
+    // If not authenticated, prompt to sign in to follow doctors
+    if (!isAuthenticated) {
+      setAuthPromptTrigger("follow_doctor");
+      setShowAuthPrompt(true);
+      return;
+    }
+    
     setAddedDoctors((prev) => new Set(prev).add(doctorId));
   };
 
-  return (
-    <ProtectedRoute>
-      <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
-          <div className="dashboard-container">
-            <div className="flex items-center justify-between py-4">
-              {/* Left: Logo and Nav */}
-              <div className="flex items-center gap-6">
-                <Link href="/feed" className="flex items-center">
-                  <Image
-                    src="/images/1another-logo.png"
-                    alt="1Another - Intelligent Health"
-                    width={280}
-                    height={80}
-                    className="h-16 w-auto"
-                    priority
-                  />
-                </Link>
-                <nav className="hidden md:flex items-center gap-6">
-                  <Link href="/feed" className="text-gray-600 hover:text-gray-900 font-medium">
-                    My Feed
-                  </Link>
-                  <Link href="/discover" className="text-primary-600 font-semibold border-b-2 border-primary-600 pb-1">
-                    Discover
-                  </Link>
-                  <Link href="/my-health" className="text-gray-600 hover:text-gray-900 font-medium">
-                    My Health
-                  </Link>
-                </nav>
-              </div>
+  const handleCloseAuthPrompt = () => {
+    setShowAuthPrompt(false);
+  };
 
-              {/* Right: Insurance Logos, Heart Score, User Menu */}
-              <div className="flex items-center gap-4">
-                {/* Insurance Logos - hidden on mobile */}
-                <div className="hidden md:flex items-center gap-2">
-                  <div className="bg-[#003A70] rounded px-2 py-1">
-                    <Image
-                      src="/images/kaiser-logo.png"
-                      alt="Kaiser Permanente"
-                      width={80}
-                      height={22}
-                      className="h-5 w-auto"
-                    />
-                  </div>
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
+        <div className="dashboard-container">
+          <div className="flex items-center justify-between py-4">
+            {/* Left: Logo and Nav */}
+            <div className="flex items-center gap-6">
+              <Link href="/feed" className="flex items-center">
+                <Image
+                  src="/images/1another-logo.png"
+                  alt="1Another - Intelligent Health"
+                  width={280}
+                  height={80}
+                  className="h-16 w-auto"
+                  priority
+                />
+              </Link>
+              <nav className="hidden md:flex items-center gap-6">
+                <Link href="/feed" className="text-gray-600 hover:text-gray-900 font-medium">
+                  My Feed
+                </Link>
+                <Link href="/discover" className="text-primary-600 font-semibold border-b-2 border-primary-600 pb-1">
+                  Discover
+                </Link>
+                <Link href="/my-health" className="text-gray-600 hover:text-gray-900 font-medium">
+                  My Health
+                </Link>
+              </nav>
+            </div>
+
+            {/* Right: Insurance Logos, Heart Score, User Menu */}
+            <div className="flex items-center gap-4">
+              {/* Insurance Logos - hidden on mobile */}
+              <div className="hidden md:flex items-center gap-2">
+                <div className="bg-[#003A70] rounded px-2 py-1">
                   <Image
-                    src="/images/united-healthcare-logo.svg"
-                    alt="UnitedHealthcare"
-                    width={120}
-                    height={28}
-                    className="h-6 w-auto"
+                    src="/images/kaiser-logo.png"
+                    alt="Kaiser Permanente"
+                    width={80}
+                    height={22}
+                    className="h-5 w-auto"
                   />
                 </div>
-                {/* Heart Score - always visible */}
-                <HeartScore score={healthScore} />
-                {/* User Menu - hidden on mobile, visible on desktop */}
-                <div className="hidden sm:block">
+                <Image
+                  src="/images/united-healthcare-logo.svg"
+                  alt="UnitedHealthcare"
+                  width={120}
+                  height={28}
+                  className="h-6 w-auto"
+                />
+              </div>
+              {/* Heart Score - always visible */}
+              <HeartScore score={healthScore} />
+              {/* User Menu or Sign In button */}
+              <div className="hidden sm:block">
+                {isAuthenticated ? (
                   <UserMenu />
-                </div>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setAuthPromptTrigger("save_progress");
+                      setShowAuthPrompt(true);
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 bg-sky-600 text-white rounded-lg font-medium hover:bg-sky-700 transition-colors"
+                  >
+                    <User className="w-4 h-4" />
+                    Sign In
+                  </button>
+                )}
               </div>
             </div>
           </div>
-        </header>
+        </div>
+      </header>
 
       {/* Main content */}
       <main className="dashboard-container py-8">
@@ -226,7 +274,7 @@ export default function DiscoverPage() {
           </p>
           <div className="bg-primary-50 border-l-4 border-primary-600 p-4 rounded-lg">
             <p className="text-gray-900 font-medium">
-              Hey Dave, here are some other videos I recommend you take a look at:
+              Hey {patientName}, here are some other videos I recommend you take a look at:
             </p>
           </div>
         </div>
@@ -513,41 +561,47 @@ export default function DiscoverPage() {
       {/* Floating message button */}
       <button
         onClick={handleOpenChat}
-        className="fixed bottom-20 md:bottom-8 right-4 md:right-8 flex items-center justify-center w-14 h-14 bg-primary-600 rounded-full shadow-lg hover:bg-primary-700 hover:scale-110 transition-all duration-200 z-40"
+        className="fixed bottom-14 md:bottom-8 right-4 md:right-8 flex items-center justify-center w-12 h-12 bg-primary-600 rounded-full shadow-lg hover:bg-primary-700 hover:scale-110 transition-all duration-200 z-40"
         aria-label="Message your doctor"
       >
-        <MessageCircle className="w-6 h-6 text-white" />
+        <MessageCircle className="w-5 h-5 text-white" />
       </button>
 
       {/* Mobile navigation */}
       <nav className="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 z-30">
-        <div className="flex items-center justify-around py-3">
-          <Link href="/feed" className="flex flex-col items-center gap-1 text-gray-600">
-            <Play className="w-6 h-6" />
-            <span className="text-xs font-medium">My Feed</span>
+        <div className="flex items-center justify-around py-1.5">
+          <Link href="/feed" className="flex flex-col items-center gap-0.5 text-gray-600">
+            <Play className="w-5 h-5" />
+            <span className="text-[10px] font-medium">My Feed</span>
           </Link>
-          <Link href="/discover" className="flex flex-col items-center gap-1 text-primary-600">
-            <div className="w-6 h-6 rounded-full border-2 border-primary-600 flex items-center justify-center">
-              <Play className="w-3 h-3" />
+          <Link href="/discover" className="flex flex-col items-center gap-0.5 text-primary-600">
+            <div className="w-5 h-5 rounded-full border-2 border-primary-600 flex items-center justify-center">
+              <Play className="w-2.5 h-2.5" />
             </div>
-            <span className="text-xs font-medium">Discover</span>
+            <span className="text-[10px] font-medium">Discover</span>
           </Link>
-          <Link href="/my-health" className="flex flex-col items-center gap-1 text-gray-600">
-            <Heart className="w-6 h-6" />
-            <span className="text-xs font-medium">My Health</span>
+          <Link href="/my-health" className="flex flex-col items-center gap-0.5 text-gray-600">
+            <Heart className="w-5 h-5" />
+            <span className="text-[10px] font-medium">My Health</span>
           </Link>
         </div>
       </nav>
+
+      {/* Auth Prompt */}
+      <AuthPrompt
+        isOpen={showAuthPrompt}
+        onClose={handleCloseAuthPrompt}
+        trigger={authPromptTrigger}
+      />
 
       {/* Chat onboarding */}
       <ChatOnboarding
         isOpen={isChatOpen}
         onClose={handleCloseChat}
         doctor={selectedDoctor || MOCK_DOCTORS[0]}
-        patientName="Dave"
-        userId="demo-user"
+        patientName={patientName}
+        userId={session?.user?.id || "anonymous"}
       />
-      </div>
-    </ProtectedRoute>
+    </div>
   );
 }

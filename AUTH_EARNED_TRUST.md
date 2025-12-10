@@ -83,12 +83,13 @@ hooks/
 └── useEngagement.ts      # Tracks video views, watch time, interactions
 ```
 
-### Key Files Modified
+### Key Files
 
-1. **`app/layout.tsx`** - Wrapped with `Providers` (SessionProvider)
-2. **`app/feed/page.tsx`** - Removed `ProtectedRoute`, added engagement tracking
-3. **`app/discover/page.tsx`** - Removed `ProtectedRoute`, soft auth prompts
-4. **`app/my-health/page.tsx`** - Keeps protection with friendly unauthenticated view
+1. **`auth.ts`** - NextAuth configuration with email provider
+2. **`app/layout.tsx`** - Wrapped with `Providers` (SessionProvider)
+3. **`app/feed/page.tsx`** - Anonymous access with engagement tracking
+4. **`app/discover/page.tsx`** - Anonymous access with soft auth prompts
+5. **`app/my-health/page.tsx`** - Protected with friendly unauthenticated view
 
 ### Using the Engagement Hook
 
@@ -148,30 +149,19 @@ const MyPage = () => {
 };
 ```
 
-## Authentication Methods
+## Authentication Method
 
-### Google Sign-In
-- One-click sign-in with Google account
-- Recommended for best UX
-
-### Email Sign-In  
+### Email Sign-In (Credentials)
 - Enter email address
-- Credentials-based auth (development)
-- Can be upgraded to magic link email with Resend
+- Instantly signed in (development mode)
+- In production, add database validation
 
 ## Environment Variables
 
 ```bash
-# Required
-AUTH_SECRET=your-generated-secret
-
-# Optional - Google OAuth
-AUTH_GOOGLE_ID=your-google-client-id
-AUTH_GOOGLE_SECRET=your-google-client-secret
-NEXT_PUBLIC_GOOGLE_OAUTH_ENABLED=true
-
-# Optional - Email (for production magic links)
-AUTH_RESEND_KEY=your-resend-api-key
+# Required for NextAuth
+AUTH_SECRET=your-generated-secret  # Run: openssl rand -base64 32
+AUTH_TRUST_HOST=true
 ```
 
 ## User Journey Example
@@ -186,12 +176,11 @@ AUTH_RESEND_KEY=your-resend-api-key
 4. Engagement tracked: hasEarnedTrust = true
    ↓
 5. After 2 seconds, soft AuthPrompt appears:
-   "Save Your Progress - Create a free account..."
+   "Save Your Progress - Enter your email..."
    ↓
 6. User can:
-   a) Sign in with Google → Full access
-   b) Sign in with Email → Full access  
-   c) Click "Maybe Later" → Continue browsing (prompt hidden 24h)
+   a) Enter email → Full access
+   b) Click "Maybe Later" → Continue browsing (prompt hidden 24h)
    ↓
 7. User continues browsing, maybe watches more videos
    ↓

@@ -5,6 +5,39 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.12.0] - 2024-12-11
+
+### 🩺 Added - Complete Doctor Portal
+
+**New Send Content Page (`/doctor/send`):**
+- 3-step wizard for sending videos to patients
+- Step 1: Multi-select patient list with search
+- Step 2: Chapter-based video selection with expandable sections
+- Step 3: Review summary with optional personal message
+- Success confirmation screen
+- Pre-selection support via URL params (?patient=, ?chapter=, ?video=)
+
+**New Settings Page (`/doctor/settings`):**
+- Profile tab: Avatar upload, personal info, bio editing
+- Notifications tab: Toggle switches for all notification types
+- Security tab: Password change, 2FA setup, active sessions
+- Save functionality with loading states
+
+**Landing Page Update:**
+- Added "Doctor Portal" button to demo section
+- 4-column responsive grid (Magic Link, Discover, My Health, Doctor Portal)
+- Purple gradient styling to distinguish provider access
+- Stethoscope emoji 🩺 for visual clarity
+
+### 📦 New Files
+- `app/doctor/send/page.tsx` - Send content wizard
+- `app/doctor/settings/page.tsx` - Doctor settings page
+
+### 🔄 Breaking Changes
+- None (all changes are backwards compatible)
+
+---
+
 ## [1.11.0] - 2024-12-11
 
 ### 👨‍⚕️ Added - Doctor Portal Dashboard
@@ -21,7 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `/doctor` - Main dashboard with analytics and quick actions
 - `/doctor/patients` - Patient management page
 - `/doctor/messages` - Patient messaging center
-- `/doctor/chapters` - Video library management
+- `/doctor/chapters` - Video library management (10 chapters, 25 videos)
 
 **Dashboard Features:**
 - Patient engagement tracking with video completion progress

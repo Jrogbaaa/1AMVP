@@ -40,7 +40,7 @@ export default async function HomePage({
             </h2>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <Link
               href={demoMagicLink}
               className="group relative overflow-hidden px-6 py-4 bg-primary-600 text-white font-bold rounded-xl hover:bg-primary-700 transition-all shadow-lg hover:shadow-2xl hover:scale-105 duration-200"
@@ -71,6 +71,17 @@ export default async function HomePage({
                 <span className="text-2xl">❤️</span>
                 <span className="text-lg">My Health</span>
                 <span className="text-xs text-gray-500">Health profile</span>
+              </div>
+            </Link>
+            
+            <Link
+              href="/doctor"
+              className="group px-6 py-4 bg-gradient-to-br from-violet-600 to-purple-700 text-white font-bold rounded-xl hover:from-violet-700 hover:to-purple-800 transition-all shadow-lg hover:shadow-2xl hover:scale-105 duration-200"
+            >
+              <div className="flex flex-col items-center gap-2">
+                <span className="text-2xl">🩺</span>
+                <span className="text-lg">Doctor Portal</span>
+                <span className="text-xs text-violet-200">Provider dashboard</span>
               </div>
             </Link>
           </div>

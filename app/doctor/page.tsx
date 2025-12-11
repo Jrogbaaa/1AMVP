@@ -14,6 +14,12 @@ import {
   ArrowRight,
   Calendar,
   Activity,
+  Sparkles,
+  Video,
+  ExternalLink,
+  Wand2,
+  UserCircle,
+  Film,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -429,6 +435,120 @@ export default function DoctorDashboard() {
               </div>
             </Link>
           ))}
+        </div>
+      </div>
+
+      {/* AI Studio Section */}
+      <div className="bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 rounded-2xl border border-violet-200 overflow-hidden">
+        <div className="p-6 border-b border-violet-200">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl">
+              <Sparkles className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">AI Studio</h2>
+              <p className="text-sm text-gray-600">Create personalized videos with your AI avatar</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6">
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Train AI Avatar Card */}
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-violet-100 hover:shadow-md transition-all group">
+              <div className="flex items-start gap-4">
+                <div className="p-3 bg-gradient-to-br from-pink-500 to-rose-600 rounded-xl text-white group-hover:scale-110 transition-transform">
+                  <UserCircle className="w-8 h-8" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                    Train AI on Your Likeness
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Create a realistic AI avatar that looks and sounds like you. Upload a short video sample to get started.
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <a
+                      href="https://www.heygen.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-rose-600 text-white font-medium rounded-lg hover:from-pink-600 hover:to-rose-700 transition-all"
+                    >
+                      <Wand2 className="w-4 h-4" />
+                      Train with HeyGen
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-3">
+                    Powered by HeyGen AI video generation
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Create Personalized Chapters Card */}
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-violet-100 hover:shadow-md transition-all group">
+              <div className="flex items-start gap-4">
+                <div className="p-3 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl text-white group-hover:scale-110 transition-transform">
+                  <Film className="w-8 h-8" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                    Create Your Chapter Videos
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Take our pre-made educational videos and personalize them with your AI avatar. Your face, your voice, your patients.
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <Link
+                      href="/doctor/create-chapters"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-violet-500 to-purple-600 text-white font-medium rounded-lg hover:from-violet-600 hover:to-purple-700 transition-all"
+                    >
+                      <Video className="w-4 h-4" />
+                      Create My Chapters
+                    </Link>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-3">
+                    10 template chapters available for personalization
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* How it Works */}
+          <div className="mt-6 pt-6 border-t border-violet-200">
+            <h4 className="text-sm font-semibold text-gray-700 mb-4">How it works:</h4>
+            <div className="grid md:grid-cols-3 gap-4">
+              <div className="flex items-start gap-3">
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 text-violet-700 font-bold text-sm flex-shrink-0">
+                  1
+                </div>
+                <div>
+                  <p className="font-medium text-gray-900 text-sm">Train Your Avatar</p>
+                  <p className="text-xs text-gray-500">Upload a video to HeyGen to create your AI twin</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 text-violet-700 font-bold text-sm flex-shrink-0">
+                  2
+                </div>
+                <div>
+                  <p className="font-medium text-gray-900 text-sm">Select Templates</p>
+                  <p className="text-xs text-gray-500">Choose from our pre-made educational chapters</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 text-violet-700 font-bold text-sm flex-shrink-0">
+                  3
+                </div>
+                <div>
+                  <p className="font-medium text-gray-900 text-sm">Send to Patients</p>
+                  <p className="text-xs text-gray-500">Your personalized videos are ready to share</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

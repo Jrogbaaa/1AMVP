@@ -16,6 +16,7 @@ import {
   X,
   Bell,
   ChevronDown,
+  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -31,6 +32,11 @@ const NAV_ITEMS: NavItem[] = [
     label: "Dashboard",
     href: "/doctor",
     icon: <LayoutDashboard className="w-5 h-5" />,
+  },
+  {
+    label: "AI Studio",
+    href: "/doctor/create-chapters",
+    icon: <Sparkles className="w-5 h-5" />,
   },
   {
     label: "Patients",

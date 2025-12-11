@@ -5,6 +5,38 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.13.0] - 2024-12-11
+
+### ✨ Added - AI Studio for Video Personalization
+
+**New AI Studio Section on Dashboard:**
+- Prominent AI Studio card on doctor dashboard
+- "Train AI on Your Likeness" - Links to HeyGen (heygen.com) for avatar training
+- "Create Your Chapter Videos" - Links to chapter personalization page
+- "How it Works" 3-step guide (Train Avatar → Select Templates → Send to Patients)
+- Gradient styling with sparkle icons
+
+**New Create Chapters Page (`/doctor/create-chapters`):**
+- Full page for personalizing template videos with AI avatar
+- Progress overview showing chapters completed
+- AI Avatar status card with link to manage in HeyGen
+- 10 template chapters with expandable video lists
+- Checkbox selection for individual videos or entire chapters
+- "Generate" button for per-video or bulk AI video generation
+- Status badges: "Template", "In Progress", "Personalized"
+- Info banner explaining AI video generation process
+
+**Navigation Update:**
+- Added "AI Studio" with sparkles icon to sidebar (after Dashboard)
+
+### 📦 New Files
+- `app/doctor/create-chapters/page.tsx` - AI video personalization page
+
+### 🔄 Breaking Changes
+- None (all changes are backwards compatible)
+
+---
+
 ## [1.12.0] - 2024-12-11
 
 ### 🩺 Added - Complete Doctor Portal

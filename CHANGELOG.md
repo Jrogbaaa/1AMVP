@@ -5,6 +5,86 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.10.0] - 2024-12-11
+
+### 🎥 Added - "Hey Dave" Personalized Video
+
+**New First Video Experience:**
+- Added `hey dave.mp4` as the first video in the feed
+- Hardcoded "Hey Dave" greeting for demo purposes
+- Video displays with "Hey Dave" text overlay
+- Associated with Dr. Jack Ellis
+- Located at `/public/videos/hey dave.mp4`
+
+**Personalized Greeting:**
+- VideoCard now shows "Hey Dave" for all personalized videos
+- Simplified greeting text (removed dynamic name for now)
+- Reminder text: "📅 Schedule your follow-up visit in 3 months"
+
+### 💬 Added - Interactive Q&A Cards
+
+**New Q&A Card Component (`components/QACard.tsx`):**
+- Interactive check-in cards that appear in the feed
+- Beautiful animated gradient background (teal → blue → purple)
+- Floating blur shapes for modern, flowing design
+- 5 different rotating questions:
+  - "Hey Dave, how are you feeling today?"
+  - "Hey Dave, how are your new medications working?"
+  - "Hey Dave, how has your sleep been lately?"
+  - "Hey Dave, have you been staying active?"
+  - "Hey Dave, how's your stress level?"
+
+**Q&A Features:**
+- Emoji-enhanced answer options (4 choices per question)
+- Visual feedback when option selected (scale, color change)
+- "Sent!" confirmation with checkmark
+- "Thanks! Your response has been sent to your doctor" message
+- Auto-reset after 3 seconds for demo purposes
+- +3% health score boost for answering
+
+**Feed Integration:**
+- Q&A cards appear after every 2nd video
+- Pattern: Video → Video → Q&A → Video → Video → Q&A...
+- Desktop sidebar shows Discover and Heart Score buttons
+- Mobile-responsive design matching video cards
+
+### 🎨 Added - New CSS Animations
+
+**Q&A Card Animations (`globals.css`):**
+- `animate-gradient-shift` - Smooth shifting gradient background (8s cycle)
+- `animate-float-slow` - Floating bubble effect (12s cycle)
+- `animate-float-slower` - Slower floating bubble (16s cycle)
+- `animate-pulse-slow` - Gentle pulsing glow (6s cycle)
+
+**Utility Classes:**
+- `hover:scale-102` - Subtle hover scale effect
+- `active:scale-98` - Active press scale effect
+
+### 🔧 Technical Changes
+
+**Files Added:**
+- `components/QACard.tsx` - New Q&A card component with all questions
+- `public/videos/hey dave.mp4` - Personalized video file
+
+**Files Modified:**
+- `app/feed/page.tsx` - Added Hey Dave video, integrated Q&A cards, combined feed logic
+- `app/globals.css` - Added Q&A animations
+- `components/VideoCard.tsx` - Simplified personalized greeting to "Hey Dave"
+
+**Feed Architecture:**
+- New `combinedFeed` array mixing videos and Q&A items
+- Type-safe feed items: `{ type: 'video' | 'qa', data: ... }`
+- Q&A tracking separate from video tracking
+- `handleQAAnswer` callback for future backend integration
+
+### 📦 Dependencies
+- No new dependencies added
+
+### 🔄 Breaking Changes
+- None (all changes are backwards compatible)
+
+---
+
 ## [1.9.0] - 2024-12-04
 
 ### 👨‍⚕️ Added - Dr. Jack Ellis (New Doctor)

@@ -36,6 +36,7 @@ A mobile-first patient communication and education platform that puts **the doct
 │   └── sitemap.ts         # Sitemap generation
 ├── components/
 │   ├── VideoCard.tsx      # TikTok-style video card
+│   ├── QACard.tsx         # Interactive Q&A check-in cards
 │   ├── ChatOnboarding.tsx # Chat-based onboarding
 │   ├── HeartScore.tsx     # Health score indicator
 │   ├── TrustBadge.tsx     # Privacy/security badge
@@ -59,9 +60,38 @@ A mobile-first patient communication and education platform that puts **the doct
     └── images/            # Static assets
 ```
 
-## ✨ Latest Updates (v1.9.0 - Dec 4, 2024)
+## ✨ Latest Updates (v1.10.0 - Dec 11, 2024)
 
-### Dr. Jack Ellis & Video Player Enhancements
+### "Hey Dave" Personalized Video & Interactive Q&A Cards
+
+**🎥 New First Video - "Hey Dave":**
+- Personalized `hey dave.mp4` video as the first thing users see
+- Hardcoded "Hey Dave" greeting text for demo purposes
+- Associated with Dr. Jack Ellis
+- Clean, consistent messaging throughout the app
+
+**💬 Interactive Q&A Cards:**
+- New check-in cards that appear every 2 videos in the feed
+- Beautiful animated gradient background (teal → blue → purple)
+- Floating shapes with modern, flowing design
+- 5 rotating questions:
+  - "How are you feeling today?"
+  - "How are your new medications working?"
+  - "How has your sleep been lately?"
+  - "Have you been staying active?"
+  - "How's your stress level?"
+- Emoji-enhanced answer options
+- Visual feedback with "Sent!" confirmation
+- +3% health score boost for engagement
+
+**🎨 New Animations:**
+- Gradient shift animation for Q&A backgrounds
+- Floating bubble effects
+- Pulse glow animations
+
+---
+
+### Previous Updates (v1.9.0 - Dec 4, 2024)
 
 **👨‍⚕️ New Doctor - Dr. Jack Ellis:**
 - Added Dr. Jack Ellis as the 4th cardiologist on the platform
@@ -384,7 +414,8 @@ npx convex dev  # In a separate terminal
 
 - **Doctors**: Dr. Sarah Johnson, Dr. Michael Chen, Dr. Emily Rodriguez, Dr. Jack Ellis (all Cardiology)
 - **Patient**: Dave Thompson (dave@example.com)
-- **Videos**: 8 videos (1 personalized + 4 educational + 3 Dr. Jack videos)
+- **Videos**: 9 videos (1 "Hey Dave" personalized + 4 educational + 3 Dr. Jack videos + 1 follow-up)
+- **Q&A Cards**: 5 interactive check-in questions (feeling, medications, sleep, exercise, stress)
 
 ### Magic Link Access
 
@@ -400,12 +431,16 @@ This will load Dave Thompson's personalized feed from Dr. Sarah Johnson.
 
 ### 1. My Feed (`/feed`)
 
-- **Card #1**: Personalized doctor video with custom greeting ("Hey Dave, thanks for coming in today!")
+- **Card #1**: "Hey Dave" personalized video greeting
 - **Cards 2+**: AI-curated educational content with doctor explanations
+- **Q&A Cards**: Interactive check-in cards appear every 2 videos
+  - Health check-ins: feeling, medications, sleep, exercise, stress
+  - Animated gradient backgrounds with floating shapes
+  - Emoji-enhanced answer options
+  - Visual feedback with confirmation messages
 - **Doctor Filtering**: View videos from specific doctors via URL parameter
 - Vertical scroll with snap behavior
 - Muted autoplay for browser compatibility
-- Session-based rate limiting (20 videos per 30 minutes)
 - Real-time engagement tracking
 - **Interactive Elements**:
   - Clickable doctor avatar to message

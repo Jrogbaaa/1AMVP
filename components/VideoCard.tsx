@@ -233,10 +233,10 @@ export const VideoCard = ({
         <div className="flex justify-between items-center pointer-events-auto pb-8">
           {/* Left side - Video info */}
           <div className="flex-1 pr-4">
-            {isPersonalized && patientName ? (
+            {isPersonalized ? (
               <div className="space-y-3">
                 <h3 className="text-white font-bold text-2xl drop-shadow-lg">
-                  Hey {patientName}, good to see you today!
+                  Hey Dave
                 </h3>
                 <p className="text-white/90 text-sm drop-shadow-md mt-3">
                   📅 Reminder: Schedule your follow-up visit in 3 months

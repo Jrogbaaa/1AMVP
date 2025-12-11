@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { VideoCard } from "@/components/VideoCard";
+import { QACard, QA_QUESTIONS } from "@/components/QACard";
 import { ChatOnboarding } from "@/components/ChatOnboarding";
 import { AuthPrompt } from "@/components/AuthPrompt";
 import { useEngagement } from "@/hooks/useEngagement";
@@ -53,6 +54,20 @@ const MOCK_DOCTOR = MOCK_DOCTORS["550e8400-e29b-41d4-a716-446655440001"];
 
 const MOCK_VIDEOS: Video[] = [
   {
+    id: "750e8400-e29b-41d4-a716-446655440000",
+    title: "Hey Dave",
+    description: "Your personalized health update",
+    videoUrl: "/videos/hey dave.mp4",
+    thumbnailUrl: "/images/doctors/doctor-jack.jpg",
+    posterUrl: "/images/doctors/doctor-jack.jpg",
+    duration: 60,
+    category: "Follow-Up",
+    tags: ["personalized", "follow-up", "greeting"],
+    doctorId: "550e8400-e29b-41d4-a716-446655440004",
+    isPersonalized: true,
+    createdAt: new Date().toISOString(),
+  },
+  {
     id: "750e8400-e29b-41d4-a716-446655440001",
     title: "Your Follow-Up from Dr. Johnson",
     description: "Here's your personalized follow-up about your recent visit and next steps for your care.",
@@ -63,7 +78,7 @@ const MOCK_VIDEOS: Video[] = [
     category: "Follow-Up",
     tags: ["personalized", "follow-up", "cardiology"],
     doctorId: "550e8400-e29b-41d4-a716-446655440001",
-    isPersonalized: true,
+    isPersonalized: false,
     createdAt: new Date().toISOString(),
   },
   {
@@ -203,15 +218,35 @@ const FeedContent = () => {
     ? MOCK_VIDEOS.filter((video) => video.doctorId === doctorFilter)
     : MOCK_VIDEOS;
 
+  // Create combined feed with Q&A cards interspersed every 2-3 videos
+  type FeedItem = 
+    | { type: 'video'; data: Video }
+    | { type: 'qa'; data: typeof QA_QUESTIONS[number] };
+
+  const combinedFeed: FeedItem[] = [];
+  let qaIndex = 0;
+  
+  filteredVideos.forEach((video, index) => {
+    combinedFeed.push({ type: 'video', data: video });
+    
+    // Insert Q&A card after every 2nd video (after indices 1, 3, 5, etc.)
+    // This creates pattern: video, video, Q&A, video, video, Q&A...
+    if ((index + 1) % 2 === 0 && qaIndex < QA_QUESTIONS.length) {
+      combinedFeed.push({ type: 'qa', data: QA_QUESTIONS[qaIndex] });
+      qaIndex++;
+    }
+  });
+
   const selectedDoctor = doctorFilter ? MOCK_DOCTORS[doctorFilter] : MOCK_DOCTOR;
-  const currentVideo = filteredVideos[currentIndex];
+  const currentFeedItem = combinedFeed[currentIndex];
 
   // Get patient name - use session name if authenticated, or default to "there"
   const patientName = session?.user?.name?.split(" ")[0] || "there";
 
   // Track watch time while video is playing
   useEffect(() => {
-    if (currentVideo) {
+    const currentItem = combinedFeed[currentIndex];
+    if (currentItem && currentItem.type === 'video') {
       // Start tracking watch time
       watchTimeIntervalRef.current = setInterval(() => {
         watchTimeRef.current += 5;
@@ -227,7 +262,7 @@ const FeedContent = () => {
         clearInterval(watchTimeIntervalRef.current);
       }
     };
-  }, [currentVideo, trackWatchTime]);
+  }, [combinedFeed, currentIndex, trackWatchTime]);
 
   // Show auth prompt after earned trust (if not authenticated)
   useEffect(() => {
@@ -257,26 +292,26 @@ const FeedContent = () => {
       const itemHeight = container.clientHeight;
       const newIndex = Math.round(scrollTop / itemHeight);
 
-      if (newIndex !== currentIndex && newIndex < filteredVideos.length) {
+      if (newIndex !== currentIndex && newIndex < combinedFeed.length) {
         setCurrentIndex(newIndex);
-        // Track video view when scrolling to a new video
-        const video = filteredVideos[newIndex];
-        if (video) {
-          trackVideoView(video.id);
+        // Track video view when scrolling to a new video (not Q&A)
+        const feedItem = combinedFeed[newIndex];
+        if (feedItem && feedItem.type === 'video') {
+          trackVideoView(feedItem.data.id);
         }
       }
     };
 
     container.addEventListener("scroll", handleScroll);
     return () => container.removeEventListener("scroll", handleScroll);
-  }, [currentIndex, filteredVideos, trackVideoView]);
+  }, [currentIndex, combinedFeed, trackVideoView]);
 
   // Track first video view on mount
   useEffect(() => {
-    if (filteredVideos.length > 0) {
-      trackVideoView(filteredVideos[0].id);
+    if (combinedFeed.length > 0 && combinedFeed[0].type === 'video') {
+      trackVideoView(combinedFeed[0].data.id);
     }
-  }, [filteredVideos, trackVideoView]);
+  }, [combinedFeed, trackVideoView]);
 
   const handleOpenChat = () => {
     setIsChatOpen(true);
@@ -306,9 +341,10 @@ const FeedContent = () => {
   };
 
   const handleVideoComplete = useCallback(() => {
-    // Track video completion
-    if (currentVideo) {
-      trackVideoComplete(currentVideo.id);
+    // Track video completion (only for video items)
+    const feedItem = combinedFeed[currentIndex];
+    if (feedItem && feedItem.type === 'video') {
+      trackVideoComplete(feedItem.data.id);
     }
     
     // Update health score when video is completed
@@ -319,7 +355,18 @@ const FeedContent = () => {
       // Completed educational video - small boost
       setHealthScore((prev) => Math.min(prev + 5, 100));
     }
-  }, [currentVideo, currentIndex, trackVideoComplete]);
+  }, [combinedFeed, currentIndex, trackVideoComplete]);
+
+  const handleQAAnswer = useCallback((questionId: string, answerId: string) => {
+    // Track Q&A interaction
+    trackInteraction();
+    
+    // Give a small health score boost for engaging with Q&A
+    setHealthScore((prev) => Math.min(prev + 3, 100));
+    
+    // In the future, this would send the answer to the backend
+    console.log(`Q&A Answer: ${questionId} -> ${answerId}`);
+  }, [trackInteraction]);
 
   const handleCloseAuthPrompt = () => {
     setShowAuthPrompt(false);
@@ -329,8 +376,10 @@ const FeedContent = () => {
   const handleShare = async () => {
     trackInteraction();
     
-    const video = filteredVideos[currentIndex];
-    if (!video) return;
+    const feedItem = combinedFeed[currentIndex];
+    if (!feedItem || feedItem.type !== 'video') return;
+
+    const video = feedItem.data;
 
     try {
       if (navigator.share) {
@@ -476,9 +525,53 @@ const FeedContent = () => {
         <div className="feed-container relative lg:ml-64">
           {/* Feed container */}
           <div ref={containerRef} className="snap-container">
-            {filteredVideos.map((video, index) => {
+            {combinedFeed.map((feedItem, index) => {
+              const isCurrentItem = currentIndex === index;
+              
+              // Render Q&A Card
+              if (feedItem.type === 'qa') {
+                return (
+                  <div key={`qa-${feedItem.data.id}`} className="snap-item">
+                    <div className="h-full w-full flex items-center justify-center md:gap-4">
+                      <div className="h-full w-full md:h-[calc(100vh-2rem)] md:max-h-[900px] md:w-auto md:aspect-[9/16] md:rounded-2xl md:overflow-hidden md:shadow-2xl relative">
+                        <QACard
+                          question={feedItem.data}
+                          onAnswer={handleQAAnswer}
+                          isActive={isCurrentItem}
+                        />
+                      </div>
+                      
+                      {/* Desktop sidebar for Q&A - simplified */}
+                      <div className="hidden md:flex flex-col gap-6 items-center py-8">
+                        <Link
+                          href="/discover"
+                          className="flex flex-col items-center gap-2 group"
+                          aria-label="Discover Doctors"
+                        >
+                          <div className="flex items-center justify-center w-14 h-14 bg-gray-100 rounded-full shadow-md hover:bg-gray-200 hover:scale-110 transition-all duration-200">
+                            <Search className="w-6 h-6 text-gray-700" />
+                          </div>
+                          <span className="text-xs text-gray-700 font-medium">Discover</span>
+                        </Link>
+                        
+                        <button
+                          onClick={handleHeartClick}
+                          className="flex flex-col items-center gap-2 hover:scale-110 transition-transform"
+                          aria-label="View action items and reminders"
+                        >
+                          <HeartScore score={healthScore} className="scale-125" />
+                          <span className="text-xs text-gray-700 font-medium">My Heart</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+              
+              // Render Video Card
+              const video = feedItem.data;
               const videoDoctor = video.doctorId ? MOCK_DOCTORS[video.doctorId] : MOCK_DOCTOR;
-              const isCurrentVideo = currentIndex === index;
+              
               return (
                 <div key={video.id} className="snap-item">
                   {/* Desktop: Flex container with video + sidebar */}
@@ -490,7 +583,7 @@ const FeedContent = () => {
                         doctor={videoDoctor}
                         isPersonalized={video.isPersonalized}
                         patientName={patientName}
-                        isActive={isCurrentVideo}
+                        isActive={isCurrentItem}
                         onComplete={handleVideoComplete}
                         onMessage={handleOpenChat}
                         onHeartClick={handleHeartClick}

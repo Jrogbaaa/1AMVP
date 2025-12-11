@@ -5,6 +5,76 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.11.0] - 2024-12-11
+
+### 👨‍⚕️ Added - Doctor Portal Dashboard
+
+**New Doctor Portal (`/doctor`):**
+- Full-featured doctor dashboard for healthcare providers
+- Analytics cards: Total Patients, Videos Watched, Completion Rate, Avg Watch Time
+- Time filter (Week/Month/Year) for statistics
+- Recent Patient Activity list with progress bars
+- Messages panel with unread indicators
+- Popular Chapters section with view counts
+
+**Doctor Portal Pages:**
+- `/doctor` - Main dashboard with analytics and quick actions
+- `/doctor/patients` - Patient management page
+- `/doctor/messages` - Patient messaging center
+- `/doctor/chapters` - Video library management
+
+**Dashboard Features:**
+- Patient engagement tracking with video completion progress
+- Color-coded status badges (Active, Completed, Inactive)
+- Quick action cards with gradient backgrounds
+- Mobile-responsive layout
+
+### 📝 Added - 3-Step Onboarding Flow
+
+**New OnboardingForm Component (`components/OnboardingForm.tsx`):**
+- Step 1: Email input with benefits list
+- Step 2: Full name collection
+- Step 3: Health insurance provider selection
+- Progress indicator dots
+- Back navigation between steps
+- Searchable provider dropdown with popular quick-select
+- Stores onboarding data in session
+
+**Supported Health Providers:**
+- Kaiser Permanente
+- United Healthcare
+- Blue Cross Blue Shield
+- Aetna, Cigna, Humana, Anthem
+- "Other" option for custom input
+
+### 🔐 Enhanced - Authentication System
+
+**Auth Updates (`auth.ts`):**
+- Extended credentials to capture name and healthProvider
+- JWT token now stores healthProvider
+- Session includes healthProvider for personalization
+- Type-safe with extended NextAuth types
+
+**Auth Page Updates (`app/auth/page.tsx`):**
+- Replaced SignInForm with OnboardingForm
+- Added "Doctor Portal Login" link with stethoscope icon
+- Clear separation between patient and doctor access
+
+### 📦 New Files
+
+- `components/OnboardingForm.tsx` - 3-step patient onboarding
+- `app/doctor/page.tsx` - Doctor dashboard
+- `app/doctor/layout.tsx` - Doctor portal layout
+- `app/doctor/patients/page.tsx` - Patient management
+- `app/doctor/messages/page.tsx` - Messaging center
+- `app/doctor/chapters/page.tsx` - Video library
+- `types/next-auth.d.ts` - Extended NextAuth types
+
+### 🔄 Breaking Changes
+- None (all changes are backwards compatible)
+
+---
+
 ## [1.10.0] - 2024-12-11
 
 ### 🎥 Added - "Hey Dave" Personalized Video

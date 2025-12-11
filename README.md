@@ -37,12 +37,19 @@ A mobile-first patient communication and education platform that puts **the doct
 ├── components/
 │   ├── VideoCard.tsx      # TikTok-style video card
 │   ├── QACard.tsx         # Interactive Q&A check-in cards
+│   ├── OnboardingForm.tsx # 3-step patient onboarding
 │   ├── ChatOnboarding.tsx # Chat-based onboarding
 │   ├── HeartScore.tsx     # Health score indicator
 │   ├── TrustBadge.tsx     # Privacy/security badge
 │   ├── ScheduleAppointment.tsx  # Appointment scheduler
 │   ├── RateLimitMessage.tsx     # Rate limit UI
 │   └── SchemaMarkup.tsx   # SEO schema markup
+├── app/doctor/            # Doctor Portal
+│   ├── page.tsx           # Doctor dashboard
+│   ├── layout.tsx         # Portal layout
+│   ├── patients/          # Patient management
+│   ├── messages/          # Messaging center
+│   └── chapters/          # Video library
 ├── convex/
 │   ├── schema.ts          # Convex database schema
 │   ├── feed.ts            # Feed logic & rate limiting
@@ -60,34 +67,45 @@ A mobile-first patient communication and education platform that puts **the doct
     └── images/            # Static assets
 ```
 
-## ✨ Latest Updates (v1.10.0 - Dec 11, 2024)
+## ✨ Latest Updates (v1.11.0 - Dec 11, 2024)
 
-### "Hey Dave" Personalized Video & Interactive Q&A Cards
+### Doctor Portal & Patient Onboarding
 
-**🎥 New First Video - "Hey Dave":**
-- Personalized `hey dave.mp4` video as the first thing users see
-- Hardcoded "Hey Dave" greeting text for demo purposes
-- Associated with Dr. Jack Ellis
-- Clean, consistent messaging throughout the app
+**👨‍⚕️ Doctor Portal (`/doctor`):**
+- Full-featured dashboard for healthcare providers
+- Analytics: Patients, Videos Watched, Completion Rate, Watch Time
+- Recent Patient Activity with progress tracking
+- Messages panel with unread indicators
+- Popular Chapters section
+- Quick action cards for common tasks
+
+**📝 3-Step Patient Onboarding:**
+- Step 1: Email address
+- Step 2: Full name
+- Step 3: Health insurance provider (searchable dropdown)
+- Progress indicator dots
+- Popular provider quick-select buttons
+- Stores onboarding data in session
+
+**🔐 Enhanced Auth:**
+- Session now captures name and health provider
+- Doctor Portal Login link on auth page
+- Extended NextAuth types for health provider data
+
+---
+
+### Previous Updates (v1.10.0 - Dec 11, 2024)
+
+**🎥 "Hey Dave" Personalized Video:**
+- Personalized video as the first thing users see
+- Hardcoded greeting text for demo purposes
 
 **💬 Interactive Q&A Cards:**
-- New check-in cards that appear every 2 videos in the feed
-- Beautiful animated gradient background (teal → blue → purple)
-- Floating shapes with modern, flowing design
-- 5 rotating questions:
-  - "How are you feeling today?"
-  - "How are your new medications working?"
-  - "How has your sleep been lately?"
-  - "Have you been staying active?"
-  - "How's your stress level?"
+- Check-in cards appear every 2 videos
+- Animated gradient backgrounds
+- 5 rotating health questions
 - Emoji-enhanced answer options
-- Visual feedback with "Sent!" confirmation
 - +3% health score boost for engagement
-
-**🎨 New Animations:**
-- Gradient shift animation for Q&A backgrounds
-- Floating bubble effects
-- Pulse glow animations
 
 ---
 

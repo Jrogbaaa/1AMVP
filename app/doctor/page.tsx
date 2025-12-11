@@ -472,6 +472,7 @@ export default function DoctorDashboard() {
                       href="https://www.heygen.com"
                       target="_blank"
                       rel="noopener noreferrer"
+                      aria-label="Train with HeyGen (opens in new tab)"
                       className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-rose-600 text-white font-medium rounded-lg hover:from-pink-600 hover:to-rose-700 transition-all"
                     >
                       <Wand2 className="w-4 h-4" />

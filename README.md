@@ -46,10 +46,13 @@ A mobile-first patient communication and education platform that puts **the doct
 │   └── SchemaMarkup.tsx   # SEO schema markup
 ├── app/doctor/            # Doctor Portal
 │   ├── page.tsx           # Doctor dashboard
-│   ├── layout.tsx         # Portal layout
+│   ├── layout.tsx         # Portal layout with sidebar navigation
+│   ├── create-chapters/   # AI Studio - personalized video creation
 │   ├── patients/          # Patient management
 │   ├── messages/          # Messaging center
-│   └── chapters/          # Video library
+│   ├── chapters/          # Video library
+│   ├── send/              # Send content wizard
+│   └── settings/          # Doctor settings & preferences
 ├── convex/
 │   ├── schema.ts          # Convex database schema
 │   ├── feed.ts            # Feed logic & rate limiting
@@ -67,7 +70,79 @@ A mobile-first patient communication and education platform that puts **the doct
     └── images/            # Static assets
 ```
 
-## ✨ Latest Updates (v1.11.0 - Dec 11, 2024)
+## ✨ Latest Updates (v1.14.0 - Dec 11, 2024)
+
+### AI Studio Accessibility & Error Handling Improvements
+
+**♿ Accessibility Enhancements:**
+- Added keyboard navigation to chapter accordion headers (Enter/Space to expand)
+- Added `aria-expanded`, `aria-controls`, and `role="button"` attributes
+- Added `aria-label` to external HeyGen links for screen readers
+- Added `aria-pressed` to video selection checkboxes
+- Improved focus management throughout AI Studio
+
+**🚨 Error & State Handling:**
+- Added error banner for failed video generation attempts
+- Added avatar training status detection (Active vs Not Trained states)
+- Conditional UI when avatar needs training (amber warning theme)
+- Generation buttons disabled until avatar is trained
+- Dismissible error messages with clear guidance
+
+**🎨 UX Improvements:**
+- "Train Avatar" CTA changes to prominent amber button when not trained
+- Added `cursor-not-allowed` style to disabled buttons
+- Clear error messages guide users through the training flow
+
+---
+
+### Previous Updates (v1.13.0 - Dec 11, 2024)
+
+### AI Studio & HeyGen Integration
+
+**🎬 AI Studio (`/doctor/create-chapters`):**
+- New dedicated page for creating personalized video chapters
+- Template library with 10 educational chapters and 17+ videos
+- Expandable accordion UI with video selection
+- Batch video generation with multi-select
+- Progress tracking (chapters personalized)
+- Individual and bulk video generation buttons
+
+**🤖 HeyGen AI Avatar Integration:**
+- Train AI on doctor's likeness via HeyGen external link
+- Avatar status display (Active/Not Trained)
+- Personalize template scripts with doctor's AI avatar
+- Video thumbnails with duration indicators
+
+**📊 Dashboard AI Studio Section:**
+- New "AI Studio" card on Doctor Dashboard
+- Two-column layout: Train Avatar + Create Chapters
+- 3-step "How it works" guide
+- Quick navigation to create-chapters page
+
+**🧭 Navigation Update:**
+- Added "AI Studio" with Sparkles icon to Doctor Portal sidebar
+- Positioned prominently after Dashboard
+
+---
+
+### Previous Updates (v1.12.0 - Dec 11, 2024)
+
+### Send Content Wizard & Settings
+
+**📤 Send Content Wizard (`/doctor/send`):**
+- 3-step wizard: Select Patients → Choose Content → Review & Send
+- Multi-select patient list with search
+- Chapter selection with video counts
+- Review summary before sending
+
+**⚙️ Settings Page (`/doctor/settings`):**
+- Profile settings with avatar upload
+- Notification preferences
+- Practice information management
+
+---
+
+### Previous Updates (v1.11.0 - Dec 11, 2024)
 
 ### Doctor Portal & Patient Onboarding
 

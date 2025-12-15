@@ -5,6 +5,60 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.0] - 2024-12-15
+
+### 🎬 Simplified Video Feed - Dr. Jack & "Hey Dave" Only
+
+**Video Feed Cleanup:**
+- Removed all placeholder videos from other doctors
+- Feed now exclusively shows local videos:
+  - "Hey Dave" personalized greeting video (`/videos/hey dave.mp4`)
+  - Dr. Jack Video 1: "Understanding Your Heart Rhythm"
+  - Dr. Jack Video 2: "Managing Cholesterol Levels"
+  - Dr. Jack Video 3: "Signs of Heart Disease to Watch"
+- Cleaner, more focused demo experience
+
+### 📋 Added - Reminder Card in Feed
+
+**New ReminderCard Component (`components/ReminderCard.tsx`):**
+- Appears as second item in feed (after "Hey Dave" video)
+- Sources reminders from My Health section
+- Three sections:
+  - **Coming Up**: Annual Physical, Cholesterol Screening with "Schedule" buttons
+  - **Today**: Medication, Blood Pressure, Walk with interactive checkboxes
+  - **This Week**: Educational videos, Water intake tracking
+- Progress tracking (X/3 done)
+- Score boost badges (+2% to +15%)
+- "View Full Health Dashboard" CTA linking to /my-health
+- Beautiful gradient background (sky → white → emerald)
+
+**Shared Reminders Data (`lib/reminders.ts`):**
+- Centralized reminder data structure
+- Types: `Reminder` with id, title, description, dueDate, scoreBoost, category, icon
+- Exported arrays: `ANNUAL_REMINDERS`, `TODAY_REMINDERS`, `WEEK_REMINDERS`
+- `ACTION_SCORES` for score calculations
+- Can be imported by both feed and my-health pages
+
+**Feed Integration:**
+- Feed pattern now: Video → Reminder → Video → Q&A → Video → Video → Q&A
+- Reminder card has full-height snap scrolling like videos
+- Schedule button opens appointment modal
+- Desktop sidebar with Discover and Heart Score buttons
+
+### 📦 New Files
+- `components/ReminderCard.tsx` - Interactive reminder card for feed
+- `lib/reminders.ts` - Shared reminders data source
+
+### 🔧 Technical Changes
+- Added `ScheduleAppointment` modal to feed page
+- Extended `FeedItem` type to include `'reminder'` type
+- Reminder card renders between first video and second video
+
+### 🔄 Breaking Changes
+- None (all changes are backwards compatible)
+
+---
+
 ## [1.13.0] - 2024-12-11
 
 ### ✨ Added - AI Studio for Video Personalization

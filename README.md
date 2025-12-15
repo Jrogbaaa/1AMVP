@@ -37,6 +37,7 @@ A mobile-first patient communication and education platform that puts **the doct
 ├── components/
 │   ├── VideoCard.tsx      # TikTok-style video card
 │   ├── QACard.tsx         # Interactive Q&A check-in cards
+│   ├── ReminderCard.tsx   # Health reminders card for feed
 │   ├── OnboardingForm.tsx # 3-step patient onboarding
 │   ├── ChatOnboarding.tsx # Chat-based onboarding
 │   ├── HeartScore.tsx     # Health score indicator
@@ -64,13 +65,37 @@ A mobile-first patient communication and education platform that puts **the doct
 ├── lib/
 │   ├── types.ts           # TypeScript types
 │   ├── utils.ts           # Utility functions
-│   └── schema.ts          # SEO schema generators
+│   ├── schema.ts          # SEO schema generators
+│   └── reminders.ts       # Shared reminders data
 └── public/
     ├── robots.txt         # SEO crawler config
     └── images/            # Static assets
 ```
 
-## ✨ Latest Updates (v1.14.0 - Dec 11, 2024)
+## ✨ Latest Updates (v1.15.0 - Dec 15, 2024)
+
+### Simplified Video Feed & Reminder Card
+
+**🎬 Simplified Video Feed:**
+- Feed now shows only local videos: "Hey Dave" + 3 Dr. Jack videos
+- Removed all placeholder videos from other doctors
+- Cleaner, more focused demo experience
+
+**📋 New Reminder Card in Feed:**
+- Interactive reminder card appears after first video
+- Sources data from My Health reminders
+- Sections: Coming Up (appointments), Today (3 tasks), This Week (2 goals)
+- Checkboxes with progress tracking
+- "Schedule" buttons open appointment modal
+- Links to full My Health dashboard
+
+**📦 New Files:**
+- `components/ReminderCard.tsx` - Reminder card component
+- `lib/reminders.ts` - Shared reminders data structure
+
+---
+
+### Previous Updates (v1.14.0 - Dec 11, 2024)
 
 ### AI Studio Accessibility & Error Handling Improvements
 
@@ -507,7 +532,8 @@ npx convex dev  # In a separate terminal
 
 - **Doctors**: Dr. Sarah Johnson, Dr. Michael Chen, Dr. Emily Rodriguez, Dr. Jack Ellis (all Cardiology)
 - **Patient**: Dave Thompson (dave@example.com)
-- **Videos**: 9 videos (1 "Hey Dave" personalized + 4 educational + 3 Dr. Jack videos + 1 follow-up)
+- **Videos**: 4 local videos (1 "Hey Dave" personalized + 3 Dr. Jack educational videos)
+- **Reminder Card**: Health tasks sourced from My Health reminders
 - **Q&A Cards**: 5 interactive check-in questions (feeling, medications, sleep, exercise, stress)
 
 ### Magic Link Access
@@ -525,8 +551,13 @@ This will load Dave Thompson's personalized feed from Dr. Sarah Johnson.
 ### 1. My Feed (`/feed`)
 
 - **Card #1**: "Hey Dave" personalized video greeting
-- **Cards 2+**: AI-curated educational content with doctor explanations
-- **Q&A Cards**: Interactive check-in cards appear every 2 videos
+- **Card #2**: Reminder Card with health tasks from My Health
+  - Coming Up: Annual appointments with Schedule buttons
+  - Today: 3 checkable tasks (medication, blood pressure, walk)
+  - This Week: Weekly goals (videos, water intake)
+  - Progress tracking and score boost badges
+- **Cards 3+**: Dr. Jack educational videos
+- **Q&A Cards**: Interactive check-in cards appear periodically
   - Health check-ins: feeling, medications, sleep, exercise, stress
   - Animated gradient backgrounds with floating shapes
   - Emoji-enhanced answer options

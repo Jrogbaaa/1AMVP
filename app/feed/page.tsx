@@ -6,8 +6,10 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { VideoCard } from "@/components/VideoCard";
 import { QACard, QA_QUESTIONS } from "@/components/QACard";
+import { ReminderCard } from "@/components/ReminderCard";
 import { ChatOnboarding } from "@/components/ChatOnboarding";
 import { AuthPrompt } from "@/components/AuthPrompt";
+import { ScheduleAppointment } from "@/components/ScheduleAppointment";
 import { useEngagement } from "@/hooks/useEngagement";
 import { Calendar, Heart, ArrowLeft, Play, Search, Share2, User } from "lucide-react";
 import { HeartScore } from "@/components/HeartScore";
@@ -53,6 +55,7 @@ const MOCK_DOCTORS: Record<string, Doctor> = {
 const MOCK_DOCTOR = MOCK_DOCTORS["550e8400-e29b-41d4-a716-446655440001"];
 
 const MOCK_VIDEOS: Video[] = [
+  // Hey Dave video (personalized greeting from the woman)
   {
     id: "750e8400-e29b-41d4-a716-446655440000",
     title: "Hey Dave",
@@ -65,76 +68,6 @@ const MOCK_VIDEOS: Video[] = [
     tags: ["personalized", "follow-up", "greeting"],
     doctorId: "550e8400-e29b-41d4-a716-446655440004",
     isPersonalized: true,
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: "750e8400-e29b-41d4-a716-446655440001",
-    title: "Your Follow-Up from Dr. Johnson",
-    description: "Here's your personalized follow-up about your recent visit and next steps for your care.",
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-    thumbnailUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=720&h=1280&fit=crop&q=80&sat=-100",
-    posterUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=720&h=1280&fit=crop&q=80&sat=-100",
-    duration: 120,
-    category: "Follow-Up",
-    tags: ["personalized", "follow-up", "cardiology"],
-    doctorId: "550e8400-e29b-41d4-a716-446655440001",
-    isPersonalized: false,
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: "750e8400-e29b-41d4-a716-446655440002",
-    title: "Understanding Blood Pressure",
-    description: "Dr. Chen explains what blood pressure numbers mean and how to monitor your heart health.",
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-    thumbnailUrl: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=720&h=1280&fit=crop&q=80",
-    posterUrl: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=720&h=1280&fit=crop&q=80",
-    duration: 180,
-    category: "Education",
-    tags: ["blood pressure", "heart health", "basics"],
-    doctorId: "550e8400-e29b-41d4-a716-446655440002",
-    isPersonalized: false,
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: "750e8400-e29b-41d4-a716-446655440003",
-    title: "Heart-Healthy Diet Tips",
-    description: "Dr. Rodriguez shares simple and practical nutrition tips for maintaining a healthy heart.",
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-    thumbnailUrl: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=720&h=1280&fit=crop&q=80",
-    posterUrl: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=720&h=1280&fit=crop&q=80",
-    duration: 240,
-    category: "Education",
-    tags: ["nutrition", "diet", "heart health"],
-    doctorId: "550e8400-e29b-41d4-a716-446655440003",
-    isPersonalized: false,
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: "750e8400-e29b-41d4-a716-446655440004",
-    title: "Medication Reminders",
-    description: "Dr. Martinez explains why taking your medication on schedule is crucial for your health.",
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-    thumbnailUrl: "https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=720&h=1280&fit=crop&q=80",
-    posterUrl: "https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=720&h=1280&fit=crop&q=80",
-    duration: 150,
-    category: "Education",
-    tags: ["medication", "compliance", "tips"],
-    doctorId: "550e8400-e29b-41d4-a716-446655440001",
-    isPersonalized: false,
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: "750e8400-e29b-41d4-a716-446655440005",
-    title: "Exercise for Heart Health",
-    description: "Dr. Kim demonstrates safe and effective exercises to strengthen your cardiovascular system.",
-    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-    thumbnailUrl: "https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=720&h=1280&fit=crop&q=80",
-    posterUrl: "https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=720&h=1280&fit=crop&q=80",
-    duration: 200,
-    category: "Education",
-    tags: ["exercise", "cardio", "fitness"],
-    doctorId: "550e8400-e29b-41d4-a716-446655440002",
-    isPersonalized: false,
     createdAt: new Date().toISOString(),
   },
   // Doctor Jack's Videos
@@ -207,6 +140,7 @@ const FeedContent = () => {
   const [healthScore, setHealthScore] = useState(55); // Start at 55%
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
+  const [isScheduleOpen, setIsScheduleOpen] = useState(false);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const [authPromptTrigger, setAuthPromptTrigger] = useState<"earned_trust" | "save_progress" | "set_reminder" | "personalized_content" | "follow_doctor">("earned_trust");
   const containerRef = useRef<HTMLDivElement>(null);
@@ -218,20 +152,27 @@ const FeedContent = () => {
     ? MOCK_VIDEOS.filter((video) => video.doctorId === doctorFilter)
     : MOCK_VIDEOS;
 
-  // Create combined feed with Q&A cards interspersed every 2-3 videos
+  // Create combined feed with Q&A cards and reminders interspersed
   type FeedItem = 
     | { type: 'video'; data: Video }
-    | { type: 'qa'; data: typeof QA_QUESTIONS[number] };
+    | { type: 'qa'; data: typeof QA_QUESTIONS[number] }
+    | { type: 'reminder'; data: null };
 
   const combinedFeed: FeedItem[] = [];
   let qaIndex = 0;
+  let reminderInserted = false;
   
   filteredVideos.forEach((video, index) => {
     combinedFeed.push({ type: 'video', data: video });
     
+    // Insert reminder card after the first video
+    if (index === 0 && !reminderInserted) {
+      combinedFeed.push({ type: 'reminder', data: null });
+      reminderInserted = true;
+    }
     // Insert Q&A card after every 2nd video (after indices 1, 3, 5, etc.)
-    // This creates pattern: video, video, Q&A, video, video, Q&A...
-    if ((index + 1) % 2 === 0 && qaIndex < QA_QUESTIONS.length) {
+    // This creates pattern: video, reminder, video, Q&A, video, video, Q&A...
+    else if ((index + 1) % 2 === 0 && qaIndex < QA_QUESTIONS.length) {
       combinedFeed.push({ type: 'qa', data: QA_QUESTIONS[qaIndex] });
       qaIndex++;
     }
@@ -528,6 +469,45 @@ const FeedContent = () => {
             {combinedFeed.map((feedItem, index) => {
               const isCurrentItem = currentIndex === index;
               
+              // Render Reminder Card
+              if (feedItem.type === 'reminder') {
+                return (
+                  <div key="reminder-card" className="snap-item">
+                    <div className="h-full w-full flex items-center justify-center md:gap-4">
+                      <div className="h-full w-full md:h-[calc(100vh-2rem)] md:max-h-[900px] md:w-auto md:aspect-[9/16] md:rounded-2xl md:overflow-hidden md:shadow-2xl relative">
+                        <ReminderCard
+                          isActive={isCurrentItem}
+                          onScheduleClick={() => setIsScheduleOpen(true)}
+                        />
+                      </div>
+                      
+                      {/* Desktop sidebar for Reminder */}
+                      <div className="hidden md:flex flex-col gap-6 items-center py-8">
+                        <Link
+                          href="/discover"
+                          className="flex flex-col items-center gap-2 group"
+                          aria-label="Discover Doctors"
+                        >
+                          <div className="flex items-center justify-center w-14 h-14 bg-gray-100 rounded-full shadow-md hover:bg-gray-200 hover:scale-110 transition-all duration-200">
+                            <Search className="w-6 h-6 text-gray-700" />
+                          </div>
+                          <span className="text-xs text-gray-700 font-medium">Discover</span>
+                        </Link>
+                        
+                        <button
+                          onClick={handleHeartClick}
+                          className="flex flex-col items-center gap-2 hover:scale-110 transition-transform"
+                          aria-label="View action items and reminders"
+                        >
+                          <HeartScore score={healthScore} className="scale-125" />
+                          <span className="text-xs text-gray-700 font-medium">My Heart</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+              
               // Render Q&A Card
               if (feedItem.type === 'qa') {
                 return (
@@ -704,6 +684,14 @@ const FeedContent = () => {
         isOpen={showAuthPrompt}
         onClose={handleCloseAuthPrompt}
         trigger={authPromptTrigger}
+      />
+
+      {/* Schedule Appointment Modal */}
+      <ScheduleAppointment
+        isOpen={isScheduleOpen}
+        onClose={() => setIsScheduleOpen(false)}
+        doctor={selectedDoctor}
+        userId={session?.user?.id || patientId || "anonymous"}
       />
 
       {/* Action Items / Reminders Menu */}

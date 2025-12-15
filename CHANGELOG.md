@@ -5,6 +5,18 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.20.0] - 2024-12-15
+
+### 🎨 Feed Reminder Simplified
+
+**ReminderCard in Feed:**
+- Changed from full list to single focused reminder
+- Shows only "Schedule Colonoscopy" (60 days away, +15%)
+- Clean centered card design with schedule button
+- Link to view all reminders on My Health page
+
+---
+
 ## [1.19.0] - 2024-12-15
 
 ### 🎨 My Health Page Updates

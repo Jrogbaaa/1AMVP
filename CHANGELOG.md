@@ -5,6 +5,24 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.19.0] - 2024-12-15
+
+### 🎨 My Health Page Updates
+
+**Reminders Section:**
+- Added "Schedule Colonoscopy" as first item under Annual Reminders
+- Shows "Due in 60 days" with +15% health score boost
+
+**Header Cleanup:**
+- Removed duplicate HeartScore from top right header (already shows on page)
+- HeartScore remains visible in Discover page header
+
+**UI Simplification:**
+- Removed Quick Actions module from My Health page
+- Cleaner, more focused layout
+
+---
+
 ## [1.18.0] - 2024-12-15
 
 ### 🎨 Q&A Widget Enhancement

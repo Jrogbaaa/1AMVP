@@ -302,7 +302,7 @@ export default function MyHealthPage() {
               </Link>
             </nav>
 
-            {/* Right: Heart Score + Menu */}
+            {/* Right: Insurance Logos + Menu (No HeartScore - already on page) */}
             <div className="flex items-center gap-2 md:gap-4">
               <div className="hidden md:flex items-center gap-2">
                 <div className="bg-[#003A70] rounded px-2 py-1">
@@ -322,7 +322,6 @@ export default function MyHealthPage() {
                   className="h-6 w-auto"
                 />
               </div>
-              <HeartScore score={healthScore} isAnimating={isHeartAnimating} />
               <div className="hidden sm:block">
                 <UserMenu />
               </div>
@@ -365,6 +364,30 @@ export default function MyHealthPage() {
                   <span>📅</span> Annual Reminders
                 </h3>
                 <div className="space-y-2">
+                  {/* Schedule Colonoscopy - Top Priority */}
+                  <div className="p-3 rounded-xl bg-sky-50 border border-sky-100">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <p className="font-semibold text-gray-900 text-sm">Schedule Colonoscopy</p>
+                          <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-lg">+15%</span>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-0.5">Due in 60 days</p>
+                      </div>
+                      <div className="flex gap-1.5 md:gap-1.5 flex-shrink-0">
+                        <button className="px-3 py-2 md:px-2 md:py-1 bg-white text-primary-600 text-xs md:text-[10px] font-medium rounded-lg border border-primary-200 hover:bg-primary-50 transition-colors">
+                          📅 Add
+                        </button>
+                        <button
+                          onClick={handleScheduleAppointment}
+                          className="px-3 py-2 md:px-2 md:py-1 bg-primary-600 text-white text-xs md:text-[10px] font-medium rounded-lg hover:bg-primary-700 transition-colors"
+                        >
+                          Schedule
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="p-3 rounded-xl bg-sky-50 border border-sky-100">
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex-1 min-w-0">
@@ -579,36 +602,6 @@ export default function MyHealthPage() {
               </div>
             </div>
 
-            {/* Quick actions - Modular Card */}
-            <div className="bg-white rounded-2xl p-3 shadow-sm">
-              <h3 className="text-sm font-semibold text-gray-900 mb-2">
-                Quick Actions
-              </h3>
-              <div className="space-y-1.5">
-                <Link
-                  href="/discover"
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors"
-                >
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded-full border-2 border-gray-400 flex items-center justify-center">
-                      <Play className="w-2 h-2 text-gray-400" />
-                    </div>
-                    <span className="font-medium text-gray-900 text-sm">Browse Discover</span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-gray-400" />
-                </Link>
-                <Link
-                  href="/feed"
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors"
-                >
-                  <div className="flex items-center gap-2">
-                    <Play className="w-4 h-4 text-gray-400" />
-                    <span className="font-medium text-gray-900 text-sm">My Feed</span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-gray-400" />
-                </Link>
-              </div>
-            </div>
           </div>
 
           {/* Right column - Doctor (SECONDARY) */}

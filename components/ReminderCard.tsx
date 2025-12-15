@@ -10,7 +10,12 @@ interface ReminderCardProps {
 
 export const ReminderCard = ({ isActive, onScheduleClick }: ReminderCardProps) => {
   return (
-    <div className="h-full w-full bg-gradient-to-br from-sky-50 via-white to-emerald-50 flex items-center justify-center">
+    <div className="h-full w-full bg-gradient-to-br from-sky-50 via-white to-emerald-50 flex flex-col items-center justify-center">
+      {/* Module title */}
+      <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center px-4">
+        What Your Doctor Wants You to Do
+      </h1>
+      
       {/* Centered single reminder card */}
       <div className="w-full max-w-sm mx-4">
         <div className="bg-white rounded-2xl shadow-xl p-6 border border-sky-100">

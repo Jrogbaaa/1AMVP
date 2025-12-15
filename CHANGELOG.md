@@ -5,6 +5,46 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.17.0] - 2024-12-15
+
+### 🎨 UI Simplification & Polish
+
+**Feed Page:**
+- Simplified ReminderCard to single "Schedule Colonoscopy" reminder (60 days away)
+- Half-page sized reminder unit with schedule button
+- Made heart icon significantly smaller (w-10 h-10 from w-14 h-14)
+
+**Discover Page:**
+- Expanded free tier doctors from 2 to 5 (not grayed out)
+- Removed HeartScore from header
+- Restored Kaiser Permanente logo in top bar
+- Added 5 specialty video rows with 6 videos each:
+  - Cardiology
+  - Primary Care (renamed from Nutrition & Exercise)
+  - Endocrinology
+  - Gastroenterology
+  - Pulmonology
+- Videos use doctor faces as thumbnails
+
+**My Health Page:**
+- Removed "Your health info is secure" module (TrustBadge)
+- Removed "Quick Actions" module
+- Changed "Your Insurers" to "Your Insurer" (singular)
+- Moved Kaiser Permanente to "Your Doctor Groups" section
+- Kept only UnitedHealthcare in insurer section
+- Removed duplicate HeartScore from header
+- Simplified reminders to single "Schedule Colonoscopy" reminder
+
+### 🔧 Technical Changes
+- Cleaned up unused state variables and handlers in My Health page
+- Removed unused imports (useEffect, CheckCircle2, Loader2)
+- Streamlined ReminderCard component
+
+### 🔄 Breaking Changes
+- None (all changes are backwards compatible)
+
+---
+
 ## [1.16.0] - 2024-12-15
 
 ### 🎨 Major UI Overhaul

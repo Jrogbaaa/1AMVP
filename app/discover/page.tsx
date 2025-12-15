@@ -18,10 +18,13 @@ interface ExtendedDoctor extends Doctor {
   insurer?: string;
 }
 
-// First two doctors are free tier, rest are premium
+// First five doctors are free tier, rest are premium
 const FREE_TIER_DOCTOR_IDS = [
   "550e8400-e29b-41d4-a716-446655440001",
   "550e8400-e29b-41d4-a716-446655440002",
+  "550e8400-e29b-41d4-a716-446655440003",
+  "550e8400-e29b-41d4-a716-446655440004",
+  "550e8400-e29b-41d4-a716-446655440005",
 ];
 
 // Mock doctor profiles data
@@ -158,10 +161,11 @@ export default function DiscoverPage() {
     new Set([
       "550e8400-e29b-41d4-a716-446655440001",
       "550e8400-e29b-41d4-a716-446655440002", 
-      "550e8400-e29b-41d4-a716-446655440003"
+      "550e8400-e29b-41d4-a716-446655440003",
+      "550e8400-e29b-41d4-a716-446655440004",
+      "550e8400-e29b-41d4-a716-446655440005"
     ])
   );
-  const healthScore = 55;
 
   const cardiologyTopics = ["all", "blood-pressure", "heart-disease", "arrhythmia", "cholesterol"];
   const specialties = ["all", "cardiology", "primary-care", "endocrinology", "gastroenterology", "pulmonology"];
@@ -279,7 +283,7 @@ export default function DiscoverPage() {
                   className="h-6 w-auto"
                 />
               </div>
-              <HeartScore score={healthScore} />
+              <HeartScore score={55} />
               <div className="hidden sm:block">
                 {isAuthenticated ? (
                   <UserMenu />
@@ -500,21 +504,10 @@ export default function DiscoverPage() {
               Cardiology
             </h2>
             <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-              {/* Video Card 1 */}
-              <Link
-                href="/feed"
-                className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
-              >
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
                 <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
-                  <Image
-                    src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=720&h=480&fit=crop&q=80"
-                    alt="Understanding Blood Pressure"
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">
-                    3:00
-                  </div>
+                  <Image src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=720&h=480&fit=crop&q=80" alt="Understanding Blood Pressure" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">3:00</div>
                   <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
                     <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
@@ -522,33 +515,15 @@ export default function DiscoverPage() {
                   </div>
                 </div>
                 <div className="p-2">
-                  <span className="inline-block px-2 py-0.5 bg-rose-50 text-rose-600 text-[10px] font-semibold rounded-lg mb-1">
-                    Heart Health
-                  </span>
-                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">
-                    Understanding Blood Pressure
-                  </h3>
-                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">
-                    Learn what BP numbers mean
-                  </p>
+                  <span className="inline-block px-2 py-0.5 bg-rose-50 text-rose-600 text-[10px] font-semibold rounded-lg mb-1">Heart Health</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">Understanding Blood Pressure</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Johnson explains BP</p>
                 </div>
               </Link>
-
-              {/* Video Card 2 */}
-              <Link
-                href="/feed"
-                className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
-              >
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
                 <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
-                  <Image
-                    src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=720&h=480&fit=crop&q=80"
-                    alt="Heart-Healthy Diet"
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">
-                    4:00
-                  </div>
+                  <Image src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=720&h=480&fit=crop&q=80" alt="Heart-Healthy Diet" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">4:00</div>
                   <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
                     <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
@@ -556,33 +531,15 @@ export default function DiscoverPage() {
                   </div>
                 </div>
                 <div className="p-2">
-                  <span className="inline-block px-2 py-0.5 bg-emerald-50 text-emerald-600 text-[10px] font-semibold rounded-lg mb-1">
-                    Nutrition
-                  </span>
-                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">
-                    Heart-Healthy Diet Tips
-                  </h3>
-                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">
-                    Practical nutrition tips
-                  </p>
+                  <span className="inline-block px-2 py-0.5 bg-emerald-50 text-emerald-600 text-[10px] font-semibold rounded-lg mb-1">Nutrition</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">Heart-Healthy Diet Tips</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Chen on nutrition</p>
                 </div>
               </Link>
-
-              {/* Video Card 3 */}
-              <Link
-                href="/feed"
-                className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
-              >
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
                 <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
-                  <Image
-                    src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=720&h=480&fit=crop&q=80"
-                    alt="Managing Cholesterol"
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">
-                    5:30
-                  </div>
+                  <Image src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=720&h=480&fit=crop&q=80" alt="Managing Cholesterol" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">5:30</div>
                   <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
                     <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
@@ -590,33 +547,15 @@ export default function DiscoverPage() {
                   </div>
                 </div>
                 <div className="p-2">
-                  <span className="inline-block px-2 py-0.5 bg-purple-50 text-purple-600 text-[10px] font-semibold rounded-lg mb-1">
-                    Cholesterol
-                  </span>
-                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">
-                    Managing Cholesterol
-                  </h3>
-                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">
-                    Lower your LDL naturally
-                  </p>
+                  <span className="inline-block px-2 py-0.5 bg-purple-50 text-purple-600 text-[10px] font-semibold rounded-lg mb-1">Cholesterol</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">Managing Cholesterol</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Rodriguez explains</p>
                 </div>
               </Link>
-
-              {/* Video Card 4 */}
-              <Link
-                href="/feed"
-                className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
-              >
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
                 <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
-                  <Image
-                    src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=720&h=480&fit=crop&q=80"
-                    alt="Heart Rate Zones"
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">
-                    4:15
-                  </div>
+                  <Image src="https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=720&h=480&fit=crop&q=80" alt="Heart Rate Zones" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">4:15</div>
                   <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
                     <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
@@ -624,33 +563,15 @@ export default function DiscoverPage() {
                   </div>
                 </div>
                 <div className="p-2">
-                  <span className="inline-block px-2 py-0.5 bg-orange-50 text-orange-600 text-[10px] font-semibold rounded-lg mb-1">
-                    Exercise
-                  </span>
-                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">
-                    Heart Rate Zones
-                  </h3>
-                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">
-                    Optimize your workout
-                  </p>
+                  <span className="inline-block px-2 py-0.5 bg-orange-50 text-orange-600 text-[10px] font-semibold rounded-lg mb-1">Exercise</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">Heart Rate Zones</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Martinez on exercise</p>
                 </div>
               </Link>
-
-              {/* Video Card 5 */}
-              <Link
-                href="/feed"
-                className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
-              >
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
                 <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
-                  <Image
-                    src="https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=720&h=480&fit=crop&q=80"
-                    alt="Arrhythmia Basics"
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">
-                    6:00
-                  </div>
+                  <Image src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=720&h=480&fit=crop&q=80" alt="Understanding Arrhythmia" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">6:00</div>
                   <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
                     <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
@@ -658,33 +579,15 @@ export default function DiscoverPage() {
                   </div>
                 </div>
                 <div className="p-2">
-                  <span className="inline-block px-2 py-0.5 bg-red-50 text-red-600 text-[10px] font-semibold rounded-lg mb-1">
-                    Arrhythmia
-                  </span>
-                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">
-                    Understanding Arrhythmia
-                  </h3>
-                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">
-                    Irregular heartbeat explained
-                  </p>
+                  <span className="inline-block px-2 py-0.5 bg-red-50 text-red-600 text-[10px] font-semibold rounded-lg mb-1">Arrhythmia</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">Understanding Arrhythmia</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Kim explains</p>
                 </div>
               </Link>
-
-              {/* Video Card 6 */}
-              <Link
-                href="/feed"
-                className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
-              >
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
                 <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
-                  <Image
-                    src="https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?w=720&h=480&fit=crop&q=80"
-                    alt="Stress and Heart Disease"
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">
-                    3:45
-                  </div>
+                  <Image src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=720&h=480&fit=crop&q=80" alt="Stress and Heart Disease" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">3:45</div>
                   <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
                     <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
@@ -692,42 +595,26 @@ export default function DiscoverPage() {
                   </div>
                 </div>
                 <div className="p-2">
-                  <span className="inline-block px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[10px] font-semibold rounded-lg mb-1">
-                    Stress
-                  </span>
-                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">
-                    Stress & Heart Disease
-                  </h3>
-                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">
-                    The mind-heart connection
-                  </p>
+                  <span className="inline-block px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[10px] font-semibold rounded-lg mb-1">Stress</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">Stress & Heart Disease</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Patel on stress</p>
                 </div>
               </Link>
             </div>
           </div>
         )}
 
-        {/* Nutrition and Exercise - Modular Card */}
+        {/* Primary Care - Modular Card */}
         {(selectedSpecialty === "all" || selectedSpecialty === "primary-care") && (
           <div className="bg-white rounded-2xl p-3 mb-3 shadow-sm">
             <h2 className="text-base font-bold text-gray-900 mb-3">
-              Nutrition & Exercise
+              Primary Care
             </h2>
             <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-              <Link
-                href="/feed"
-                className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
-              >
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
                 <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
-                  <Image
-                    src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=720&h=480&fit=crop&q=80"
-                    alt="Exercise for Heart Health"
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">
-                    3:20
-                  </div>
+                  <Image src="https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=720&h=480&fit=crop&q=80" alt="Annual Checkup" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">3:20</div>
                   <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
                     <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
@@ -735,32 +622,15 @@ export default function DiscoverPage() {
                   </div>
                 </div>
                 <div className="p-2">
-                  <span className="inline-block px-2 py-0.5 bg-sky-50 text-sky-600 text-[10px] font-semibold rounded-lg mb-1">
-                    Exercise
-                  </span>
-                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">
-                    Exercise for Heart Health
-                  </h3>
-                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">
-                    Safe exercises for your heart
-                  </p>
+                  <span className="inline-block px-2 py-0.5 bg-sky-50 text-sky-600 text-[10px] font-semibold rounded-lg mb-1">Checkup</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">Annual Physical Guide</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Williams explains</p>
                 </div>
               </Link>
-
-              <Link
-                href="/feed"
-                className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
-              >
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
                 <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
-                  <Image
-                    src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=720&h=480&fit=crop&q=80"
-                    alt="Mediterranean Diet"
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">
-                    4:45
-                  </div>
+                  <Image src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=720&h=480&fit=crop&q=80" alt="Preventive Care" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">4:45</div>
                   <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
                     <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
@@ -768,32 +638,15 @@ export default function DiscoverPage() {
                   </div>
                 </div>
                 <div className="p-2">
-                  <span className="inline-block px-2 py-0.5 bg-emerald-50 text-emerald-600 text-[10px] font-semibold rounded-lg mb-1">
-                    Diet
-                  </span>
-                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">
-                    Mediterranean Diet
-                  </h3>
-                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">
-                    Eat for heart health
-                  </p>
+                  <span className="inline-block px-2 py-0.5 bg-emerald-50 text-emerald-600 text-[10px] font-semibold rounded-lg mb-1">Prevention</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">Preventive Screenings</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Foster on prevention</p>
                 </div>
               </Link>
-
-              <Link
-                href="/feed"
-                className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
-              >
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
                 <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
-                  <Image
-                    src="https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=720&h=480&fit=crop&q=80"
-                    alt="Walking for Wellness"
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">
-                    2:30
-                  </div>
+                  <Image src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=720&h=480&fit=crop&q=80" alt="Vaccination Guide" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">2:30</div>
                   <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
                     <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
@@ -801,32 +654,15 @@ export default function DiscoverPage() {
                   </div>
                 </div>
                 <div className="p-2">
-                  <span className="inline-block px-2 py-0.5 bg-sky-50 text-sky-600 text-[10px] font-semibold rounded-lg mb-1">
-                    Walking
-                  </span>
-                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">
-                    Walking for Wellness
-                  </h3>
-                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">
-                    10,000 steps daily
-                  </p>
+                  <span className="inline-block px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-semibold rounded-lg mb-1">Vaccines</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">Vaccination Schedule</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Lee explains</p>
                 </div>
               </Link>
-
-              <Link
-                href="/feed"
-                className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
-              >
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
                 <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
-                  <Image
-                    src="https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=720&h=480&fit=crop&q=80"
-                    alt="Superfoods for Heart"
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">
-                    5:15
-                  </div>
+                  <Image src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=720&h=480&fit=crop&q=80" alt="Wellness Tips" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">5:15</div>
                   <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
                     <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
@@ -834,32 +670,31 @@ export default function DiscoverPage() {
                   </div>
                 </div>
                 <div className="p-2">
-                  <span className="inline-block px-2 py-0.5 bg-amber-50 text-amber-600 text-[10px] font-semibold rounded-lg mb-1">
-                    Superfoods
-                  </span>
-                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">
-                    Superfoods for Heart
-                  </h3>
-                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">
-                    Best foods for your heart
-                  </p>
+                  <span className="inline-block px-2 py-0.5 bg-amber-50 text-amber-600 text-[10px] font-semibold rounded-lg mb-1">Wellness</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">Daily Wellness Tips</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Adams on wellness</p>
                 </div>
               </Link>
-
-              <Link
-                href="/feed"
-                className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
-              >
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
                 <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
-                  <Image
-                    src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=720&h=480&fit=crop&q=80"
-                    alt="Yoga for Heart Health"
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">
-                    8:00
+                  <Image src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=720&h=480&fit=crop&q=80" alt="Sleep Health" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">8:00</div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
                   </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-violet-50 text-violet-600 text-[10px] font-semibold rounded-lg mb-1">Sleep</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">Better Sleep Habits</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Brown explains</p>
+                </div>
+              </Link>
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=720&h=480&fit=crop&q=80" alt="Stress Management" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">4:30</div>
                   <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
                     <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
@@ -867,15 +702,9 @@ export default function DiscoverPage() {
                   </div>
                 </div>
                 <div className="p-2">
-                  <span className="inline-block px-2 py-0.5 bg-violet-50 text-violet-600 text-[10px] font-semibold rounded-lg mb-1">
-                    Yoga
-                  </span>
-                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">
-                    Yoga for Heart Health
-                  </h3>
-                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">
-                    Gentle poses for cardio
-                  </p>
+                  <span className="inline-block px-2 py-0.5 bg-rose-50 text-rose-600 text-[10px] font-semibold rounded-lg mb-1">Stress</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">Managing Stress</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Johnson on stress</p>
                 </div>
               </Link>
             </div>
@@ -883,13 +712,13 @@ export default function DiscoverPage() {
         )}
 
         {/* Endocrinology Videos */}
-        {selectedSpecialty === "endocrinology" && (
+        {(selectedSpecialty === "all" || selectedSpecialty === "endocrinology") && (
           <div className="bg-white rounded-2xl p-3 mb-3 shadow-sm">
             <h2 className="text-base font-bold text-gray-900 mb-3">Endocrinology</h2>
             <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
               <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
                 <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
-                  <Image src="https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=720&h=480&fit=crop&q=80" alt="Diabetes Management" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <Image src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=720&h=480&fit=crop&q=80" alt="Diabetes Management" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
                   <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">4:30</div>
                   <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
                     <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -900,12 +729,12 @@ export default function DiscoverPage() {
                 <div className="p-2">
                   <span className="inline-block px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-semibold rounded-lg mb-1">Diabetes</span>
                   <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Diabetes Management</h3>
-                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Blood sugar control tips</p>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Chen on diabetes</p>
                 </div>
               </Link>
               <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
                 <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
-                  <Image src="https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?w=720&h=480&fit=crop&q=80" alt="Thyroid Health" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <Image src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=720&h=480&fit=crop&q=80" alt="Thyroid Health" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
                   <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">3:45</div>
                   <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
                     <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -916,12 +745,12 @@ export default function DiscoverPage() {
                 <div className="p-2">
                   <span className="inline-block px-2 py-0.5 bg-purple-50 text-purple-600 text-[10px] font-semibold rounded-lg mb-1">Thyroid</span>
                   <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Thyroid Health</h3>
-                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Understanding your thyroid</p>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Rodriguez explains</p>
                 </div>
               </Link>
               <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
                 <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
-                  <Image src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=720&h=480&fit=crop&q=80" alt="Hormone Balance" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <Image src="https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=720&h=480&fit=crop&q=80" alt="Hormone Balance" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
                   <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">5:00</div>
                   <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
                     <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -932,7 +761,55 @@ export default function DiscoverPage() {
                 <div className="p-2">
                   <span className="inline-block px-2 py-0.5 bg-pink-50 text-pink-600 text-[10px] font-semibold rounded-lg mb-1">Hormones</span>
                   <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Hormone Balance</h3>
-                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Natural hormone health</p>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Martinez on hormones</p>
+                </div>
+              </Link>
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=720&h=480&fit=crop&q=80" alt="Metabolic Health" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">4:15</div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-orange-50 text-orange-600 text-[10px] font-semibold rounded-lg mb-1">Metabolism</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Metabolic Health</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Johnson explains</p>
+                </div>
+              </Link>
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=720&h=480&fit=crop&q=80" alt="Insulin Resistance" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">6:00</div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-red-50 text-red-600 text-[10px] font-semibold rounded-lg mb-1">Insulin</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Insulin Resistance</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Kim explains</p>
+                </div>
+              </Link>
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=720&h=480&fit=crop&q=80" alt="Adrenal Health" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">3:30</div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[10px] font-semibold rounded-lg mb-1">Adrenals</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Adrenal Health</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Patel on adrenals</p>
                 </div>
               </Link>
             </div>
@@ -940,13 +817,13 @@ export default function DiscoverPage() {
         )}
 
         {/* Gastroenterology Videos */}
-        {selectedSpecialty === "gastroenterology" && (
+        {(selectedSpecialty === "all" || selectedSpecialty === "gastroenterology") && (
           <div className="bg-white rounded-2xl p-3 mb-3 shadow-sm">
             <h2 className="text-base font-bold text-gray-900 mb-3">Gastroenterology</h2>
             <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
               <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
                 <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
-                  <Image src="https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=720&h=480&fit=crop&q=80" alt="Gut Health Basics" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <Image src="https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=720&h=480&fit=crop&q=80" alt="Gut Health Basics" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
                   <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">4:15</div>
                   <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
                     <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -957,12 +834,12 @@ export default function DiscoverPage() {
                 <div className="p-2">
                   <span className="inline-block px-2 py-0.5 bg-green-50 text-green-600 text-[10px] font-semibold rounded-lg mb-1">Gut Health</span>
                   <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Gut Health Basics</h3>
-                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Your microbiome explained</p>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Williams explains</p>
                 </div>
               </Link>
               <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
                 <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
-                  <Image src="https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=720&h=480&fit=crop&q=80" alt="IBS Management" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <Image src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=720&h=480&fit=crop&q=80" alt="IBS Management" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
                   <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">5:30</div>
                   <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
                     <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -973,12 +850,12 @@ export default function DiscoverPage() {
                 <div className="p-2">
                   <span className="inline-block px-2 py-0.5 bg-orange-50 text-orange-600 text-[10px] font-semibold rounded-lg mb-1">IBS</span>
                   <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">IBS Management</h3>
-                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Living well with IBS</p>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Foster on IBS</p>
                 </div>
               </Link>
               <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
                 <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
-                  <Image src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=720&h=480&fit=crop&q=80" alt="Digestive Health" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <Image src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=720&h=480&fit=crop&q=80" alt="Digestive Health" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
                   <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">3:45</div>
                   <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
                     <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -989,7 +866,55 @@ export default function DiscoverPage() {
                 <div className="p-2">
                   <span className="inline-block px-2 py-0.5 bg-teal-50 text-teal-600 text-[10px] font-semibold rounded-lg mb-1">Digestion</span>
                   <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Digestive Health</h3>
-                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Foods that help digestion</p>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Lee explains</p>
+                </div>
+              </Link>
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=720&h=480&fit=crop&q=80" alt="Colonoscopy Prep" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">4:00</div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-semibold rounded-lg mb-1">Screening</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Colonoscopy Prep</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Adams explains</p>
+                </div>
+              </Link>
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=720&h=480&fit=crop&q=80" alt="Acid Reflux" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">5:00</div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-amber-50 text-amber-600 text-[10px] font-semibold rounded-lg mb-1">GERD</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Managing Acid Reflux</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Brown on GERD</p>
+                </div>
+              </Link>
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=720&h=480&fit=crop&q=80" alt="Probiotics" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">3:30</div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-emerald-50 text-emerald-600 text-[10px] font-semibold rounded-lg mb-1">Probiotics</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Probiotics Guide</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Chen on probiotics</p>
                 </div>
               </Link>
             </div>
@@ -997,13 +922,13 @@ export default function DiscoverPage() {
         )}
 
         {/* Pulmonology Videos */}
-        {selectedSpecialty === "pulmonology" && (
+        {(selectedSpecialty === "all" || selectedSpecialty === "pulmonology") && (
           <div className="bg-white rounded-2xl p-3 mb-3 shadow-sm">
             <h2 className="text-base font-bold text-gray-900 mb-3">Pulmonology</h2>
             <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
               <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
                 <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
-                  <Image src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=720&h=480&fit=crop&q=80" alt="Breathing Exercises" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <Image src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=720&h=480&fit=crop&q=80" alt="Breathing Exercises" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
                   <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">6:00</div>
                   <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
                     <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -1014,12 +939,12 @@ export default function DiscoverPage() {
                 <div className="p-2">
                   <span className="inline-block px-2 py-0.5 bg-cyan-50 text-cyan-600 text-[10px] font-semibold rounded-lg mb-1">Breathing</span>
                   <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Breathing Exercises</h3>
-                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Improve lung capacity</p>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Rodriguez on breathing</p>
                 </div>
               </Link>
               <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
                 <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
-                  <Image src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=720&h=480&fit=crop&q=80" alt="Asthma Management" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <Image src="https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=720&h=480&fit=crop&q=80" alt="Asthma Management" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
                   <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">4:30</div>
                   <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
                     <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -1030,12 +955,12 @@ export default function DiscoverPage() {
                 <div className="p-2">
                   <span className="inline-block px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[10px] font-semibold rounded-lg mb-1">Asthma</span>
                   <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Asthma Management</h3>
-                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Control your asthma</p>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Martinez on asthma</p>
                 </div>
               </Link>
               <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
                 <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
-                  <Image src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=720&h=480&fit=crop&q=80" alt="Sleep Apnea" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <Image src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=720&h=480&fit=crop&q=80" alt="Sleep Apnea" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
                   <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">5:15</div>
                   <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
                     <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -1046,7 +971,55 @@ export default function DiscoverPage() {
                 <div className="p-2">
                   <span className="inline-block px-2 py-0.5 bg-slate-50 text-slate-600 text-[10px] font-semibold rounded-lg mb-1">Sleep</span>
                   <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Sleep Apnea</h3>
-                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Better sleep, better health</p>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Kim on sleep apnea</p>
+                </div>
+              </Link>
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=720&h=480&fit=crop&q=80" alt="COPD Management" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">4:45</div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-purple-50 text-purple-600 text-[10px] font-semibold rounded-lg mb-1">COPD</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">COPD Management</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Patel on COPD</p>
+                </div>
+              </Link>
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=720&h=480&fit=crop&q=80" alt="Lung Health" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">3:30</div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-emerald-50 text-emerald-600 text-[10px] font-semibold rounded-lg mb-1">Prevention</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Lung Health Tips</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Johnson explains</p>
+                </div>
+              </Link>
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=720&h=480&fit=crop&q=80" alt="Allergy Management" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">4:00</div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-rose-50 text-rose-600 text-[10px] font-semibold rounded-lg mb-1">Allergies</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Respiratory Allergies</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Chen on allergies</p>
                 </div>
               </Link>
             </div>

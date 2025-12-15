@@ -5,6 +5,20 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.18.0] - 2024-12-15
+
+### 🎨 Q&A Widget Enhancement
+
+**Feed Page:**
+- Added "What Your Doctor Wants to Know" header title to Q&A cards
+- Title displays at top of widget in pill-shaped badge
+- Improved visual hierarchy for doctor check-in questions
+
+### 🔧 Bug Fix
+- Renamed video file from "hey dave.mp4" to "hey-dave.mp4" to fix URL encoding issues
+
+---
+
 ## [1.17.0] - 2024-12-15
 
 ### 🎨 UI Simplification & Polish

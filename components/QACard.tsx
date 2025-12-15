@@ -135,8 +135,15 @@ export const QACard = ({ question, onAnswer, isActive = false }: QACardProps) =>
 
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center justify-center h-full px-6 py-12">
+        {/* Header Title */}
+        <div className="mb-4 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full">
+          <p className="text-white/90 text-sm font-semibold tracking-wide uppercase">
+            What Your Doctor Wants to Know
+          </p>
+        </div>
+
         {/* Icon */}
-        <div className="mb-6 p-4 bg-white/20 backdrop-blur-sm rounded-full">
+        <div className="mb-4 p-4 bg-white/20 backdrop-blur-sm rounded-full">
           <MessageCircle className="w-8 h-8 text-white" />
         </div>
 

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import { Play, MessageCircle, Heart, Filter, Check, User } from "lucide-react";
+import { Play, MessageCircle, Heart, Filter, Check, User, Lock, Crown } from "lucide-react";
 import { HeartScore } from "@/components/HeartScore";
 import { TrustBadge } from "@/components/TrustBadge";
 import { UserMenu } from "@/components/UserMenu";
@@ -13,14 +13,26 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Doctor } from "@/lib/types";
 
+// Extended doctor type with insurer info
+interface ExtendedDoctor extends Doctor {
+  insurer?: string;
+}
+
+// First two doctors are free tier, rest are premium
+const FREE_TIER_DOCTOR_IDS = [
+  "550e8400-e29b-41d4-a716-446655440001",
+  "550e8400-e29b-41d4-a716-446655440002",
+];
+
 // Mock doctor profiles data
-const MOCK_DOCTORS: Doctor[] = [
+const MOCK_DOCTORS: ExtendedDoctor[] = [
   {
     id: "550e8400-e29b-41d4-a716-446655440001",
     name: "Sarah Johnson",
     specialty: "Cardiology",
     avatarUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop&q=80",
     clinicName: "Heart Health Clinic",
+    insurer: "Kaiser",
     createdAt: new Date().toISOString(),
   },
   {
@@ -29,6 +41,7 @@ const MOCK_DOCTORS: Doctor[] = [
     specialty: "Cardiology",
     avatarUrl: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&h=400&fit=crop&q=80",
     clinicName: "Boston Cardiology Center",
+    insurer: "UnitedHealthcare",
     createdAt: new Date().toISOString(),
   },
   {
@@ -37,6 +50,7 @@ const MOCK_DOCTORS: Doctor[] = [
     specialty: "Cardiology",
     avatarUrl: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=400&h=400&fit=crop&q=80",
     clinicName: "Advanced Heart Care",
+    insurer: "Aetna",
     createdAt: new Date().toISOString(),
   },
   {
@@ -45,6 +59,7 @@ const MOCK_DOCTORS: Doctor[] = [
     specialty: "Cardiology",
     avatarUrl: "https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=400&h=400&fit=crop&q=80",
     clinicName: "Cardiovascular Associates",
+    insurer: "Cigna",
     createdAt: new Date().toISOString(),
   },
   {
@@ -53,6 +68,7 @@ const MOCK_DOCTORS: Doctor[] = [
     specialty: "Cardiology",
     avatarUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop&q=80&sat=-100",
     clinicName: "Heart & Vascular Institute",
+    insurer: "Blue Cross",
     createdAt: new Date().toISOString(),
   },
   {
@@ -61,6 +77,7 @@ const MOCK_DOCTORS: Doctor[] = [
     specialty: "Cardiology",
     avatarUrl: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&h=400&fit=crop&q=80",
     clinicName: "Metro Heart Specialists",
+    insurer: "Humana",
     createdAt: new Date().toISOString(),
   },
   {
@@ -69,6 +86,7 @@ const MOCK_DOCTORS: Doctor[] = [
     specialty: "Cardiology",
     avatarUrl: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=400&h=400&fit=crop&q=80",
     clinicName: "Cardiac Care Center",
+    insurer: "Kaiser",
     createdAt: new Date().toISOString(),
   },
   {
@@ -77,6 +95,7 @@ const MOCK_DOCTORS: Doctor[] = [
     specialty: "Cardiology",
     avatarUrl: "https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=400&h=400&fit=crop&q=80",
     clinicName: "Heart Health Partners",
+    insurer: "Anthem",
     createdAt: new Date().toISOString(),
   },
   {
@@ -85,6 +104,7 @@ const MOCK_DOCTORS: Doctor[] = [
     specialty: "Cardiology",
     avatarUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&q=80",
     clinicName: "Premier Cardiology",
+    insurer: "UnitedHealthcare",
     createdAt: new Date().toISOString(),
   },
   {
@@ -93,6 +113,7 @@ const MOCK_DOCTORS: Doctor[] = [
     specialty: "Cardiology",
     avatarUrl: "https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=400&h=400&fit=crop&q=80",
     clinicName: "Integrated Heart Solutions",
+    insurer: "Cigna",
     createdAt: new Date().toISOString(),
   },
   {
@@ -101,6 +122,7 @@ const MOCK_DOCTORS: Doctor[] = [
     specialty: "Cardiology",
     avatarUrl: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop&q=80",
     clinicName: "Wellness Heart Clinic",
+    insurer: "Aetna",
     createdAt: new Date().toISOString(),
   },
   {
@@ -109,6 +131,7 @@ const MOCK_DOCTORS: Doctor[] = [
     specialty: "Cardiology",
     avatarUrl: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop&q=80",
     clinicName: "Comprehensive Cardiac Care",
+    insurer: "Blue Cross",
     createdAt: new Date().toISOString(),
   },
 ];
@@ -128,6 +151,7 @@ export default function DiscoverPage() {
   const [selectedSpecialty, setSelectedSpecialty] = useState<string>("all");
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const [authPromptTrigger, setAuthPromptTrigger] = useState<"earned_trust" | "save_progress" | "set_reminder" | "personalized_content" | "follow_doctor">("follow_doctor");
+  const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
   
   // Initialize with first three doctors already added
   const [addedDoctors, setAddedDoctors] = useState<Set<string>>(
@@ -153,7 +177,13 @@ export default function DiscoverPage() {
     setIsChatOpen(false);
   };
 
-  const handleDoctorClick = (doctor: Doctor) => {
+  const handleDoctorClick = (doctor: Doctor, isPremium: boolean) => {
+    // If premium doctor, show upgrade prompt
+    if (isPremium) {
+      setShowUpgradePrompt(true);
+      return;
+    }
+    
     setSelectedDoctor(doctor);
     trackInteraction();
     
@@ -167,9 +197,16 @@ export default function DiscoverPage() {
     setAddedDoctors((prev) => new Set(prev).add(doctor.id));
   };
 
-  const handleAddDoctor = (e: React.MouseEvent, doctorId: string) => {
+  const handleAddDoctor = (e: React.MouseEvent, doctorId: string, isPremium: boolean) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    // If premium doctor, show upgrade prompt
+    if (isPremium) {
+      setShowUpgradePrompt(true);
+      return;
+    }
+    
     trackInteraction();
     
     // If not authenticated, prompt to sign in to follow doctors
@@ -193,15 +230,19 @@ export default function DiscoverPage() {
         <div className="px-3 md:px-6">
           <div className="flex items-center justify-between py-2 md:py-4">
             {/* Left: Logo */}
-            <Link href="/feed" className="flex items-center">
+            <Link href="/feed" className="flex flex-col items-center">
               <Image
-                src="/images/1another-logo.png"
+                src="/images/1another-logo.png?v=2"
                 alt="1Another"
                 width={140}
                 height={40}
                 className="h-8 md:h-12 w-auto"
                 priority
+                unoptimized
               />
+              <span className="text-[#00BCD4] font-semibold text-[10px] md:text-sm tracking-wide">
+                Intelligent Health
+              </span>
             </Link>
             
             {/* Desktop Nav - hidden on mobile */}
@@ -267,14 +308,9 @@ export default function DiscoverPage() {
           <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-1">
             Your Doctors
           </h1>
-          <p className="text-gray-500 text-sm mb-3">
+          <p className="text-gray-500 text-sm">
             Explore content from your experts
           </p>
-          <div className="bg-gradient-to-r from-emerald-50 to-sky-50 rounded-xl p-3 border border-emerald-100">
-            <p className="text-gray-800 text-sm font-medium">
-              Hey {patientName}, here are some videos I recommend:
-            </p>
-          </div>
         </div>
 
         {/* Doctor Profiles - Modular Card */}
@@ -286,56 +322,121 @@ export default function DiscoverPage() {
               return doctor.specialty.toLowerCase() === selectedSpecialty.replace("-", " ");
             }).map((doctor) => {
               const isAdded = addedDoctors.has(doctor.id);
+              const isPremium = !FREE_TIER_DOCTOR_IDS.includes(doctor.id);
+              
               return (
-                <Link
+                <div
                   key={doctor.id}
-                  href={`/feed?doctor=${doctor.id}`}
-                  className="flex flex-col items-center gap-1 flex-shrink-0 group cursor-pointer"
-                  onClick={() => handleDoctorClick(doctor)}
+                  className={`flex flex-col items-center gap-1 flex-shrink-0 group cursor-pointer ${isPremium ? 'opacity-60' : ''}`}
+                  onClick={(e) => {
+                    if (isPremium) {
+                      e.preventDefault();
+                      setShowUpgradePrompt(true);
+                    }
+                  }}
                 >
-                  <div className="relative">
-                    {/* Gradient ring - smaller on mobile */}
-                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-tr from-primary-500 via-pink-500 to-yellow-500 p-[2px] group-hover:scale-105 transition-transform duration-200">
-                      <div className="w-full h-full rounded-full bg-white p-[2px]">
-                        <div className="relative w-full h-full rounded-full overflow-hidden">
-                          {doctor.avatarUrl ? (
-                            <Image
-                              src={doctor.avatarUrl}
-                              alt={doctor.name}
-                              fill
-                              className="object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center">
-                              <span className="text-white text-lg font-bold">
-                                {doctor.name.charAt(0)}
-                              </span>
+                  {isPremium ? (
+                    // Premium doctor - not clickable to feed
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="relative">
+                        {/* Grayscale ring for premium */}
+                        <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-tr from-gray-400 via-gray-300 to-gray-400 p-[2px]">
+                          <div className="w-full h-full rounded-full bg-white p-[2px]">
+                            <div className="relative w-full h-full rounded-full overflow-hidden">
+                              {doctor.avatarUrl ? (
+                                <Image
+                                  src={doctor.avatarUrl}
+                                  alt={doctor.name}
+                                  fill
+                                  className="object-cover grayscale"
+                                />
+                              ) : (
+                                <div className="w-full h-full bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center">
+                                  <span className="text-white text-lg font-bold">
+                                    {doctor.name.charAt(0)}
+                                  </span>
+                                </div>
+                              )}
                             </div>
-                          )}
+                          </div>
+                        </div>
+                        {/* Premium lock badge */}
+                        <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-amber-500 rounded-full flex items-center justify-center shadow border-2 border-white">
+                          <Crown className="w-3 h-3 text-white" />
                         </div>
                       </div>
+                      <p className="text-[10px] md:text-xs font-medium text-gray-400 max-w-[70px] truncate text-center">
+                        Dr. {doctor.name.split(' ')[1]}
+                      </p>
+                      <p className="text-[8px] text-gray-400 max-w-[70px] truncate text-center">
+                        {doctor.clinicName}
+                      </p>
+                      {doctor.insurer && (
+                        <p className="text-[8px] text-gray-400 max-w-[70px] truncate text-center">
+                          {doctor.insurer}
+                        </p>
+                      )}
                     </div>
-                    {/* Checkmark badge */}
-                    {isAdded && (
-                      <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center shadow border-2 border-white">
-                        <Check className="w-3 h-3 text-white" strokeWidth={3} />
+                  ) : (
+                    // Free tier doctor - clickable
+                    <Link
+                      href={`/feed?doctor=${doctor.id}`}
+                      className="flex flex-col items-center gap-1"
+                      onClick={() => handleDoctorClick(doctor, false)}
+                    >
+                      <div className="relative">
+                        {/* Gradient ring - smaller on mobile */}
+                        <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-tr from-primary-500 via-pink-500 to-yellow-500 p-[2px] group-hover:scale-105 transition-transform duration-200">
+                          <div className="w-full h-full rounded-full bg-white p-[2px]">
+                            <div className="relative w-full h-full rounded-full overflow-hidden">
+                              {doctor.avatarUrl ? (
+                                <Image
+                                  src={doctor.avatarUrl}
+                                  alt={doctor.name}
+                                  fill
+                                  className="object-cover"
+                                />
+                              ) : (
+                                <div className="w-full h-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center">
+                                  <span className="text-white text-lg font-bold">
+                                    {doctor.name.charAt(0)}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        {/* Checkmark badge */}
+                        {isAdded && (
+                          <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center shadow border-2 border-white">
+                            <Check className="w-3 h-3 text-white" strokeWidth={3} />
+                          </div>
+                        )}
+                        {/* Add button */}
+                        {!isAdded && (
+                          <button
+                            onClick={(e) => handleAddDoctor(e, doctor.id, false)}
+                            className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-xs hover:bg-primary-600 transition-colors shadow border-2 border-white"
+                            aria-label={`Add Dr. ${doctor.name}`}
+                          >
+                            +
+                          </button>
+                        )}
                       </div>
-                    )}
-                    {/* Add button */}
-                    {!isAdded && (
-                      <button
-                        onClick={(e) => handleAddDoctor(e, doctor.id)}
-                        className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-xs hover:bg-primary-600 transition-colors shadow border-2 border-white"
-                        aria-label={`Add Dr. ${doctor.name}`}
-                      >
-                        +
-                      </button>
-                    )}
-                  </div>
-                  <p className="text-[10px] md:text-xs font-medium text-gray-700 max-w-[56px] truncate text-center">
-                    Dr. {doctor.name.split(' ')[1]}
-                  </p>
-                </Link>
+                      <p className="text-[10px] md:text-xs font-medium text-gray-700 max-w-[70px] truncate text-center">
+                        Dr. {doctor.name.split(' ')[1]}
+                      </p>
+                      <p className="text-[8px] text-gray-500 max-w-[70px] truncate text-center">
+                        {doctor.clinicName}
+                      </p>
+                      {doctor.insurer && (
+                        <p className="text-[8px] text-gray-500 max-w-[70px] truncate text-center">
+                          {doctor.insurer}
+                        </p>
+                      )}
+                    </Link>
+                  )}
+                </div>
               );
             })}
           </div>
@@ -398,11 +499,11 @@ export default function DiscoverPage() {
             <h2 className="text-base font-bold text-gray-900 mb-3">
               Cardiology
             </h2>
-            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4">
+            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
               {/* Video Card 1 */}
               <Link
                 href="/feed"
-                className="flex-shrink-0 w-44 md:w-auto bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
+                className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
               >
                 <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
                   <Image
@@ -436,7 +537,7 @@ export default function DiscoverPage() {
               {/* Video Card 2 */}
               <Link
                 href="/feed"
-                className="flex-shrink-0 w-44 md:w-auto bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
+                className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
               >
                 <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
                   <Image
@@ -466,6 +567,142 @@ export default function DiscoverPage() {
                   </p>
                 </div>
               </Link>
+
+              {/* Video Card 3 */}
+              <Link
+                href="/feed"
+                className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
+              >
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=720&h=480&fit=crop&q=80"
+                    alt="Managing Cholesterol"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">
+                    5:30
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-purple-50 text-purple-600 text-[10px] font-semibold rounded-lg mb-1">
+                    Cholesterol
+                  </span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">
+                    Managing Cholesterol
+                  </h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">
+                    Lower your LDL naturally
+                  </p>
+                </div>
+              </Link>
+
+              {/* Video Card 4 */}
+              <Link
+                href="/feed"
+                className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
+              >
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=720&h=480&fit=crop&q=80"
+                    alt="Heart Rate Zones"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">
+                    4:15
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-orange-50 text-orange-600 text-[10px] font-semibold rounded-lg mb-1">
+                    Exercise
+                  </span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">
+                    Heart Rate Zones
+                  </h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">
+                    Optimize your workout
+                  </p>
+                </div>
+              </Link>
+
+              {/* Video Card 5 */}
+              <Link
+                href="/feed"
+                className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
+              >
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=720&h=480&fit=crop&q=80"
+                    alt="Arrhythmia Basics"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">
+                    6:00
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-red-50 text-red-600 text-[10px] font-semibold rounded-lg mb-1">
+                    Arrhythmia
+                  </span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">
+                    Understanding Arrhythmia
+                  </h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">
+                    Irregular heartbeat explained
+                  </p>
+                </div>
+              </Link>
+
+              {/* Video Card 6 */}
+              <Link
+                href="/feed"
+                className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
+              >
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?w=720&h=480&fit=crop&q=80"
+                    alt="Stress and Heart Disease"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">
+                    3:45
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[10px] font-semibold rounded-lg mb-1">
+                    Stress
+                  </span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">
+                    Stress & Heart Disease
+                  </h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">
+                    The mind-heart connection
+                  </p>
+                </div>
+              </Link>
             </div>
           </div>
         )}
@@ -476,10 +713,10 @@ export default function DiscoverPage() {
             <h2 className="text-base font-bold text-gray-900 mb-3">
               Nutrition & Exercise
             </h2>
-            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4">
+            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
               <Link
                 href="/feed"
-                className="flex-shrink-0 w-44 md:w-auto bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
+                className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
               >
                 <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
                   <Image
@@ -509,34 +746,309 @@ export default function DiscoverPage() {
                   </p>
                 </div>
               </Link>
+
+              <Link
+                href="/feed"
+                className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
+              >
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=720&h=480&fit=crop&q=80"
+                    alt="Mediterranean Diet"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">
+                    4:45
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-emerald-50 text-emerald-600 text-[10px] font-semibold rounded-lg mb-1">
+                    Diet
+                  </span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">
+                    Mediterranean Diet
+                  </h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">
+                    Eat for heart health
+                  </p>
+                </div>
+              </Link>
+
+              <Link
+                href="/feed"
+                className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
+              >
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=720&h=480&fit=crop&q=80"
+                    alt="Walking for Wellness"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">
+                    2:30
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-sky-50 text-sky-600 text-[10px] font-semibold rounded-lg mb-1">
+                    Walking
+                  </span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">
+                    Walking for Wellness
+                  </h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">
+                    10,000 steps daily
+                  </p>
+                </div>
+              </Link>
+
+              <Link
+                href="/feed"
+                className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
+              >
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=720&h=480&fit=crop&q=80"
+                    alt="Superfoods for Heart"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">
+                    5:15
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-amber-50 text-amber-600 text-[10px] font-semibold rounded-lg mb-1">
+                    Superfoods
+                  </span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">
+                    Superfoods for Heart
+                  </h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">
+                    Best foods for your heart
+                  </p>
+                </div>
+              </Link>
+
+              <Link
+                href="/feed"
+                className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
+              >
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=720&h=480&fit=crop&q=80"
+                    alt="Yoga for Heart Health"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">
+                    8:00
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-violet-50 text-violet-600 text-[10px] font-semibold rounded-lg mb-1">
+                    Yoga
+                  </span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-primary-600 transition-colors">
+                    Yoga for Heart Health
+                  </h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">
+                    Gentle poses for cardio
+                  </p>
+                </div>
+              </Link>
             </div>
           </div>
         )}
 
-        {/* Other Specialties - Modular Cards */}
+        {/* Endocrinology Videos */}
         {selectedSpecialty === "endocrinology" && (
           <div className="bg-white rounded-2xl p-3 mb-3 shadow-sm">
-            <h2 className="text-base font-bold text-gray-900 mb-2">Endocrinology</h2>
-            <div className="p-4 bg-gray-50 rounded-xl text-center">
-              <p className="text-gray-500 text-sm">Content coming soon</p>
+            <h2 className="text-base font-bold text-gray-900 mb-3">Endocrinology</h2>
+            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image src="https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=720&h=480&fit=crop&q=80" alt="Diabetes Management" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">4:30</div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-semibold rounded-lg mb-1">Diabetes</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Diabetes Management</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Blood sugar control tips</p>
+                </div>
+              </Link>
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image src="https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?w=720&h=480&fit=crop&q=80" alt="Thyroid Health" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">3:45</div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-purple-50 text-purple-600 text-[10px] font-semibold rounded-lg mb-1">Thyroid</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Thyroid Health</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Understanding your thyroid</p>
+                </div>
+              </Link>
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=720&h=480&fit=crop&q=80" alt="Hormone Balance" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">5:00</div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-pink-50 text-pink-600 text-[10px] font-semibold rounded-lg mb-1">Hormones</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Hormone Balance</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Natural hormone health</p>
+                </div>
+              </Link>
             </div>
           </div>
         )}
 
+        {/* Gastroenterology Videos */}
         {selectedSpecialty === "gastroenterology" && (
           <div className="bg-white rounded-2xl p-3 mb-3 shadow-sm">
-            <h2 className="text-base font-bold text-gray-900 mb-2">Gastroenterology</h2>
-            <div className="p-4 bg-gray-50 rounded-xl text-center">
-              <p className="text-gray-500 text-sm">Content coming soon</p>
+            <h2 className="text-base font-bold text-gray-900 mb-3">Gastroenterology</h2>
+            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image src="https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=720&h=480&fit=crop&q=80" alt="Gut Health Basics" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">4:15</div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-green-50 text-green-600 text-[10px] font-semibold rounded-lg mb-1">Gut Health</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Gut Health Basics</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Your microbiome explained</p>
+                </div>
+              </Link>
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image src="https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=720&h=480&fit=crop&q=80" alt="IBS Management" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">5:30</div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-orange-50 text-orange-600 text-[10px] font-semibold rounded-lg mb-1">IBS</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">IBS Management</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Living well with IBS</p>
+                </div>
+              </Link>
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=720&h=480&fit=crop&q=80" alt="Digestive Health" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">3:45</div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-teal-50 text-teal-600 text-[10px] font-semibold rounded-lg mb-1">Digestion</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Digestive Health</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Foods that help digestion</p>
+                </div>
+              </Link>
             </div>
           </div>
         )}
 
+        {/* Pulmonology Videos */}
         {selectedSpecialty === "pulmonology" && (
           <div className="bg-white rounded-2xl p-3 mb-3 shadow-sm">
-            <h2 className="text-base font-bold text-gray-900 mb-2">Pulmonology</h2>
-            <div className="p-4 bg-gray-50 rounded-xl text-center">
-              <p className="text-gray-500 text-sm">Content coming soon</p>
+            <h2 className="text-base font-bold text-gray-900 mb-3">Pulmonology</h2>
+            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=720&h=480&fit=crop&q=80" alt="Breathing Exercises" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">6:00</div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-cyan-50 text-cyan-600 text-[10px] font-semibold rounded-lg mb-1">Breathing</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Breathing Exercises</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Improve lung capacity</p>
+                </div>
+              </Link>
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=720&h=480&fit=crop&q=80" alt="Asthma Management" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">4:30</div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[10px] font-semibold rounded-lg mb-1">Asthma</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Asthma Management</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Control your asthma</p>
+                </div>
+              </Link>
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=720&h=480&fit=crop&q=80" alt="Sleep Apnea" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">5:15</div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-slate-50 text-slate-600 text-[10px] font-semibold rounded-lg mb-1">Sleep</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Sleep Apnea</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Better sleep, better health</p>
+                </div>
+              </Link>
             </div>
           </div>
         )}
@@ -591,6 +1103,53 @@ export default function DiscoverPage() {
         patientName={patientName}
         userId={session?.user?.id || "anonymous"}
       />
+
+      {/* Premium Upgrade Prompt */}
+      {showUpgradePrompt && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div 
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setShowUpgradePrompt(false)}
+          />
+          <div className="relative bg-white rounded-2xl w-full max-w-sm mx-4 p-6 shadow-2xl">
+            <button
+              onClick={() => setShowUpgradePrompt(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+              aria-label="Close"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
+                <Crown className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">
+                Unlock Premium Doctors
+              </h3>
+              <p className="text-gray-600 text-sm mb-6">
+                Upgrade to premium to access all doctors and their personalized content. Get unlimited access to expert health guidance.
+              </p>
+              <div className="space-y-3">
+                <button
+                  onClick={() => setShowUpgradePrompt(false)}
+                  className="w-full py-3 px-4 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-semibold rounded-xl hover:from-amber-600 hover:to-amber-700 transition-all shadow-lg"
+                >
+                  Upgrade to Premium
+                </button>
+                <button
+                  onClick={() => setShowUpgradePrompt(false)}
+                  className="w-full py-2 px-4 text-gray-500 text-sm font-medium hover:text-gray-700 transition-colors"
+                >
+                  Maybe Later
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

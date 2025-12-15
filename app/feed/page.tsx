@@ -18,6 +18,14 @@ import Image from "next/image";
 
 // Mock doctors data
 const MOCK_DOCTORS: Record<string, Doctor> = {
+  "550e8400-e29b-41d4-a716-446655440000": {
+    id: "550e8400-e29b-41d4-a716-446655440000",
+    name: "Lisa Mitchell",
+    specialty: "Cardiology",
+    avatarUrl: "/images/doctors/doctor-lisa.jpg",
+    clinicName: "Heart Health Partners",
+    createdAt: new Date().toISOString(),
+  },
   "550e8400-e29b-41d4-a716-446655440001": {
     id: "550e8400-e29b-41d4-a716-446655440001",
     name: "Sarah Johnson",
@@ -55,18 +63,18 @@ const MOCK_DOCTORS: Record<string, Doctor> = {
 const MOCK_DOCTOR = MOCK_DOCTORS["550e8400-e29b-41d4-a716-446655440001"];
 
 const MOCK_VIDEOS: Video[] = [
-  // Hey Dave video (personalized greeting from the woman)
+  // Hey Dave video (personalized greeting from Dr. Lisa Mitchell)
   {
     id: "750e8400-e29b-41d4-a716-446655440000",
     title: "Hey Dave",
-    description: "Your personalized health update",
+    description: "Your personalized health update from Dr. Lisa Mitchell",
     videoUrl: "/videos/hey dave.mp4",
-    thumbnailUrl: "/images/doctors/doctor-jack.jpg",
-    posterUrl: "/images/doctors/doctor-jack.jpg",
+    thumbnailUrl: "/images/doctors/doctor-lisa.jpg",
+    posterUrl: "/images/doctors/doctor-lisa.jpg",
     duration: 60,
     category: "Follow-Up",
     tags: ["personalized", "follow-up", "greeting"],
-    doctorId: "550e8400-e29b-41d4-a716-446655440004",
+    doctorId: "550e8400-e29b-41d4-a716-446655440000",
     isPersonalized: true,
     createdAt: new Date().toISOString(),
   },
@@ -247,9 +255,11 @@ const FeedContent = () => {
     return () => container.removeEventListener("scroll", handleScroll);
   }, [currentIndex, combinedFeed, trackVideoView]);
 
-  // Track first video view on mount
+  // Track first video view on mount - use ref to prevent infinite loop
+  const hasTrackedFirstVideo = useRef(false);
   useEffect(() => {
-    if (combinedFeed.length > 0 && combinedFeed[0].type === 'video') {
+    if (!hasTrackedFirstVideo.current && combinedFeed.length > 0 && combinedFeed[0].type === 'video') {
+      hasTrackedFirstVideo.current = true;
       trackVideoView(combinedFeed[0].data.id);
     }
   }, [combinedFeed, trackVideoView]);
@@ -345,15 +355,19 @@ const FeedContent = () => {
         <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-gray-200 h-screen fixed left-0 top-0 z-40">
           {/* Logo */}
           <div className="p-6 border-b border-gray-100">
-            <Link href="/feed" className="flex items-center justify-center">
+            <Link href="/feed" className="flex flex-col items-center justify-center">
               <Image
-                src="/images/1another-logo.png"
-                alt="1Another - Intelligent Health"
+                src="/images/1another-logo.png?v=2"
+                alt="1Another"
                 width={280}
                 height={80}
-                className="h-16 w-auto"
+                className="h-12 w-auto"
                 priority
+                unoptimized
               />
+              <span className="text-[#00BCD4] font-semibold text-sm tracking-wide">
+                Intelligent Health
+              </span>
             </Link>
           </div>
 

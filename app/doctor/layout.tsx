@@ -17,6 +17,7 @@ import {
   Bell,
   ChevronDown,
   Sparkles,
+  UserPlus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -28,6 +29,16 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
+  {
+    label: "Onboarding",
+    href: "/doctor/onboarding",
+    icon: <UserPlus className="w-5 h-5" />,
+  },
+  {
+    label: "Send Content",
+    href: "/doctor/send",
+    icon: <Send className="w-5 h-5" />,
+  },
   {
     label: "Dashboard",
     href: "/doctor",
@@ -54,11 +65,6 @@ const NAV_ITEMS: NavItem[] = [
     label: "Video Library",
     href: "/doctor/chapters",
     icon: <Film className="w-5 h-5" />,
-  },
-  {
-    label: "Send Content",
-    href: "/doctor/send",
-    icon: <Send className="w-5 h-5" />,
   },
 ];
 
@@ -100,13 +106,19 @@ export default function DoctorLayout({
             <Menu className="w-6 h-6" />
           </button>
 
-          <Image
-            src="/images/1another-logo.png"
-            alt="1Another"
-            width={120}
-            height={36}
-            className="h-8 w-auto"
-          />
+          <div className="flex flex-col items-center">
+            <Image
+              src="/images/1another-logo.png?v=2"
+              alt="1Another"
+              width={120}
+              height={36}
+              className="h-7 w-auto"
+              unoptimized
+            />
+            <span className="text-[#00BCD4] font-semibold text-[9px] tracking-wide">
+              Intelligent Health
+            </span>
+          </div>
 
           <button
             className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg relative"
@@ -134,15 +146,19 @@ export default function DoctorLayout({
         )}
       >
         {/* Sidebar Header */}
-        <div className="flex items-center justify-between h-16 px-6 border-b border-gray-100">
-          <Link href="/doctor" className="flex items-center">
+        <div className="flex items-center justify-between h-20 px-6 border-b border-gray-100">
+          <Link href="/doctor" className="flex flex-col items-center">
             <Image
-              src="/images/1another-logo.png"
+              src="/images/1another-logo.png?v=2"
               alt="1Another"
               width={140}
               height={42}
               className="h-10 w-auto"
+              unoptimized
             />
+            <span className="text-[#00BCD4] font-semibold text-xs tracking-wide">
+              Intelligent Health
+            </span>
           </Link>
           <button
             onClick={handleCloseSidebar}

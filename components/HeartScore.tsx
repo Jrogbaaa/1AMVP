@@ -89,13 +89,7 @@ export const HeartScore = ({ score, className, showMessage = false, isAnimating 
           />
         </div>
         
-        {/* Score text overlay with better contrast */}
-        <span className={cn(
-          "absolute inset-0 flex items-center justify-center text-xs font-bold text-white z-10",
-          isFullScore ? "drop-shadow-[0_0_8px_rgba(0,191,166,0.8)]" : "drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]"
-        )}>
-          {clampedScore}%
-        </span>
+        {/* Heart icon without score number */}
       </div>
       {showMessage && (
         <span className={cn("text-sm font-medium", colorClass)}>

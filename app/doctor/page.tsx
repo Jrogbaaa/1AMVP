@@ -221,10 +221,10 @@ export default function DoctorDashboard() {
         ))}
       </div>
 
-      {/* Main Content Grid */}
-      <div className="grid lg:grid-cols-3 gap-6">
+      {/* Main Content - Stacked Vertically */}
+      <div className="space-y-6">
         {/* Recent Patients */}
-        <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100">
           <div className="flex items-center justify-between p-6 border-b border-gray-100">
             <div>
               <h2 className="text-lg font-semibold text-gray-900">
@@ -248,14 +248,20 @@ export default function DoctorDashboard() {
                 className="p-4 hover:bg-gray-50 transition-colors"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-100 flex-shrink-0">
-                    <Image
-                      src={patient.avatarUrl}
-                      alt={patient.name}
-                      width={40}
-                      height={40}
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-100 flex-shrink-0 bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center">
+                    {patient.avatarUrl ? (
+                      <Image
+                        src={patient.avatarUrl}
+                        alt={patient.name}
+                        width={40}
+                        height={40}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-white font-bold text-sm">
+                        {patient.name.split(' ').map(n => n[0]).join('')}
+                      </span>
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
@@ -333,14 +339,20 @@ export default function DoctorDashboard() {
               >
                 <div className="flex items-start gap-3">
                   <div className="relative flex-shrink-0">
-                    <div className="w-10 h-10 rounded-full overflow-hidden">
-                      <Image
-                        src={message.avatarUrl}
-                        alt={message.patientName}
-                        width={40}
-                        height={40}
-                        className="w-full h-full object-cover"
-                      />
+                    <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center">
+                      {message.avatarUrl ? (
+                        <Image
+                          src={message.avatarUrl}
+                          alt={message.patientName}
+                          width={40}
+                          height={40}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-white font-bold text-sm">
+                          {message.patientName.split(' ').map(n => n[0]).join('')}
+                        </span>
+                      )}
                     </div>
                     {message.unread && (
                       <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-sky-500 rounded-full border-2 border-white" />
@@ -406,15 +418,15 @@ export default function DoctorDashboard() {
           </Link>
         </div>
 
-        <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-100">
+        <div className="divide-y divide-gray-100">
           {POPULAR_CHAPTERS.map((chapter, index) => (
             <Link
               key={chapter.id}
               href={`/doctor/chapters#${chapter.id}`}
-              className="p-6 hover:bg-gray-50 transition-colors group"
+              className="p-6 hover:bg-gray-50 transition-colors group block"
             >
               <div className="flex items-start gap-4">
-                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-sky-100 text-sky-600 font-bold text-lg group-hover:bg-sky-600 group-hover:text-white transition-colors">
+                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-sky-100 text-sky-600 font-bold text-lg group-hover:bg-sky-600 group-hover:text-white transition-colors flex-shrink-0">
                   {index + 1}
                 </div>
                 <div className="flex-1">
@@ -453,7 +465,7 @@ export default function DoctorDashboard() {
         </div>
 
         <div className="p-6">
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="space-y-6">
             {/* Train AI Avatar Card */}
             <div className="bg-white rounded-xl p-6 shadow-sm border border-violet-100 hover:shadow-md transition-all group">
               <div className="flex items-start gap-4">
@@ -520,7 +532,7 @@ export default function DoctorDashboard() {
           {/* How it Works */}
           <div className="mt-6 pt-6 border-t border-violet-200">
             <h4 className="text-sm font-semibold text-gray-700 mb-4">How it works:</h4>
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="space-y-4">
               <div className="flex items-start gap-3">
                 <div className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 text-violet-700 font-bold text-sm flex-shrink-0">
                   1
@@ -554,7 +566,7 @@ export default function DoctorDashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="space-y-4">
         <Link
           href="/doctor/send"
           className="flex items-center gap-4 p-4 bg-gradient-to-br from-sky-500 to-blue-600 text-white rounded-xl hover:shadow-lg transition-shadow"

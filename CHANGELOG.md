@@ -5,6 +5,62 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.16.0] - 2024-12-15
+
+### 🎨 Major UI Overhaul
+
+**Discover Page - Premium Doctor Model:**
+- First 2 doctors (Sarah Johnson, Michael Chen) are free tier
+- Remaining 10 doctors grayed out with gold crown badge
+- Click premium doctor shows "Upgrade to Premium" modal
+- Added doctor group and medical insurer below each doctor's name
+- Added 6+ videos per topic with horizontal scrolling
+- Videos added for Cardiology, Nutrition & Exercise, Endocrinology, Gastroenterology, Pulmonology
+- Removed welcome text block
+
+**Logo & Branding:**
+- Added "Intelligent Health" text below logo on all pages
+- Cache-busting added (`?v=2`) to refresh updated logo
+- Logo properly centered across all pages
+
+**My Health Page:**
+- Renamed "Hospital Groups" → "Your Doctor Groups"
+- Removed duplicate HeartScore on mobile (hidden in summary card)
+- Made reminder buttons larger on mobile (`px-3 py-2 text-xs`)
+
+**HeartScore Component:**
+- Removed percentage/number display - now shows just the heart icon
+
+**Feed Page:**
+- Audio now ON by default (users click to mute)
+- Fixed Maximum update depth exceeded error using ref
+- Added Dr. Lisa Mitchell for "Hey Dave" personalized video
+
+**Doctor Portal:**
+- Changed all grid layouts to vertical stacked layout
+- Created new Doctor Onboarding page (`/doctor/onboarding`)
+- Onboarding flow: Practice Setup → Train AI Avatar (HeyGen) → Create First Video → Invite Patients
+- Reordered navigation: Onboarding first, Send Content second
+- Added fallback initials for patient avatars
+
+**ReminderCard Component:**
+- Consolidated 3 separate sections into one unified scrollable list
+- Color-coded left borders indicate category (sky=annual, emerald=today, amber=week)
+
+### 📦 New Files
+- `app/doctor/onboarding/page.tsx` - 4-step doctor onboarding flow
+- `public/images/doctors/doctor-lisa.jpg` - Dr. Lisa Mitchell image
+
+### 🔧 Technical Changes
+- Fixed infinite re-render loop in feed page useEffect
+- Added `hasTrackedFirstVideo` ref to prevent multiple trackVideoView calls
+- Updated VideoCard to default `isMuted` to `false`
+
+### 🔄 Breaking Changes
+- None (all changes are backwards compatible)
+
+---
+
 ## [1.15.0] - 2024-12-15
 
 ### 🎬 Simplified Video Feed - Dr. Jack & "Hey Dave" Only

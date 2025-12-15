@@ -37,7 +37,7 @@ export const VideoCard = ({
 }: VideoCardProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(false); // Audio ON by default
   const [hasVideoError, setHasVideoError] = useState(false);
 
   useEffect(() => {
@@ -347,10 +347,7 @@ export const VideoCard = ({
                     />
                   </div>
                   
-                  {/* Score text overlay with better contrast */}
-                  <span className="absolute inset-0 flex items-center justify-center text-sm font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] z-10">
-                    {healthScore}%
-                  </span>
+                  {/* Heart icon without score number */}
                 </div>
               </button>
             )}

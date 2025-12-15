@@ -61,15 +61,19 @@ const UnauthenticatedView = () => {
       <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-30">
         <div className="dashboard-container">
           <div className="flex items-center justify-between py-4">
-            <Link href="/feed" className="flex items-center">
+            <Link href="/feed" className="flex flex-col items-center">
               <Image
-                src="/images/1another-logo.png"
-                alt="1Another - Intelligent Health"
+                src="/images/1another-logo.png?v=2"
+                alt="1Another"
                 width={280}
                 height={80}
-                className="h-16 w-auto"
+                className="h-12 w-auto"
                 priority
+                unoptimized
               />
+              <span className="text-[#00BCD4] font-semibold text-sm tracking-wide">
+                Intelligent Health
+              </span>
             </Link>
             <nav className="hidden md:flex items-center gap-6">
               <Link href="/feed" className="text-gray-600 hover:text-gray-900 font-medium">
@@ -270,15 +274,19 @@ export default function MyHealthPage() {
         <div className="px-3 md:px-6">
           <div className="flex items-center justify-between py-2 md:py-4">
             {/* Left: Logo */}
-            <Link href="/feed" className="flex items-center">
+            <Link href="/feed" className="flex flex-col items-center">
               <Image
-                src="/images/1another-logo.png"
+                src="/images/1another-logo.png?v=2"
                 alt="1Another"
                 width={140}
                 height={40}
                 className="h-8 md:h-12 w-auto"
                 priority
+                unoptimized
               />
+              <span className="text-[#00BCD4] font-semibold text-[10px] md:text-sm tracking-wide">
+                Intelligent Health
+              </span>
             </Link>
             
             {/* Desktop Nav */}
@@ -338,7 +346,10 @@ export default function MyHealthPage() {
                   </h1>
                   <p className="text-gray-600 text-sm">Track your health actions</p>
                 </div>
-                <HeartScore score={healthScore} className="scale-110" isAnimating={isHeartAnimating} />
+                {/* Hidden on mobile to avoid duplicate with header */}
+                <div className="hidden md:block">
+                  <HeartScore score={healthScore} className="scale-110" isAnimating={isHeartAnimating} />
+                </div>
               </div>
             </div>
 
@@ -363,13 +374,13 @@ export default function MyHealthPage() {
                         </div>
                         <p className="text-xs text-gray-500 mt-0.5">Due: March 2025</p>
                       </div>
-                      <div className="flex gap-1.5 flex-shrink-0">
-                        <button className="px-2 py-1 bg-white text-primary-600 text-[10px] font-medium rounded-lg border border-primary-200 hover:bg-primary-50 transition-colors">
+                      <div className="flex gap-1.5 md:gap-1.5 flex-shrink-0">
+                        <button className="px-3 py-2 md:px-2 md:py-1 bg-white text-primary-600 text-xs md:text-[10px] font-medium rounded-lg border border-primary-200 hover:bg-primary-50 transition-colors">
                           📅 Add
                         </button>
                         <button
                           onClick={handleScheduleAppointment}
-                          className="px-2 py-1 bg-primary-600 text-white text-[10px] font-medium rounded-lg hover:bg-primary-700 transition-colors"
+                          className="px-3 py-2 md:px-2 md:py-1 bg-primary-600 text-white text-xs md:text-[10px] font-medium rounded-lg hover:bg-primary-700 transition-colors"
                         >
                           Schedule
                         </button>
@@ -386,13 +397,13 @@ export default function MyHealthPage() {
                         </div>
                         <p className="text-xs text-gray-500 mt-0.5">Due: June 2025</p>
                       </div>
-                      <div className="flex gap-1.5 flex-shrink-0">
-                        <button className="px-2 py-1 bg-white text-primary-600 text-[10px] font-medium rounded-lg border border-primary-200 hover:bg-primary-50 transition-colors">
+                      <div className="flex gap-1.5 md:gap-1.5 flex-shrink-0">
+                        <button className="px-3 py-2 md:px-2 md:py-1 bg-white text-primary-600 text-xs md:text-[10px] font-medium rounded-lg border border-primary-200 hover:bg-primary-50 transition-colors">
                           📅 Add
                         </button>
                         <button
                           onClick={handleScheduleAppointment}
-                          className="px-2 py-1 bg-primary-600 text-white text-[10px] font-medium rounded-lg hover:bg-primary-700 transition-colors"
+                          className="px-3 py-2 md:px-2 md:py-1 bg-primary-600 text-white text-xs md:text-[10px] font-medium rounded-lg hover:bg-primary-700 transition-colors"
                         >
                           Schedule
                         </button>
@@ -409,13 +420,13 @@ export default function MyHealthPage() {
                         </div>
                         <p className="text-xs text-gray-500 mt-0.5">Due: October 2025</p>
                       </div>
-                      <div className="flex gap-1.5 flex-shrink-0">
-                        <button className="px-2 py-1 bg-white text-primary-600 text-[10px] font-medium rounded-lg border border-primary-200 hover:bg-primary-50 transition-colors">
+                      <div className="flex gap-1.5 md:gap-1.5 flex-shrink-0">
+                        <button className="px-3 py-2 md:px-2 md:py-1 bg-white text-primary-600 text-xs md:text-[10px] font-medium rounded-lg border border-primary-200 hover:bg-primary-50 transition-colors">
                           📅 Add
                         </button>
                         <button
                           onClick={handleScheduleAppointment}
-                          className="px-2 py-1 bg-primary-600 text-white text-[10px] font-medium rounded-lg hover:bg-primary-700 transition-colors"
+                          className="px-3 py-2 md:px-2 md:py-1 bg-primary-600 text-white text-xs md:text-[10px] font-medium rounded-lg hover:bg-primary-700 transition-colors"
                         >
                           Schedule
                         </button>
@@ -710,10 +721,10 @@ export default function MyHealthPage() {
             </div>
           </div>
 
-          {/* Hospital Groups */}
+          {/* Doctor Groups */}
           <div className="card">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Hospital Groups
+              Your Doctor Groups
             </h3>
             <div className="space-y-3">
               <div className="p-3 bg-gray-50 rounded-lg">

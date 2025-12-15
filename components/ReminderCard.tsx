@@ -2,13 +2,21 @@
 
 import { Calendar, Clock } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface ReminderCardProps {
   isActive: boolean;
   onScheduleClick?: () => void;
+  doctorName?: string;
+  doctorAvatarUrl?: string;
 }
 
-export const ReminderCard = ({ isActive, onScheduleClick }: ReminderCardProps) => {
+export const ReminderCard = ({ 
+  isActive, 
+  onScheduleClick,
+  doctorName = "Lisa Mitchell",
+  doctorAvatarUrl = "/images/doctors/doctor-lisa.jpg"
+}: ReminderCardProps) => {
   return (
     <div className="h-full w-full bg-gradient-to-br from-sky-50 via-white to-emerald-50 flex flex-col items-center justify-center">
       {/* Module title */}
@@ -19,12 +27,28 @@ export const ReminderCard = ({ isActive, onScheduleClick }: ReminderCardProps) =
       {/* Centered single reminder card */}
       <div className="w-full max-w-sm mx-4">
         <div className="bg-white rounded-2xl shadow-xl p-6 border border-sky-100">
-          {/* Icon */}
+          {/* Doctor Avatar */}
           <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-sky-500 to-emerald-500 flex items-center justify-center">
-              <span className="text-3xl">🩺</span>
+            <div className="relative">
+              <div className="w-20 h-20 rounded-full overflow-hidden ring-4 ring-sky-100 shadow-lg">
+                <Image
+                  src={doctorAvatarUrl}
+                  alt={`Dr. ${doctorName}`}
+                  width={80}
+                  height={80}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-gradient-to-br from-sky-500 to-emerald-500 rounded-full flex items-center justify-center shadow-md border-2 border-white">
+                <span className="text-sm">🩺</span>
+              </div>
             </div>
           </div>
+          
+          {/* Doctor Name */}
+          <p className="text-center text-sm text-gray-500 mb-3">
+            From <span className="font-semibold text-gray-700">Dr. {doctorName}</span>
+          </p>
 
           {/* Title */}
           <h2 className="text-xl font-bold text-gray-900 text-center mb-2">

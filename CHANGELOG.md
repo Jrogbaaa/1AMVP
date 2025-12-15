@@ -5,6 +5,43 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.22.0] - 2024-12-15
+
+### 🎨 Multiple UI Enhancements
+
+**ReminderCard - Doctor's Face Added:**
+- Added Dr. Lisa Mitchell's avatar photo to the reminder card
+- Shows "From Dr. Lisa Mitchell" text below avatar
+- Stethoscope badge on doctor avatar
+- Props allow customizing doctor name and avatar URL
+
+**Discover Page - Suggested Doctor Profile:**
+- Changed blue plus "Add Doctor" placeholder to actual Dr. Kim profile
+- Shows Dr. Kim's headshot with blue plus badge
+- Clicking navigates to the feed to view content
+- Displays "Dr. Kim", "Metro Heart", and "+ Add" text
+
+**Discover Page - Video Thumbnails:**
+- All video thumbnails now show doctor headshots instead of medical images
+- Added `object-top` class for proper face positioning
+- Updated all specialty sections: Cardiology, Primary Care, Endocrinology, Gastroenterology, Pulmonology
+
+**Discover Page - Message Notification:**
+- Added red notification badge with "2" on floating message button
+- Pulsing animation to draw attention
+- Indicates pending medicine check-in questions
+
+**Chat Onboarding - Medicine Q&A:**
+- Changed chat questions to medicine-focused Q&A:
+  - "Have you taken your medicine today?"
+  - "Are you feeling better after the new medicine?"
+- Simplified to 2 focused questions
+
+**Doctor Portal - Patient Avatar Fix:**
+- Updated Dave Thompson's placeholder image to real professional headshot
+
+---
+
 ## [1.21.0] - 2024-12-15
 
 ### 🎨 Reminder Module Title

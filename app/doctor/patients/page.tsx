@@ -43,7 +43,7 @@ const MOCK_PATIENTS: Patient[] = [
     name: "Dave Thompson",
     email: "dave.t@email.com",
     phone: "(555) 123-4567",
-    avatarUrl: "https://images.unsplash.com/photo-1599566150163-29194dcabd36?w=100&h=100&fit=crop",
+    avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&q=80",
     status: "active",
     videosWatched: 8,
     totalVideos: 10,

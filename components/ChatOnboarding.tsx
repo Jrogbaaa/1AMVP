@@ -25,23 +25,13 @@ interface ChatOnboardingProps {
 const ONBOARDING_QUESTIONS = [
   {
     step: 1,
-    question: "Reminder to schedule your colonoscopy!",
-    field: "medications",
+    question: "Have you taken your medicine today?",
+    field: "medicine_taken",
   },
   {
     step: 2,
-    question: "Do you have any allergies I should know about?",
-    field: "allergies",
-  },
-  {
-    step: 3,
-    question: "What's the best phone number to reach you?",
-    field: "phone",
-  },
-  {
-    step: 4,
-    question: "Perfect! You're all set. Would you like to schedule a follow-up appointment?",
-    field: "schedule",
+    question: "Are you feeling better after the new medicine?",
+    field: "feeling_better",
   },
 ];
 

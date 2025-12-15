@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { HeartScore } from "@/components/HeartScore";
+import { TrustBadge } from "@/components/TrustBadge";
 import { ScheduleAppointment } from "@/components/ScheduleAppointment";
 import { ChatOnboarding } from "@/components/ChatOnboarding";
 import { AuthPrompt } from "@/components/AuthPrompt";
@@ -18,10 +19,11 @@ import {
   LogOut,
   Play,
   Heart,
+  ChevronRight,
   MessageCircle,
+  CheckCircle2,
   Lock,
   Loader2,
-  CheckCircle2,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -38,6 +40,15 @@ const MOCK_DOCTOR: Doctor = {
   phone: "(617) 555-0100",
   email: "sjohnson@hearthealthclinic.com",
   createdAt: new Date().toISOString(),
+};
+
+// Score values for each action item
+const ACTION_SCORES: Record<string, number> = {
+  med1: 2,
+  bp: 3,
+  walk: 5,
+  video: 5,
+  water: 3,
 };
 
 // Unauthenticated view component
@@ -182,6 +193,9 @@ export default function MyHealthPage() {
   
   const [isScheduleOpen, setIsScheduleOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
+  const [isHeartAnimating, setIsHeartAnimating] = useState(false);
+  const [floatingCheck, setFloatingCheck] = useState<{id: string; active: boolean} | null>(null);
 
   // Show loading state while checking auth
   if (status === "loading") {
@@ -204,7 +218,12 @@ export default function MyHealthPage() {
     updatedAt: new Date().toISOString(),
   };
   
-  const healthScore = 55;
+  // Calculate health score based on completed items
+  const baseScore = 55;
+  const completedScore = Object.entries(checkedItems)
+    .filter(([_, checked]) => checked)
+    .reduce((sum, [id]) => sum + (ACTION_SCORES[id] || 0), 0);
+  const healthScore = Math.min(baseScore + completedScore, 100);
 
   const handleScheduleAppointment = () => {
     setIsScheduleOpen(true);
@@ -220,6 +239,32 @@ export default function MyHealthPage() {
 
   const handleSignOut = async () => {
     await signOut({ callbackUrl: "/" });
+  };
+
+  const handleCheckboxChange = (id: string) => {
+    const isNowChecked = !checkedItems[id];
+    
+    setCheckedItems((prev) => ({
+      ...prev,
+      [id]: isNowChecked,
+    }));
+    
+    // Trigger animations when checking an item
+    if (isNowChecked) {
+      // Show floating check animation
+      setFloatingCheck({ id, active: true });
+      
+      // Trigger heart pulse after a delay
+      setTimeout(() => {
+        setIsHeartAnimating(true);
+        setFloatingCheck(null);
+      }, 400);
+      
+      // Reset heart animation
+      setTimeout(() => {
+        setIsHeartAnimating(false);
+      }, 900);
+    }
   };
 
   return (
@@ -257,7 +302,7 @@ export default function MyHealthPage() {
               </Link>
             </nav>
 
-            {/* Right: Menu */}
+            {/* Right: Heart Score + Menu */}
             <div className="flex items-center gap-2 md:gap-4">
               <div className="hidden md:flex items-center gap-2">
                 <div className="bg-[#003A70] rounded px-2 py-1">
@@ -277,6 +322,7 @@ export default function MyHealthPage() {
                   className="h-6 w-auto"
                 />
               </div>
+              <HeartScore score={healthScore} isAnimating={isHeartAnimating} />
               <div className="hidden sm:block">
                 <UserMenu />
               </div>
@@ -302,37 +348,267 @@ export default function MyHealthPage() {
                 </div>
                 {/* Hidden on mobile to avoid duplicate with header */}
                 <div className="hidden md:block">
-                  <HeartScore score={healthScore} className="scale-110" />
+                  <HeartScore score={healthScore} className="scale-110" isAnimating={isHeartAnimating} />
                 </div>
               </div>
             </div>
 
-            {/* Single Reminder - Schedule Colonoscopy */}
-            <div className="bg-white rounded-2xl p-4 md:p-5 shadow-sm">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-sky-500 to-emerald-500 flex items-center justify-center">
-                  <span className="text-2xl">🩺</span>
-                </div>
-                <div>
-                  <h2 className="text-lg font-bold text-gray-900">Schedule Colonoscopy</h2>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-sm text-amber-600 font-medium">60 days away</span>
-                    <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-lg">+15%</span>
+            {/* Action Items - Modular Card */}
+            <div className="bg-white rounded-2xl p-3 md:p-4 shadow-sm">
+              <h2 className="text-base md:text-lg font-bold text-gray-900 mb-3">
+                Action Items & Reminders
+              </h2>
+
+              {/* Annual Reminders */}
+              <div className="mb-4">
+                <h3 className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-1.5">
+                  <span>📅</span> Annual Reminders
+                </h3>
+                <div className="space-y-2">
+                  <div className="p-3 rounded-xl bg-sky-50 border border-sky-100">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <p className="font-semibold text-gray-900 text-sm">Annual Physical</p>
+                          <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-lg">+15%</span>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-0.5">Due: March 2025</p>
+                      </div>
+                      <div className="flex gap-1.5 md:gap-1.5 flex-shrink-0">
+                        <button className="px-3 py-2 md:px-2 md:py-1 bg-white text-primary-600 text-xs md:text-[10px] font-medium rounded-lg border border-primary-200 hover:bg-primary-50 transition-colors">
+                          📅 Add
+                        </button>
+                        <button
+                          onClick={handleScheduleAppointment}
+                          className="px-3 py-2 md:px-2 md:py-1 bg-primary-600 text-white text-xs md:text-[10px] font-medium rounded-lg hover:bg-primary-700 transition-colors"
+                        >
+                          Schedule
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-sky-50 border border-sky-100">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <p className="font-semibold text-gray-900 text-sm">Cholesterol Screening</p>
+                          <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-lg">+10%</span>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-0.5">Due: June 2025</p>
+                      </div>
+                      <div className="flex gap-1.5 md:gap-1.5 flex-shrink-0">
+                        <button className="px-3 py-2 md:px-2 md:py-1 bg-white text-primary-600 text-xs md:text-[10px] font-medium rounded-lg border border-primary-200 hover:bg-primary-50 transition-colors">
+                          📅 Add
+                        </button>
+                        <button
+                          onClick={handleScheduleAppointment}
+                          className="px-3 py-2 md:px-2 md:py-1 bg-primary-600 text-white text-xs md:text-[10px] font-medium rounded-lg hover:bg-primary-700 transition-colors"
+                        >
+                          Schedule
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-sky-50 border border-sky-100">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <p className="font-semibold text-gray-900 text-sm">Flu Vaccination</p>
+                          <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-lg">+5%</span>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-0.5">Due: October 2025</p>
+                      </div>
+                      <div className="flex gap-1.5 md:gap-1.5 flex-shrink-0">
+                        <button className="px-3 py-2 md:px-2 md:py-1 bg-white text-primary-600 text-xs md:text-[10px] font-medium rounded-lg border border-primary-200 hover:bg-primary-50 transition-colors">
+                          📅 Add
+                        </button>
+                        <button
+                          onClick={handleScheduleAppointment}
+                          className="px-3 py-2 md:px-2 md:py-1 bg-primary-600 text-white text-xs md:text-[10px] font-medium rounded-lg hover:bg-primary-700 transition-colors"
+                        >
+                          Schedule
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-              <p className="text-gray-600 text-sm mb-4">
-                Your preventive screening is coming up. Schedule now to secure your preferred time.
-              </p>
-              <button
-                onClick={handleScheduleAppointment}
-                className="w-full py-3 bg-gradient-to-r from-sky-600 to-emerald-600 text-white font-semibold rounded-xl hover:from-sky-700 hover:to-emerald-700 transition-all flex items-center justify-center gap-2"
-              >
-                <Calendar className="w-5 h-5" />
-                Schedule Now
-              </button>
+
+              {/* Today */}
+              <div className="mb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-1.5">
+                    <span>✅</span> Today
+                  </h3>
+                  <span className="text-[10px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded-lg">
+                    {Object.values(checkedItems).filter(Boolean).length}/3 done
+                  </span>
+                </div>
+              
+                <div className="space-y-2">
+                  <div 
+                    className={`flex items-center gap-3 p-3 rounded-xl transition-all cursor-pointer ${
+                      checkedItems['med1'] ? 'bg-green-50 border border-green-200' : 'bg-emerald-50 border border-emerald-100 hover:bg-emerald-100'
+                    }`}
+                    onClick={() => handleCheckboxChange('med1')}
+                  >
+                    <div className="flex-shrink-0">
+                      {checkedItems['med1'] ? (
+                        <CheckCircle2 className="w-5 h-5 text-green-600 animate-check-complete" fill="currentColor" />
+                      ) : (
+                        <div className="w-5 h-5 rounded-full border-2 border-gray-300 bg-white" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <p className={`font-semibold text-sm ${checkedItems['med1'] ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
+                          Take morning medication
+                        </p>
+                        <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-lg">+2%</span>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-0.5">9:00 AM · Aspirin 81mg</p>
+                    </div>
+                  </div>
+
+                  <div 
+                    className={`flex items-center gap-3 p-3 rounded-xl transition-all cursor-pointer ${
+                      checkedItems['bp'] ? 'bg-green-50 border border-green-200' : 'bg-emerald-50 border border-emerald-100 hover:bg-emerald-100'
+                    }`}
+                    onClick={() => handleCheckboxChange('bp')}
+                  >
+                    <div className="flex-shrink-0">
+                      {checkedItems['bp'] ? (
+                        <CheckCircle2 className="w-5 h-5 text-green-600 animate-check-complete" fill="currentColor" />
+                      ) : (
+                        <div className="w-5 h-5 rounded-full border-2 border-gray-300 bg-white" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <p className={`font-semibold text-sm ${checkedItems['bp'] ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
+                          Log blood pressure
+                        </p>
+                        <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-lg">+3%</span>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-0.5">Target: 120/80</p>
+                    </div>
+                  </div>
+
+                  <div 
+                    className={`flex items-center gap-3 p-3 rounded-xl transition-all cursor-pointer ${
+                      checkedItems['walk'] ? 'bg-green-50 border border-green-200' : 'bg-emerald-50 border border-emerald-100 hover:bg-emerald-100'
+                    }`}
+                    onClick={() => handleCheckboxChange('walk')}
+                  >
+                    <div className="flex-shrink-0">
+                      {checkedItems['walk'] ? (
+                        <CheckCircle2 className="w-5 h-5 text-green-600 animate-check-complete" fill="currentColor" />
+                      ) : (
+                        <div className="w-5 h-5 rounded-full border-2 border-gray-300 bg-white" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <p className={`font-semibold text-sm ${checkedItems['walk'] ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
+                          30-minute walk
+                        </p>
+                        <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-lg">+5%</span>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-0.5">Daily activity</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* This Week */}
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-1.5">
+                  <span>📆</span> This Week
+                </h3>
+                <div className="space-y-2">
+                  <div 
+                    className={`flex items-center gap-3 p-3 rounded-xl transition-all cursor-pointer ${
+                      checkedItems['video'] ? 'bg-green-50 border border-green-200' : 'bg-amber-50 border border-amber-100 hover:bg-amber-100'
+                    }`}
+                    onClick={() => handleCheckboxChange('video')}
+                  >
+                    <div className="flex-shrink-0">
+                      {checkedItems['video'] ? (
+                        <CheckCircle2 className="w-5 h-5 text-green-600 animate-check-complete" fill="currentColor" />
+                      ) : (
+                        <div className="w-5 h-5 rounded-full border-2 border-gray-300 bg-white" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <p className={`font-semibold text-sm ${checkedItems['video'] ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
+                          Watch educational videos
+                        </p>
+                        <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-lg">+5%</span>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-0.5">3 videos on heart health</p>
+                    </div>
+                  </div>
+
+                  <div 
+                    className={`flex items-center gap-3 p-3 rounded-xl transition-all cursor-pointer ${
+                      checkedItems['water'] ? 'bg-green-50 border border-green-200' : 'bg-amber-50 border border-amber-100 hover:bg-amber-100'
+                    }`}
+                    onClick={() => handleCheckboxChange('water')}
+                  >
+                    <div className="flex-shrink-0">
+                      {checkedItems['water'] ? (
+                        <CheckCircle2 className="w-5 h-5 text-green-600 animate-check-complete" fill="currentColor" />
+                      ) : (
+                        <div className="w-5 h-5 rounded-full border-2 border-gray-300 bg-white" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <p className={`font-semibold text-sm ${checkedItems['water'] ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
+                          Track water intake
+                        </p>
+                        <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-lg">+3%</span>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-0.5">8 glasses/day for 7 days</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
+            {/* Quick actions - Modular Card */}
+            <div className="bg-white rounded-2xl p-3 shadow-sm">
+              <h3 className="text-sm font-semibold text-gray-900 mb-2">
+                Quick Actions
+              </h3>
+              <div className="space-y-1.5">
+                <Link
+                  href="/discover"
+                  className="flex items-center justify-between p-2.5 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors"
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 rounded-full border-2 border-gray-400 flex items-center justify-center">
+                      <Play className="w-2 h-2 text-gray-400" />
+                    </div>
+                    <span className="font-medium text-gray-900 text-sm">Browse Discover</span>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-gray-400" />
+                </Link>
+                <Link
+                  href="/feed"
+                  className="flex items-center justify-between p-2.5 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors"
+                >
+                  <div className="flex items-center gap-2">
+                    <Play className="w-4 h-4 text-gray-400" />
+                    <span className="font-medium text-gray-900 text-sm">My Feed</span>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-gray-400" />
+                </Link>
+              </div>
+            </div>
           </div>
 
           {/* Right column - Doctor (SECONDARY) */}
@@ -397,6 +673,10 @@ export default function MyHealthPage() {
               </button>
             </div>
 
+            {/* Trust badge */}
+            <div className="card">
+              <TrustBadge />
+            </div>
           </div>
         </div>
 
@@ -455,17 +735,16 @@ export default function MyHealthPage() {
                 <p className="font-medium text-gray-900 text-sm">Boston Medical Center</p>
                 <p className="text-xs text-gray-500 mt-1">1 Boston Medical Center Pl, Boston, MA</p>
               </div>
+              {/* Kaiser Permanente */}
               <div className="p-3 bg-[#003A70] rounded-lg">
-                <div className="flex items-center gap-3">
-                  <Image
-                    src="/images/kaiser-logo.png"
-                    alt="Kaiser Permanente"
-                    width={100}
-                    height={26}
-                    className="h-5 w-auto"
-                  />
-                </div>
-                <p className="text-white/80 text-xs mt-2">Northern California Region</p>
+                <Image
+                  src="/images/kaiser-logo.png"
+                  alt="Kaiser Permanente"
+                  width={120}
+                  height={32}
+                  className="h-6 w-auto"
+                />
+                <p className="text-xs text-white/80 mt-2">Member Network</p>
               </div>
             </div>
           </div>
@@ -476,19 +755,19 @@ export default function MyHealthPage() {
               Your Insurer
             </h3>
             <div className="space-y-3">
-              <div className="p-4 bg-[#002677] rounded-lg overflow-hidden">
-                <div className="mb-3">
+              <div className="p-4 bg-[#003A70] rounded-lg overflow-hidden">
+                <div className="flex flex-wrap items-center gap-4 mb-3">
                   <Image
                     src="/images/united-healthcare-logo-white.svg"
                     alt="UnitedHealthcare"
                     width={160}
                     height={36}
-                    className="h-7 w-auto"
+                    className="h-7 w-auto flex-shrink-0"
                   />
                 </div>
                 <div className="text-white/90 text-xs space-y-1">
-                  <p>Member ID: UHC-987654321</p>
-                  <p>Group: 54321</p>
+                  <p>Member ID: UHC-123456789</p>
+                  <p>Group: 98765</p>
                   <p>Plan: PPO Gold</p>
                 </div>
               </div>

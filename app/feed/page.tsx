@@ -68,7 +68,7 @@ const MOCK_VIDEOS: Video[] = [
     id: "750e8400-e29b-41d4-a716-446655440000",
     title: "Hey Dave",
     description: "Your personalized health update from Dr. Lisa Mitchell",
-    videoUrl: "/videos/hey dave.mp4",
+    videoUrl: "/videos/hey-dave.mp4",
     thumbnailUrl: "/images/doctors/doctor-lisa.jpg",
     posterUrl: "/images/doctors/doctor-lisa.jpg",
     duration: 60,

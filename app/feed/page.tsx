@@ -10,6 +10,7 @@ import { ReminderCard } from "@/components/ReminderCard";
 import { ChatOnboarding } from "@/components/ChatOnboarding";
 import { AuthPrompt } from "@/components/AuthPrompt";
 import { ScheduleAppointment } from "@/components/ScheduleAppointment";
+import { FeedSkeleton } from "@/components/FeedSkeleton";
 import { useEngagement } from "@/hooks/useEngagement";
 import { Calendar, Heart, ArrowLeft, Play, Search, Share2, User } from "lucide-react";
 import { HeartScore } from "@/components/HeartScore";
@@ -944,11 +945,7 @@ const FeedContent = () => {
 
 export default function FeedPage() {
   return (
-    <Suspense fallback={
-      <div className="feed-container flex items-center justify-center">
-        <div className="text-gray-600 text-xl">Loading your personalized feed...</div>
-      </div>
-    }>
+    <Suspense fallback={<FeedSkeleton />}>
       <FeedContent />
     </Suspense>
   );

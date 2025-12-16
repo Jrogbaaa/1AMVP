@@ -5,6 +5,90 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.27.0] - 2024-12-16
+
+### 🧪 Full Testing Infrastructure
+
+**Testing Framework Setup:**
+- Installed Playwright for E2E testing (`@playwright/test@^1.57.0`)
+- Installed Jest for unit/component testing (`jest@^29.7.0`, `ts-jest@^29.4.6`)
+- Installed React Testing Library (`@testing-library/react@^16.3.1`, `@testing-library/jest-dom@^6.9.1`)
+- Installed `@axe-core/playwright@^4.11.0` for accessibility compliance testing
+
+**New Configuration Files:**
+- `playwright.config.ts` - E2E test configuration with webServer auto-start
+- `jest.config.ts` - Jest configuration with Next.js support
+- `jest.setup.ts` - Jest setup file importing testing-library matchers
+
+**New Test Scripts (package.json):**
+- `npm test` - Run Jest unit tests
+- `npm run test:watch` - Jest in watch mode
+- `npm run test:e2e` - Run Playwright E2E tests
+- `npm run test:e2e:ui` - Playwright with UI mode
+- `npm run test:a11y` - Accessibility tests only
+- `npm run test:all` - Run all tests (unit + E2E)
+
+**E2E Test Files Created:**
+- `tests/e2e/patient/feed.spec.ts` - Feed page tests (video playback, Q&A, scroll)
+- `tests/e2e/patient/discover.spec.ts` - Discover page tests (filtering, premium modal)
+- `tests/e2e/patient/auth.spec.ts` - Authentication flow tests
+- `tests/e2e/doctor/dashboard.spec.ts` - Doctor portal tests
+- `tests/e2e/a11y/accessibility.spec.ts` - WCAG 2.1 AA compliance tests
+
+**Unit Test Files Created:**
+- `tests/unit/components/HeartScore.test.tsx` - HeartScore component tests
+- `tests/unit/hooks/useEngagement.test.ts` - useEngagement hook tests
+- `tests/unit/lib/utils.test.ts` - Utility function tests
+
+**GitHub Actions CI/CD Updated:**
+- Added `unit-tests` job running Jest
+- Added `e2e-tests` job running Playwright with browser installation
+- Playwright test results uploaded as artifacts
+
+### ♿ Accessibility Fixes (WCAG 2.1 AA)
+
+**Meta Viewport Fix:**
+- Changed `userScalable: false` to `userScalable: true` in `app/layout.tsx`
+- Changed `maximumScale: 1` to `maximumScale: 5`
+- Allows users with visual impairments to zoom up to 500%
+- Fixes `meta-viewport` accessibility violation
+
+**E2E Test Selector Improvements:**
+- Fixed strict mode violations in Playwright tests
+- Updated selectors to use specific aria-labels and data-testids
+- Made tests more resilient to UI variations
+
+### 🛠️ New Hooks
+
+**useOffline Hook (`hooks/useOffline.ts`):**
+- Detects online/offline status for healthcare reliability
+- Uses `navigator.onLine` and event listeners
+- Returns `isOffline` boolean for UI rendering
+- Critical for healthcare apps to show appropriate messaging
+
+### 📦 Files Modified
+- `app/layout.tsx` - WCAG viewport fix
+- `package.json` - Test dependencies and scripts
+- `.github/workflows/quality-gate.yml` - CI test jobs
+- `tests/e2e/**/*.spec.ts` - E2E test fixes
+- `components/HeartScore.tsx` - Added data-testid attributes
+
+### 📦 New Files
+- `playwright.config.ts`
+- `jest.config.ts`
+- `jest.setup.ts`
+- `hooks/useOffline.ts`
+- `tests/e2e/patient/feed.spec.ts`
+- `tests/e2e/patient/discover.spec.ts`
+- `tests/e2e/patient/auth.spec.ts`
+- `tests/e2e/doctor/dashboard.spec.ts`
+- `tests/e2e/a11y/accessibility.spec.ts`
+- `tests/unit/components/HeartScore.test.tsx`
+- `tests/unit/hooks/useEngagement.test.ts`
+- `tests/unit/lib/utils.test.ts`
+
+---
+
 ## [1.26.0] - 2024-12-16
 
 ### 📱 Mobile Bottom Navigation Polish

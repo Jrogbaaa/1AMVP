@@ -40,3 +40,6 @@ next-env.d.ts
 .convex
 # convex/_generated  # Temporarily committed for Vercel build
 
+test-results/
+playwright-report/
+playwright-auth-state.json

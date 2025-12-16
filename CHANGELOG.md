@@ -5,6 +5,48 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.23.0] - 2024-12-16
+
+### 🎨 In-Feed Q&A & Reminder Overlays
+
+**Feed Page - Integrated Overlay System:**
+- Q&A and Reminder cards now appear as in-feed overlays (not full-screen pop-ups)
+- Semi-transparent backdrop (`bg-black/30`) shows video playing underneath
+- Cards positioned within feed container using `absolute` positioning
+- Removed X button from Q&A overlay - users must answer to continue
+- Added "Answer to continue or swipe to skip" hint text
+- Reminder overlay after 1st video, Q&A overlay after every 2nd video
+- Smooth slide-up animation for overlay appearance
+
+**HeartScore Component - 1A Brand Gradient:**
+- Heart icon now always uses 1A brand green-blue gradient
+- Gradient colors: `#00BFA6` (teal) to `#00A6CE` (cyan)
+- Updated glow effect to match brand colors
+- Consistent branding regardless of health score value
+
+**Doctor Messages Page - Automated Q&A System:**
+- Replaced free-form messaging with automated Q&A check-ins
+- Pre-defined questions: feeling, medication, side effects, diet, exercise
+- Doctors can send check-in questions to patients
+- Response history view showing patient answers
+- Reduces doctor message overload with structured interactions
+
+### 📦 Package Updates
+
+**Framework & Dependencies:**
+- Updated Next.js from `15.x` to `^16.0.10`
+- Updated React from `18.x` to `^19.2.3`
+- Updated react-dom to `^19.2.3`
+- Updated `@types/react` to `^19.2.7`
+- Updated `@types/react-dom` to `^19.2.3`
+
+### 🐛 Bug Fixes
+
+- Fixed React key warning in Discover page (added `key` prop to `React.Fragment`)
+- Ensured build compiles successfully with latest dependencies
+
+---
+
 ## [1.22.0] - 2024-12-15
 
 ### 🎨 Multiple UI Enhancements

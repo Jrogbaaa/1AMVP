@@ -72,26 +72,43 @@ A mobile-first patient communication and education platform that puts **the doct
     └── images/            # Static assets
 ```
 
-## ✨ Latest Updates (v1.15.0 - Dec 15, 2024)
+## ✨ Latest Updates (v1.23.0 - Dec 16, 2024)
 
-### Simplified Video Feed & Reminder Card
+### In-Feed Q&A & Reminder Overlays
 
-**🎬 Simplified Video Feed:**
-- Feed now shows only local videos: "Hey Dave" + 3 Dr. Jack videos
-- Removed all placeholder videos from other doctors
-- Cleaner, more focused demo experience
+**🎯 In-Feed Overlay System:**
+- Q&A and Reminder cards appear as overlays within the feed (not full-screen)
+- Video plays underneath with semi-transparent backdrop
+- Users must answer Q&A to continue (no X button to dismiss)
+- Smooth slide-up animations for card appearance
+- Reminder after 1st video, Q&A after every 2nd video
 
-**📋 New Reminder Card in Feed:**
-- Interactive reminder card appears after first video
-- Sources data from My Health reminders
-- Sections: Coming Up (appointments), Today (3 tasks), This Week (2 goals)
-- Checkboxes with progress tracking
-- "Schedule" buttons open appointment modal
-- Links to full My Health dashboard
+**💚 HeartScore - 1A Brand Gradient:**
+- Heart icon always uses 1A brand green-blue gradient
+- Colors: `#00BFA6` (teal) to `#00A6CE` (cyan)
+- Consistent brand look regardless of health score
 
-**📦 New Files:**
-- `components/ReminderCard.tsx` - Reminder card component
-- `lib/reminders.ts` - Shared reminders data structure
+**💬 Automated Doctor Q&A:**
+- Doctor messages page now uses structured Q&A instead of free-form chat
+- Pre-defined check-in questions (feeling, medication, diet, exercise)
+- Reduces doctor message overload with organized patient responses
+
+**📦 Package Updates:**
+- Next.js `^16.0.10`, React `^19.2.3`, react-dom `^19.2.3`
+
+---
+
+### Previous Updates (v1.22.0 - Dec 15, 2024)
+
+### Multiple UI Enhancements
+
+**ReminderCard - Doctor's Face Added:**
+- Dr. Lisa Mitchell's avatar on reminder cards
+- Stethoscope badge on doctor avatar
+
+**Discover Page - Video Thumbnails:**
+- All video thumbnails show doctor headshots
+- Message notification badge on floating button
 
 ---
 

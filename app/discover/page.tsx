@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useSession } from "next-auth/react";
 import { Play, MessageCircle, Heart, Filter, Check, User, Lock, Crown, Plus } from "lucide-react";
 import { HeartScore } from "@/components/HeartScore";
@@ -332,11 +332,10 @@ export default function DiscoverPage() {
               const isFirstPremium = isPremium && isPrevFree;
               
               return (
-                <>
+                <React.Fragment key={doctor.id}>
                   {/* Suggested Doctor - appears before first premium doctor */}
                   {isFirstPremium && (
                     <Link
-                      key="suggested-doctor"
                       href="/feed"
                       className="flex flex-col items-center gap-1 flex-shrink-0 group cursor-pointer"
                       onClick={() => {
@@ -374,7 +373,6 @@ export default function DiscoverPage() {
                     </Link>
                   )}
                   <div
-                    key={doctor.id}
                     className={`flex flex-col items-center gap-1 flex-shrink-0 group cursor-pointer ${isPremium ? 'opacity-60' : ''}`}
                     onClick={(e) => {
                       if (isPremium) {
@@ -485,7 +483,7 @@ export default function DiscoverPage() {
                     </Link>
                   )}
                   </div>
-                </>
+                </React.Fragment>
               );
             })}
           </div>

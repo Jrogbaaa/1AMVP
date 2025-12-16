@@ -160,11 +160,12 @@ const FeedContent = () => {
     ? MOCK_VIDEOS.filter((video) => video.doctorId === doctorFilter)
     : MOCK_VIDEOS;
 
-  // Create combined feed with Q&A cards and reminders interspersed
+  // Combined feed with Q&A overlays interspersed between videos
+  // Q&A items overlay on top of the video underneath them
   type FeedItem = 
     | { type: 'video'; data: Video }
-    | { type: 'qa'; data: typeof QA_QUESTIONS[number] }
-    | { type: 'reminder'; data: null };
+    | { type: 'qa'; data: typeof QA_QUESTIONS[number]; backgroundVideo: Video }
+    | { type: 'reminder'; backgroundVideo: Video };
 
   const combinedFeed: FeedItem[] = [];
   let qaIndex = 0;
@@ -173,15 +174,14 @@ const FeedContent = () => {
   filteredVideos.forEach((video, index) => {
     combinedFeed.push({ type: 'video', data: video });
     
-    // Insert reminder card after the first video
-    if (index === 0 && !reminderInserted) {
-      combinedFeed.push({ type: 'reminder', data: null });
+    // Insert reminder overlay after the first video (using next video as background)
+    if (index === 0 && !reminderInserted && filteredVideos[index + 1]) {
+      combinedFeed.push({ type: 'reminder', backgroundVideo: filteredVideos[index + 1] });
       reminderInserted = true;
     }
-    // Insert Q&A card after every 2nd video (after indices 1, 3, 5, etc.)
-    // This creates pattern: video, reminder, video, Q&A, video, video, Q&A...
-    else if ((index + 1) % 2 === 0 && qaIndex < QA_QUESTIONS.length) {
-      combinedFeed.push({ type: 'qa', data: QA_QUESTIONS[qaIndex] });
+    // Insert Q&A overlay after every 2nd video
+    else if ((index + 1) % 2 === 0 && qaIndex < QA_QUESTIONS.length && filteredVideos[index + 1]) {
+      combinedFeed.push({ type: 'qa', data: QA_QUESTIONS[qaIndex], backgroundVideo: filteredVideos[index + 1] });
       qaIndex++;
     }
   });
@@ -243,7 +243,7 @@ const FeedContent = () => {
 
       if (newIndex !== currentIndex && newIndex < combinedFeed.length) {
         setCurrentIndex(newIndex);
-        // Track video view when scrolling to a new video (not Q&A)
+        // Track video view when scrolling to a new video
         const feedItem = combinedFeed[newIndex];
         if (feedItem && feedItem.type === 'video') {
           trackVideoView(feedItem.data.id);
@@ -483,36 +483,86 @@ const FeedContent = () => {
             {combinedFeed.map((feedItem, index) => {
               const isCurrentItem = currentIndex === index;
               
-              // Render Reminder Card
-              if (feedItem.type === 'reminder') {
+              // Render Q&A Overlay (with video playing behind)
+              if (feedItem.type === 'qa') {
+                const bgVideo = feedItem.backgroundVideo;
+                const bgDoctor = bgVideo.doctorId ? MOCK_DOCTORS[bgVideo.doctorId] : MOCK_DOCTOR;
+                
                 return (
-                  <div key="reminder-card" className="snap-item">
+                  <div key={`qa-${feedItem.data.id}`} className="snap-item">
                     <div className="h-full w-full flex items-center justify-center md:gap-4">
                       <div className="h-full w-full md:h-[calc(100vh-2rem)] md:max-h-[900px] md:w-auto md:aspect-[9/16] md:rounded-2xl md:overflow-hidden md:shadow-2xl relative">
-                        <ReminderCard
+                        {/* Video playing in background */}
+                        <VideoCard
+                          video={bgVideo}
+                          doctor={bgDoctor}
+                          isPersonalized={bgVideo.isPersonalized}
+                          patientName={patientName}
                           isActive={isCurrentItem}
-                          onScheduleClick={() => setIsScheduleOpen(true)}
+                          onComplete={handleVideoComplete}
+                          onMessage={handleOpenChat}
+                          onHeartClick={handleHeartClick}
+                          healthScore={healthScore}
                         />
+                        
+                        {/* Q&A Overlay on top of video */}
+                        <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/40">
+                          <div className="w-[90%] max-w-sm">
+                            {/* Q&A Content */}
+                            <div className="bg-gradient-to-br from-[#00BFA6]/95 via-[#00A6CE]/95 to-[#7C3AED]/95 backdrop-blur-sm rounded-2xl p-5 shadow-2xl overflow-hidden">
+                              {/* Content */}
+                              <div className="relative z-10">
+                                {/* Header */}
+                                <div className="mb-3 text-center">
+                                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full mb-2">
+                                    <span className="text-white/90 text-[10px] font-semibold uppercase tracking-wide">
+                                      Quick Check-in
+                                    </span>
+                                  </div>
+                                  <h2 className="text-white text-lg font-bold drop-shadow-lg">
+                                    {feedItem.data.question}
+                                  </h2>
+                                  {feedItem.data.subtitle && (
+                                    <p className="text-white/80 text-xs mt-1">
+                                      {feedItem.data.subtitle}
+                                    </p>
+                                  )}
+                                </div>
+
+                                {/* Options */}
+                                <div className="space-y-2">
+                                  {feedItem.data.options.map((option) => (
+                                    <button
+                                      key={option.id}
+                                      onClick={() => handleQAAnswer(feedItem.data.id, option.id)}
+                                      className="w-full flex items-center gap-3 px-4 py-2.5 bg-white/20 backdrop-blur-sm rounded-xl text-white hover:bg-white/30 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                                      aria-label={`Select ${option.label}`}
+                                    >
+                                      <span className="text-lg">{option.emoji}</span>
+                                      <span className="font-medium text-sm">{option.label}</span>
+                                    </button>
+                                  ))}
+                                </div>
+
+                                {/* Swipe hint */}
+                                <p className="mt-3 text-white/60 text-[10px] text-center">
+                                  Answer to continue or swipe to skip
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                       
-                      {/* Desktop sidebar for Reminder */}
+                      {/* Desktop sidebar */}
                       <div className="hidden md:flex flex-col gap-6 items-center py-8">
-                        <Link
-                          href="/discover"
-                          className="flex flex-col items-center gap-2 group"
-                          aria-label="Discover Doctors"
-                        >
+                        <Link href="/discover" className="flex flex-col items-center gap-2 group" aria-label="Discover Doctors">
                           <div className="flex items-center justify-center w-14 h-14 bg-gray-100 rounded-full shadow-md hover:bg-gray-200 hover:scale-110 transition-all duration-200">
                             <Search className="w-6 h-6 text-gray-700" />
                           </div>
                           <span className="text-xs text-gray-700 font-medium">Discover</span>
                         </Link>
-                        
-                        <button
-                          onClick={handleHeartClick}
-                          className="flex flex-col items-center gap-2 hover:scale-110 transition-transform"
-                          aria-label="View action items and reminders"
-                        >
+                        <button onClick={handleHeartClick} className="flex flex-col items-center gap-2 hover:scale-110 transition-transform" aria-label="View action items and reminders">
                           <HeartScore score={healthScore} className="scale-125" />
                           <span className="text-xs text-gray-700 font-medium">My Heart</span>
                         </button>
@@ -522,37 +572,108 @@ const FeedContent = () => {
                 );
               }
               
-              // Render Q&A Card
-              if (feedItem.type === 'qa') {
+              // Render Reminder Overlay (with video playing behind)
+              if (feedItem.type === 'reminder') {
+                const bgVideo = feedItem.backgroundVideo;
+                const bgDoctor = bgVideo.doctorId ? MOCK_DOCTORS[bgVideo.doctorId] : MOCK_DOCTOR;
+                
                 return (
-                  <div key={`qa-${feedItem.data.id}`} className="snap-item">
+                  <div key="reminder-card" className="snap-item">
                     <div className="h-full w-full flex items-center justify-center md:gap-4">
                       <div className="h-full w-full md:h-[calc(100vh-2rem)] md:max-h-[900px] md:w-auto md:aspect-[9/16] md:rounded-2xl md:overflow-hidden md:shadow-2xl relative">
-                        <QACard
-                          question={feedItem.data}
-                          onAnswer={handleQAAnswer}
+                        {/* Video playing in background */}
+                        <VideoCard
+                          video={bgVideo}
+                          doctor={bgDoctor}
+                          isPersonalized={bgVideo.isPersonalized}
+                          patientName={patientName}
                           isActive={isCurrentItem}
+                          onComplete={handleVideoComplete}
+                          onMessage={handleOpenChat}
+                          onHeartClick={handleHeartClick}
+                          healthScore={healthScore}
                         />
+                        
+                        {/* Reminder Overlay on top of video */}
+                        <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/40">
+                          <div className="w-[90%] max-w-sm">
+                            {/* Reminder Content */}
+                            <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-5 shadow-2xl">
+                              {/* Doctor Avatar */}
+                              <div className="flex justify-center mb-3">
+                                <div className="relative">
+                                  <div className="w-14 h-14 rounded-full overflow-hidden ring-4 ring-sky-100 shadow-lg">
+                                    <Image
+                                      src="/images/doctors/doctor-lisa.jpg"
+                                      alt="Dr. Lisa Mitchell"
+                                      width={56}
+                                      height={56}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  </div>
+                                  <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gradient-to-br from-sky-500 to-emerald-500 rounded-full flex items-center justify-center shadow-md border-2 border-white">
+                                    <span className="text-[10px]">🩺</span>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              {/* Doctor Name */}
+                              <p className="text-center text-xs text-gray-500 mb-2">
+                                From <span className="font-semibold text-gray-700">Dr. Lisa Mitchell</span>
+                              </p>
+
+                              {/* Title */}
+                              <h2 className="text-base font-bold text-gray-900 text-center mb-2">
+                                Schedule Colonoscopy
+                              </h2>
+
+                              {/* Due date badge */}
+                              <div className="flex justify-center mb-2">
+                                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-medium">
+                                  <Calendar className="w-3.5 h-3.5" />
+                                  <span>60 days away</span>
+                                </div>
+                              </div>
+
+                              {/* Description */}
+                              <p className="text-gray-600 text-center text-xs mb-3">
+                                Your preventive screening is coming up.
+                              </p>
+
+                              {/* Score boost */}
+                              <div className="flex justify-center mb-3">
+                                <span className="px-2.5 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-lg">
+                                  +15% Health Score
+                                </span>
+                              </div>
+
+                              {/* Schedule button */}
+                              <button
+                                onClick={() => setIsScheduleOpen(true)}
+                                className="w-full py-2.5 bg-gradient-to-r from-sky-600 to-emerald-600 text-white font-semibold rounded-xl hover:from-sky-700 hover:to-emerald-700 transition-all shadow-lg flex items-center justify-center gap-2 text-sm"
+                              >
+                                <Calendar className="w-4 h-4" />
+                                Schedule Now
+                              </button>
+
+                              {/* Swipe hint */}
+                              <p className="text-center text-[10px] text-gray-400 mt-2">
+                                Swipe to continue
+                              </p>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                       
-                      {/* Desktop sidebar for Q&A - simplified */}
+                      {/* Desktop sidebar */}
                       <div className="hidden md:flex flex-col gap-6 items-center py-8">
-                        <Link
-                          href="/discover"
-                          className="flex flex-col items-center gap-2 group"
-                          aria-label="Discover Doctors"
-                        >
+                        <Link href="/discover" className="flex flex-col items-center gap-2 group" aria-label="Discover Doctors">
                           <div className="flex items-center justify-center w-14 h-14 bg-gray-100 rounded-full shadow-md hover:bg-gray-200 hover:scale-110 transition-all duration-200">
                             <Search className="w-6 h-6 text-gray-700" />
                           </div>
                           <span className="text-xs text-gray-700 font-medium">Discover</span>
                         </Link>
-                        
-                        <button
-                          onClick={handleHeartClick}
-                          className="flex flex-col items-center gap-2 hover:scale-110 transition-transform"
-                          aria-label="View action items and reminders"
-                        >
+                        <button onClick={handleHeartClick} className="flex flex-col items-center gap-2 hover:scale-110 transition-transform" aria-label="View action items and reminders">
                           <HeartScore score={healthScore} className="scale-125" />
                           <span className="text-xs text-gray-700 font-medium">My Heart</span>
                         </button>
@@ -681,6 +802,7 @@ const FeedContent = () => {
               </Link>
             </div>
           </nav>
+
         </div>
       </div>
 

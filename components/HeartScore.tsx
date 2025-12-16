@@ -15,19 +15,15 @@ export const HeartScore = ({ score, className, showMessage = false, isAnimating 
   const clampedScore = Math.min(Math.max(score, 0), 100);
   const isFullScore = clampedScore >= 100;
   
-  // Determine color based on score thresholds
+  // Always use 1A brand colors - green to blue gradient
   const getColorClass = (score: number) => {
-    if (score >= 100) return "text-[#00BFA6]"; // 1A brand teal
-    if (score >= 70) return "text-green-500";
-    if (score >= 40) return "text-yellow-500";
-    return "text-red-500";
+    // Use 1A teal for all scores - brand consistency
+    return "text-[#00BFA6]";
   };
 
   const getGradientClass = (score: number) => {
-    if (score >= 100) return "heart-gradient-1a"; // 1A brand gradient
-    if (score >= 70) return "bg-gradient-to-br from-emerald-400 to-green-600";
-    if (score >= 40) return "bg-gradient-to-br from-amber-400 to-orange-500";
-    return "bg-gradient-to-br from-rose-400 to-red-600";
+    // Always use 1A brand gradient (green to blue) for all scores
+    return "heart-gradient-1a";
   };
   
   const colorClass = getColorClass(clampedScore);
@@ -47,10 +43,10 @@ export const HeartScore = ({ score, className, showMessage = false, isAnimating 
         {/* Background heart with subtle shadow */}
         <div className="absolute inset-0 w-12 h-12 rounded-full blur-sm opacity-20 bg-gray-400" />
         
-        {/* Outer ring/border */}
+        {/* Outer ring/border - always use 1A brand colors */}
         <div className={cn(
           "absolute inset-0 w-12 h-12 rounded-full",
-          isFullScore ? "bg-gradient-to-br from-[#00BFA6]/30 to-[#00A6CE]/30" : "bg-gray-200/50"
+          "bg-gradient-to-br from-[#00BFA6]/30 to-[#00A6CE]/30"
         )}
              style={{
                WebkitMaskImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'%3E%3Cpath d=\'M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z\'%3E%3C/path%3E%3C/svg%3E")',
@@ -82,9 +78,10 @@ export const HeartScore = ({ score, className, showMessage = false, isAnimating 
               maskSize: 'contain',
               WebkitMaskPosition: 'center',
               maskPosition: 'center',
+              // Always use 1A brand glow - brighter at 100%
               filter: isFullScore 
                 ? 'drop-shadow(0 0 8px rgba(0, 191, 166, 0.6)) drop-shadow(0 0 16px rgba(0, 166, 206, 0.4))' 
-                : 'drop-shadow(0 2px 3px rgba(0,0,0,0.25))'
+                : 'drop-shadow(0 0 4px rgba(0, 191, 166, 0.3)) drop-shadow(0 0 8px rgba(0, 166, 206, 0.2))'
             }}
           />
         </div>

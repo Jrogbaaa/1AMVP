@@ -13,29 +13,43 @@ A mobile-first patient communication and education platform that puts **the doct
 
 ## 🏗️ Tech Stack
 
-- **Next.js 15** (App Router) - React framework
+- **Next.js 16** (App Router) - React framework
+- **React 19** - UI library
 - **TypeScript** - Type safety
 - **Tailwind CSS** - Styling
-- **PostgreSQL** - Primary data store
-- **Convex** - Real-time features, feed algorithms, rate limiting
+- **Shadcn/UI** - Component library
+- **Convex** - Real-time database, feed algorithms, engagement tracking
+- **NextAuth.js** - Authentication
 - **Lucide React** - Icons
+- **GitHub Actions** - CI/CD quality gate
 
 ## 📁 Project Structure
 
 ```
 1A-MVP/
+├── .github/
+│   └── workflows/
+│       └── quality-gate.yml  # CI/CD pipeline
 ├── app/
 │   ├── feed/              # TikTok-style vertical feed with doctor filtering
+│   │   ├── page.tsx       # Feed page with skeleton loading
+│   │   └── layout.tsx     # Feed metadata for SEO
 │   ├── discover/          # Instagram-style doctor profiles & content
 │   ├── my-health/         # Health dashboard with reminders & profile
 │   ├── content/           # SEO-optimized content pages
 │   ├── api/               # API endpoints
-│   ├── layout.tsx         # Root layout
+│   ├── layout.tsx         # Root layout with viewport config
 │   ├── page.tsx           # Landing page
-│   ├── globals.css        # Global styles
+│   ├── globals.css        # Global styles + Shadcn CSS variables
 │   └── sitemap.ts         # Sitemap generation
 ├── components/
+│   ├── ui/                # Shadcn/UI primitives
+│   │   ├── button.tsx     # Button component
+│   │   ├── card.tsx       # Card component
+│   │   ├── input.tsx      # Input component
+│   │   └── skeleton.tsx   # Skeleton component
 │   ├── VideoCard.tsx      # TikTok-style video card
+│   ├── FeedSkeleton.tsx   # Feed loading skeleton
 │   ├── QACard.tsx         # Interactive Q&A check-in cards
 │   ├── ReminderCard.tsx   # Health reminders card for feed
 │   ├── OnboardingForm.tsx # 3-step patient onboarding
@@ -72,7 +86,36 @@ A mobile-first patient communication and education platform that puts **the doct
     └── images/            # Static assets
 ```
 
-## ✨ Latest Updates (v1.23.0 - Dec 16, 2024)
+## ✨ Latest Updates (v1.24.0 - Dec 16, 2024)
+
+### CI/CD & Developer Experience
+
+**🚀 GitHub Actions Quality Gate:**
+- Automated CI pipeline runs on every PR to `main`
+- TypeScript type checking
+- ESLint code quality
+- Production build verification
+- Security audit for dependencies
+- No more "works on my machine" issues!
+
+**🔒 Environment Validation:**
+- Type-safe environment variables with `@t3-oss/env-nextjs`
+- Build-time validation catches missing config early
+- Zod schema for runtime safety
+
+**🎨 Shadcn/UI Design System:**
+- Initialized with Button, Card, Input, Skeleton components
+- New `FeedSkeleton` component for loading states
+- Prevents layout shift during feed loading
+
+**📈 SEO Improvements:**
+- Feed route metadata for social sharing
+- OpenGraph and Twitter card tags
+- Viewport and theme color configuration
+
+---
+
+### Previous Updates (v1.23.0 - Dec 16, 2024)
 
 ### In-Feed Q&A & Reminder Overlays
 
@@ -780,7 +823,9 @@ npm start
 - `GET /api/health-score` - Calculate health score
 - `POST /api/video-event` - Track video engagement
 
-## 🧪 Testing
+## 🧪 Testing & CI/CD
+
+### Local Testing
 
 ```bash
 # Run linter
@@ -788,7 +833,23 @@ npm run lint
 
 # Type check
 npx tsc --noEmit
+
+# Build check
+npm run build
 ```
+
+### GitHub Actions Quality Gate
+
+Every PR to `main` automatically runs:
+
+1. **TypeScript Check** - Catches type errors before merge
+2. **ESLint** - Enforces code quality standards
+3. **Build** - Ensures production build succeeds
+4. **Security Audit** - Flags vulnerable dependencies
+
+PRs cannot be merged if any check fails. This eliminates "works on my machine" issues.
+
+See `.github/workflows/quality-gate.yml` for the full pipeline configuration.
 
 ## 🤝 Contributing
 

@@ -555,14 +555,48 @@ const FeedContent = () => {
                         </div>
                       </div>
                       
-                      {/* Desktop sidebar */}
+                      {/* Desktop sidebar - ORDER: Doctor → Discover → My Heart */}
                       <div className="hidden md:flex flex-col gap-6 items-center py-8">
+                        {/* Doctor avatar - FIRST */}
+                        {bgDoctor && (
+                          <button
+                            className="flex flex-col items-center gap-2 group"
+                            onClick={handleOpenChat}
+                            aria-label={`Message Dr. ${bgDoctor.name}`}
+                          >
+                            <div className="relative">
+                              <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-gray-200 shadow-md hover:scale-110 transition-transform">
+                                {bgDoctor.avatarUrl ? (
+                                  <Image
+                                    src={bgDoctor.avatarUrl}
+                                    alt={bgDoctor.name}
+                                    width={56}
+                                    height={56}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  <div className="w-full h-full bg-primary-600 flex items-center justify-center">
+                                    <span className="text-white font-bold text-xl">
+                                      {bgDoctor.name.charAt(0)}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                              <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white">
+                                +
+                              </div>
+                            </div>
+                            <span className="text-xs text-gray-700 font-medium max-w-[70px] truncate">Dr. {bgDoctor.name.split(' ')[0]}</span>
+                          </button>
+                        )}
+                        {/* Discover - SECOND */}
                         <Link href="/discover" className="flex flex-col items-center gap-2 group" aria-label="Discover Doctors">
                           <div className="flex items-center justify-center w-14 h-14 bg-gray-100 rounded-full shadow-md hover:bg-gray-200 hover:scale-110 transition-all duration-200">
                             <Search className="w-6 h-6 text-gray-700" />
                           </div>
                           <span className="text-xs text-gray-700 font-medium">Discover</span>
                         </Link>
+                        {/* My Heart - THIRD */}
                         <button onClick={handleHeartClick} className="flex flex-col items-center gap-2 hover:scale-110 transition-transform" aria-label="View action items and reminders">
                           <HeartScore score={healthScore} className="scale-125" />
                           <span className="text-xs text-gray-700 font-medium">My Heart</span>
@@ -600,6 +634,14 @@ const FeedContent = () => {
                           <div className="w-[90%] max-w-sm">
                             {/* Reminder Content */}
                             <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-5 shadow-2xl">
+                              {/* Continuity badge - progression context */}
+                              <div className="flex justify-center mb-3">
+                                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-sky-50 text-sky-700 rounded-full text-[10px] font-semibold">
+                                  <span>🔄</span>
+                                  <span>Coming up next in your care plan</span>
+                                </div>
+                              </div>
+                              
                               {/* Doctor Avatar */}
                               <div className="flex justify-center mb-3">
                                 <div className="relative">
@@ -618,28 +660,28 @@ const FeedContent = () => {
                                 </div>
                               </div>
                               
-                              {/* Doctor Name */}
+                              {/* Doctor Name with relationship context */}
                               <p className="text-center text-xs text-gray-500 mb-2">
-                                From <span className="font-semibold text-gray-700">Dr. Lisa Mitchell</span>
+                                Dr. Lisa Mitchell <span className="text-sky-600 font-medium">mentioned this</span>
                               </p>
 
-                              {/* Title */}
-                              <h2 className="text-base font-bold text-gray-900 text-center mb-2">
-                                Schedule Colonoscopy
+                              {/* Title - more directive */}
+                              <h2 className="text-base font-bold text-gray-900 text-center mb-1">
+                                Your Next Step: Colonoscopy
                               </h2>
+                              
+                              {/* Context from last visit */}
+                              <p className="text-gray-500 text-center text-[11px] mb-2 italic">
+                                &ldquo;Based on your family history, let&apos;s get this scheduled.&rdquo;
+                              </p>
 
                               {/* Due date badge */}
                               <div className="flex justify-center mb-2">
                                 <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-medium">
                                   <Calendar className="w-3.5 h-3.5" />
-                                  <span>60 days away</span>
+                                  <span>Due in 60 days</span>
                                 </div>
                               </div>
-
-                              {/* Description */}
-                              <p className="text-gray-600 text-center text-xs mb-3">
-                                Your preventive screening is coming up.
-                              </p>
 
                               {/* Score boost */}
                               <div className="flex justify-center mb-3">
@@ -648,7 +690,7 @@ const FeedContent = () => {
                                 </span>
                               </div>
 
-                              {/* Schedule button */}
+                              {/* Schedule button - clear CTA */}
                               <button
                                 onClick={() => setIsScheduleOpen(true)}
                                 className="w-full py-2.5 bg-gradient-to-r from-sky-600 to-emerald-600 text-white font-semibold rounded-xl hover:from-sky-700 hover:to-emerald-700 transition-all shadow-lg flex items-center justify-center gap-2 text-sm"
@@ -656,9 +698,16 @@ const FeedContent = () => {
                                 <Calendar className="w-4 h-4" />
                                 Schedule Now
                               </button>
+                              
+                              {/* Alternative action */}
+                              <button
+                                className="w-full mt-2 py-2 text-sky-600 font-medium text-sm hover:text-sky-700 transition-colors"
+                              >
+                                Learn What Happens Next →
+                              </button>
 
                               {/* Swipe hint */}
-                              <p className="text-center text-[10px] text-gray-400 mt-2">
+                              <p className="text-center text-[10px] text-gray-400 mt-1">
                                 Swipe to continue
                               </p>
                             </div>
@@ -666,14 +715,48 @@ const FeedContent = () => {
                         </div>
                       </div>
                       
-                      {/* Desktop sidebar */}
+                      {/* Desktop sidebar - ORDER: Doctor → Discover → My Heart */}
                       <div className="hidden md:flex flex-col gap-6 items-center py-8">
+                        {/* Doctor avatar - FIRST */}
+                        {bgDoctor && (
+                          <button
+                            className="flex flex-col items-center gap-2 group"
+                            onClick={handleOpenChat}
+                            aria-label={`Message Dr. ${bgDoctor.name}`}
+                          >
+                            <div className="relative">
+                              <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-gray-200 shadow-md hover:scale-110 transition-transform">
+                                {bgDoctor.avatarUrl ? (
+                                  <Image
+                                    src={bgDoctor.avatarUrl}
+                                    alt={bgDoctor.name}
+                                    width={56}
+                                    height={56}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  <div className="w-full h-full bg-primary-600 flex items-center justify-center">
+                                    <span className="text-white font-bold text-xl">
+                                      {bgDoctor.name.charAt(0)}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                              <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white">
+                                +
+                              </div>
+                            </div>
+                            <span className="text-xs text-gray-700 font-medium max-w-[70px] truncate">Dr. {bgDoctor.name.split(' ')[0]}</span>
+                          </button>
+                        )}
+                        {/* Discover - SECOND */}
                         <Link href="/discover" className="flex flex-col items-center gap-2 group" aria-label="Discover Doctors">
                           <div className="flex items-center justify-center w-14 h-14 bg-gray-100 rounded-full shadow-md hover:bg-gray-200 hover:scale-110 transition-all duration-200">
                             <Search className="w-6 h-6 text-gray-700" />
                           </div>
                           <span className="text-xs text-gray-700 font-medium">Discover</span>
                         </Link>
+                        {/* My Heart - THIRD */}
                         <button onClick={handleHeartClick} className="flex flex-col items-center gap-2 hover:scale-110 transition-transform" aria-label="View action items and reminders">
                           <HeartScore score={healthScore} className="scale-125" />
                           <span className="text-xs text-gray-700 font-medium">My Heart</span>
@@ -703,25 +786,15 @@ const FeedContent = () => {
                         onComplete={handleVideoComplete}
                         onMessage={handleOpenChat}
                         onHeartClick={handleHeartClick}
+                        onScheduleClick={() => setIsScheduleOpen(true)}
                         healthScore={healthScore}
                       />
                     </div>
 
                     {/* Desktop sidebar - buttons outside video */}
+                    {/* ORDER: Doctor Profile → Discover → My Heart (builds relationship first) */}
                     <div className="hidden md:flex flex-col gap-6 items-center py-8">
-                      {/* Discover button */}
-                      <Link
-                        href="/discover"
-                        className="flex flex-col items-center gap-2 group"
-                        aria-label="Discover Doctors"
-                      >
-                        <div className="flex items-center justify-center w-14 h-14 bg-gray-100 rounded-full shadow-md hover:bg-gray-200 hover:scale-110 transition-all duration-200">
-                          <Search className="w-6 h-6 text-gray-700" />
-                        </div>
-                        <span className="text-xs text-gray-700 font-medium">Discover</span>
-                      </Link>
-
-                      {/* Doctor avatar */}
+                      {/* Doctor avatar - FIRST (relationship-focused) */}
                       {videoDoctor && (
                         <button
                           className="flex flex-col items-center gap-2 group"
@@ -754,7 +827,19 @@ const FeedContent = () => {
                         </button>
                       )}
 
-                      {/* Heart score */}
+                      {/* Discover button - SECOND */}
+                      <Link
+                        href="/discover"
+                        className="flex flex-col items-center gap-2 group"
+                        aria-label="Discover Doctors"
+                      >
+                        <div className="flex items-center justify-center w-14 h-14 bg-gray-100 rounded-full shadow-md hover:bg-gray-200 hover:scale-110 transition-all duration-200">
+                          <Search className="w-6 h-6 text-gray-700" />
+                        </div>
+                        <span className="text-xs text-gray-700 font-medium">Discover</span>
+                      </Link>
+
+                      {/* Heart score - THIRD (My Heart) */}
                       <button
                         onClick={handleHeartClick}
                         className="flex flex-col items-center gap-2 hover:scale-110 transition-transform"

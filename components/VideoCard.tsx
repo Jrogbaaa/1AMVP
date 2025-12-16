@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { Play, Pause, Share2, Heart, Search, Volume2, VolumeX } from "lucide-react";
+import { Play, Pause, Share2, Heart, Search, Volume2, VolumeX, Calendar, ArrowRight } from "lucide-react";
 import type { Video, Doctor } from "@/lib/types";
 import Image from "next/image";
 import Link from "next/link";
@@ -16,6 +16,7 @@ interface VideoCardProps {
   onComplete?: () => void;
   onMessage?: () => void;
   onHeartClick?: () => void;
+  onScheduleClick?: () => void;
   isActive: boolean;
   healthScore?: number;
   showDesktopActions?: boolean; // For rendering actions outside video on desktop
@@ -31,6 +32,7 @@ export const VideoCard = ({
   onComplete,
   onMessage,
   onHeartClick,
+  onScheduleClick,
   isActive,
   healthScore,
   showDesktopActions = false,
@@ -234,13 +236,32 @@ export const VideoCard = ({
           {/* Left side - Video info */}
           <div className="flex-1 pr-4">
             {isPersonalized ? (
-              <div className="space-y-3">
-                <h3 className="text-white font-bold text-2xl drop-shadow-lg">
-                  Hey Dave
+              <div className="space-y-2">
+                {/* Context badge - continuity */}
+                <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full">
+                  <span className="text-white/90 text-[10px] font-medium">Since your last visit • 2 weeks ago</span>
+                </div>
+                
+                {/* Value-focused headline */}
+                <h3 className="text-white font-bold text-xl drop-shadow-lg">
+                  Hey {patientName || "Dave"} — here&apos;s what to do next for your heart health
                 </h3>
-                <p className="text-white/90 text-sm drop-shadow-md mt-3">
-                  📅 Reminder: Schedule your follow-up visit in 3 months
+                
+                {/* Doctor context */}
+                <p className="text-white/80 text-sm drop-shadow-md">
+                  Dr. {doctor?.name || "Lisa Mitchell"} explains your upcoming follow-up and what to expect.
                 </p>
+                
+                {/* Clear action button */}
+                <button
+                  onClick={onScheduleClick}
+                  className="mt-3 inline-flex items-center gap-2 px-4 py-2.5 bg-white text-gray-900 font-semibold rounded-xl hover:bg-white/90 active:scale-[0.98] transition-all shadow-lg"
+                  aria-label="Schedule your follow-up visit"
+                >
+                  <Calendar className="w-4 h-4" />
+                  <span>Schedule Visit</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
               </div>
             ) : (
               <>
@@ -258,7 +279,40 @@ export const VideoCard = ({
 
           {/* Right side - Actions (mobile only, hidden on desktop) */}
           <div className="flex flex-col gap-6 items-center md:hidden">
-            {/* Discover button */}
+            {/* Doctor avatar - FIRST (builds relationship) */}
+            {doctor && (
+              <button
+                className="flex flex-col items-center gap-1"
+                onClick={onMessage}
+                aria-label={`Message Dr. ${doctor.name}`}
+              >
+                <div className="relative">
+                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-lg hover:scale-110 transition-transform">
+                    {doctor.avatarUrl ? (
+                      <Image
+                        src={doctor.avatarUrl}
+                        alt={doctor.name}
+                        width={48}
+                        height={48}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-primary-600 flex items-center justify-center">
+                        <span className="text-white font-bold text-lg">
+                          {doctor.name.charAt(0)}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  {/* Follow indicator */}
+                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white">
+                    +
+                  </div>
+                </div>
+              </button>
+            )}
+
+            {/* Discover button - SECOND */}
             <Link
               href="/discover"
               className="flex items-center justify-center w-12 h-12 bg-white/50 backdrop-blur-sm rounded-full shadow-lg hover:bg-white/70 hover:scale-110 transition-all duration-200"
@@ -268,34 +322,7 @@ export const VideoCard = ({
               <Search className="w-5 h-5 text-gray-700" />
             </Link>
 
-            {/* Doctor avatar */}
-            {doctor && (
-              <button
-                className="flex flex-col items-center gap-1"
-                onClick={onMessage}
-                aria-label="Message doctor"
-              >
-                <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-lg hover:scale-110 transition-transform">
-                  {doctor.avatarUrl ? (
-                    <Image
-                      src={doctor.avatarUrl}
-                      alt={doctor.name}
-                      width={48}
-                      height={48}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-primary-600 flex items-center justify-center">
-                      <span className="text-white font-bold text-lg">
-                        {doctor.name.charAt(0)}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </button>
-            )}
-
-            {/* Heart score - show above share button */}
+            {/* Heart score - THIRD (My Heart) */}
             {healthScore !== undefined && (
               <button
                 onClick={onHeartClick}
@@ -346,8 +373,6 @@ export const VideoCard = ({
                       }}
                     />
                   </div>
-                  
-                  {/* Heart icon without score number */}
                 </div>
               </button>
             )}

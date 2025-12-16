@@ -5,6 +5,46 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.25.0] - 2024-12-16
+
+### 🎯 UX Strategic Improvements - "Why Now?" & Continuity
+
+**Personalized Video - Value-Focused Messaging:**
+- Changed passive reminder to action-focused copy
+- Before: "Hey Dave" with "📅 Reminder: Schedule your follow-up visit in 3 months"
+- After: "Hey Dave — here's what to do next for your heart health"
+- Added doctor context: "Dr. Lisa explains your upcoming follow-up and what to expect"
+- Added prominent "Schedule Visit" action button with arrow icon
+- Added continuity badge: "Since your last visit • 2 weeks ago"
+
+**Right Sidebar Reordered (Desktop & Mobile):**
+- New order: Doctor Profile → Discover → My Heart
+- Puts relationship-building first (doctor avatar)
+- Applied consistently across:
+  - Video card sidebar
+  - Q&A overlay sidebar  
+  - Reminder overlay sidebar
+  - Mobile action buttons
+
+**Continuity Elements Added:**
+- Personalized video: "Since your last visit • 2 weeks ago" context badge
+- Reminder overlay: "Coming up next in your care plan" progression badge
+- Reminder overlay: "Dr. Lisa Mitchell mentioned this" relationship context
+- Reminder overlay: Doctor quote - "Based on your family history, let's get this scheduled."
+- Reminder overlay: Secondary CTA "Learn What Happens Next →"
+- Changed title from "Schedule Colonoscopy" to "Your Next Step: Colonoscopy"
+
+**Strategic Shift:**
+- Product now communicates: continuity, progression, memory, relationship
+- Shifted from "Watch a video" → "Guided healthcare decisions over time"
+- Humans are led, not just shown options
+
+### 📦 Files Modified
+- `components/VideoCard.tsx` - Added onScheduleClick prop, updated personalized content, reordered mobile actions
+- `app/feed/page.tsx` - Reordered all desktop sidebars, updated reminder overlay with continuity messaging
+
+---
+
 ## [1.24.0] - 2024-12-16
 
 ### 🚀 CI/CD & Developer Experience

@@ -12,7 +12,8 @@ import { AuthPrompt } from "@/components/AuthPrompt";
 import { ScheduleAppointment } from "@/components/ScheduleAppointment";
 import { FeedSkeleton } from "@/components/FeedSkeleton";
 import { useEngagement } from "@/hooks/useEngagement";
-import { Calendar, Heart, ArrowLeft, Play, Search, Share2, User } from "lucide-react";
+import { Calendar, Heart, ArrowLeft, Play, Search, Share2, User, MessageCircle } from "lucide-react";
+import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { HeartScore } from "@/components/HeartScore";
 import type { Video, Doctor } from "@/lib/types";
 import Image from "next/image";
@@ -870,24 +871,7 @@ const FeedContent = () => {
           </div>
 
           {/* Mobile navigation */}
-          <nav className="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 z-30">
-            <div className="flex items-center justify-around py-1.5">
-              <Link href="/feed" className="flex flex-col items-center gap-0.5 text-primary-600">
-                <Play className="w-5 h-5" fill="currentColor" />
-                <span className="text-[10px] font-medium">My Feed</span>
-              </Link>
-              <Link href="/discover" className="flex flex-col items-center gap-0.5 text-gray-600">
-                <div className="w-5 h-5 rounded-full border-2 border-gray-600 flex items-center justify-center">
-                  <Play className="w-2.5 h-2.5" />
-                </div>
-                <span className="text-[10px] font-medium">Discover</span>
-              </Link>
-              <Link href="/my-health" className="flex flex-col items-center gap-0.5 text-gray-600">
-                <Heart className="w-5 h-5" />
-                <span className="text-[10px] font-medium">My Health</span>
-              </Link>
-            </div>
-          </nav>
+          <MobileBottomNav />
 
         </div>
       </div>

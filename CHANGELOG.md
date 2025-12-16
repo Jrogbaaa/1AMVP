@@ -5,6 +5,44 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.26.0] - 2024-12-16
+
+### 📱 Mobile Bottom Navigation Polish
+
+**New MobileBottomNav Component:**
+- Created reusable `components/MobileBottomNav.tsx` for consistent mobile navigation
+- Three navigation items: My Feed (Play icon), Discover (Compass icon), My Health (Heart icon)
+- Active state uses 1A brand color `#00BFA6` (teal) matching HeartScore gradient
+- iOS safe area support with `safe-area-bottom` CSS class
+- Subtle shadow effect with `mobile-nav-shadow` class
+- Icons fill when active for clear visual feedback
+
+**Mobile UX Improvements:**
+- Reduced bottom nav height by ~50% for more screen real estate
+- Changed padding from `py-3` to `py-2`
+- Reduced icon size from `w-6 h-6` to `w-5 h-5`
+- Reduced gap between icon and label from `gap-1` to `gap-0.5`
+- Hidden messaging button on My Feed page (no duplicate actions)
+- Adjusted floating message button position on Discover and My Health pages (`bottom-10`)
+
+**Brand Color Consistency:**
+- Updated active navigation color from `#37A9D9` to `#00BFA6`
+- Now matches HeartScore component gradient (`#00BFA6` to `#00A6CE`)
+- Consistent brand identity across all navigation elements
+
+**CSS Additions (globals.css):**
+- `.safe-area-bottom` - iOS safe area padding
+- `.mobile-nav-shadow` - Subtle top shadow for nav bar
+
+### 📦 Files Modified
+- `components/MobileBottomNav.tsx` - New reusable navigation component
+- `app/feed/page.tsx` - Added MobileBottomNav, removed floating message button
+- `app/discover/page.tsx` - Added MobileBottomNav, adjusted button positions
+- `app/my-health/page.tsx` - Added MobileBottomNav, adjusted button positions
+- `app/globals.css` - Added safe area and shadow utility classes
+
+---
+
 ## [1.25.0] - 2024-12-16
 
 ### 🎯 UX Strategic Improvements - "Why Now?" & Continuity

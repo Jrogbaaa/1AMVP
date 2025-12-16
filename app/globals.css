@@ -191,6 +191,16 @@ html {
   display: none;
 }
 
+/* Safe area padding for iOS devices with notch/home indicator */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* Mobile bottom nav shadow */
+.mobile-nav-shadow {
+  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.05), 0 -1px 2px rgba(0, 0, 0, 0.03);
+}
+
 /* Check complete animation - green check flows and scales */
 @keyframes check-complete {
   0% {

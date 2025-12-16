@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useSession } from "next-auth/react";
 import { Play, MessageCircle, Heart, Filter, Check, User, Lock, Crown, Plus } from "lucide-react";
+import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { HeartScore } from "@/components/HeartScore";
 import { TrustBadge } from "@/components/TrustBadge";
 import { UserMenu } from "@/components/UserMenu";
@@ -1075,38 +1076,34 @@ export default function DiscoverPage() {
         </div>
       </main>
 
-      {/* Floating message button with notification */}
+      {/* Floating message button with notification - Mobile */}
       <button
         onClick={handleOpenChat}
-        className="fixed bottom-14 md:bottom-8 right-4 md:right-8 flex items-center justify-center w-12 h-12 bg-primary-600 rounded-full shadow-lg hover:bg-primary-700 hover:scale-110 transition-all duration-200 z-40"
+        className="md:hidden fixed bottom-14 right-4 flex items-center justify-center w-14 h-14 bg-[#37A9D9] rounded-full shadow-lg hover:bg-[#2A8DBF] active:scale-95 transition-all duration-200 z-40"
         aria-label="Message your doctor"
       >
-        <MessageCircle className="w-5 h-5 text-white" />
+        <MessageCircle className="w-6 h-6 text-white" />
         {/* Notification badge */}
-        <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white animate-pulse">
+        <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white">
+          2
+        </span>
+      </button>
+
+      {/* Desktop Floating message button */}
+      <button
+        onClick={handleOpenChat}
+        className="hidden md:flex fixed bottom-8 right-8 items-center justify-center w-14 h-14 bg-[#37A9D9] rounded-full shadow-lg hover:bg-[#2A8DBF] hover:scale-110 transition-all duration-200 z-40"
+        aria-label="Message your doctor"
+      >
+        <MessageCircle className="w-6 h-6 text-white" />
+        {/* Notification badge */}
+        <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white">
           2
         </span>
       </button>
 
       {/* Mobile navigation */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 z-30">
-        <div className="flex items-center justify-around py-1.5">
-          <Link href="/feed" className="flex flex-col items-center gap-0.5 text-gray-600">
-            <Play className="w-5 h-5" />
-            <span className="text-[10px] font-medium">My Feed</span>
-          </Link>
-          <Link href="/discover" className="flex flex-col items-center gap-0.5 text-primary-600">
-            <div className="w-5 h-5 rounded-full border-2 border-primary-600 flex items-center justify-center">
-              <Play className="w-2.5 h-2.5" />
-            </div>
-            <span className="text-[10px] font-medium">Discover</span>
-          </Link>
-          <Link href="/my-health" className="flex flex-col items-center gap-0.5 text-gray-600">
-            <Heart className="w-5 h-5" />
-            <span className="text-[10px] font-medium">My Health</span>
-          </Link>
-        </div>
-      </nav>
+      <MobileBottomNav />
 
       {/* Auth Prompt */}
       <AuthPrompt

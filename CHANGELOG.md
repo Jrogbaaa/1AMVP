@@ -58,6 +58,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `class-variance-authority` - Component variants (Shadcn)
 - `@radix-ui/react-slot` - Slot component (Shadcn)
 - `tailwindcss-animate` - Animation utilities
+- `eslint@8` and `eslint-config-next@14` - Stable linting
+
+### 🐛 Bug Fixes
+
+- Fixed ESLint config for CI compatibility (Next.js 16 `next lint` bug workaround)
+- Fixed Convex client crash when `NEXT_PUBLIC_CONVEX_URL` is missing during CI build
+- ConvexClientProvider now gracefully falls back to SessionProvider only
 
 ---
 

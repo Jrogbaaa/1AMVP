@@ -27,8 +27,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **Brand Color Consistency:**
 - Updated active navigation color from `#37A9D9` to `#00BFA6`
-- Now matches HeartScore component gradient (`#00BFA6` to `#00A6CE`)
-- Consistent brand identity across all navigation elements
+- Updated VideoCard heart icon to use `heart-gradient-1a` class (was conditional amber/green/red)
+- All heart icons now use 1A brand gradient (`#00BFA6` to `#00A6CE`)
+- Consistent brand identity across all navigation elements and video sidebar
 
 **CSS Additions (globals.css):**
 - `.safe-area-bottom` - iOS safe area padding
@@ -36,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 📦 Files Modified
 - `components/MobileBottomNav.tsx` - New reusable navigation component
+- `components/VideoCard.tsx` - Updated heart icon to use 1A brand gradient
 - `app/feed/page.tsx` - Added MobileBottomNav, removed floating message button
 - `app/discover/page.tsx` - Added MobileBottomNav, adjusted button positions
 - `app/my-health/page.tsx` - Added MobileBottomNav, adjusted button positions

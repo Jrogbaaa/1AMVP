@@ -347,7 +347,7 @@ export const VideoCard = ({
                        }}
                   />
                   
-                  {/* Filled heart with gradient and clip-path */}
+                  {/* Filled heart with 1A brand gradient and clip-path */}
                   <div 
                     className="absolute inset-0 transition-all duration-500 ease-out"
                     style={{ 
@@ -355,11 +355,7 @@ export const VideoCard = ({
                     }}
                   >
                     <div 
-                      className={`w-7 h-7 transition-all duration-500 ${
-                        healthScore >= 70 ? "bg-gradient-to-br from-emerald-400 to-green-600" : 
-                        healthScore >= 40 ? "bg-gradient-to-br from-amber-400 to-orange-500" : 
-                        "bg-gradient-to-br from-rose-400 to-red-600"
-                      }`}
+                      className="w-7 h-7 transition-all duration-500 heart-gradient-1a"
                       style={{
                         WebkitMaskImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'currentColor\' stroke=\'currentColor\' stroke-width=\'1.5\'%3E%3Cpath d=\'M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z\'%3E%3C/path%3E%3C/svg%3E")',
                         maskImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'currentColor\' stroke=\'currentColor\' stroke-width=\'1.5\'%3E%3Cpath d=\'M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z\'%3E%3C/path%3E%3C/svg%3E")',
@@ -369,7 +365,7 @@ export const VideoCard = ({
                         maskSize: 'contain',
                         WebkitMaskPosition: 'center',
                         maskPosition: 'center',
-                        filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))'
+                        filter: 'drop-shadow(0 0 4px rgba(0, 191, 166, 0.4)) drop-shadow(0 0 8px rgba(0, 166, 206, 0.3))'
                       }}
                     />
                   </div>

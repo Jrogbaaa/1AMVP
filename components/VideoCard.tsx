@@ -249,7 +249,7 @@ export const VideoCard = ({
                 
                 {/* Doctor context */}
                 <p className="text-white/80 text-sm drop-shadow-md">
-                  Dr. {doctor?.name || "Lisa Mitchell"} explains your upcoming follow-up and what to expect.
+                  Dr. {doctor?.name || "Jack Ellis"} explains your upcoming follow-up and what to expect.
                 </p>
                 
                 {/* Clear action button */}

@@ -22,10 +22,10 @@ import Image from "next/image";
 const MOCK_DOCTORS: Record<string, Doctor> = {
   "550e8400-e29b-41d4-a716-446655440000": {
     id: "550e8400-e29b-41d4-a716-446655440000",
-    name: "Lisa Mitchell",
+    name: "Jack Ellis",
     specialty: "Cardiology",
-    avatarUrl: "/images/doctors/doctor-lisa.jpg",
-    clinicName: "Heart Health Partners",
+    avatarUrl: "/images/doctors/doctor-jack.jpg",
+    clinicName: "1Another Cardiology",
     createdAt: new Date().toISOString(),
   },
   "550e8400-e29b-41d4-a716-446655440001": {
@@ -65,14 +65,14 @@ const MOCK_DOCTORS: Record<string, Doctor> = {
 const MOCK_DOCTOR = MOCK_DOCTORS["550e8400-e29b-41d4-a716-446655440001"];
 
 const MOCK_VIDEOS: Video[] = [
-  // Hey Dave video (personalized greeting from Dr. Lisa Mitchell)
+  // Hey Dave video (personalized greeting from Dr. Jack Ellis)
   {
     id: "750e8400-e29b-41d4-a716-446655440000",
     title: "Hey Dave",
-    description: "Your personalized health update from Dr. Lisa Mitchell",
+    description: "Your personalized health update from Dr. Jack Ellis",
     videoUrl: "/videos/hey-dave.mp4",
-    thumbnailUrl: "/images/doctors/doctor-lisa.jpg",
-    posterUrl: "/images/doctors/doctor-lisa.jpg",
+    thumbnailUrl: "/images/doctors/doctor-jack.jpg",
+    posterUrl: "/images/doctors/doctor-jack.jpg",
     duration: 60,
     category: "Follow-Up",
     tags: ["personalized", "follow-up", "greeting"],
@@ -648,8 +648,8 @@ const FeedContent = () => {
                                 <div className="relative">
                                   <div className="w-14 h-14 rounded-full overflow-hidden ring-4 ring-sky-100 shadow-lg">
                                     <Image
-                                      src="/images/doctors/doctor-lisa.jpg"
-                                      alt="Dr. Lisa Mitchell"
+                                      src="/images/doctors/doctor-jack.jpg"
+                                      alt="Dr. Jack Ellis"
                                       width={56}
                                       height={56}
                                       className="w-full h-full object-cover"
@@ -663,7 +663,7 @@ const FeedContent = () => {
                               
                               {/* Doctor Name with relationship context */}
                               <p className="text-center text-xs text-gray-500 mb-2">
-                                Dr. Lisa Mitchell <span className="text-sky-600 font-medium">mentioned this</span>
+                                Dr. Jack Ellis <span className="text-sky-600 font-medium">mentioned this</span>
                               </p>
 
                               {/* Title - more directive */}

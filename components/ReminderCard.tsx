@@ -14,8 +14,8 @@ interface ReminderCardProps {
 export const ReminderCard = ({ 
   isActive, 
   onScheduleClick,
-  doctorName = "Lisa Mitchell",
-  doctorAvatarUrl = "/images/doctors/doctor-lisa.jpg"
+  doctorName = "Jack Ellis",
+  doctorAvatarUrl = "/images/doctors/doctor-jack.jpg"
 }: ReminderCardProps) => {
   return (
     <div className="h-full w-full bg-gradient-to-br from-sky-50 via-white to-emerald-50 flex flex-col items-center justify-center">

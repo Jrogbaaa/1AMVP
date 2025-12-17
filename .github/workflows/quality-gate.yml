@@ -33,9 +33,15 @@ jobs:
 
       - name: Type check
         run: npx tsc --noEmit
+        env:
+          SKIP_ENV_VALIDATION: true
+          AUTH_SECRET: ci-test-secret-at-least-32-characters-long
 
       - name: Lint
         run: npm run lint
+        env:
+          SKIP_ENV_VALIDATION: true
+          AUTH_SECRET: ci-test-secret-at-least-32-characters-long
 
   # ============================================
   # Build Check
@@ -62,6 +68,9 @@ jobs:
         env:
           # Provide dummy values for build-time validation
           SKIP_ENV_VALIDATION: true
+          # Auth secrets for NextAuth (CI test values)
+          AUTH_SECRET: ci-test-secret-at-least-32-characters-long
+          NEXTAUTH_SECRET: ci-test-secret-at-least-32-characters-long
 
   # ============================================
   # Unit Tests (Jest)
@@ -87,6 +96,9 @@ jobs:
         run: npm run test -- --ci --coverage
         env:
           SKIP_ENV_VALIDATION: true
+          # Auth secrets for NextAuth (CI test values)
+          AUTH_SECRET: ci-test-secret-at-least-32-characters-long
+          NEXTAUTH_SECRET: ci-test-secret-at-least-32-characters-long
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
@@ -124,6 +136,10 @@ jobs:
         env:
           SKIP_ENV_VALIDATION: true
           CI: true
+          # Auth secrets for NextAuth (CI test values)
+          AUTH_SECRET: ci-test-secret-at-least-32-characters-long
+          NEXTAUTH_SECRET: ci-test-secret-at-least-32-characters-long
+          NEXTAUTH_URL: http://localhost:3000
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4

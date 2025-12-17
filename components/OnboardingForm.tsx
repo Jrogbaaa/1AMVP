@@ -11,6 +11,7 @@ import {
   ArrowRight,
   ArrowLeft,
   Search,
+  Stethoscope,
 } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
@@ -34,7 +35,16 @@ const HEALTH_PROVIDERS: HealthProvider[] = [
 
 type OnboardingStep = "email" | "name" | "provider";
 
-export const OnboardingForm = () => {
+interface OnboardingFormProps {
+  callbackUrl?: string;
+  isDoctorLogin?: boolean;
+}
+
+export const OnboardingForm = ({ 
+  callbackUrl = "/feed", 
+  isDoctorLogin = false 
+}: OnboardingFormProps) => {
+  
   const [currentStep, setCurrentStep] = useState<OnboardingStep>("email");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -111,7 +121,7 @@ export const OnboardingForm = () => {
         name,
         healthProvider,
         redirect: true,
-        callbackUrl: "/feed",
+        callbackUrl,
       });
     } catch (err) {
       setError("Failed to complete signup. Please try again.");
@@ -180,29 +190,58 @@ export const OnboardingForm = () => {
       {/* Step 1: Email */}
       {currentStep === "email" && (
         <div className="animate-fade-in">
+          {/* Doctor Login Badge */}
+          {isDoctorLogin && (
+            <div className="mb-4 flex items-center justify-center gap-2 px-4 py-2 bg-sky-50 border border-sky-200 rounded-lg">
+              <Stethoscope className="w-4 h-4 text-sky-600" />
+              <span className="text-sm font-medium text-sky-700">Doctor Portal Login</span>
+            </div>
+          )}
+          
           <div className="mb-8 text-center">
             <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              Welcome to 1Another
+              {isDoctorLogin ? "Doctor Portal Access" : "Welcome to 1Another"}
             </h1>
             <p className="text-gray-600">
-              Sign in to access your personalized health content
+              {isDoctorLogin 
+                ? "Sign in with your @1another.com email" 
+                : "Sign in to access your personalized health content"}
             </p>
           </div>
 
           {/* Benefits list */}
           <div className="mb-6 space-y-2">
-            <div className="flex items-center gap-3 text-sm text-gray-700">
-              <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-              <span>Save your progress across devices</span>
-            </div>
-            <div className="flex items-center gap-3 text-sm text-gray-700">
-              <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-              <span>Get personalized health reminders</span>
-            </div>
-            <div className="flex items-center gap-3 text-sm text-gray-700">
-              <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-              <span>Connect with your healthcare providers</span>
-            </div>
+            {isDoctorLogin ? (
+              <>
+                <div className="flex items-center gap-3 text-sm text-gray-700">
+                  <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                  <span>Manage your patient content</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-gray-700">
+                  <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                  <span>Send personalized health videos</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-gray-700">
+                  <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                  <span>Track patient engagement</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center gap-3 text-sm text-gray-700">
+                  <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                  <span>Save your progress across devices</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-gray-700">
+                  <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                  <span>Get personalized health reminders</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-gray-700">
+                  <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                  <span>Connect with your healthcare providers</span>
+                </div>
+              </>
+            )}
           </div>
 
           <form onSubmit={handleEmailSubmit} className="space-y-4">
@@ -239,19 +278,27 @@ export const OnboardingForm = () => {
           </form>
 
           <p className="mt-6 text-xs text-center text-gray-500">
-            By continuing, you agree to receive personalized health content.
-            <br />
-            Your data is encrypted and HIPAA-compliant.
+            {isDoctorLogin 
+              ? "Enter any email to access the doctor portal demo."
+              : (
+                <>
+                  By continuing, you agree to receive personalized health content.
+                  <br />
+                  Your data is encrypted and HIPAA-compliant.
+                </>
+              )}
           </p>
 
-          <div className="mt-6 text-center">
-            <a
-              href="/feed"
-              className="text-sm text-sky-600 hover:text-sky-700 font-medium hover:underline"
-            >
-              Browse content without signing in →
-            </a>
-          </div>
+          {!isDoctorLogin && (
+            <div className="mt-6 text-center">
+              <a
+                href="/feed"
+                className="text-sm text-sky-600 hover:text-sky-700 font-medium hover:underline"
+              >
+                Browse content without signing in →
+              </a>
+            </div>
+          )}
         </div>
       )}
 

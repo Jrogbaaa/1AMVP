@@ -5,7 +5,11 @@ import { signIn } from "next-auth/react";
 import { Mail, Loader2, CheckCircle } from "lucide-react";
 import Image from "next/image";
 
-export const SignInForm = () => {
+interface SignInFormProps {
+  callbackUrl?: string;
+}
+
+export const SignInForm = ({ callbackUrl = "/feed" }: SignInFormProps) => {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -19,7 +23,7 @@ export const SignInForm = () => {
       await signIn("email", {
         email,
         redirect: true,
-        callbackUrl: "/feed",
+        callbackUrl,
       });
     } catch (err) {
       setError("Failed to sign in. Please try again.");

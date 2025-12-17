@@ -5,6 +5,43 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.30.0] - 2024-12-17
+
+### 🔐 Doctor Portal Authentication Fix
+
+**Problem Solved:**
+- Doctor Portal Login was redirecting users to `/feed` after authentication instead of `/doctor`
+- Role-based access was blocking demo users from accessing the doctor portal
+
+**Authentication Flow Improvements:**
+- Fixed `OnboardingForm` to accept `callbackUrl` as a prop from the server component
+- Removed `useSearchParams()` hook in favor of server-side prop passing (more reliable)
+- Auth page now reads `searchParams` server-side and passes to client components
+- `callbackUrl` is now guaranteed to be available during sign-in
+
+**Middleware Simplification:**
+- Removed role-based access restriction from doctor portal
+- Any authenticated user can now access `/doctor` for demo purposes
+- Middleware still requires authentication (redirects to `/auth?callbackUrl=/doctor`)
+
+**UI Improvements:**
+- Doctor Portal Login shows "Doctor Portal Login" badge when in doctor login mode
+- Shows doctor-specific benefits: "Manage patient content", "Send personalized videos", "Track engagement"
+- Helper text updated to "Enter any email to access the doctor portal demo"
+- "Doctor Portal Login" button hidden when already in doctor login mode
+- "Browse without signing in" link hidden for doctor login flow
+
+**Files Modified:**
+- `middleware.ts` - Simplified to only require authentication (not role)
+- `app/auth/page.tsx` - Server-side searchParams reading, passes props to OnboardingForm
+- `components/OnboardingForm.tsx` - Accepts `callbackUrl` and `isDoctorLogin` props
+- `components/SignInForm.tsx` - Accepts `callbackUrl` prop
+
+### 🔄 Breaking Changes
+- None (doctor portal is now more accessible for demos)
+
+---
+
 ## [1.29.0] - 2024-12-17
 
 ### 🎬 Personalized Video Doctor Update

@@ -37,6 +37,14 @@ export default defineConfig({
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
+    env: {
+      ...process.env,
+      // Ensure auth secrets are available for the dev server
+      AUTH_SECRET: process.env.AUTH_SECRET || "dev-test-secret-at-least-32-characters-long",
+      NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET || "dev-test-secret-at-least-32-characters-long",
+      NEXTAUTH_URL: process.env.NEXTAUTH_URL || "http://localhost:3000",
+      SKIP_ENV_VALIDATION: "true",
+    },
   },
 });
 

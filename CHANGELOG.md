@@ -5,6 +5,30 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.29.0] - 2024-12-17
+
+### 🎬 Personalized Video Doctor Update
+
+**Dr. Ryan Mitchell - New AI Avatar Doctor:**
+- Updated personalized "Hey Dave" video to feature Dr. Ryan Mitchell
+- Added new AI-generated avatar profile image (`doctor-ryan.jpg`)
+- Replaced previous female doctor (Lisa Mitchell) with new male character
+
+**Files Updated:**
+- `app/feed/page.tsx` - Updated MOCK_DOCTORS and MOCK_VIDEOS for Dr. Ryan Mitchell
+- `components/VideoCard.tsx` - Updated fallback doctor name
+- `components/ReminderCard.tsx` - Updated default props
+- `public/images/doctors/doctor-ryan.jpg` - New profile image (AI avatar still)
+- `public/videos/hey-dave.mp4` - Updated video file (renamed from "hey dave.mp4")
+
+**Doctor Profile:**
+- Name: Dr. Ryan Mitchell
+- Specialty: Cardiology
+- Clinic: Heart Health Partners
+- Image: `/images/doctors/doctor-ryan.jpg`
+
+---
+
 ## [1.28.0] - 2024-12-17
 
 ### 🔐 Auth Security Hardening

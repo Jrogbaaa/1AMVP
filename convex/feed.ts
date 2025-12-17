@@ -1,14 +1,27 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
+import { getAuthUserId, getUserIdOrFallback } from "./authHelpers";
 
-// Get personalized feed for user
+/**
+ * Get personalized feed for user
+ * 
+ * Authentication: Optional (falls back to provided userId or anonymous)
+ * This allows both authenticated and anonymous users to view feeds
+ */
 export const getFeed = query({
-  args: { userId: v.string(), patientId: v.string(), doctorId: v.string() },
+  args: { 
+    userId: v.optional(v.string()), 
+    patientId: v.string(), 
+    doctorId: v.string() 
+  },
   handler: async (ctx, args) => {
+    // Prefer authenticated user ID, fall back to provided userId
+    const effectiveUserId = await getUserIdOrFallback(ctx, args.userId);
+
     // Check if user has existing feed
     const existingFeed = await ctx.db
       .query("feedItems")
-      .withIndex("by_user", (q) => q.eq("userId", args.userId))
+      .withIndex("by_user", (q) => q.eq("userId", effectiveUserId))
       .collect();
 
     if (existingFeed.length > 0) {
@@ -21,14 +34,25 @@ export const getFeed = query({
   },
 });
 
-// Generate initial feed (mutation for writes)
+/**
+ * Generate initial feed (mutation for writes)
+ * 
+ * Authentication: Optional (falls back to provided userId or anonymous)
+ */
 export const generateFeed = mutation({
-  args: { userId: v.string(), patientId: v.string(), doctorId: v.string() },
+  args: { 
+    userId: v.optional(v.string()), 
+    patientId: v.string(), 
+    doctorId: v.string() 
+  },
   handler: async (ctx, args) => {
+    // Prefer authenticated user ID, fall back to provided userId
+    const effectiveUserId = await getUserIdOrFallback(ctx, args.userId);
+
     // Check if feed already exists
     const existingFeed = await ctx.db
       .query("feedItems")
-      .withIndex("by_user", (q) => q.eq("userId", args.userId))
+      .withIndex("by_user", (q) => q.eq("userId", effectiveUserId))
       .first();
 
     if (existingFeed) {
@@ -37,7 +61,7 @@ export const generateFeed = mutation({
 
     // Card 1: Always the doctor's personalized video
     const card1 = {
-      userId: args.userId,
+      userId: effectiveUserId,
       videoId: "750e8400-e29b-41d4-a716-446655440001",
       position: 0,
       reason: "Your personalized follow-up from your doctor",
@@ -47,28 +71,28 @@ export const generateFeed = mutation({
     // Cards 2+: Educational content
     const educationalCards = [
       {
-        userId: args.userId,
+        userId: effectiveUserId,
         videoId: "750e8400-e29b-41d4-a716-446655440002",
         position: 1,
         reason: "Recommended based on your recent visit",
         timestamp: Date.now(),
       },
       {
-        userId: args.userId,
+        userId: effectiveUserId,
         videoId: "750e8400-e29b-41d4-a716-446655440003",
         position: 2,
         reason: "Heart health essentials",
         timestamp: Date.now(),
       },
       {
-        userId: args.userId,
+        userId: effectiveUserId,
         videoId: "750e8400-e29b-41d4-a716-446655440004",
         position: 3,
         reason: "Important for your treatment",
         timestamp: Date.now(),
       },
       {
-        userId: args.userId,
+        userId: effectiveUserId,
         videoId: "750e8400-e29b-41d4-a716-446655440005",
         position: 4,
         reason: "Personalized for your condition",
@@ -86,13 +110,25 @@ export const generateFeed = mutation({
   },
 });
 
-// Track scroll event
+/**
+ * Track scroll event
+ * 
+ * Authentication: Optional (falls back to provided userId or anonymous)
+ * Rate limiting is applied per user ID
+ */
 export const trackScroll = mutation({
-  args: { userId: v.string(), videoId: v.string(), position: v.number() },
+  args: { 
+    userId: v.optional(v.string()), 
+    videoId: v.string(), 
+    position: v.number() 
+  },
   handler: async (ctx, args) => {
+    // Prefer authenticated user ID, fall back to provided userId
+    const effectiveUserId = await getUserIdOrFallback(ctx, args.userId);
+
     const session = await ctx.db
       .query("userSessions")
-      .withIndex("by_user", (q) => q.eq("userId", args.userId))
+      .withIndex("by_user", (q) => q.eq("userId", effectiveUserId))
       .first();
 
     const now = Date.now();
@@ -102,7 +138,7 @@ export const trackScroll = mutation({
     if (!session) {
       // Create new session
       await ctx.db.insert("userSessions", {
-        userId: args.userId,
+        userId: effectiveUserId,
         scrollCount: 1,
         lastScrollTime: now,
         sessionStart: now,
@@ -138,13 +174,20 @@ export const trackScroll = mutation({
   },
 });
 
-// Check if user is rate limited
+/**
+ * Check if user is rate limited
+ * 
+ * Authentication: Optional (falls back to provided userId or anonymous)
+ */
 export const checkRateLimit = query({
-  args: { userId: v.string() },
+  args: { userId: v.optional(v.string()) },
   handler: async (ctx, args) => {
+    // Prefer authenticated user ID, fall back to provided userId
+    const effectiveUserId = await getUserIdOrFallback(ctx, args.userId);
+
     const session = await ctx.db
       .query("userSessions")
-      .withIndex("by_user", (q) => q.eq("userId", args.userId))
+      .withIndex("by_user", (q) => q.eq("userId", effectiveUserId))
       .first();
 
     if (!session) {
@@ -166,4 +209,3 @@ export const checkRateLimit = query({
     };
   },
 });
-

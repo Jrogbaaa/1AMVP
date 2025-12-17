@@ -1,10 +1,15 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { getUserIdOrFallback } from "./authHelpers";
 
-// Track video engagement event
+/**
+ * Track video engagement event
+ * 
+ * Authentication: Optional (falls back to provided userId or anonymous)
+ */
 export const trackVideoEvent = mutation({
   args: {
-    userId: v.string(),
+    userId: v.optional(v.string()),
     videoId: v.string(),
     eventType: v.union(
       v.literal("view"),
@@ -17,8 +22,11 @@ export const trackVideoEvent = mutation({
     metadata: v.optional(v.any()),
   },
   handler: async (ctx, args) => {
+    // Prefer authenticated user ID, fall back to provided userId
+    const effectiveUserId = await getUserIdOrFallback(ctx, args.userId);
+
     await ctx.db.insert("videoEvents", {
-      userId: args.userId,
+      userId: effectiveUserId,
       videoId: args.videoId,
       eventType: args.eventType,
       timestamp: Date.now(),
@@ -29,14 +37,24 @@ export const trackVideoEvent = mutation({
   },
 });
 
-// Get user's video engagement
+/**
+ * Get user's video engagement
+ * 
+ * Authentication: Optional (falls back to provided userId or anonymous)
+ */
 export const getUserVideoEngagement = query({
-  args: { userId: v.string(), videoId: v.string() },
+  args: { 
+    userId: v.optional(v.string()), 
+    videoId: v.string() 
+  },
   handler: async (ctx, args) => {
+    // Prefer authenticated user ID, fall back to provided userId
+    const effectiveUserId = await getUserIdOrFallback(ctx, args.userId);
+
     const events = await ctx.db
       .query("videoEvents")
       .withIndex("by_user_video", (q) =>
-        q.eq("userId", args.userId).eq("videoId", args.videoId)
+        q.eq("userId", effectiveUserId).eq("videoId", args.videoId)
       )
       .collect();
 
@@ -57,13 +75,20 @@ export const getUserVideoEngagement = query({
   },
 });
 
-// Get all engagement for a user (for health score calculation)
+/**
+ * Get all engagement for a user (for health score calculation)
+ * 
+ * Authentication: Optional (falls back to provided userId or anonymous)
+ */
 export const getUserEngagementSummary = query({
-  args: { userId: v.string() },
+  args: { userId: v.optional(v.string()) },
   handler: async (ctx, args) => {
+    // Prefer authenticated user ID, fall back to provided userId
+    const effectiveUserId = await getUserIdOrFallback(ctx, args.userId);
+
     const events = await ctx.db
       .query("videoEvents")
-      .withIndex("by_user", (q) => q.eq("userId", args.userId))
+      .withIndex("by_user", (q) => q.eq("userId", effectiveUserId))
       .collect();
 
     const completedVideos = new Set(
@@ -87,4 +112,3 @@ export const getUserEngagementSummary = query({
     };
   },
 });
-

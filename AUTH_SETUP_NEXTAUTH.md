@@ -7,6 +7,10 @@
 - "Earned trust" authentication flow
 - Protected routes with soft prompts
 - Sign-in page at `/auth`
+- **Role-based access control** (patient/doctor/admin)
+- **Edge middleware** protecting `/doctor/*` routes
+- **Secure session cookies** (HttpOnly, SameSite, Secure in production)
+- **8-hour session expiration**
 
 ## 🚀 Quick Setup (2 Steps)
 
@@ -138,6 +142,71 @@ That's it! ✅
 - For auth only: **No**
 - For full features: **Yes** (terminal 1)
 - Convex handles real-time features, NOT auth
+
+## 🔐 Role-Based Access Control
+
+### User Roles
+
+| Role | Access | How to Get |
+|------|--------|------------|
+| `patient` | Feed, Discover, My Health | Default role (any email) |
+| `doctor` | Patient areas + Doctor Portal | Email @1another.com or @1another.health |
+| `admin` | Everything | Specific admin emails (admin@1another.com) |
+
+### Protected Routes
+
+- `/doctor/*` - **Doctor/Admin only** (middleware protected)
+- `/my-health` - Soft prompt for authentication
+- `/feed`, `/discover` - Public access
+
+### Testing Roles
+
+**As Patient:**
+```
+Email: test@gmail.com
+→ Can access: /feed, /discover, /my-health
+→ Cannot access: /doctor (redirected to /auth)
+```
+
+**As Doctor:**
+```
+Email: drsmith@1another.com
+→ Can access: Everything including /doctor portal
+```
+
+### Server-Side Role Checks
+
+Use the auth helpers in your Server Components or API routes:
+
+```typescript
+import { requireDoctor, requireAuth, hasRole } from "@/lib/auth-helpers";
+
+// In a Server Component or Server Action:
+export default async function DoctorPage() {
+  const user = await requireDoctor(); // Redirects if not doctor
+  return <div>Welcome, Dr. {user.name}</div>;
+}
+
+// Check role without redirecting:
+const isDoctor = await hasRole(["doctor", "admin"]);
+```
+
+### Convex Server-Side Auth
+
+Convex functions now verify user identity server-side:
+
+```typescript
+// In Convex functions:
+import { requireAuth, getAuthUserId } from "./authHelpers";
+
+export const myMutation = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const user = await requireAuth(ctx); // Throws if not authenticated
+    // user.subject is the verified user ID
+  },
+});
+```
 
 ## 📚 Resources
 

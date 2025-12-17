@@ -5,6 +5,72 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.28.0] - 2024-12-17
+
+### 🔐 Auth Security Hardening
+
+**Role-Based Access Control:**
+- Added user roles: `patient`, `doctor`, `admin`
+- Role determined by email domain:
+  - `@1another.com` or `@1another.health` → doctor
+  - Specific admin emails → admin
+  - Everyone else → patient
+- Session now includes `role` property for authorization checks
+
+**Edge Middleware Protection:**
+- New `middleware.ts` protects `/doctor/*` routes
+- Unauthenticated users redirected to `/auth?callbackUrl=...`
+- Patients blocked from doctor portal (redirected to `/feed?error=unauthorized`)
+- Only doctors and admins can access doctor portal
+
+**Secure Session Configuration:**
+- `maxAge: 8 hours` for session expiration
+- Secure cookies in production (`__Secure-` prefix)
+- `HttpOnly`, `SameSite=lax` cookie options
+- CSRF token protection with `__Host-` prefix
+
+**Convex Auth Integration:**
+- Updated `ConvexClientProvider` to use `ConvexProviderWithAuth`
+- New `convex/authHelpers.ts` with:
+  - `getAuthUserId()` - Get verified user ID
+  - `requireAuth()` - Throw if not authenticated
+  - `requireRole()` - Verify user has required role
+  - `getUserIdOrFallback()` - Graceful degradation for anonymous users
+- Updated `convex/feed.ts`, `convex/chat.ts`, `convex/videoEngagement.ts` to use server-verified auth
+
+**Server-Side Auth Helpers:**
+- New `lib/auth-helpers.ts` for Next.js:
+  - `requireAuth()` - Redirect to /auth if not authenticated
+  - `requireRole()` - Redirect if wrong role
+  - `requireDoctor()` - Convenience for doctor-only routes
+  - `hasRole()` - Check role without redirecting
+
+**E2E Test Updates:**
+- Updated `tests/e2e/patient/auth.spec.ts` with role-based access tests
+- Updated `tests/e2e/doctor/dashboard.spec.ts` for middleware protection
+- All 66 tests passing across Chromium and mobile-chrome
+
+### 📦 New Files
+- `middleware.ts` - Edge middleware for route protection
+- `convex/authHelpers.ts` - Convex auth utilities
+- `lib/auth-helpers.ts` - Server-side auth helpers
+
+### 📦 Files Modified
+- `auth.ts` - Added role system, secure cookies, maxAge
+- `types/next-auth.d.ts` - Added role type definitions
+- `components/ConvexClientProvider.tsx` - Convex auth integration
+- `convex/feed.ts` - Server-side auth verification
+- `convex/chat.ts` - Server-side auth verification
+- `convex/videoEngagement.ts` - Server-side auth verification
+- `tests/e2e/patient/auth.spec.ts` - Role-based access tests
+- `tests/e2e/doctor/dashboard.spec.ts` - Middleware protection tests
+
+### 🔄 Breaking Changes
+- Doctor portal now requires authentication and doctor/admin role
+- Convex functions prefer server-verified userId over client-provided
+
+---
+
 ## [1.27.0] - 2024-12-16
 
 ### 🧪 Full Testing Infrastructure

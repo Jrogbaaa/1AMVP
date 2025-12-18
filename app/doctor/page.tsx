@@ -597,6 +597,19 @@ export default function DoctorDashboard() {
       {/* Quick Actions */}
       <div className="space-y-4">
         <Link
+          href="/doctor/content"
+          className="flex items-center gap-4 p-4 bg-gradient-to-br from-pink-500 to-rose-600 text-white rounded-xl hover:shadow-lg transition-shadow"
+        >
+          <div className="p-3 bg-white/20 rounded-xl">
+            <Sparkles className="w-6 h-6" />
+          </div>
+          <div>
+            <p className="font-semibold">Create Content</p>
+            <p className="text-sm text-pink-100">AI scripts & videos</p>
+          </div>
+        </Link>
+
+        <Link
           href="/doctor/send"
           className="flex items-center gap-4 p-4 bg-gradient-to-br from-sky-500 to-blue-600 text-white rounded-xl hover:shadow-lg transition-shadow"
         >

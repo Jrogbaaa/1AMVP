@@ -22,8 +22,10 @@ import {
   Sparkles,
   CheckCircle2,
   ArrowRight,
+  Camera,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { VideoRecorder } from "@/components/VideoRecorder";
 
 // Steps for the onboarding flow
 const STEPS = [
@@ -334,105 +336,146 @@ export default function DoctorOnboarding() {
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  Train Your AI Avatar
+                  Create Your AI Avatar
                 </h2>
                 <p className="text-gray-600">
-                  Create a realistic AI avatar that looks and sounds like you using HeyGen.
+                  Record a short video and we'll create a realistic AI avatar that looks and sounds like you.
                 </p>
               </div>
 
-              <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-xl p-6 border border-pink-100">
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-gradient-to-br from-pink-500 to-rose-600 rounded-xl text-white flex-shrink-0">
-                    <UserCircle className="w-8 h-8" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      How HeyGen Works
-                    </h3>
-                    <ol className="space-y-3 text-sm text-gray-700">
-                      <li className="flex items-start gap-2">
-                        <span className="flex items-center justify-center w-5 h-5 rounded-full bg-pink-500 text-white text-xs font-bold flex-shrink-0 mt-0.5">
-                          1
-                        </span>
-                        <span>Record a 2-3 minute video of yourself speaking naturally</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="flex items-center justify-center w-5 h-5 rounded-full bg-pink-500 text-white text-xs font-bold flex-shrink-0 mt-0.5">
-                          2
-                        </span>
-                        <span>Upload to HeyGen to train your AI avatar (takes ~24 hours)</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="flex items-center justify-center w-5 h-5 rounded-full bg-pink-500 text-white text-xs font-bold flex-shrink-0 mt-0.5">
-                          3
-                        </span>
-                        <span>Once trained, your avatar can speak any text in your voice and likeness</span>
-                      </li>
-                    </ol>
-                  </div>
+              {/* Avatar Creation Options */}
+              {avatarStatus === "not_started" && (
+                <div className="grid md:grid-cols-2 gap-4">
+                  {/* Option 1: Record In-App */}
+                  <button
+                    onClick={() => setAvatarStatus("in_progress")}
+                    className="p-6 bg-gradient-to-br from-pink-50 to-rose-50 rounded-xl border-2 border-pink-200 hover:border-pink-400 transition-all text-left group"
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="p-3 bg-gradient-to-br from-pink-500 to-rose-600 rounded-xl text-white">
+                        <Camera className="w-6 h-6" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-pink-700">
+                          Record Here
+                        </h3>
+                        <p className="text-sm text-gray-600">
+                          Use your webcam to record directly in this app. Quickest option.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mt-4 flex items-center gap-2 text-sm text-pink-600 font-medium">
+                      <span>Start Recording</span>
+                      <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </button>
+
+                  {/* Option 2: Use HeyGen */}
+                  <a
+                    href="https://app.heygen.com/avatars/create-instant-avatar?listAccessType=any"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-6 bg-white rounded-xl border-2 border-gray-200 hover:border-violet-400 hover:bg-violet-50/50 transition-all text-left group"
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="p-3 bg-violet-100 rounded-xl text-violet-600 group-hover:bg-violet-600 group-hover:text-white transition-colors">
+                        <Wand2 className="w-6 h-6" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-violet-700">
+                          Use HeyGen Studio
+                        </h3>
+                        <p className="text-sm text-gray-600">
+                          Access advanced tools on HeyGen for professional avatars.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mt-4 flex items-center gap-2 text-sm text-violet-600 font-medium">
+                      <span>Open HeyGen</span>
+                      <ExternalLink className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </a>
                 </div>
-              </div>
+              )}
 
-              <div className="bg-gray-50 rounded-xl p-6">
-                <h4 className="font-semibold text-gray-900 mb-4">Recording Tips:</h4>
-                <ul className="space-y-2 text-sm text-gray-600">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                    Good lighting (face the window or use ring light)
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                    Quiet environment with minimal background noise
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                    Look directly at the camera
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                    Speak naturally and vary your expressions
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                    Wear professional attire (lab coat recommended)
-                  </li>
-                </ul>
-              </div>
+              {/* In-App Recording */}
+              {avatarStatus === "in_progress" && (
+                <div className="space-y-4">
+                  <button
+                    onClick={() => setAvatarStatus("not_started")}
+                    className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                    Back to options
+                  </button>
+                  <VideoRecorder
+                    maxDuration={180}
+                    onAvatarCreated={(avatarId) => {
+                      console.log("Avatar created:", avatarId);
+                      setAvatarStatus("completed");
+                    }}
+                  />
+                </div>
+              )}
 
-              <div className="flex flex-col sm:flex-row gap-4">
-                <a
-                  href="https://www.heygen.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-pink-500 to-rose-600 text-white font-semibold rounded-xl hover:from-pink-600 hover:to-rose-700 transition-all shadow-lg"
-                >
-                  <Wand2 className="w-5 h-5" />
-                  Go to HeyGen
-                  <ExternalLink className="w-4 h-4" />
-                </a>
-                <button
-                  onClick={() => setAvatarStatus("completed")}
-                  className={cn(
-                    "flex-1 inline-flex items-center justify-center gap-2 px-6 py-4 font-semibold rounded-xl transition-all",
-                    avatarStatus === "completed"
-                      ? "bg-emerald-500 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  )}
-                >
-                  {avatarStatus === "completed" ? (
-                    <>
-                      <Check className="w-5 h-5" />
-                      Avatar Training Complete
-                    </>
-                  ) : (
-                    "I've Completed Training"
-                  )}
-                </button>
-              </div>
+              {/* Avatar Created Success */}
+              {avatarStatus === "completed" && (
+                <div className="bg-emerald-50 rounded-xl p-6 border border-emerald-200">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-emerald-500 rounded-full">
+                      <CheckCircle2 className="w-8 h-8 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-emerald-800 text-lg">Avatar Created Successfully!</h3>
+                      <p className="text-sm text-emerald-700">
+                        Your AI avatar is ready. You can now create personalized videos.
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setAvatarStatus("not_started")}
+                    className="mt-4 text-sm text-emerald-600 hover:text-emerald-700 font-medium"
+                  >
+                    Create a different avatar
+                  </button>
+                </div>
+              )}
+
+              {/* Tips (shown when not in recording mode) */}
+              {avatarStatus === "not_started" && (
+                <div className="bg-gray-50 rounded-xl p-6">
+                  <h4 className="font-semibold text-gray-900 mb-4">Recording Tips for Best Results:</h4>
+                  <ul className="grid md:grid-cols-2 gap-2 text-sm text-gray-600">
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                      Good lighting on your face
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                      Quiet environment
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                      Look directly at the camera
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                      Speak naturally
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                      Professional attire (lab coat)
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                      Neutral background
+                    </li>
+                  </ul>
+                </div>
+              )}
 
               <p className="text-xs text-gray-500 text-center">
-                Don't have time now? You can skip this step and complete it later from your dashboard.
+                Don't have time now? You can skip this step and complete it later from Settings.
               </p>
             </div>
           )}

@@ -44,11 +44,17 @@ A mobile-first patient communication and education platform that puts **the doct
 │   ├── globals.css        # Global styles + Shadcn CSS variables
 │   └── sitemap.ts         # Sitemap generation
 ├── components/
-│   ├── ui/                # Shadcn/UI primitives
-│   │   ├── button.tsx     # Button component
-│   │   ├── card.tsx       # Card component
-│   │   ├── input.tsx      # Input component
-│   │   └── skeleton.tsx   # Skeleton component
+│   ├── ui/                # Shadcn/UI primitives (10 components)
+│   │   ├── avatar.tsx     # Profile images with fallbacks
+│   │   ├── badge.tsx      # Status indicators
+│   │   ├── button.tsx     # Button with variants
+│   │   ├── card.tsx       # Card container
+│   │   ├── dialog.tsx     # Modal dialogs
+│   │   ├── drawer.tsx     # Bottom sheets (mobile)
+│   │   ├── input.tsx      # Form inputs
+│   │   ├── skeleton.tsx   # Loading placeholders
+│   │   ├── sonner.tsx     # Toast notifications
+│   │   └── tooltip.tsx    # Hover tooltips
 │   ├── VideoCard.tsx      # TikTok-style video card
 │   ├── FeedSkeleton.tsx   # Feed loading skeleton
 │   ├── QACard.tsx         # Interactive Q&A check-in cards
@@ -87,7 +93,25 @@ A mobile-first patient communication and education platform that puts **the doct
     └── images/            # Static assets
 ```
 
-## ✨ Latest Updates (v1.31.0 - Dec 18, 2024)
+## ✨ Latest Updates (v1.32.0 - Dec 18, 2024)
+
+### 🎨 Shadcn CLI 3.0 Upgrade & New Components
+
+**Component Library Expanded:**
+- Upgraded to **Shadcn CLI 3.6.2** (3x faster installations)
+- Added 6 new UI components: **Avatar, Badge, Dialog, Drawer, Sonner (toast), Tooltip**
+- Total UI components now: **10** (was 4)
+- Updated existing components with improved accessibility and new variants
+
+**New Component Highlights:**
+- `Sonner` - Modern toast notifications for feedback
+- `Drawer` - Mobile-friendly bottom sheets
+- `Avatar` - Doctor/patient profile images with fallbacks
+- `Badge` - Status indicators (Verified, Premium, etc.)
+
+---
+
+### Previous Updates (v1.31.0 - Dec 18, 2024)
 
 ### 🎬 HeyGen AI Video Generation
 

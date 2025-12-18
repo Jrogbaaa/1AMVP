@@ -5,6 +5,72 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.32.0] - 2024-12-18
+
+### 🎨 Shadcn CLI 3.0 Upgrade & New Components
+
+**Shadcn CLI Updated:**
+- Upgraded to Shadcn CLI 3.6.2 (CLI 3.0)
+- 3x faster component installation
+- Better error handling and monorepo support
+- Updated `components.json` for latest CLI compatibility
+
+**New UI Components Added (6):**
+- `sonner.tsx` - Modern toast notifications (replaces deprecated toast)
+- `drawer.tsx` - Bottom sheet for mobile-friendly modals
+- `dialog.tsx` - Modal dialogs for forms & confirmations
+- `badge.tsx` - Status indicators & tags
+- `avatar.tsx` - User/doctor profile images with fallbacks
+- `tooltip.tsx` - Hover information tooltips
+
+**Existing Components Updated:**
+- `button.tsx` - New icon sizes (`icon-sm`, `icon-lg`), improved focus states, data attributes
+- `card.tsx` - Updated for latest Shadcn patterns
+- `input.tsx` - Improved accessibility
+- `skeleton.tsx` - Better animation defaults
+
+**Component Library Now Includes (10 total):**
+- Button, Card, Input, Skeleton (existing)
+- Avatar, Badge, Dialog, Drawer, Sonner, Tooltip (new)
+
+**Usage Examples:**
+```tsx
+// Toast notifications
+import { toast } from "sonner"
+toast.success("Appointment scheduled!")
+
+// Avatar with fallback
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+<Avatar>
+  <AvatarImage src="/doctor.jpg" />
+  <AvatarFallback>DR</AvatarFallback>
+</Avatar>
+
+// Badge for status
+import { Badge } from "@/components/ui/badge"
+<Badge variant="success">Verified Doctor</Badge>
+```
+
+### 📦 New Files
+- `components/ui/avatar.tsx`
+- `components/ui/badge.tsx`
+- `components/ui/dialog.tsx`
+- `components/ui/drawer.tsx`
+- `components/ui/sonner.tsx`
+- `components/ui/tooltip.tsx`
+
+### 📦 Files Modified
+- `components.json` - Updated for CLI 3.0
+- `components/ui/button.tsx` - New variants and attributes
+- `components/ui/card.tsx` - Updated patterns
+- `components/ui/input.tsx` - Accessibility improvements
+- `components/ui/skeleton.tsx` - Animation updates
+
+### 🔄 Breaking Changes
+- None (all changes are backwards compatible)
+
+---
+
 ## [1.31.0] - 2024-12-18
 
 ### 🎬 HeyGen AI Video Generation Integration

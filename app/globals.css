@@ -1,14 +1,124 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
+/* ===== TAILWIND V4 THEME CONFIGURATION ===== */
+@theme {
+  /* Font Family */
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  /* Primary Colors - Sky Blue Medical Palette */
+  --color-primary-50: #f0f9ff;
+  --color-primary-100: #e0f2fe;
+  --color-primary-200: #bae6fd;
+  --color-primary-300: #7dd3fc;
+  --color-primary-400: #38bdf8;
+  --color-primary-500: #0ea5e9;
+  --color-primary-600: #0284c7;
+  --color-primary-700: #0369a1;
+  --color-primary-800: #075985;
+  --color-primary-900: #0c4a6e;
+
+  /* Medical-specific Colors */
+  --color-medical-trust: #0369a1;
+  --color-medical-success: #22c55e;
+  --color-medical-warning: #fbbf24;
+  --color-medical-danger: #ef4444;
+
+  /* 1A Brand Colors */
+  --color-brand-teal: #00BFA6;
+  --color-brand-cyan: #00A6CE;
+
+  /* Chart Colors */
+  --color-chart-1: oklch(0.646 0.222 41.116);
+  --color-chart-2: oklch(0.6 0.118 184.704);
+  --color-chart-3: oklch(0.398 0.07 227.392);
+  --color-chart-4: oklch(0.828 0.189 84.429);
+  --color-chart-5: oklch(0.769 0.188 70.08);
+
+  /* Border Radius */
+  --radius-lg: 0.5rem;
+  --radius-md: calc(0.5rem - 2px);
+  --radius-sm: calc(0.5rem - 4px);
+
+  /* Custom Animations */
+  --animate-slide-up: slideUp 0.3s ease-out;
+  --animate-fade-in: fadeIn 0.2s ease-in;
+
+  @keyframes slideUp {
+    0% {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+}
+
+/* ===== CSS VARIABLES FOR SHADCN THEMING ===== */
 :root {
   --font-inter: 'Inter', system-ui, sans-serif;
+  --background: 0 0% 100%;
+  --foreground: 0 0% 3.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 3.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 3.9%;
+  --primary: 0 0% 9%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 0 0% 96.1%;
+  --secondary-foreground: 0 0% 9%;
+  --muted: 0 0% 96.1%;
+  --muted-foreground: 0 0% 45.1%;
+  --accent: 0 0% 96.1%;
+  --accent-foreground: 0 0% 9%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 0 0% 89.8%;
+  --input: 0 0% 89.8%;
+  --ring: 0 0% 3.9%;
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: 0 0% 3.9%;
+  --foreground: 0 0% 98%;
+  --card: 0 0% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --popover: 0 0% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 0 0% 98%;
+  --primary-foreground: 0 0% 9%;
+  --secondary: 0 0% 14.9%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 0 0% 14.9%;
+  --muted-foreground: 0 0% 63.9%;
+  --accent: 0 0% 14.9%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 0 0% 14.9%;
+  --input: 0 0% 14.9%;
+  --ring: 0 0% 83.1%;
+}
+
+/* ===== BASE STYLES ===== */
+* {
+  border-color: hsl(var(--border));
 }
 
 body {
-  background-color: white;
-  color: #111827;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-family: var(--font-inter);
@@ -17,6 +127,8 @@ body {
 html {
   scroll-behavior: smooth;
 }
+
+/* ===== FEED LAYOUT STYLES ===== */
 
 /* Feed wrapper for desktop layout with left sidebar */
 .feed-wrapper {
@@ -74,7 +186,7 @@ html {
   height: 100dvh;
 }
 
-/* Video card styles */
+/* ===== VIDEO CARD STYLES ===== */
 .video-card {
   position: relative;
   width: 100%;
@@ -92,7 +204,7 @@ html {
   pointer-events: none;
 }
 
-/* Dashboard styles */
+/* ===== DASHBOARD STYLES ===== */
 .dashboard-container {
   max-width: 80rem;
   margin-left: auto;
@@ -103,7 +215,7 @@ html {
   padding-bottom: 1.5rem;
 }
 
-/* Button styles */
+/* ===== BUTTON STYLES ===== */
 .btn-primary {
   padding: 0.75rem 1.5rem;
   background-color: #0284c7;
@@ -143,7 +255,7 @@ html {
   background-color: #f3f4f6;
 }
 
-/* Card styles */
+/* ===== CARD & INPUT STYLES ===== */
 .card {
   background-color: white;
   border-radius: 0.75rem;
@@ -152,7 +264,6 @@ html {
   border: 1px solid #f3f4f6;
 }
 
-/* Input styles */
 .input {
   width: 100%;
   padding: 0.75rem 1rem;
@@ -166,7 +277,7 @@ html {
   border-color: transparent;
 }
 
-/* Medical trust badge */
+/* ===== MEDICAL TRUST BADGE ===== */
 .trust-badge {
   display: flex;
   align-items: center;
@@ -178,6 +289,7 @@ html {
   border-radius: 9999px;
 }
 
+/* ===== UTILITY CLASSES ===== */
 .text-balance {
   text-wrap: balance;
 }
@@ -200,6 +312,8 @@ html {
 .mobile-nav-shadow {
   box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.05), 0 -1px 2px rgba(0, 0, 0, 0.03);
 }
+
+/* ===== ENGAGEMENT ANIMATIONS ===== */
 
 /* Check complete animation - green check flows and scales */
 @keyframes check-complete {
@@ -303,7 +417,7 @@ html {
   animation: fade-in 0.2s ease-out forwards;
 }
 
-/* Q&A Card Animations */
+/* ===== Q&A CARD ANIMATIONS ===== */
 @keyframes gradient-shift {
   0%, 100% {
     background-position: 0% 50%;
@@ -365,7 +479,7 @@ html {
   animation: pulse-slow 6s ease-in-out infinite;
 }
 
-/* Scale utilities for hover effects */
+/* ===== HOVER EFFECT UTILITIES ===== */
 .hover\:scale-102:hover {
   transform: scale(1.02);
 }
@@ -373,73 +487,3 @@ html {
 .active\:scale-98:active {
   transform: scale(0.98);
 }
-
-
-
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
-  }
-  .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-  }
-}
-
-
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
-

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import {
   User,
@@ -18,8 +18,28 @@ import {
   CheckCircle,
   AlertCircle,
   Loader2,
+  RefreshCw,
+  Play,
+  Volume2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+// HeyGen asset types
+interface HeyGenAvatar {
+  avatar_id: string;
+  avatar_name: string;
+  gender: string;
+  preview_image_url: string;
+  preview_video_url: string;
+}
+
+interface HeyGenVoice {
+  voice_id: string;
+  name: string;
+  language: string;
+  gender: string;
+  preview_audio: string;
+}
 
 const CURRENT_DOCTOR = {
   name: "Jack Ellis",
@@ -50,6 +70,56 @@ export default function SettingsPage() {
   const [avatarStatus, setAvatarStatus] = useState<"not_configured" | "pending" | "active" | "error">("not_configured");
   const [isValidating, setIsValidating] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
+  
+  // HeyGen asset lists from API
+  const [availableAvatars, setAvailableAvatars] = useState<HeyGenAvatar[]>([]);
+  const [availableVoices, setAvailableVoices] = useState<HeyGenVoice[]>([]);
+  const [isLoadingAssets, setIsLoadingAssets] = useState(false);
+  const [assetsError, setAssetsError] = useState<string | null>(null);
+  const [playingAudioId, setPlayingAudioId] = useState<string | null>(null);
+
+  // Fetch HeyGen avatars and voices
+  const fetchHeyGenAssets = async () => {
+    setIsLoadingAssets(true);
+    setAssetsError(null);
+    
+    try {
+      const response = await fetch("/api/heygen/avatars");
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to fetch assets");
+      }
+      
+      setAvailableAvatars(data.data.avatars || []);
+      setAvailableVoices(data.data.voices || []);
+    } catch (error) {
+      console.error("Error fetching HeyGen assets:", error);
+      setAssetsError(error instanceof Error ? error.message : "Failed to load avatars");
+    } finally {
+      setIsLoadingAssets(false);
+    }
+  };
+
+  // Play voice preview
+  const handlePlayVoicePreview = (voiceId: string, audioUrl: string) => {
+    if (playingAudioId === voiceId) {
+      setPlayingAudioId(null);
+      return;
+    }
+    
+    const audio = new Audio(audioUrl);
+    audio.onended = () => setPlayingAudioId(null);
+    audio.play();
+    setPlayingAudioId(voiceId);
+  };
+
+  // Load assets when AI Avatar tab is selected
+  useEffect(() => {
+    if (activeTab === "ai-avatar" && availableAvatars.length === 0) {
+      fetchHeyGenAssets();
+    }
+  }, [activeTab]);
 
   // Notification settings
   const [notifications, setNotifications] = useState({
@@ -328,17 +398,18 @@ export default function SettingsPage() {
                   1
                 </div>
                 <div>
-                  <h4 className="font-medium text-gray-900">Train Your Avatar on HeyGen</h4>
+                  <h4 className="font-medium text-gray-900">Create Your Instant Avatar</h4>
                   <p className="text-sm text-gray-600 mt-1">
-                    Go to HeyGen and upload a 2-3 minute video of yourself speaking. This trains your AI avatar.
+                    Record a short video of yourself speaking. HeyGen will create an AI avatar that looks and sounds like you.
                   </p>
                   <a
-                    href="https://app.heygen.com/avatars"
+                    href="https://app.heygen.com/avatars/create-instant-avatar?listAccessType=any"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 mt-2 text-sm font-medium text-violet-600 hover:text-violet-700"
+                    className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-violet-600 text-white text-sm font-medium rounded-lg hover:bg-violet-700 transition-colors"
                   >
-                    Open HeyGen Avatar Studio
+                    <Sparkles className="w-4 h-4" />
+                    Create Instant Avatar
                     <ExternalLink className="w-4 h-4" />
                   </a>
                 </div>
@@ -349,9 +420,9 @@ export default function SettingsPage() {
                   2
                 </div>
                 <div>
-                  <h4 className="font-medium text-gray-900">Copy Your Avatar ID</h4>
+                  <h4 className="font-medium text-gray-900">Wait for Processing</h4>
                   <p className="text-sm text-gray-600 mt-1">
-                    Once your avatar is trained, find your Avatar ID in the HeyGen dashboard and paste it below.
+                    Your avatar will be ready in a few minutes. You&apos;ll receive an email when it&apos;s complete.
                   </p>
                 </div>
               </div>
@@ -361,27 +432,35 @@ export default function SettingsPage() {
                   3
                 </div>
                 <div>
-                  <h4 className="font-medium text-gray-900">Get Your Voice ID</h4>
+                  <h4 className="font-medium text-gray-900">Select Your Avatar Below</h4>
                   <p className="text-sm text-gray-600 mt-1">
-                    Your Voice ID is created alongside your avatar. Find it in the voices section of HeyGen.
+                    Once created, your avatar will appear in the selector below. Click &quot;Refresh&quot; to load your new avatar.
                   </p>
-                  <a
-                    href="https://app.heygen.com/voices"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 mt-2 text-sm font-medium text-violet-600 hover:text-violet-700"
-                  >
-                    Open HeyGen Voices
-                    <ExternalLink className="w-4 h-4" />
-                  </a>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* HeyGen Credentials Form */}
+          {/* Avatar Selection */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">HeyGen Credentials</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-gray-900">Select Your Avatar</h2>
+              <button
+                onClick={fetchHeyGenAssets}
+                disabled={isLoadingAssets}
+                className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-violet-600 hover:bg-violet-50 rounded-lg transition-colors disabled:opacity-50"
+              >
+                <RefreshCw className={cn("w-4 h-4", isLoadingAssets && "animate-spin")} />
+                Refresh
+              </button>
+            </div>
+
+            {assetsError && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-700 text-sm">
+                <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                {assetsError}
+              </div>
+            )}
             
             {validationError && (
               <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-700 text-sm">
@@ -390,18 +469,83 @@ export default function SettingsPage() {
               </div>
             )}
 
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Avatar ID
+            {isLoadingAssets ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="text-center">
+                  <Loader2 className="w-8 h-8 animate-spin text-violet-600 mx-auto mb-3" />
+                  <p className="text-sm text-gray-500">Loading your avatars...</p>
+                </div>
+              </div>
+            ) : availableAvatars.length === 0 ? (
+              <div className="text-center py-12 bg-gray-50 rounded-xl">
+                <Sparkles className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                <h3 className="font-medium text-gray-900 mb-1">No Avatars Found</h3>
+                <p className="text-sm text-gray-500 mb-4">
+                  Create your instant avatar on HeyGen first, then click Refresh.
+                </p>
+                <a
+                  href="https://app.heygen.com/avatars/create-instant-avatar?listAccessType=any"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-violet-600 text-white text-sm font-medium rounded-lg hover:bg-violet-700 transition-colors"
+                >
+                  Create Avatar
+                  <ExternalLink className="w-4 h-4" />
+                </a>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {availableAvatars.map((avatar) => (
                   <button
-                    type="button"
-                    className="ml-1 text-gray-400 hover:text-gray-600"
-                    aria-label="Help with Avatar ID"
+                    key={avatar.avatar_id}
+                    onClick={() => setHeygenAvatarId(avatar.avatar_id)}
+                    className={cn(
+                      "relative group rounded-xl overflow-hidden border-2 transition-all",
+                      heygenAvatarId === avatar.avatar_id
+                        ? "border-violet-600 ring-2 ring-violet-200"
+                        : "border-gray-200 hover:border-violet-300"
+                    )}
                   >
-                    <HelpCircle className="w-4 h-4 inline" />
+                    <div className="aspect-square relative">
+                      {avatar.preview_image_url ? (
+                        <Image
+                          src={avatar.preview_image_url}
+                          alt={avatar.avatar_name}
+                          fill
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-violet-100 to-purple-100 flex items-center justify-center">
+                          <User className="w-12 h-12 text-violet-400" />
+                        </div>
+                      )}
+                      {avatar.preview_video_url && (
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <Play className="w-10 h-10 text-white" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-2 bg-white">
+                      <p className="text-xs font-medium text-gray-900 truncate">
+                        {avatar.avatar_name}
+                      </p>
+                      {heygenAvatarId === avatar.avatar_id && (
+                        <div className="absolute top-2 right-2 p-1 bg-violet-600 rounded-full">
+                          <Check className="w-3 h-3 text-white" />
+                        </div>
+                      )}
+                    </div>
                   </button>
-                </label>
+                ))}
+              </div>
+            )}
+
+            {/* Manual ID Entry (fallback) */}
+            <details className="mt-4">
+              <summary className="text-sm text-gray-500 cursor-pointer hover:text-gray-700">
+                Or enter Avatar ID manually
+              </summary>
+              <div className="mt-3">
                 <input
                   type="text"
                   value={heygenAvatarId}
@@ -409,22 +553,75 @@ export default function SettingsPage() {
                   placeholder="e.g., avatar_1234567890abcdef"
                   className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all font-mono text-sm"
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  Found in HeyGen under Avatars → Your Avatar → Avatar ID
+              </div>
+            </details>
+          </div>
+
+          {/* Voice Selection */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Select Your Voice</h2>
+            
+            {isLoadingAssets ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="w-6 h-6 animate-spin text-violet-600" />
+              </div>
+            ) : availableVoices.length === 0 ? (
+              <div className="text-center py-8 bg-gray-50 rounded-xl">
+                <Volume2 className="w-10 h-10 text-gray-300 mx-auto mb-2" />
+                <p className="text-sm text-gray-500">
+                  Voices will appear after creating your avatar
                 </p>
               </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Voice ID
+            ) : (
+              <div className="space-y-2">
+                {availableVoices.slice(0, 10).map((voice) => (
                   <button
-                    type="button"
-                    className="ml-1 text-gray-400 hover:text-gray-600"
-                    aria-label="Help with Voice ID"
+                    key={voice.voice_id}
+                    onClick={() => setHeygenVoiceId(voice.voice_id)}
+                    className={cn(
+                      "w-full flex items-center gap-4 p-4 rounded-xl border-2 transition-all text-left",
+                      heygenVoiceId === voice.voice_id
+                        ? "border-violet-600 bg-violet-50"
+                        : "border-gray-200 hover:border-violet-300"
+                    )}
                   >
-                    <HelpCircle className="w-4 h-4 inline" />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-gray-900 truncate">{voice.name}</p>
+                      <p className="text-xs text-gray-500">
+                        {voice.language} • {voice.gender}
+                      </p>
+                    </div>
+                    {voice.preview_audio && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handlePlayVoicePreview(voice.voice_id, voice.preview_audio);
+                        }}
+                        className="p-2 rounded-full bg-gray-100 hover:bg-violet-100 transition-colors"
+                        aria-label="Play voice preview"
+                  >
+                        {playingAudioId === voice.voice_id ? (
+                          <Volume2 className="w-4 h-4 text-violet-600" />
+                        ) : (
+                          <Play className="w-4 h-4 text-gray-600" />
+                        )}
+                      </button>
+                    )}
+                    {heygenVoiceId === voice.voice_id && (
+                      <Check className="w-5 h-5 text-violet-600 flex-shrink-0" />
+                    )}
                   </button>
-                </label>
+                ))}
+              </div>
+            )}
+
+            {/* Manual ID Entry (fallback) */}
+            <details className="mt-4">
+              <summary className="text-sm text-gray-500 cursor-pointer hover:text-gray-700">
+                Or enter Voice ID manually
+              </summary>
+              <div className="mt-3">
                 <input
                   type="text"
                   value={heygenVoiceId}
@@ -432,17 +629,18 @@ export default function SettingsPage() {
                   placeholder="e.g., voice_1234567890abcdef"
                   className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all font-mono text-sm"
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  Found in HeyGen under Voices → Your Voice → Voice ID
-                </p>
+              </div>
+            </details>
               </div>
 
+          {/* Save Configuration Button */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <button
                 onClick={handleValidateHeyGen}
-                disabled={isValidating || (!heygenAvatarId && !heygenVoiceId)}
+              disabled={isValidating || (!heygenAvatarId || !heygenVoiceId)}
                 className={cn(
                   "w-full flex items-center justify-center gap-2 px-6 py-3 font-medium rounded-xl transition-all",
-                  isValidating || (!heygenAvatarId && !heygenVoiceId)
+                isValidating || (!heygenAvatarId || !heygenVoiceId)
                     ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                     : "bg-gradient-to-r from-violet-600 to-purple-600 text-white hover:from-violet-700 hover:to-purple-700"
                 )}
@@ -450,7 +648,7 @@ export default function SettingsPage() {
                 {isValidating ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
-                    Validating...
+                  Saving Configuration...
                   </>
                 ) : avatarStatus === "active" ? (
                   <>
@@ -460,11 +658,15 @@ export default function SettingsPage() {
                 ) : (
                   <>
                     <Sparkles className="w-5 h-5" />
-                    Save & Validate
+                  Save & Activate Avatar
                   </>
                 )}
               </button>
-            </div>
+            {(!heygenAvatarId || !heygenVoiceId) && (
+              <p className="text-xs text-center text-gray-500 mt-2">
+                Select both an avatar and a voice to continue
+              </p>
+            )}
           </div>
 
           {/* Help Section */}

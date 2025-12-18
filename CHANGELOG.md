@@ -5,6 +5,79 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.33.0] - 2024-12-18
+
+### 🎬 Content Creation Hub for Doctors
+
+**New Content Creation Page (`/doctor/content`):**
+- Centralized hub for all video content creation
+- Four creation modes:
+  - **AI Script Generator** - GPT-4o-mini powered script writing
+  - **Pre-made Script Templates** - 6 professional templates
+  - **Video Library** - Browse and send existing videos
+  - **Custom Script Editor** - Full creative control
+
+**AI Script Generation:**
+- New `/api/ai/generate-script` endpoint
+- Topic-based script generation with customizable:
+  - Tone (professional, friendly, empathetic, educational)
+  - Duration (30s, 1min, 2min)
+  - Health condition context
+- Word count and estimated duration display
+
+**AI Chat for Script Refinement:**
+- New `/api/ai/chat` endpoint
+- Interactive refinement with quick prompts:
+  - "Make it shorter"
+  - "Add more empathy"
+  - "Simplify the language"
+  - "Add a call-to-action"
+
+**In-App Avatar Recording:**
+- New `VideoRecorder` component
+- Record directly in browser (no external site needed!)
+- Features:
+  - 3-second countdown before recording
+  - Live camera preview with mirroring
+  - Recording timer with max duration limit
+  - Preview playback before upload
+  - Camera/microphone permission indicators
+  - Recording tips display
+
+**HeyGen Avatar Creation API:**
+- New `/api/heygen/create-avatar` endpoint
+- Upload recorded video to create instant avatar
+- Status polling for avatar creation progress
+- New `/api/heygen/avatars` for listing available avatars/voices
+
+**Updated Doctor Onboarding:**
+- Step 2 now offers two avatar creation options:
+  - **Record Here** - In-app webcam recording
+  - **Use HeyGen Studio** - External advanced tools
+- Correct HeyGen instant avatar link
+
+**Dashboard Updates:**
+- New "Create Content" quick action button
+- Links to content creation hub
+
+**Pre-made Script Templates (6):**
+1. Post-Visit Follow-Up
+2. Medication Reminder
+3. Test Results Explanation
+4. Pre-Procedure Instructions
+5. Heart-Healthy Diet Tips
+6. Exercise Getting Started
+
+**New Components:**
+- `AIScriptGenerator.tsx` - Full-featured AI script UI
+- `VideoRecorder.tsx` - In-app video recording
+
+**Dependencies Added:**
+- `openai` ^6.14.0 - AI script generation
+- `tailwindcss-animate` - Animation utilities
+
+---
+
 ## [1.32.0] - 2024-12-18
 
 ### 🎨 Shadcn CLI 3.0 Upgrade & New Components

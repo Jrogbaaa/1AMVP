@@ -5,6 +5,76 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.31.0] - 2024-12-18
+
+### 🎬 HeyGen AI Video Generation Integration
+
+**Complete API Integration:**
+- Integrated HeyGen API v2 for AI-powered video generation
+- Doctors can create personalized videos using their AI avatars
+- One-click video cloning from existing templates or other doctors' content
+- Full webhook support for async video generation status updates
+
+**New Database Schema:**
+- `doctorProfiles` - Stores doctor's HeyGen avatar and voice IDs
+- `videoTemplates` - Library of video scripts that can be cloned
+- `generatedVideos` - Tracks AI-generated videos per doctor
+- `videoGenerationJobs` - Tracks HeyGen job status and progress
+
+**New API Routes:**
+- `POST /api/heygen/generate` - Submit video generation request
+- `POST /api/heygen/webhook` - Receive HeyGen status callbacks
+- `GET /api/heygen/status/[jobId]` - Poll job status (backup to webhook)
+
+**HeyGen API Client (`lib/heygen.ts`):**
+- `generateVideo()` - Create videos with avatar and voice
+- `getVideoStatus()` - Check video generation progress
+- `listAvatars()` - Fetch available HeyGen avatars
+- `listVoices()` - Fetch available HeyGen voices
+
+**Doctor Portal Updates:**
+- AI Avatar settings tab in `/doctor/settings` for HeyGen credentials
+- Updated Create Chapters page with real video generation
+- One-click "Generate" buttons on all template videos
+- Progress indicators and status badges for generation jobs
+
+**Convex Backend Functions:**
+- `doctorProfiles.ts` - CRUD for doctor HeyGen profiles
+- `generatedVideos.ts` - Track generated videos per doctor
+- `videoGenerationJobs.ts` - Monitor job progress
+- `videoTemplates.ts` - Manage video templates
+
+**API Testing Verified:**
+- ✅ List 1,289 HeyGen avatars
+- ✅ List 2,406 HeyGen voices
+- ✅ Generate test video (completed in ~45 seconds)
+- ✅ Video status polling working
+- ✅ Free tier confirmed working (10 credits/month, 720p, watermarked)
+
+**Environment Variables:**
+- `HEYGEN_API_KEY` - Required for video generation
+
+### 📦 New Files
+- `lib/heygen.ts` - HeyGen API client wrapper
+- `app/api/heygen/generate/route.ts` - Video generation endpoint
+- `app/api/heygen/webhook/route.ts` - Webhook handler
+- `app/api/heygen/status/[jobId]/route.ts` - Status polling endpoint
+- `convex/doctorProfiles.ts` - Doctor profile management
+- `convex/generatedVideos.ts` - Generated videos tracking
+- `convex/videoGenerationJobs.ts` - Job progress tracking
+- `convex/videoTemplates.ts` - Template management
+
+### 📦 Files Modified
+- `convex/schema.ts` - Added 4 new tables for HeyGen integration
+- `app/doctor/settings/page.tsx` - AI Avatar configuration tab
+- `app/doctor/create-chapters/page.tsx` - Real video generation UI
+- `VERCEL_ENV_PASTE.txt` - Added HEYGEN_API_KEY
+
+### 🔄 Breaking Changes
+- None (all changes are backwards compatible)
+
+---
+
 ## [1.30.0] - 2024-12-17
 
 ### 🔐 Doctor Portal Authentication Fix

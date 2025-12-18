@@ -33,6 +33,10 @@ NEXT_PUBLIC_APP_URL=https://YOUR-VERCEL-URL-HERE.vercel.app
 # AUTH_GOOGLE_SECRET=your-client-secret
 # NEXT_PUBLIC_GOOGLE_OAUTH_ENABLED=true
 
+# HeyGen AI Video Generation - REQUIRED for AI video features
+# Get from: HeyGen Dashboard → Settings → Subscriptions & API → API token
+HEYGEN_API_KEY=sk_V2_hgu_kehscNzawtG_EoaY2MXx4taNMihxen277uN4iya2D8aj
+
 # =============================================================================
 # NEXT STEPS:
 # =============================================================================

@@ -527,6 +527,35 @@ export default function DoctorDashboard() {
                 </div>
               </div>
             </div>
+
+            {/* Discover Videos from Other Doctors */}
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-violet-100 hover:shadow-md transition-all group">
+              <div className="flex items-start gap-4">
+                <div className="p-3 bg-gradient-to-br from-sky-500 to-blue-600 rounded-xl text-white group-hover:scale-110 transition-transform">
+                  <Sparkles className="w-8 h-8" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                    Discover & Clone Videos
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Browse videos from other doctors and clone them with your own avatar. One click to make their content yours.
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <Link
+                      href="/doctor/discover-videos"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-sky-500 to-blue-600 text-white font-medium rounded-lg hover:from-sky-600 hover:to-blue-700 transition-all"
+                    >
+                      <Sparkles className="w-4 h-4" />
+                      Discover Videos
+                    </Link>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-3">
+                    6 public videos available from other doctors
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* How it Works */}

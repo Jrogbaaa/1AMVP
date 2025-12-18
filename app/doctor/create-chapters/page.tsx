@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -9,7 +9,6 @@ import {
   Check,
   Sparkles,
   Clock,
-  Eye,
   ChevronDown,
   ChevronUp,
   Wand2,
@@ -22,6 +21,30 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+// Types for API responses
+interface GenerateVideoResponse {
+  success: boolean;
+  data?: {
+    generatedVideoId: string;
+    heygenVideoId: string;
+    status: string;
+    message: string;
+  };
+  error?: string;
+}
+
+interface VideoStatusResponse {
+  success: boolean;
+  data?: {
+    status: "pending" | "processing" | "completed" | "failed";
+    videoUrl?: string;
+    thumbnailUrl?: string;
+    duration?: number;
+    errorMessage?: string;
+  };
+  error?: string;
+}
 
 interface TemplateVideo {
   id: string;
@@ -284,7 +307,9 @@ export default function CreateChaptersPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatingVideoId, setGeneratingVideoId] = useState<string | null>(null);
   const [generationError, setGenerationError] = useState<string | null>(null);
-  const [isAvatarTrained, setIsAvatarTrained] = useState(true); // TODO: fetch from backend
+  const [isAvatarTrained, setIsAvatarTrained] = useState(true); // TODO: fetch from Convex doctorProfiles
+  const [generatedVideoIds, setGeneratedVideoIds] = useState<Map<string, string>>(new Map()); // templateVideoId -> generatedVideoId
+  const [completedVideos, setCompletedVideos] = useState<Set<string>>(new Set());
 
   const handleToggleChapter = (chapterId: string) => {
     setExpandedChapter(expandedChapter === chapterId ? null : chapterId);
@@ -315,46 +340,164 @@ export default function CreateChaptersPage() {
     });
   };
 
+  // Find video by ID from templates
+  const findVideoById = useCallback((videoId: string): TemplateVideo | undefined => {
+    for (const chapter of TEMPLATE_CHAPTERS) {
+      const video = chapter.videos.find((v) => v.id === videoId);
+      if (video) return video;
+    }
+    return undefined;
+  }, []);
+
+  // Poll for video status
+  const pollVideoStatus = useCallback(async (generatedVideoId: string, templateVideoId: string) => {
+    const maxAttempts = 60; // 5 minutes max (5s intervals)
+    let attempts = 0;
+
+    const poll = async () => {
+      if (attempts >= maxAttempts) {
+        setGenerationError("Video generation timed out. Please check your dashboard for status.");
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/heygen/status/${generatedVideoId}`);
+        const data: VideoStatusResponse = await response.json();
+
+        if (data.success && data.data) {
+          if (data.data.status === "completed") {
+            setCompletedVideos((prev) => new Set(prev).add(templateVideoId));
+            setGeneratingVideoId(null);
+            setIsGenerating(false);
+          } else if (data.data.status === "failed") {
+            setGenerationError(data.data.errorMessage || "Video generation failed");
+            setGeneratingVideoId(null);
+            setIsGenerating(false);
+          } else {
+            // Still processing, poll again
+            attempts++;
+            setTimeout(poll, 5000);
+          }
+        }
+      } catch (error) {
+        console.error("Error polling status:", error);
+        attempts++;
+        setTimeout(poll, 5000);
+      }
+    };
+
+    poll();
+  }, []);
+
+  // Generate a single video via the API
   const handleGenerateVideo = async (videoId: string) => {
     if (!isAvatarTrained) {
-      setGenerationError("Please train your AI avatar first before generating videos.");
+      setGenerationError("Please configure your AI avatar in Settings before generating videos.");
       return;
     }
     
+    const video = findVideoById(videoId);
+    if (!video) {
+      setGenerationError("Video template not found.");
+      return;
+    }
+
     setGenerationError(null);
     setGeneratingVideoId(videoId);
     setIsGenerating(true);
     
     try {
-      // Simulate API call to HeyGen
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-      // In real app, this would trigger HeyGen API and update chapter status
-    } catch {
-      setGenerationError("Failed to generate video. Please try again.");
-    } finally {
+      const response = await fetch("/api/heygen/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          templateId: videoId,
+          title: video.title,
+          script: video.script,
+          description: video.description,
+        }),
+      });
+
+      const data: GenerateVideoResponse = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || "Failed to start video generation");
+      }
+
+      if (data.data?.generatedVideoId) {
+        // Store the mapping and start polling
+        setGeneratedVideoIds((prev) => new Map(prev).set(videoId, data.data!.generatedVideoId));
+        pollVideoStatus(data.data.generatedVideoId, videoId);
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to generate video. Please try again.";
+      setGenerationError(message);
       setIsGenerating(false);
       setGeneratingVideoId(null);
     }
   };
 
+  // Generate multiple selected videos
   const handleGenerateSelected = async () => {
     if (!isAvatarTrained) {
-      setGenerationError("Please train your AI avatar first before generating videos.");
+      setGenerationError("Please configure your AI avatar in Settings before generating videos.");
       return;
     }
     
+    if (selectedVideos.size === 0) {
+      return;
+    }
+
     setGenerationError(null);
     setIsGenerating(true);
     
-    try {
-      // Simulate batch generation
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-      setSelectedVideos(new Set());
-    } catch {
-      setGenerationError("Failed to generate videos. Please try again.");
-    } finally {
-      setIsGenerating(false);
+    const videoIds = Array.from(selectedVideos);
+    let successCount = 0;
+    let errorMessages: string[] = [];
+
+    for (const videoId of videoIds) {
+      const video = findVideoById(videoId);
+      if (!video) continue;
+
+      try {
+        const response = await fetch("/api/heygen/generate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            templateId: videoId,
+            title: video.title,
+            script: video.script,
+            description: video.description,
+          }),
+        });
+
+        const data: GenerateVideoResponse = await response.json();
+
+        if (response.ok && data.success && data.data?.generatedVideoId) {
+          setGeneratedVideoIds((prev) => new Map(prev).set(videoId, data.data!.generatedVideoId));
+          successCount++;
+        } else {
+          errorMessages.push(`${video.title}: ${data.error || "Unknown error"}`);
+        }
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Unknown error";
+        errorMessages.push(`${video.title}: ${message}`);
+      }
     }
+
+    if (errorMessages.length > 0) {
+      setGenerationError(`Some videos failed to generate: ${errorMessages.join("; ")}`);
+    }
+
+    if (successCount > 0) {
+      setSelectedVideos(new Set());
+    }
+
+    setIsGenerating(false);
   };
 
   const handleDismissError = () => {
@@ -666,13 +809,15 @@ export default function CreateChaptersPage() {
                         {/* Generate Button */}
                         <button
                           onClick={() => handleGenerateVideo(video.id)}
-                          disabled={isGenerating || !isAvatarTrained}
+                          disabled={isGenerating || !isAvatarTrained || completedVideos.has(video.id)}
                           className={cn(
                             "inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all",
-                            chapter.status === "completed"
+                            completedVideos.has(video.id) || chapter.status === "completed"
                               ? "bg-emerald-100 text-emerald-700"
+                              : generatedVideoIds.has(video.id)
+                              ? "bg-amber-100 text-amber-700"
                               : "bg-violet-100 text-violet-700 hover:bg-violet-200",
-                            (!isAvatarTrained && chapter.status !== "completed") && "opacity-50 cursor-not-allowed"
+                            (!isAvatarTrained && !completedVideos.has(video.id)) && "opacity-50 cursor-not-allowed"
                           )}
                         >
                           {generatingVideoId === video.id ? (
@@ -680,10 +825,15 @@ export default function CreateChaptersPage() {
                               <Loader2 className="w-4 h-4 animate-spin" />
                               Generating...
                             </>
-                          ) : chapter.status === "completed" ? (
+                          ) : completedVideos.has(video.id) || chapter.status === "completed" ? (
                             <>
                               <CheckCircle className="w-4 h-4" />
                               Generated
+                            </>
+                          ) : generatedVideoIds.has(video.id) ? (
+                            <>
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                              Processing...
                             </>
                           ) : (
                             <>

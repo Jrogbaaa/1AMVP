@@ -20,6 +20,7 @@ A mobile-first patient communication and education platform that puts **the doct
 - **Shadcn/UI** - Component library
 - **Convex** - Real-time database, feed algorithms, engagement tracking
 - **NextAuth.js** - Authentication
+- **HeyGen API** - AI avatar video generation
 - **Lucide React** - Icons
 - **GitHub Actions** - CI/CD quality gate
 
@@ -86,7 +87,31 @@ A mobile-first patient communication and education platform that puts **the doct
     └── images/            # Static assets
 ```
 
-## ✨ Latest Updates (v1.24.0 - Dec 16, 2024)
+## ✨ Latest Updates (v1.31.0 - Dec 18, 2024)
+
+### 🎬 HeyGen AI Video Generation
+
+**Complete AI Video Integration:**
+- **HeyGen API v2** fully integrated for AI-powered video creation
+- Doctors can generate personalized videos using their AI avatars
+- One-click video cloning from templates or other doctors' content
+- Async video generation with webhook/polling status updates
+
+**Doctor Portal AI Features:**
+- AI Avatar settings tab for HeyGen avatar/voice configuration
+- Real "Generate" buttons on Create Chapters page
+- Progress tracking with status badges (Pending → Generating → Completed)
+- Video generation jobs tracked in database
+
+**API Verified Working:**
+- ✅ 1,289 HeyGen avatars available
+- ✅ 2,406 HeyGen voices available  
+- ✅ Test video generated in ~45 seconds
+- ✅ Free tier works (10 credits/month, watermarked)
+
+---
+
+### Previous Updates (v1.24.0 - Dec 16, 2024)
 
 ### CI/CD & Developer Experience
 

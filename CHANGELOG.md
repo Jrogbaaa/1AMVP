@@ -5,6 +5,42 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.34.0] - 2024-12-18
+
+### 🎨 Tailwind CSS v4 Upgrade & Typography Refresh
+
+**Major Framework Upgrade:**
+- Upgraded from Tailwind CSS v3.4.18 to v4.x (latest)
+- Migrated from JS config (`tailwind.config.ts`) to CSS-first `@theme` configuration
+- Removed deprecated `tailwindcss-animate` plugin (animations now in CSS)
+- Updated PostCSS config to use `@tailwindcss/postcss`
+
+**New Typography System:**
+- **Primary Font:** Plus Jakarta Sans (sans-serif) - modern, clean, highly readable
+- **Serif Font:** Lora - elegant for headings and emphasis
+- **Monospace Font:** IBM Plex Mono - excellent for code and data display
+
+**Design Token Updates:**
+- New border radius system: `--radius-sm` through `--radius-3xl` (base: 1.4rem)
+- Custom shadow scale: `--shadow-2xs` through `--shadow-2xl` with refined opacity
+- All design tokens now defined in `@theme` block for native Tailwind v4 support
+
+**Benefits:**
+- Smaller bundle size
+- Faster build times
+- Simplified configuration (CSS-only)
+- Better CSS custom property support
+- Native theme customization
+
+**Files Changed:**
+- `app/globals.css` - Complete rewrite with `@theme` configuration
+- `app/layout.tsx` - Updated font imports (Plus Jakarta Sans, Lora, IBM Plex Mono)
+- `postcss.config.mjs` - Updated to `@tailwindcss/postcss`
+- Removed `tailwind.config.ts` (no longer needed in v4)
+- `package.json` - Updated dependencies
+
+---
+
 ## [1.33.0] - 2024-12-18
 
 ### 🎬 Content Creation Hub for Doctors

@@ -1,14 +1,27 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Plus_Jakarta_Sans, Lora, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
 import { Providers } from "@/components/Providers";
 
-const inter = Inter({ 
+const plusJakartaSans = Plus_Jakarta_Sans({ 
   subsets: ["latin"], 
-  variable: "--font-inter",
-  display: "swap", // Improve font loading performance
+  variable: "--font-sans",
+  display: "swap",
+});
+
+const lora = Lora({ 
+  subsets: ["latin"], 
+  variable: "--font-serif",
+  display: "swap",
+});
+
+const ibmPlexMono = IBM_Plex_Mono({ 
+  subsets: ["latin"], 
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-mono",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -50,10 +63,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={cn(inter.variable)} suppressHydrationWarning>
+    <html lang="en" className={cn(plusJakartaSans.variable, lora.variable, ibmPlexMono.variable)} suppressHydrationWarning>
       <body className={cn(
         "min-h-screen bg-background font-sans antialiased",
-        inter.variable
+        plusJakartaSans.variable,
+        lora.variable,
+        ibmPlexMono.variable
       )}>
         <Providers>
           <ConvexClientProvider>

@@ -19,8 +19,8 @@ test.describe("Authentication Flows", () => {
   test("should have doctor portal link on auth page", async ({ page }) => {
     await page.goto("/auth");
 
-    // Doctor portal link - look for link containing "doctor" or stethoscope icon
-    const doctorLink = page.locator('a[href="/doctor"]');
+    // Doctor portal link - the link goes to /auth?callbackUrl=/doctor
+    const doctorLink = page.locator('a[href="/auth?callbackUrl=/doctor"]');
     await expect(doctorLink).toBeVisible();
   });
 

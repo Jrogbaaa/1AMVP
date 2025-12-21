@@ -5,9 +5,6 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-
-// Prevent static generation - this page requires auth and Convex
-export const dynamic = "force-dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import {

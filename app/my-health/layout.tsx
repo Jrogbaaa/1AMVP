@@ -1,7 +1,7 @@
 // Force dynamic rendering - this page requires Convex and authentication
 export const dynamic = "force-dynamic";
 
-export default function OnboardingLayout({
+export default function MyHealthLayout({
   children,
 }: {
   children: React.ReactNode;

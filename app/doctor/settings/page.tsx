@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { useUserSync } from "@/hooks/useUserSync";
 import {
   User,
   Mail,
@@ -41,28 +44,44 @@ interface HeyGenVoice {
   preview_audio: string;
 }
 
-const CURRENT_DOCTOR = {
-  name: "Jack Ellis",
-  email: "dr.ellis@1another.com",
-  phone: "(555) 123-4567",
-  specialty: "Cardiology",
-  clinic: "1Another Cardiology",
-  avatarUrl: "/images/doctors/doctor-jack.jpg",
-  bio: "Board-certified cardiologist with over 15 years of experience in interventional cardiology and preventive care.",
-};
-
 export default function SettingsPage() {
+  const { user, isSyncing } = useUserSync();
   const [activeTab, setActiveTab] = useState<"profile" | "ai-avatar" | "notifications" | "security">("profile");
   const [isSaving, setIsSaving] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
 
-  // Profile state
-  const [name, setName] = useState(CURRENT_DOCTOR.name);
-  const [email, setEmail] = useState(CURRENT_DOCTOR.email);
-  const [phone, setPhone] = useState(CURRENT_DOCTOR.phone);
-  const [specialty, setSpecialty] = useState(CURRENT_DOCTOR.specialty);
-  const [clinic, setClinic] = useState(CURRENT_DOCTOR.clinic);
-  const [bio, setBio] = useState(CURRENT_DOCTOR.bio);
+  // Convex mutations
+  const updateUserProfile = useMutation(api.users.updateProfile);
+  const updateDoctorProfile = useMutation(api.doctorProfiles.update);
+  const updateHeygenCredentials = useMutation(api.doctorProfiles.updateHeygenCredentials);
+
+  // Profile state - initialized from user data
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [specialty, setSpecialty] = useState("");
+  const [clinic, setClinic] = useState("");
+  const [bio, setBio] = useState("");
+
+  // Initialize form with user data
+  useEffect(() => {
+    if (user) {
+      setName(user.name || "");
+      setEmail(user.email || "");
+      setSpecialty(user.doctorProfile?.specialty || "");
+      setClinic(user.doctorProfile?.clinicName || "");
+      // Initialize HeyGen credentials if already configured
+      if (user.doctorProfile?.heygenAvatarId) {
+        setHeygenAvatarId(user.doctorProfile.heygenAvatarId);
+      }
+      if (user.doctorProfile?.heygenVoiceId) {
+        setHeygenVoiceId(user.doctorProfile.heygenVoiceId);
+      }
+      if (user.doctorProfile?.avatarStatus) {
+        setAvatarStatus(user.doctorProfile.avatarStatus);
+      }
+    }
+  }, [user]);
 
   // HeyGen AI Avatar state
   const [heygenAvatarId, setHeygenAvatarId] = useState("");
@@ -130,10 +149,15 @@ export default function SettingsPage() {
     emailDigest: true,
   });
 
-  // Validate HeyGen credentials
+  // Validate and save HeyGen credentials
   const handleValidateHeyGen = async () => {
     if (!heygenAvatarId || !heygenVoiceId) {
       setValidationError("Both Avatar ID and Voice ID are required");
+      return;
+    }
+
+    if (!user?.id) {
+      setValidationError("User not found. Please try refreshing the page.");
       return;
     }
 
@@ -141,15 +165,19 @@ export default function SettingsPage() {
     setValidationError(null);
 
     try {
-      // In production, this would call the API to validate
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Save HeyGen credentials to Convex
+      await updateHeygenCredentials({
+        doctorId: user.id,
+        heygenAvatarId,
+        heygenVoiceId,
+      });
       
-      // Simulate successful validation
       setAvatarStatus("active");
       setShowSaved(true);
       setTimeout(() => setShowSaved(false), 3000);
-    } catch {
-      setValidationError("Failed to validate credentials. Please check your Avatar ID and Voice ID.");
+    } catch (error) {
+      console.error("Failed to save HeyGen credentials:", error);
+      setValidationError("Failed to save credentials. Please try again.");
       setAvatarStatus("error");
     } finally {
       setIsValidating(false);
@@ -157,11 +185,31 @@ export default function SettingsPage() {
   };
 
   const handleSave = async () => {
+    if (!user?.id) return;
+
     setIsSaving(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsSaving(false);
-    setShowSaved(true);
-    setTimeout(() => setShowSaved(false), 3000);
+    try {
+      // Update user profile
+      await updateUserProfile({
+        authId: user.id,
+        name,
+      });
+
+      // Update doctor profile
+      await updateDoctorProfile({
+        doctorId: user.id,
+        name,
+        specialty: specialty || undefined,
+        clinicName: clinic || undefined,
+      });
+
+      setShowSaved(true);
+      setTimeout(() => setShowSaved(false), 3000);
+    } catch (error) {
+      console.error("Failed to save profile:", error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const TABS = [
@@ -198,22 +246,35 @@ export default function SettingsPage() {
         ))}
       </div>
 
+      {/* Loading state */}
+      {isSyncing && (
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="w-8 h-8 animate-spin text-sky-600" />
+        </div>
+      )}
+
       {/* Profile Tab */}
-      {activeTab === "profile" && (
+      {activeTab === "profile" && !isSyncing && (
         <div className="space-y-6">
           {/* Avatar */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Profile Photo</h2>
             <div className="flex items-center gap-6">
               <div className="relative">
-                <div className="w-24 h-24 rounded-full overflow-hidden ring-4 ring-gray-100">
-                  <Image
-                    src={CURRENT_DOCTOR.avatarUrl}
-                    alt={CURRENT_DOCTOR.name}
-                    width={96}
-                    height={96}
-                    className="w-full h-full object-cover"
-                  />
+                <div className="w-24 h-24 rounded-full overflow-hidden ring-4 ring-gray-100 bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center">
+                  {user?.avatarUrl || user?.doctorProfile?.avatarUrl ? (
+                    <Image
+                      src={user?.doctorProfile?.avatarUrl || user?.avatarUrl || ""}
+                      alt={user?.name || "Doctor"}
+                      width={96}
+                      height={96}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-white font-bold text-3xl">
+                      {user?.name?.charAt(0).toUpperCase() || "D"}
+                    </span>
+                  )}
                 </div>
                 <button
                   className="absolute bottom-0 right-0 p-2 bg-sky-600 text-white rounded-full shadow-lg hover:bg-sky-700 transition-colors"
@@ -330,7 +391,7 @@ export default function SettingsPage() {
       )}
 
       {/* AI Avatar Tab */}
-      {activeTab === "ai-avatar" && (
+      {activeTab === "ai-avatar" && !isSyncing && (
         <div className="space-y-6">
           {/* Status Banner */}
           <div className={cn(

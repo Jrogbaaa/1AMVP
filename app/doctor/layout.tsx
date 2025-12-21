@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
+import { useUserSync } from "@/hooks/useUserSync";
 import {
   LayoutDashboard,
   Users,
@@ -18,6 +20,7 @@ import {
   ChevronDown,
   Sparkles,
   UserPlus,
+  Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -68,22 +71,23 @@ const NAV_ITEMS: NavItem[] = [
   },
 ];
 
-// Mock doctor data
-const CURRENT_DOCTOR = {
-  name: "Dr. Jack Ellis",
-  specialty: "Cardiology",
-  clinic: "1Another Cardiology",
-  avatarUrl: "/images/doctors/doctor-jack.jpg",
-};
-
 export default function DoctorLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, isSyncing, isSynced } = useUserSync();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  // Redirect if not a doctor
+  useEffect(() => {
+    if (isSynced && user && user.role !== "doctor" && user.role !== "admin") {
+      router.push("/feed");
+    }
+  }, [isSynced, user, router]);
 
   const handleToggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -92,6 +96,32 @@ export default function DoctorLayout({
   const handleCloseSidebar = () => {
     setIsSidebarOpen(false);
   };
+
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: "/auth" });
+  };
+
+  // Current doctor data from session
+  const currentDoctor = {
+    name: user?.name ? `Dr. ${user.name.split(" ").slice(-1)[0]}` : "Doctor",
+    fullName: user?.name || "Doctor",
+    specialty: user?.doctorProfile?.specialty || "Healthcare Provider",
+    clinic: user?.doctorProfile?.clinicName || "1Another Health",
+    avatarUrl: user?.doctorProfile?.avatarUrl || user?.avatarUrl || "/images/doctors/doctor-jack.jpg",
+    email: user?.email || "",
+  };
+
+  // Show loading state while syncing
+  if (isSyncing) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-8 h-8 animate-spin text-sky-600" />
+          <p className="text-gray-600">Loading your profile...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -172,21 +202,27 @@ export default function DoctorLayout({
         {/* Doctor Info */}
         <div className="p-4 border-b border-gray-100">
           <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-sky-50 to-blue-50 rounded-xl">
-            <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-sky-200">
-              <Image
-                src={CURRENT_DOCTOR.avatarUrl}
-                alt={CURRENT_DOCTOR.name}
-                width={48}
-                height={48}
-                className="w-full h-full object-cover"
-              />
+            <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-sky-200 bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center">
+              {currentDoctor.avatarUrl && currentDoctor.avatarUrl !== "/images/doctors/doctor-jack.jpg" ? (
+                <Image
+                  src={currentDoctor.avatarUrl}
+                  alt={currentDoctor.name}
+                  width={48}
+                  height={48}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-white font-bold text-lg">
+                  {currentDoctor.fullName.charAt(0).toUpperCase()}
+                </span>
+              )}
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-semibold text-gray-900 truncate">
-                {CURRENT_DOCTOR.name}
+                {currentDoctor.name}
               </p>
               <p className="text-sm text-gray-500 truncate">
-                {CURRENT_DOCTOR.specialty}
+                {currentDoctor.specialty}
               </p>
             </div>
           </div>
@@ -236,13 +272,13 @@ export default function DoctorLayout({
             <Settings className="w-5 h-5" />
             <span className="font-medium">Settings</span>
           </Link>
-          <Link
-            href="/auth"
-            className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-xl transition-colors"
+          <button
+            onClick={handleSignOut}
+            className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-xl transition-colors w-full"
           >
             <LogOut className="w-5 h-5" />
             <span className="font-medium">Sign Out</span>
-          </Link>
+          </button>
         </div>
       </aside>
 
@@ -275,21 +311,27 @@ export default function DoctorLayout({
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className="flex items-center gap-3 p-2 hover:bg-gray-100 rounded-xl transition-colors"
               >
-                <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-gray-100">
-                  <Image
-                    src={CURRENT_DOCTOR.avatarUrl}
-                    alt={CURRENT_DOCTOR.name}
-                    width={36}
-                    height={36}
-                    className="w-full h-full object-cover"
-                  />
+                <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-gray-100 bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center">
+                  {currentDoctor.avatarUrl && currentDoctor.avatarUrl !== "/images/doctors/doctor-jack.jpg" ? (
+                    <Image
+                      src={currentDoctor.avatarUrl}
+                      alt={currentDoctor.name}
+                      width={36}
+                      height={36}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-white font-bold text-sm">
+                      {currentDoctor.fullName.charAt(0).toUpperCase()}
+                    </span>
+                  )}
                 </div>
                 <div className="text-left hidden xl:block">
                   <p className="text-sm font-medium text-gray-900">
-                    {CURRENT_DOCTOR.name}
+                    {currentDoctor.name}
                   </p>
                   <p className="text-xs text-gray-500">
-                    {CURRENT_DOCTOR.clinic}
+                    {currentDoctor.clinic}
                   </p>
                 </div>
                 <ChevronDown className="w-4 h-4 text-gray-400" />
@@ -304,10 +346,13 @@ export default function DoctorLayout({
                   <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-100 z-50">
                     <div className="p-4 border-b border-gray-100">
                       <p className="font-semibold text-gray-900">
-                        {CURRENT_DOCTOR.name}
+                        {currentDoctor.name}
                       </p>
                       <p className="text-sm text-gray-500">
-                        {CURRENT_DOCTOR.specialty}
+                        {currentDoctor.specialty}
+                      </p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        {currentDoctor.email}
                       </p>
                     </div>
                     <div className="p-2">
@@ -319,14 +364,16 @@ export default function DoctorLayout({
                         <Settings className="w-4 h-4" />
                         <span>Settings</span>
                       </Link>
-                      <Link
-                        href="/auth"
-                        className="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                        onClick={() => setIsProfileOpen(false)}
+                      <button
+                        onClick={() => {
+                          setIsProfileOpen(false);
+                          handleSignOut();
+                        }}
+                        className="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors w-full"
                       >
                         <LogOut className="w-4 h-4" />
                         <span>Sign Out</span>
-                      </Link>
+                      </button>
                     </div>
                   </div>
                 </>

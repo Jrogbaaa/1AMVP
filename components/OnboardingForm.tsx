@@ -105,24 +105,32 @@ export const OnboardingForm = ({
     setError("");
 
     try {
-      // Store onboarding data in localStorage for now
-      // In production, this would be stored in a database
-      localStorage.setItem(
-        "onboardingData",
-        JSON.stringify({
-          name,
-          healthProvider,
-          completedAt: new Date().toISOString(),
-        })
-      );
-
-      await signIn("email", {
+      // Sign in with NextAuth - user data will be persisted to Convex
+      // via the useUserSync hook that runs after login
+      const result = await signIn("email", {
         email,
         name,
         healthProvider,
-        redirect: true,
+        redirect: false,
         callbackUrl,
       });
+
+      if (result?.error) {
+        setError("Failed to sign in. Please try again.");
+        setIsLoading(false);
+        return;
+      }
+
+      // Sync user to Convex database
+      try {
+        await fetch("/api/auth/sync-user", { method: "POST" });
+      } catch (syncError) {
+        // Non-critical - the useUserSync hook will also try to sync
+        console.warn("Initial sync failed, will retry:", syncError);
+      }
+
+      // Redirect to callback URL
+      window.location.href = callbackUrl;
     } catch (err) {
       setError("Failed to complete signup. Please try again.");
       console.error(err);

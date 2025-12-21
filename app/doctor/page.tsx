@@ -3,6 +3,9 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useUserSync } from "@/hooks/useUserSync";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import {
   Users,
   Play,
@@ -147,6 +150,33 @@ const POPULAR_CHAPTERS = [
 
 export default function DoctorDashboard() {
   const [timeFilter, setTimeFilter] = useState<"week" | "month" | "year">("week");
+  const { user } = useUserSync();
+  
+  // Get doctor's videos from Convex
+  const doctorVideos = useQuery(
+    api.generatedVideos.getByDoctorId,
+    user?.id ? { doctorId: user.id } : "skip"
+  );
+
+  // Get time-based greeting
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 18) return "Good afternoon";
+    return "Good evening";
+  };
+
+  // Get doctor's display name
+  const doctorName = user?.name
+    ? `Dr. ${user.name.split(" ").slice(-1)[0]}`
+    : "Doctor";
+
+  // Count videos by status
+  const videoStats = {
+    total: doctorVideos?.length || 0,
+    completed: doctorVideos?.filter(v => v.status === "completed").length || 0,
+    generating: doctorVideos?.filter(v => v.status === "generating").length || 0,
+  };
 
   return (
     <div className="space-y-8">
@@ -154,10 +184,10 @@ export default function DoctorDashboard() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
-            Good morning, Dr. Ellis 👋
+            {getGreeting()}, {doctorName} 👋
           </h1>
           <p className="text-gray-500 mt-1">
-            Here's what's happening with your patients today
+            Here&apos;s what&apos;s happening with your patients today
           </p>
         </div>
         <div className="flex items-center gap-3">

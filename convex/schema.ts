@@ -3,6 +3,23 @@ import { v } from "convex/values";
 
 // Auth tables are now managed by NextAuth.js (not Convex)
 export default defineSchema({
+  // Users table - stores all users (patients, doctors, admins)
+  users: defineTable({
+    authId: v.string(), // NextAuth user ID (typically email)
+    email: v.string(),
+    name: v.string(),
+    role: v.union(v.literal("patient"), v.literal("doctor"), v.literal("admin")),
+    healthProvider: v.optional(v.string()), // For patients
+    avatarUrl: v.optional(v.string()),
+    // Metadata
+    lastLoginAt: v.number(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_auth_id", ["authId"])
+    .index("by_email", ["email"])
+    .index("by_role", ["role"]),
+
   // Doctor profiles with HeyGen integration
   doctorProfiles: defineTable({
     doctorId: v.string(), // Auth user ID

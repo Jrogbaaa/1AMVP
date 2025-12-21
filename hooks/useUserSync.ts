@@ -116,10 +116,8 @@ export const useUserSync = (): UserSyncResult => {
         role: (userProfile?.role || session.user.role || "patient") as "patient" | "doctor" | "admin",
         healthProvider: userProfile?.healthProvider || session.user.healthProvider,
         avatarUrl: userProfile?.avatarUrl,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        doctorProfile: (userProfile as any)?.doctorProfile,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        preventiveCareProfile: (userProfile as any)?.preventiveCareProfile,
+        doctorProfile: (userProfile as unknown as { doctorProfile?: UserSyncResult["user"] extends { doctorProfile?: infer T } ? T : never })?.doctorProfile,
+        preventiveCareProfile: (userProfile as unknown as { preventiveCareProfile?: UserSyncResult["user"] extends { preventiveCareProfile?: infer T } ? T : never })?.preventiveCareProfile,
       }
     : null;
 

@@ -1,0 +1,11 @@
+// Force dynamic rendering - this page requires Convex and authentication
+export const dynamic = "force-dynamic";
+
+export default function OnboardingLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return children;
+}
+

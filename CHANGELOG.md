@@ -5,6 +5,82 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.35.0] - 2024-12-21
+
+### 🩺 Preventive Care Onboarding & Personalized Health Checklist
+
+**New Preventive Care Onboarding Flow (`/my-health/onboarding`):**
+A comprehensive 12-screen wizard that collects health information to build personalized preventive care recommendations based on USPSTF A/B guidelines.
+
+**Onboarding Screens:**
+1. **Framing** - Introduction and privacy assurance
+2. **Core Basics** - Date of birth, sex at birth, anatomy present
+3. **Pregnancy Status** - Conditional screen for relevant users
+4. **Smoking & Tobacco** - Pack-years calculation for lung cancer screening
+5. **Alcohol Use** - Frequency and consumption patterns
+6. **Sexual Health** - STI/HIV risk assessment
+7. **Medical Conditions** - Diabetes, hypertension, heart disease, etc.
+8. **Family History** - First-degree relative cancer/heart disease
+9. **Height & Weight** - BMI calculation for obesity-related screenings
+10. **Preventive History** - When tests were last completed
+11. **Location & Coverage** - ZIP code and insurance info
+12. **Care Logistics** - PCP status, telehealth preference, scheduling
+
+**New Preventive Care Checklist Component:**
+- Dynamic recommendations based on collected health data
+- Screenings grouped by status: **Due Now**, **Due Soon**, **Up to Date**, **Not Applicable**
+- Color-coded cards with status badges
+- USPSTF A/B recommendation logic for 16+ screening types:
+  - Blood pressure, cholesterol, diabetes screening
+  - Colorectal, breast, cervical, lung cancer screening
+  - HIV, STI, Hepatitis B/C screening
+  - Depression screening
+  - Tobacco/alcohol counseling
+  - Osteoporosis, AAA screening
+
+**"Near You" Health Centers Feature:**
+- Location-based provider recommendations
+- Centers shown based on user's ZIP code from onboarding
+- Screening-specific locations:
+  - Labs (LabCorp, Quest) for blood tests
+  - Imaging centers for mammograms
+  - GI centers for colonoscopy
+  - Pharmacies (CVS, Walgreens) for walk-in services
+  - Telehealth options for mental health
+- Each location shows:
+  - Type icon (🩺 🧪 📷 💊 📱 etc.)
+  - Distance from user
+  - Next available appointment
+  - Individual "Schedule" button
+
+**My Health Page Updates:**
+- New "Personalize My Page" button (gradient, prominent CTA)
+- Button only shows for users who haven't completed onboarding
+- Preventive Care Checklist section integrated after Action Items
+- Checklist shows for users who completed onboarding
+
+**New Convex Schema & Functions:**
+- `preventiveCareProfiles` table for storing health data
+- `preventiveCare.getProfile` - Fetch user's profile
+- `preventiveCare.saveProfile` - Save/update profile after onboarding
+- `preventiveCare.hasCompletedOnboarding` - Check completion status
+
+**New Files:**
+- `app/my-health/onboarding/page.tsx` - 12-screen onboarding wizard
+- `components/PreventiveCareChecklist.tsx` - Checklist with Near You feature
+- `lib/preventive-care-logic.ts` - USPSTF recommendation engine
+- `convex/preventiveCare.ts` - Convex mutations and queries
+
+**Technical Details:**
+- Progress bar (0-100%) across all screens
+- Conditional screen logic (pregnancy shown only if relevant)
+- Real-time BMI and pack-years calculations
+- Form validation with disabled states
+- Animated transitions between screens
+- Mobile-responsive design throughout
+
+---
+
 ## [1.34.0] - 2024-12-18
 
 ### 🎨 Tailwind CSS v4 Upgrade & Typography Refresh

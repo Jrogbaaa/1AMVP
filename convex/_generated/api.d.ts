@@ -8,10 +8,16 @@
  * @module
  */
 
+import type * as authHelpers from "../authHelpers.js";
 import type * as chat from "../chat.js";
+import type * as doctorProfiles from "../doctorProfiles.js";
 import type * as feed from "../feed.js";
+import type * as generatedVideos from "../generatedVideos.js";
 import type * as http from "../http.js";
+import type * as preventiveCare from "../preventiveCare.js";
 import type * as videoEngagement from "../videoEngagement.js";
+import type * as videoGenerationJobs from "../videoGenerationJobs.js";
+import type * as videoTemplates from "../videoTemplates.js";
 
 import type {
   ApiFromModules,
@@ -20,10 +26,16 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  authHelpers: typeof authHelpers;
   chat: typeof chat;
+  doctorProfiles: typeof doctorProfiles;
   feed: typeof feed;
+  generatedVideos: typeof generatedVideos;
   http: typeof http;
+  preventiveCare: typeof preventiveCare;
   videoEngagement: typeof videoEngagement;
+  videoGenerationJobs: typeof videoGenerationJobs;
+  videoTemplates: typeof videoTemplates;
 }>;
 
 /**

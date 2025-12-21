@@ -3,12 +3,15 @@
 import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import { HeartScore } from "@/components/HeartScore";
 import { TrustBadge } from "@/components/TrustBadge";
 import { ScheduleAppointment } from "@/components/ScheduleAppointment";
 import { ChatOnboarding } from "@/components/ChatOnboarding";
 import { AuthPrompt } from "@/components/AuthPrompt";
 import { UserMenu } from "@/components/UserMenu";
+import { PreventiveCareChecklist } from "@/components/PreventiveCareChecklist";
 import {
   User,
   Mail,
@@ -21,11 +24,14 @@ import {
   CheckCircle2,
   Lock,
   Loader2,
+  Sparkles,
+  ChevronRight,
 } from "lucide-react";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import Image from "next/image";
 import Link from "next/link";
 import type { Doctor, User as UserType } from "@/lib/types";
+import type { PreventiveCareProfile } from "@/lib/preventive-care-logic";
 
 // Mock data
 const MOCK_DOCTOR: Doctor = {
@@ -178,6 +184,12 @@ export default function MyHealthPage() {
   const [isHeartAnimating, setIsHeartAnimating] = useState(false);
   const [floatingCheck, setFloatingCheck] = useState<{id: string; active: boolean} | null>(null);
 
+  // Query for preventive care profile
+  const preventiveCareProfile = useQuery(
+    api.preventiveCare.getProfile,
+    session?.user?.id ? { userId: session.user.id } : "skip"
+  );
+
   // Show loading state while checking auth
   if (status === "loading") {
     return <LoadingView />;
@@ -187,6 +199,43 @@ export default function MyHealthPage() {
   if (status === "unauthenticated") {
     return <UnauthenticatedView />;
   }
+
+  // Convert Convex profile to PreventiveCareProfile type
+  const profileForChecklist: PreventiveCareProfile | null = preventiveCareProfile ? {
+    dateOfBirth: preventiveCareProfile.dateOfBirth,
+    sexAtBirth: preventiveCareProfile.sexAtBirth,
+    anatomyPresent: preventiveCareProfile.anatomyPresent,
+    isPregnant: preventiveCareProfile.isPregnant,
+    weeksPregnant: preventiveCareProfile.weeksPregnant,
+    smokingStatus: preventiveCareProfile.smokingStatus,
+    smokingYears: preventiveCareProfile.smokingYears,
+    packsPerDay: preventiveCareProfile.packsPerDay,
+    quitYear: preventiveCareProfile.quitYear,
+    alcoholFrequency: preventiveCareProfile.alcoholFrequency,
+    drinksPerOccasion: preventiveCareProfile.drinksPerOccasion,
+    sexuallyActive: preventiveCareProfile.sexuallyActive,
+    partnersLast12Months: preventiveCareProfile.partnersLast12Months,
+    stiHistory: preventiveCareProfile.stiHistory,
+    hivRisk: preventiveCareProfile.hivRisk,
+    conditions: preventiveCareProfile.conditions,
+    cancerTypes: preventiveCareProfile.cancerTypes,
+    familyHistory: preventiveCareProfile.familyHistory,
+    heightInches: preventiveCareProfile.heightInches,
+    weightLbs: preventiveCareProfile.weightLbs,
+    lastBloodPressure: preventiveCareProfile.lastBloodPressure,
+    lastCholesterol: preventiveCareProfile.lastCholesterol,
+    lastDiabetesTest: preventiveCareProfile.lastDiabetesTest,
+    lastColonoscopy: preventiveCareProfile.lastColonoscopy,
+    lastCervicalScreening: preventiveCareProfile.lastCervicalScreening,
+    lastMammogram: preventiveCareProfile.lastMammogram,
+    lastHivTest: preventiveCareProfile.lastHivTest,
+    lastDepressionScreening: preventiveCareProfile.lastDepressionScreening,
+    zipCode: preventiveCareProfile.zipCode,
+    insurancePlan: preventiveCareProfile.insurancePlan,
+    hasPCP: preventiveCareProfile.hasPCP,
+    openToTelehealth: preventiveCareProfile.openToTelehealth,
+    preferredAppointmentTimes: preventiveCareProfile.preferredAppointmentTimes,
+  } : null;
 
   // Create user object from session
   const currentUser: UserType = {
@@ -331,6 +380,18 @@ export default function MyHealthPage() {
                   <HeartScore score={healthScore} className="scale-110" isAnimating={isHeartAnimating} />
                 </div>
               </div>
+              
+              {/* Personalize My Page Button - only show if not completed onboarding */}
+              {!preventiveCareProfile && (
+                <Link
+                  href="/my-health/onboarding"
+                  className="mt-4 w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-sky-600 to-teal-600 text-white rounded-xl font-semibold hover:from-sky-700 hover:to-teal-700 transition-all shadow-md group"
+                >
+                  <Sparkles className="w-5 h-5" />
+                  Personalize My Page
+                  <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              )}
             </div>
 
             {/* Action Items - Modular Card */}
@@ -582,6 +643,19 @@ export default function MyHealthPage() {
                 </div>
               </div>
             </div>
+
+            {/* Preventive Care Checklist - Show if completed onboarding */}
+            {profileForChecklist && (
+              <div id="checklist" className="bg-white rounded-2xl p-3 md:p-4 shadow-sm">
+                <PreventiveCareChecklist
+                  profile={profileForChecklist}
+                  onSchedule={(screeningId, locationId) => {
+                    console.log("Schedule:", screeningId, "at location:", locationId);
+                    setIsScheduleOpen(true);
+                  }}
+                />
+              </div>
+            )}
 
           </div>
 

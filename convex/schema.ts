@@ -163,5 +163,62 @@ export default defineSchema({
     lastUpdated: v.number(),
   })
     .index("by_user", ["userId"]),
+
+  // Preventive care profile (health data from onboarding)
+  preventiveCareProfiles: defineTable({
+    userId: v.string(),
+    // Core basics
+    dateOfBirth: v.string(),
+    sexAtBirth: v.union(v.literal("male"), v.literal("female")),
+    anatomyPresent: v.array(v.string()), // ["cervix", "uterus", "prostate"]
+    // Pregnancy
+    isPregnant: v.optional(v.boolean()),
+    weeksPregnant: v.optional(v.number()),
+    // Smoking & tobacco
+    smokingStatus: v.union(
+      v.literal("never"),
+      v.literal("former"),
+      v.literal("current")
+    ),
+    smokingYears: v.optional(v.number()),
+    packsPerDay: v.optional(v.number()),
+    quitYear: v.optional(v.number()),
+    // Alcohol
+    alcoholFrequency: v.string(), // "never", "rarely", "weekly", "daily"
+    drinksPerOccasion: v.optional(v.number()),
+    // Sexual health
+    sexuallyActive: v.optional(v.boolean()),
+    partnersLast12Months: v.optional(v.number()),
+    stiHistory: v.optional(v.boolean()),
+    hivRisk: v.optional(v.boolean()),
+    // Medical conditions
+    conditions: v.array(v.string()), // ["diabetes", "hypertension", "high_cholesterol", etc.]
+    cancerTypes: v.optional(v.array(v.string())),
+    // Family history (first-degree)
+    familyHistory: v.array(v.string()), // ["colorectal_cancer", "breast_cancer", etc.]
+    // Height & weight
+    heightInches: v.number(),
+    weightLbs: v.number(),
+    // Preventive history (when last done)
+    lastBloodPressure: v.optional(v.string()), // "never", "within_1_year", "1_3_years", "over_3_years"
+    lastCholesterol: v.optional(v.string()),
+    lastDiabetesTest: v.optional(v.string()),
+    lastColonoscopy: v.optional(v.string()),
+    lastCervicalScreening: v.optional(v.string()),
+    lastMammogram: v.optional(v.string()),
+    lastHivTest: v.optional(v.string()),
+    lastDepressionScreening: v.optional(v.string()),
+    // Location & coverage
+    zipCode: v.optional(v.string()),
+    insurancePlan: v.optional(v.string()),
+    // Care logistics
+    hasPCP: v.optional(v.boolean()),
+    openToTelehealth: v.optional(v.boolean()),
+    preferredAppointmentTimes: v.optional(v.array(v.string())),
+    // Timestamps
+    completedAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_user", ["userId"]),
 });
 

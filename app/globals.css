@@ -227,12 +227,12 @@ html {
   height: 100dvh;
 }
 
-/* Smaller snap item for inline cards (Q&A, Reminder) */
+/* Snap item for inline cards (Q&A, Reminder) - same height as videos for proper alignment */
 .snap-item-card {
-  scroll-snap-align: center;
+  scroll-snap-align: start;
   scroll-snap-stop: always;
-  height: 70vh;
-  height: 70dvh;
+  height: 100vh;
+  height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -488,133 +488,125 @@ const FeedContent = () => {
             {combinedFeed.map((feedItem, index) => {
               const isCurrentItem = currentIndex === index;
               
-              // Render Q&A Inline Card (aligned with video container)
+              // Render Q&A Inline Card (same snap behavior as videos)
               if (feedItem.type === 'qa') {
                 return (
                   <div key={`qa-${feedItem.data.id}`} className="snap-item-card">
-                    <div className="h-full w-full flex items-center justify-center md:gap-4">
-                      {/* Card container - wider for better text display */}
-                      <div className="h-[70vh] w-full max-w-[420px] mx-4 md:mx-0 md:h-auto md:max-h-[600px] md:w-[400px] rounded-2xl overflow-hidden shadow-2xl relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-6">
-                        <div className="w-full">
-                          {/* Doctor asks header */}
-                          <div className="flex items-center gap-3 mb-5">
-                            <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-[#00BFA6]/40 shadow-lg flex-shrink-0">
-                              <Image
-                                src={selectedDoctor.avatarUrl || "/images/doctors/doctor-ryan.jpg"}
-                                alt={selectedDoctor.name}
-                                width={48}
-                                height={48}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                            <div>
-                              <p className="text-white font-semibold">Dr. {selectedDoctor.name} asks:</p>
-                              <p className="text-[#00BFA6] text-sm font-medium">Quick Check-in</p>
-                            </div>
-                          </div>
-
-                          {/* Question card */}
-                          <div className="bg-gradient-to-br from-[#00BFA6] via-[#00A6CE] to-[#0088B4] rounded-2xl p-6 shadow-2xl">
-                            <h2 className="text-white text-xl font-bold mb-2">
-                              {feedItem.data.question}
-                            </h2>
-                            {feedItem.data.subtitle && (
-                              <p className="text-white/80 text-sm mb-5">
-                                {feedItem.data.subtitle}
-                              </p>
-                            )}
-
-                            {/* Options */}
-                            <div className="space-y-2.5">
-                              {feedItem.data.options.map((option) => (
-                                <button
-                                  key={option.id}
-                                  onClick={() => handleQAAnswer(feedItem.data.id, option.id)}
-                                  className="w-full flex items-center gap-3 px-4 py-3.5 bg-white/20 backdrop-blur-sm rounded-xl text-white hover:bg-white/30 hover:scale-[1.02] active:scale-[0.98] transition-all"
-                                  aria-label={`Select ${option.label}`}
-                                >
-                                  <span className="text-2xl">{option.emoji}</span>
-                                  <span className="font-semibold text-base">{option.label}</span>
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Swipe hint */}
-                          <p className="mt-5 text-white/40 text-sm text-center">
-                            ↑ Swipe to continue ↓
-                          </p>
+                    {/* Card content - centered in full-height container */}
+                    <div className="w-full max-w-md mx-auto px-4">
+                      {/* Doctor asks header */}
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-11 h-11 rounded-full overflow-hidden ring-2 ring-[#00BFA6]/40 shadow-lg flex-shrink-0">
+                          <Image
+                            src={selectedDoctor.avatarUrl || "/images/doctors/doctor-ryan.jpg"}
+                            alt={selectedDoctor.name}
+                            width={44}
+                            height={44}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div>
+                          <p className="text-white font-semibold text-sm">Dr. {selectedDoctor.name} asks:</p>
+                          <p className="text-[#00BFA6] text-xs font-medium">Quick Check-in</p>
                         </div>
                       </div>
+
+                      {/* Question card */}
+                      <div className="bg-gradient-to-br from-[#00BFA6] via-[#00A6CE] to-[#0088B4] rounded-2xl p-5 shadow-2xl">
+                        <h2 className="text-white text-lg font-bold mb-1">
+                          {feedItem.data.question}
+                        </h2>
+                        {feedItem.data.subtitle && (
+                          <p className="text-white/80 text-xs mb-4">
+                            {feedItem.data.subtitle}
+                          </p>
+                        )}
+
+                        {/* Options */}
+                        <div className="space-y-2">
+                          {feedItem.data.options.map((option) => (
+                            <button
+                              key={option.id}
+                              onClick={() => handleQAAnswer(feedItem.data.id, option.id)}
+                              className="w-full flex items-center gap-3 px-3 py-3 bg-white/20 backdrop-blur-sm rounded-xl text-white hover:bg-white/30 hover:scale-[1.01] active:scale-[0.99] transition-all"
+                              aria-label={`Select ${option.label}`}
+                            >
+                              <span className="text-xl">{option.emoji}</span>
+                              <span className="font-medium text-sm">{option.label}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Swipe hint */}
+                      <p className="mt-4 text-white/40 text-xs text-center">
+                        ↑ Swipe to continue ↓
+                      </p>
                     </div>
                   </div>
                 );
               }
               
-              // Render Reminder Inline Card (aligned with video container)
+              // Render Reminder Inline Card (same snap behavior as videos)
               if (feedItem.type === 'reminder') {
                 return (
                   <div key="reminder-card" className="snap-item-card">
-                    <div className="h-full w-full flex items-center justify-center md:gap-4">
-                      {/* Card container - wider for better text display */}
-                      <div className="h-[70vh] w-full max-w-[420px] mx-4 md:mx-0 md:h-auto md:max-h-[550px] md:w-[400px] rounded-2xl overflow-hidden shadow-2xl relative bg-gradient-to-br from-sky-50 via-white to-emerald-50 flex items-center justify-center p-6">
-                        <div className="w-full">
-                          {/* Doctor recommends header */}
-                          <div className="flex items-center gap-3 mb-5">
-                            <div className="relative flex-shrink-0">
-                              <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-[#00BFA6]/40 shadow-lg">
-                                <Image
-                                  src={selectedDoctor.avatarUrl || "/images/doctors/doctor-ryan.jpg"}
-                                  alt={selectedDoctor.name}
-                                  width={48}
-                                  height={48}
-                                  className="w-full h-full object-cover"
-                                />
-                              </div>
-                              <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gradient-to-br from-[#00BFA6] to-[#00A6CE] rounded-full flex items-center justify-center shadow-md border-2 border-white">
-                                <span className="text-[10px]">🩺</span>
-                              </div>
-                            </div>
-                            <div>
-                              <p className="text-gray-900 font-semibold">Dr. {selectedDoctor.name} recommends:</p>
-                              <p className="text-[#00A6CE] text-sm font-medium">Care Plan Update</p>
-                            </div>
+                    {/* Card content - centered in full-height container */}
+                    <div className="w-full max-w-md mx-auto px-4">
+                      {/* Doctor recommends header */}
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="relative flex-shrink-0">
+                          <div className="w-11 h-11 rounded-full overflow-hidden ring-2 ring-[#00BFA6]/40 shadow-lg">
+                            <Image
+                              src={selectedDoctor.avatarUrl || "/images/doctors/doctor-ryan.jpg"}
+                              alt={selectedDoctor.name}
+                              width={44}
+                              height={44}
+                              className="w-full h-full object-cover"
+                            />
                           </div>
-
-                          {/* Reminder card */}
-                          <div className="bg-white rounded-2xl p-6 shadow-xl border border-gray-100">
-                            <h2 className="text-xl font-bold text-gray-900 mb-2">
-                              Your Next Step: Colonoscopy
-                            </h2>
-                            
-                            <p className="text-gray-500 text-base mb-4 italic">
-                              &ldquo;Based on your family history, let&apos;s get this scheduled.&rdquo;
-                            </p>
-
-                            {/* Due date badge */}
-                            <div className="flex justify-start mb-5">
-                              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-100 text-amber-800 rounded-full text-sm font-medium">
-                                <Calendar className="w-4 h-4" />
-                                <span>Due in 60 days</span>
-                              </div>
-                            </div>
-
-                            {/* Schedule button */}
-                            <button
-                              onClick={() => setIsScheduleOpen(true)}
-                              className="w-full py-3.5 bg-gradient-to-r from-[#00BFA6] to-[#00A6CE] text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-lg flex items-center justify-center gap-2 text-base"
-                            >
-                              <Calendar className="w-5 h-5" />
-                              Schedule Now
-                            </button>
+                          <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-gradient-to-br from-[#00BFA6] to-[#00A6CE] rounded-full flex items-center justify-center shadow-md border-2 border-white">
+                            <span className="text-[8px]">🩺</span>
                           </div>
-
-                          {/* Swipe hint */}
-                          <p className="mt-5 text-gray-400 text-sm text-center">
-                            ↑ Swipe to continue ↓
-                          </p>
+                        </div>
+                        <div>
+                          <p className="text-white font-semibold text-sm">Dr. {selectedDoctor.name} recommends:</p>
+                          <p className="text-[#00A6CE] text-xs font-medium">Care Plan Update</p>
                         </div>
                       </div>
+
+                      {/* Reminder card */}
+                      <div className="bg-white/95 backdrop-blur-md rounded-2xl p-5 shadow-2xl border border-white/30">
+                        <h2 className="text-lg font-bold text-gray-900 mb-1">
+                          Your Next Step: Colonoscopy
+                        </h2>
+                        
+                        <p className="text-gray-500 text-sm mb-3 italic">
+                          &ldquo;Based on your family history, let&apos;s get this scheduled.&rdquo;
+                        </p>
+
+                        {/* Due date badge */}
+                        <div className="flex justify-start mb-4">
+                          <div className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-medium">
+                            <Calendar className="w-3.5 h-3.5" />
+                            <span>Due in 60 days</span>
+                          </div>
+                        </div>
+
+                        {/* Schedule button */}
+                        <button
+                          onClick={() => setIsScheduleOpen(true)}
+                          className="w-full py-3 bg-gradient-to-r from-[#00BFA6] to-[#00A6CE] text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-lg flex items-center justify-center gap-2 text-sm"
+                        >
+                          <Calendar className="w-4 h-4" />
+                          Schedule Now
+                        </button>
+                      </div>
+
+                      {/* Swipe hint */}
+                      <p className="mt-4 text-white/40 text-xs text-center">
+                        ↑ Swipe to continue ↓
+                      </p>
                     </div>
                   </div>
                 );

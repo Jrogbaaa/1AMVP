@@ -60,10 +60,13 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
 
-  // Query for preventive care profile - only called when user is authenticated
+  // Get user ID safely - ensure it's a valid string
+  const userId = session?.user?.id && typeof session.user.id === "string" ? session.user.id : null;
+
+  // Query for preventive care profile - only called when user is authenticated with valid ID
   const preventiveCareProfile = useQuery(
     api.preventiveCare.getProfile,
-    session?.user?.id ? { userId: session.user.id } : "skip"
+    userId ? { userId } : "skip"
   );
 
   // Convert Convex profile to PreventiveCareProfile type

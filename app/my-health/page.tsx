@@ -1,13 +1,75 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Component, ReactNode } from "react";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import { AuthPrompt } from "@/components/AuthPrompt";
-import { CheckCircle2, Lock, Loader2 } from "lucide-react";
+import { CheckCircle2, Lock, Loader2, AlertCircle, RefreshCw } from "lucide-react";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import Image from "next/image";
 import Link from "next/link";
+
+// Error boundary to catch Convex and other async errors
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error: Error | null;
+}
+
+interface ErrorBoundaryProps {
+  children: ReactNode;
+  fallback?: ReactNode;
+}
+
+class ConvexErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error("Dashboard error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback || (
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+          <div className="max-w-md w-full bg-white rounded-2xl shadow-lg p-6 text-center">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-100 flex items-center justify-center">
+              <AlertCircle className="w-8 h-8 text-amber-600" />
+            </div>
+            <h2 className="text-xl font-bold text-gray-900 mb-2">
+              Something went wrong
+            </h2>
+            <p className="text-gray-600 mb-6">
+              We're having trouble loading your health dashboard. This might be a temporary issue.
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-sky-600 text-white rounded-xl font-semibold hover:bg-sky-700 transition-colors"
+            >
+              <RefreshCw className="w-4 h-4" />
+              Try Again
+            </button>
+            <p className="mt-4 text-sm text-gray-500">
+              If this problem persists, please{" "}
+              <Link href="/feed" className="text-sky-600 hover:underline">
+                browse health content
+              </Link>
+              {" "}instead.
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
 
 // Unauthenticated view component
 const UnauthenticatedView = () => {
@@ -150,6 +212,15 @@ export default function MyHealthPage() {
     return <UnauthenticatedView />;
   }
 
-  // Render authenticated dashboard (which uses Convex hooks)
-  return <AuthenticatedDashboard session={session} />;
+  // Ensure session is valid before rendering dashboard
+  if (!session?.user?.id) {
+    return <LoadingView />;
+  }
+
+  // Render authenticated dashboard (which uses Convex hooks) wrapped in error boundary
+  return (
+    <ConvexErrorBoundary>
+      <AuthenticatedDashboard session={session} />
+    </ConvexErrorBoundary>
+  );
 }

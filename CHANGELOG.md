@@ -5,6 +5,39 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.37.3] - 2024-12-25
+
+### 🐛 Convex Production Deployment Fix & Error Boundary
+
+**Fixed Production Server Error on My Health Page:**
+- Fixed `[CONVEX Q(preventiveCare:getProfile)] Server Error` on Vercel deployment
+- Root cause: Convex production deployment was missing database indexes
+- Deployed all missing table indexes including `preventiveCareProfiles.by_user`
+
+**Added Error Boundary for Convex Queries:**
+- Added `ConvexErrorBoundary` class component to My Health page
+- Gracefully catches Convex query errors instead of crashing the page
+- Shows user-friendly "Something went wrong" message with retry button
+- Provides fallback link to browse health content
+
+**Improved Session Validation:**
+- Added explicit check for `session.user.id` before rendering authenticated dashboard
+- Improved type safety for userId validation
+
+**Files Modified:**
+- `app/my-health/page.tsx` - Added error boundary component and session validation
+- `app/my-health/AuthenticatedDashboard.tsx` - Improved userId type checking
+
+**Convex Indexes Deployed:**
+- `preventiveCareProfiles.by_user`
+- `users.by_auth_id`, `users.by_email`, `users.by_role`
+- `doctorProfiles.by_doctor`, `doctorProfiles.by_email`
+- `generatedVideos.by_doctor`, `generatedVideos.by_status`, etc.
+- `videoGenerationJobs.by_doctor`, `videoGenerationJobs.by_job`, etc.
+- `videoTemplates.by_category`, `videoTemplates.by_doctor`, etc.
+
+---
+
 ## [1.37.2] - 2024-12-25
 
 ### 🏥 My Health Page Improvements & E2E Test Fixes

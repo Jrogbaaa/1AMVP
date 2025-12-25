@@ -5,6 +5,84 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.37.0] - 2024-12-25
+
+### 🎨 Major UI/UX Overhaul & TikTok-Style Discovery
+
+**Feed Page - Global Mute & Inline Cards:**
+- Added global mute state that persists across all videos
+- Once muted, all subsequent videos remain muted until user unmutes
+- Converted Q&A and Reminder cards from overlays to inline cards
+- Q&A and Reminder now appear between videos as smaller inline units
+- User can see videos above/below while viewing Q&A or Reminder
+- Q&A card styled as "message from YOUR Dr." with doctor avatar and name
+- Removed HeartScore from feed page
+- Removed heart icon button from all video cards
+
+**Discover Page - TikTok-Style Vertical Previews:**
+- Added "Trending Now" section with TikTok-style 9:16 vertical video previews
+- Videos autoplay on hover with smooth fade-in
+- Mute/unmute toggle on each preview
+- Progress bar animation during video playback
+- Doctor avatar, name, and video duration displayed on each preview
+- 6 trending videos from various doctors and categories
+- Added "Mental Health" as a specialty category
+- Added search input to filter by topic or condition
+- Integrated MessagesDrawer for inbox functionality
+- Removed HeartScore from Discover page header
+
+**Doctor Profile Page (`/profile/[id]`):**
+- Created new public doctor profile page (TikTok/YouTube style)
+- Shows doctor info: name, specialty, clinic, insurer badge
+- Stats section with video count and 5-star rating display
+- Follow and Message action buttons
+- Grid of all videos by that doctor with thumbnails
+- Videos link to feed with doctor and video context
+- Doctor profile navigation from Discover page clicks
+
+**Messages Drawer Component:**
+- New `MessagesDrawer` component for inbox/messenger
+- Shows only "Your Doctors" (doctors you've added)
+- Slide-in drawer from right side
+- Links to individual doctor message threads
+- Empty state with link to Discover page
+
+**My Health Page:**
+- Removed HeartScore component and all heart-related UI
+- Cleaner, more focused health dashboard
+
+**Design System Updates - Remove Shadcn Default Look:**
+- Customized button styles with 1A brand colors and gradients
+- Buttons now have distinctive rounded corners and shadows
+- Updated card component with subtle shadows and hover effects
+- Refined input fields with better focus states
+- Updated badge component with brand colors
+- Enhanced global button classes (btn-primary, btn-secondary, btn-ghost)
+- Custom card styles with depth and hover transitions
+- Input fields with smooth focus transitions
+
+**New Components:**
+- `VerticalVideoPreview` - TikTok-style vertical video preview with autoplay
+- `MessagesDrawer` - Inbox drawer showing your doctors
+
+**Files Modified:**
+- `app/feed/page.tsx` - Global mute, inline Q&A/Reminder, removed HeartScore
+- `app/discover/page.tsx` - Trending section, search, mental health, MessagesDrawer
+- `app/my-health/AuthenticatedDashboard.tsx` - Removed HeartScore
+- `app/profile/[id]/page.tsx` - New doctor profile page
+- `components/VideoCard.tsx` - Global mute props, removed heart icon
+- `components/QACard.tsx` - Doctor prop for personalized styling
+- `components/ReminderCard.tsx` - Doctor prop for personalized styling
+- `components/MessagesDrawer.tsx` - New inbox component
+- `components/VerticalVideoPreview.tsx` - New video preview component
+- `components/ui/button.tsx` - Custom 1A brand styling
+- `components/ui/card.tsx` - Enhanced shadow and hover effects
+- `components/ui/input.tsx` - Refined focus states
+- `components/ui/badge.tsx` - Brand color variants
+- `app/globals.css` - Enhanced button and card utility classes
+
+---
+
 ## [1.36.0] - 2024-12-25
 
 ### 🔐 Complete Authentication & User Profile System

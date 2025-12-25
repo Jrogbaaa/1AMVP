@@ -2,17 +2,18 @@
 
 import React, { useState } from "react";
 import { useSession } from "next-auth/react";
-import { Play, MessageCircle, Heart, Filter, Check, User, Lock, Crown, Plus } from "lucide-react";
+import { Play, MessageCircle, Filter, Check, User, Crown, Plus, Search, TrendingUp } from "lucide-react";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
-import { HeartScore } from "@/components/HeartScore";
 import { TrustBadge } from "@/components/TrustBadge";
+import { MessagesDrawer } from "@/components/MessagesDrawer";
 import { UserMenu } from "@/components/UserMenu";
 import { ChatOnboarding } from "@/components/ChatOnboarding";
 import { AuthPrompt } from "@/components/AuthPrompt";
+import { VerticalVideoPreview } from "@/components/VerticalVideoPreview";
 import { useEngagement } from "@/hooks/useEngagement";
 import Image from "next/image";
 import Link from "next/link";
-import type { Doctor } from "@/lib/types";
+import type { Doctor, Video } from "@/lib/types";
 
 // Extended doctor type with insurer info
 interface ExtendedDoctor extends Doctor {
@@ -140,6 +141,94 @@ const MOCK_DOCTORS: ExtendedDoctor[] = [
   },
 ];
 
+// Trending vertical video previews for TikTok-style display
+const TRENDING_VIDEOS: Video[] = [
+  {
+    id: "trend-001",
+    title: "Why Your Heart Beats Faster at Night",
+    description: "Dr. Johnson explains the surprising reason your heart rate changes while you sleep.",
+    videoUrl: "/videos/doctor-jack-video-1.mp4",
+    thumbnailUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=600&fit=crop&q=80",
+    posterUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=600&fit=crop&q=80",
+    duration: 45,
+    category: "Cardiology",
+    tags: ["heart rate", "sleep", "health"],
+    doctorId: "550e8400-e29b-41d4-a716-446655440001",
+    isPersonalized: false,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: "trend-002",
+    title: "The #1 Sign of Heart Disease",
+    description: "Learn the early warning sign most people miss.",
+    videoUrl: "/videos/doctor-jack-video-2.mp4",
+    thumbnailUrl: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&h=600&fit=crop&q=80",
+    posterUrl: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&h=600&fit=crop&q=80",
+    duration: 60,
+    category: "Cardiology",
+    tags: ["heart disease", "symptoms", "prevention"],
+    doctorId: "550e8400-e29b-41d4-a716-446655440002",
+    isPersonalized: false,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: "trend-003",
+    title: "Anxiety or Heart Attack?",
+    description: "How to tell the difference between anxiety symptoms and cardiac events.",
+    videoUrl: "/videos/doctor-jack-video-3.mp4",
+    thumbnailUrl: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=400&h=600&fit=crop&q=80",
+    posterUrl: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=400&h=600&fit=crop&q=80",
+    duration: 52,
+    category: "Mental Health",
+    tags: ["anxiety", "heart health", "mental health"],
+    doctorId: "550e8400-e29b-41d4-a716-446655440006",
+    isPersonalized: false,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: "trend-004",
+    title: "Foods That Heal Your Heart",
+    description: "5 superfoods cardiologists recommend for heart health.",
+    videoUrl: "/videos/doctor-jack-video-1.mp4",
+    thumbnailUrl: "https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=400&h=600&fit=crop&q=80",
+    posterUrl: "https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=400&h=600&fit=crop&q=80",
+    duration: 38,
+    category: "Nutrition",
+    tags: ["nutrition", "diet", "heart health"],
+    doctorId: "550e8400-e29b-41d4-a716-446655440003",
+    isPersonalized: false,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: "trend-005",
+    title: "Stress is Killing Your Heart",
+    description: "The science behind stress-related heart problems.",
+    videoUrl: "/videos/doctor-jack-video-2.mp4",
+    thumbnailUrl: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&h=600&fit=crop&q=80",
+    posterUrl: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&h=600&fit=crop&q=80",
+    duration: 65,
+    category: "Mental Health",
+    tags: ["stress", "mental health", "heart"],
+    doctorId: "550e8400-e29b-41d4-a716-446655440005",
+    isPersonalized: false,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: "trend-006",
+    title: "Blood Pressure Myths Debunked",
+    description: "Common misconceptions about high blood pressure.",
+    videoUrl: "/videos/doctor-jack-video-3.mp4",
+    thumbnailUrl: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=400&h=600&fit=crop&q=80",
+    posterUrl: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=400&h=600&fit=crop&q=80",
+    duration: 48,
+    category: "Cardiology",
+    tags: ["blood pressure", "myths", "facts"],
+    doctorId: "550e8400-e29b-41d4-a716-446655440004",
+    isPersonalized: false,
+    createdAt: new Date().toISOString(),
+  },
+];
+
 export default function DiscoverPage() {
   // Auth state
   const { data: session, status } = useSession();
@@ -149,6 +238,7 @@ export default function DiscoverPage() {
   const { trackInteraction } = useEngagement();
   
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isMessagesOpen, setIsMessagesOpen] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedTopic, setSelectedTopic] = useState<string>("all");
@@ -168,8 +258,19 @@ export default function DiscoverPage() {
     ])
   );
 
+  const [searchQuery, setSearchQuery] = useState("");
+  
   const cardiologyTopics = ["all", "blood-pressure", "heart-disease", "arrhythmia", "cholesterol"];
-  const specialties = ["all", "cardiology", "primary-care", "endocrinology", "gastroenterology", "pulmonology"];
+  const specialties = ["all", "cardiology", "primary-care", "endocrinology", "gastroenterology", "pulmonology", "mental-health"];
+  
+  // Filter specialties based on search query
+  const filteredSpecialties = searchQuery 
+    ? specialties.filter(s => 
+        s.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (s === "cardiology" && (searchQuery.toLowerCase().includes("heart") || searchQuery.toLowerCase().includes("cardiac"))) ||
+        (s === "mental-health" && (searchQuery.toLowerCase().includes("mental") || searchQuery.toLowerCase().includes("anxiety") || searchQuery.toLowerCase().includes("depression")))
+      )
+    : specialties;
 
   // Get patient name for display
   const patientName = session?.user?.name?.split(" ")[0] || "there";
@@ -181,6 +282,23 @@ export default function DiscoverPage() {
   const handleCloseChat = () => {
     setIsChatOpen(false);
   };
+
+  const handleOpenMessages = () => {
+    setIsMessagesOpen(true);
+  };
+
+  const handleCloseMessages = () => {
+    setIsMessagesOpen(false);
+  };
+
+  const handleSelectDoctorFromMessages = (doctor: Doctor) => {
+    setSelectedDoctor(doctor);
+    setIsMessagesOpen(false);
+    setIsChatOpen(true);
+  };
+
+  // Get list of followed doctors for messages drawer
+  const followedDoctors = MOCK_DOCTORS.filter((d) => addedDoctors.has(d.id));
 
   const handleDoctorClick = (doctor: Doctor, isPremium: boolean) => {
     // If premium doctor, show upgrade prompt
@@ -263,7 +381,7 @@ export default function DiscoverPage() {
               </Link>
             </nav>
 
-            {/* Right: Heart Score + Menu */}
+            {/* Right: Menu */}
             <div className="flex items-center gap-2 md:gap-4">
               {/* Insurance Logos - hidden on mobile */}
               <div className="hidden md:flex items-center gap-2">
@@ -284,7 +402,6 @@ export default function DiscoverPage() {
                   className="h-6 w-auto"
                 />
               </div>
-              <HeartScore score={55} />
               <div className="hidden sm:block">
                 {isAuthenticated ? (
                   <UserMenu />
@@ -310,12 +427,39 @@ export default function DiscoverPage() {
       <main className="px-3 md:px-6 py-3 md:py-6 pb-16 max-w-7xl mx-auto">
         {/* Header Card - Modular */}
         <div className="bg-white rounded-2xl p-4 mb-3 shadow-sm">
-          <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-1">
-            Your Doctors
-          </h1>
-          <p className="text-gray-500 text-sm">
-            Explore content from your experts
-          </p>
+          <div className="flex items-center justify-between mb-3">
+            <div>
+              <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-1">
+                Discover
+              </h1>
+              <p className="text-gray-500 text-sm">
+                Explore content from your experts
+              </p>
+            </div>
+          </div>
+          
+          {/* Search Input */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search topics (e.g., heart, mental health, diabetes...)"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00BFA6]/30 focus:border-[#00BFA6] transition-all"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                aria-label="Clear search"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Doctor Profiles - Modular Card */}
@@ -337,7 +481,7 @@ export default function DiscoverPage() {
                   {/* Suggested Doctor - appears before first premium doctor */}
                   {isFirstPremium && (
                     <Link
-                      href="/feed"
+                      href="/doctor/550e8400-e29b-41d4-a716-446655440006"
                       className="flex flex-col items-center gap-1 flex-shrink-0 group cursor-pointer"
                       onClick={() => {
                         setAddedDoctors((prev) => new Set(prev).add("550e8400-e29b-41d4-a716-446655440006"));
@@ -425,9 +569,9 @@ export default function DiscoverPage() {
                         )}
                       </div>
                     ) : (
-                    // Free tier doctor - clickable
+                    // Free tier doctor - clickable (goes to profile page)
                     <Link
-                      href={`/feed?doctor=${doctor.id}`}
+                      href={`/profile/${doctor.id}`}
                       className="flex flex-col items-center gap-1"
                       onClick={() => handleDoctorClick(doctor, false)}
                     >
@@ -539,6 +683,48 @@ export default function DiscoverPage() {
               ))}
             </div>
           )}
+        </div>
+
+        {/* Trending Videos - TikTok-style Vertical Previews */}
+        <div className="bg-white rounded-2xl p-3 mb-3 shadow-sm">
+          <div className="flex items-center gap-2 mb-3">
+            <TrendingUp className="w-5 h-5 text-[#00BFA6]" />
+            <h2 className="text-base font-bold text-gray-900">Trending Now</h2>
+          </div>
+          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+            {TRENDING_VIDEOS.filter(video => {
+              // Filter based on search term
+              if (searchQuery) {
+                const search = searchQuery.toLowerCase();
+                return (
+                  video.title.toLowerCase().includes(search) ||
+                  video.description?.toLowerCase().includes(search) ||
+                  video.category?.toLowerCase().includes(search) ||
+                  video.tags?.some(tag => tag.toLowerCase().includes(search))
+                );
+              }
+              // Filter based on specialty
+              if (selectedSpecialty !== "all") {
+                if (selectedSpecialty === "cardiology") {
+                  return video.category === "Cardiology";
+                }
+                if (selectedSpecialty === "mental-health") {
+                  return video.category === "Mental Health";
+                }
+              }
+              return true;
+            }).map((video) => {
+              const doctor = MOCK_DOCTORS.find(d => d.id === video.doctorId);
+              return (
+                <VerticalVideoPreview
+                  key={video.id}
+                  video={video}
+                  doctor={doctor}
+                  href={`/feed?video=${video.id}`}
+                />
+              );
+            })}
+          </div>
         </div>
 
         {/* Cardiology Videos - Modular Card */}
@@ -965,6 +1151,111 @@ export default function DiscoverPage() {
           </div>
         )}
 
+        {/* Mental Health Videos */}
+        {(selectedSpecialty === "all" || selectedSpecialty === "mental-health") && (
+          <div className="bg-white rounded-2xl p-3 mb-3 shadow-sm">
+            <h2 className="text-base font-bold text-gray-900 mb-3">Mental Health</h2>
+            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop&q=80" alt="Managing Anxiety" fill className="object-cover object-top group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">5:30</div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-violet-50 text-violet-600 text-[10px] font-semibold rounded-lg mb-1">Anxiety</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Managing Anxiety</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Johnson explains</p>
+                </div>
+              </Link>
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&h=400&fit=crop&q=80" alt="Depression Support" fill className="object-cover object-top group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">6:15</div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-semibold rounded-lg mb-1">Depression</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Understanding Depression</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Chen on support</p>
+                </div>
+              </Link>
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=400&h=400&fit=crop&q=80" alt="Stress Relief" fill className="object-cover object-top group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">4:00</div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-rose-50 text-rose-600 text-[10px] font-semibold rounded-lg mb-1">Stress</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Stress Relief Techniques</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Rodriguez explains</p>
+                </div>
+              </Link>
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image src="https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=400&h=400&fit=crop&q=80" alt="Sleep & Mental Health" fill className="object-cover object-top group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">5:00</div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[10px] font-semibold rounded-lg mb-1">Sleep</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Sleep & Mental Health</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Martinez on sleep</p>
+                </div>
+              </Link>
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&h=400&fit=crop&q=80" alt="Mindfulness Meditation" fill className="object-cover object-top group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">7:30</div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-emerald-50 text-emerald-600 text-[10px] font-semibold rounded-lg mb-1">Mindfulness</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Mindfulness Meditation</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Kim guides you</p>
+                </div>
+              </Link>
+              <Link href="/feed" className="flex-shrink-0 w-44 bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
+                <div className="relative aspect-[4/3] bg-gray-200 overflow-hidden">
+                  <Image src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=400&h=400&fit=crop&q=80" alt="Work-Life Balance" fill className="object-cover object-top group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">4:45</div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Play className="w-5 h-5 text-primary-600 ml-0.5" fill="currentColor" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <span className="inline-block px-2 py-0.5 bg-amber-50 text-amber-600 text-[10px] font-semibold rounded-lg mb-1">Wellness</span>
+                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">Work-Life Balance</h3>
+                  <p className="text-gray-500 text-xs line-clamp-1 mt-0.5">Dr. Patel on balance</p>
+                </div>
+              </Link>
+            </div>
+          </div>
+        )}
+
         {/* Pulmonology Videos */}
         {(selectedSpecialty === "all" || selectedSpecialty === "pulmonology") && (
           <div className="bg-white rounded-2xl p-3 mb-3 shadow-sm">
@@ -1078,9 +1369,9 @@ export default function DiscoverPage() {
 
       {/* Floating message button with notification - Mobile */}
       <button
-        onClick={handleOpenChat}
+        onClick={handleOpenMessages}
         className="md:hidden fixed bottom-14 right-4 flex items-center justify-center w-14 h-14 bg-[#37A9D9] rounded-full shadow-lg hover:bg-[#2A8DBF] active:scale-95 transition-all duration-200 z-40"
-        aria-label="Message your doctor"
+        aria-label="View messages"
       >
         <MessageCircle className="w-6 h-6 text-white" />
         {/* Notification badge */}
@@ -1091,9 +1382,9 @@ export default function DiscoverPage() {
 
       {/* Desktop Floating message button */}
       <button
-        onClick={handleOpenChat}
+        onClick={handleOpenMessages}
         className="hidden md:flex fixed bottom-8 right-8 items-center justify-center w-14 h-14 bg-[#37A9D9] rounded-full shadow-lg hover:bg-[#2A8DBF] hover:scale-110 transition-all duration-200 z-40"
-        aria-label="Message your doctor"
+        aria-label="View messages"
       >
         <MessageCircle className="w-6 h-6 text-white" />
         {/* Notification badge */}
@@ -1110,6 +1401,14 @@ export default function DiscoverPage() {
         isOpen={showAuthPrompt}
         onClose={handleCloseAuthPrompt}
         trigger={authPromptTrigger}
+      />
+
+      {/* Messages Drawer */}
+      <MessagesDrawer
+        isOpen={isMessagesOpen}
+        onClose={handleCloseMessages}
+        doctors={followedDoctors}
+        onSelectDoctor={handleSelectDoctorFromMessages}
       />
 
       {/* Chat onboarding */}

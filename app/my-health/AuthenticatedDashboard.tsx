@@ -4,7 +4,6 @@ import { useState } from "react";
 import { signOut } from "next-auth/react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { HeartScore } from "@/components/HeartScore";
 import { TrustBadge } from "@/components/TrustBadge";
 import { ScheduleAppointment } from "@/components/ScheduleAppointment";
 import { ChatOnboarding } from "@/components/ChatOnboarding";
@@ -60,7 +59,6 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
   const [isScheduleOpen, setIsScheduleOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
-  const [isHeartAnimating, setIsHeartAnimating] = useState(false);
 
   // Query for preventive care profile - only called when user is authenticated
   const preventiveCareProfile = useQuery(
@@ -115,13 +113,6 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
-  
-  // Calculate health score based on completed items
-  const baseScore = 55;
-  const completedScore = Object.entries(checkedItems)
-    .filter(([, checked]) => checked)
-    .reduce((sum, [id]) => sum + (ACTION_SCORES[id] || 0), 0);
-  const healthScore = Math.min(baseScore + completedScore, 100);
 
   const handleScheduleAppointment = () => {
     setIsScheduleOpen(true);
@@ -140,25 +131,10 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
   };
 
   const handleCheckboxChange = (id: string) => {
-    const isNowChecked = !checkedItems[id];
-    
     setCheckedItems((prev) => ({
       ...prev,
-      [id]: isNowChecked,
+      [id]: !prev[id],
     }));
-    
-    // Trigger animations when checking an item
-    if (isNowChecked) {
-      // Trigger heart pulse after a delay
-      setTimeout(() => {
-        setIsHeartAnimating(true);
-      }, 400);
-      
-      // Reset heart animation
-      setTimeout(() => {
-        setIsHeartAnimating(false);
-      }, 900);
-    }
   };
 
   return (
@@ -230,19 +206,13 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 mb-3">
           {/* Left column */}
           <div className="lg:col-span-2 space-y-3">
-            {/* Health Score Summary - Modular Card */}
+            {/* Health Summary - Modular Card */}
             <div className="bg-gradient-to-r from-emerald-50 to-sky-50 rounded-2xl p-4 shadow-sm border border-emerald-100">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-0.5">
-                    My Health
-                  </h1>
-                  <p className="text-gray-600 text-sm">Track your health actions</p>
-                </div>
-                {/* Hidden on mobile to avoid duplicate with header */}
-                <div className="hidden md:block">
-                  <HeartScore score={healthScore} className="scale-110" isAnimating={isHeartAnimating} />
-                </div>
+              <div>
+                <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-0.5">
+                  My Health
+                </h1>
+                <p className="text-gray-600 text-sm">Track your health actions</p>
               </div>
               
               {/* Personalize My Page Button - only show if not completed onboarding */}

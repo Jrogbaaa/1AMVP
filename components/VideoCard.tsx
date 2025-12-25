@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { Play, Pause, Share2, Heart, Search, Volume2, VolumeX, Calendar, ArrowRight } from "lucide-react";
+import { Play, Pause, Share2, Search, Volume2, VolumeX, Calendar, ArrowRight } from "lucide-react";
 import type { Video, Doctor } from "@/lib/types";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,11 +15,11 @@ interface VideoCardProps {
   onPause?: () => void;
   onComplete?: () => void;
   onMessage?: () => void;
-  onHeartClick?: () => void;
   onScheduleClick?: () => void;
+  onMuteChange?: (muted: boolean) => void;
   isActive: boolean;
-  healthScore?: number;
-  showDesktopActions?: boolean; // For rendering actions outside video on desktop
+  isMuted?: boolean; // Controlled mute state from parent
+  showDesktopActions?: boolean;
 }
 
 export const VideoCard = ({
@@ -31,15 +31,14 @@ export const VideoCard = ({
   onPause,
   onComplete,
   onMessage,
-  onHeartClick,
   onScheduleClick,
+  onMuteChange,
   isActive,
-  healthScore,
+  isMuted: controlledMuted = false,
   showDesktopActions = false,
 }: VideoCardProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false); // Audio ON by default
   const [hasVideoError, setHasVideoError] = useState(false);
 
   useEffect(() => {
@@ -108,10 +107,17 @@ export const VideoCard = ({
     e.stopPropagation();
     if (!videoRef.current) return;
     
-    const newMutedState = !isMuted;
+    const newMutedState = !controlledMuted;
     videoRef.current.muted = newMutedState;
-    setIsMuted(newMutedState);
+    onMuteChange?.(newMutedState);
   };
+
+  // Sync video muted state with controlled prop
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.muted = controlledMuted;
+    }
+  }, [controlledMuted]);
 
   const handleVideoEnd = () => {
     setIsPlaying(false);
@@ -159,7 +165,7 @@ export const VideoCard = ({
           poster={imageSrc}
           className="absolute inset-0 w-full h-full object-cover"
           loop
-          muted={isMuted}
+          muted={controlledMuted}
           playsInline
           onEnded={handleVideoEnd}
           onClick={handlePlayPause}
@@ -211,9 +217,9 @@ export const VideoCard = ({
         <button
           onClick={handleToggleMute}
           className="absolute top-5 right-5 z-20 flex items-center justify-center w-10 h-10 bg-black/40 backdrop-blur-sm rounded-full hover:bg-black/60 transition-all duration-200"
-          aria-label={isMuted ? "Unmute video" : "Mute video"}
+          aria-label={controlledMuted ? "Unmute video" : "Mute video"}
         >
-          {isMuted ? (
+          {controlledMuted ? (
             <VolumeX className="w-5 h-5 text-white" />
           ) : (
             <Volume2 className="w-5 h-5 text-white" />
@@ -281,10 +287,10 @@ export const VideoCard = ({
           <div className="flex flex-col gap-6 items-center md:hidden">
             {/* Doctor avatar - FIRST (builds relationship) */}
             {doctor && (
-              <button
+              <Link
+                href={`/doctor/${doctor.id}`}
                 className="flex flex-col items-center gap-1"
-                onClick={onMessage}
-                aria-label={`Message Dr. ${doctor.name}`}
+                aria-label={`View Dr. ${doctor.name}'s profile`}
               >
                 <div className="relative">
                   <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-lg hover:scale-110 transition-transform">
@@ -309,7 +315,7 @@ export const VideoCard = ({
                     +
                   </div>
                 </div>
-              </button>
+              </Link>
             )}
 
             {/* Discover button - SECOND */}
@@ -321,57 +327,6 @@ export const VideoCard = ({
             >
               <Search className="w-5 h-5 text-gray-700" />
             </Link>
-
-            {/* Heart score - THIRD (My Heart) */}
-            {healthScore !== undefined && (
-              <button
-                onClick={onHeartClick}
-                className="flex flex-col items-center gap-1 hover:scale-110 transition-transform"
-                aria-label="View action items and reminders"
-              >
-                <div className="relative w-7 h-7">
-                  {/* Background heart with subtle shadow */}
-                  <div className="absolute inset-0 w-7 h-7 rounded-full blur-md opacity-30 bg-white" />
-                  
-                  {/* Outer ring/border */}
-                  <div className="absolute inset-0 w-7 h-7 rounded-full bg-white/20 backdrop-blur-sm" 
-                       style={{
-                         WebkitMaskImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'%3E%3Cpath d=\'M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z\'%3E%3C/path%3E%3C/svg%3E")',
-                         maskImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'%3E%3Cpath d=\'M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z\'%3E%3C/path%3E%3C/svg%3E")',
-                         WebkitMaskRepeat: 'no-repeat',
-                         maskRepeat: 'no-repeat',
-                         WebkitMaskSize: 'contain',
-                         maskSize: 'contain',
-                         WebkitMaskPosition: 'center',
-                         maskPosition: 'center'
-                       }}
-                  />
-                  
-                  {/* Filled heart with 1A brand gradient and clip-path */}
-                  <div 
-                    className="absolute inset-0 transition-all duration-500 ease-out"
-                    style={{ 
-                      clipPath: `inset(${100 - healthScore}% 0 0 0)`
-                    }}
-                  >
-                    <div 
-                      className="w-7 h-7 transition-all duration-500 heart-gradient-1a"
-                      style={{
-                        WebkitMaskImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'currentColor\' stroke=\'currentColor\' stroke-width=\'1.5\'%3E%3Cpath d=\'M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z\'%3E%3C/path%3E%3C/svg%3E")',
-                        maskImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'currentColor\' stroke=\'currentColor\' stroke-width=\'1.5\'%3E%3Cpath d=\'M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z\'%3E%3C/path%3E%3C/svg%3E")',
-                        WebkitMaskRepeat: 'no-repeat',
-                        maskRepeat: 'no-repeat',
-                        WebkitMaskSize: 'contain',
-                        maskSize: 'contain',
-                        WebkitMaskPosition: 'center',
-                        maskPosition: 'center',
-                        filter: 'drop-shadow(0 0 4px rgba(0, 191, 166, 0.4)) drop-shadow(0 0 8px rgba(0, 166, 206, 0.3))'
-                      }}
-                    />
-                  </div>
-                </div>
-              </button>
-            )}
 
             {/* Share button - only show for non-personalized videos */}
             {!isPersonalized && (

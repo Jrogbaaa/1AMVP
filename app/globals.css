@@ -257,41 +257,58 @@ html {
 }
 
 /* ============================================
-   BUTTON STYLES
+   BUTTON STYLES - Custom 1A Design
    ============================================ */
 .btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 0.75rem 1.5rem;
-  background-color: #0284c7;
+  background: linear-gradient(135deg, #00BFA6 0%, #00A6CE 100%);
   color: white;
-  font-weight: 500;
-  border-radius: 0.5rem;
-  transition: background-color 200ms;
+  font-weight: 600;
+  border-radius: 0.875rem;
+  transition: all 200ms ease;
+  box-shadow: 0 2px 8px rgba(0, 191, 166, 0.25);
 }
 
 .btn-primary:hover {
-  background-color: #0369a1;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 191, 166, 0.35);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 191, 166, 0.2);
 }
 
 .btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 0.75rem 1.5rem;
   background-color: white;
-  color: #0284c7;
-  font-weight: 500;
-  border-radius: 0.5rem;
-  border: 2px solid #0284c7;
-  transition: background-color 200ms;
+  color: #00A6CE;
+  font-weight: 600;
+  border-radius: 0.875rem;
+  border: 2px solid #00BFA6;
+  transition: all 200ms ease;
 }
 
 .btn-secondary:hover {
-  background-color: #f0f9ff;
+  background-color: rgba(0, 191, 166, 0.05);
+  border-color: #00A6CE;
 }
 
 .btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 0.5rem 1rem;
   color: #374151;
   font-weight: 500;
-  border-radius: 0.5rem;
-  transition: background-color 200ms;
+  border-radius: 0.75rem;
+  transition: all 200ms ease;
 }
 
 .btn-ghost:hover {
@@ -299,39 +316,54 @@ html {
 }
 
 /* ============================================
-   CARD & INPUT STYLES
+   CARD & INPUT STYLES - Custom 1A Design
    ============================================ */
 .card {
   background-color: white;
-  border-radius: 0.75rem;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+  border-radius: 1.25rem;
+  box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
   padding: 1.5rem;
-  border: 1px solid #f3f4f6;
+  border: 1px solid rgba(0, 166, 206, 0.08);
+  transition: all 200ms ease;
+}
+
+.card:hover {
+  box-shadow: 0 8px 30px -8px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
 .input {
   width: 100%;
-  padding: 0.75rem 1rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
+  padding: 0.875rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.875rem;
+  background-color: #fafafa;
+  font-size: 0.9375rem;
+  transition: all 200ms ease;
 }
 
 .input:focus {
   outline: none;
-  box-shadow: 0 0 0 2px #0ea5e9;
-  border-color: transparent;
+  border-color: #00BFA6;
+  box-shadow: 0 0 0 4px rgba(0, 191, 166, 0.12);
+  background-color: white;
+}
+
+.input::placeholder {
+  color: #9ca3af;
 }
 
 /* Medical trust badge */
 .trust-badge {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   font-size: 0.875rem;
-  color: #0369a1;
-  background-color: #eff6ff;
-  padding: 0.5rem 0.75rem;
+  font-weight: 500;
+  color: #00A6CE;
+  background: linear-gradient(135deg, rgba(0, 191, 166, 0.1) 0%, rgba(0, 166, 206, 0.1) 100%);
+  padding: 0.5rem 0.875rem;
   border-radius: 9999px;
+  border: 1px solid rgba(0, 191, 166, 0.15);
 }
 
 /* ============================================

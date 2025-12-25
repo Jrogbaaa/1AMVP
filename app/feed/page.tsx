@@ -5,16 +5,14 @@ import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { VideoCard } from "@/components/VideoCard";
-import { QACard, QA_QUESTIONS } from "@/components/QACard";
-import { ReminderCard } from "@/components/ReminderCard";
+import { QA_QUESTIONS } from "@/components/QACard";
 import { ChatOnboarding } from "@/components/ChatOnboarding";
 import { AuthPrompt } from "@/components/AuthPrompt";
 import { ScheduleAppointment } from "@/components/ScheduleAppointment";
 import { FeedSkeleton } from "@/components/FeedSkeleton";
 import { useEngagement } from "@/hooks/useEngagement";
-import { Calendar, Heart, ArrowLeft, Play, Search, Share2, User, MessageCircle } from "lucide-react";
+import { Calendar, Search, Share2, User, MessageCircle } from "lucide-react";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
-import { HeartScore } from "@/components/HeartScore";
 import type { Video, Doctor } from "@/lib/types";
 import Image from "next/image";
 
@@ -65,11 +63,11 @@ const MOCK_DOCTORS: Record<string, Doctor> = {
 const MOCK_DOCTOR = MOCK_DOCTORS["550e8400-e29b-41d4-a716-446655440001"];
 
 const MOCK_VIDEOS: Video[] = [
-  // Hey Dave video (personalized greeting from Dr. Ryan Mitchell)
+  // First video: Dr. Ryan Mitchell (personalized greeting)
   {
     id: "750e8400-e29b-41d4-a716-446655440000",
     title: "Hey Dave",
-    description: "Your personalized health update from Dr. Ryan Mitchell",
+    description: "Your personalized health update",
     videoUrl: "/videos/hey-dave.mp4",
     thumbnailUrl: "/images/doctors/doctor-ryan.jpg",
     posterUrl: "/images/doctors/doctor-ryan.jpg",
@@ -80,11 +78,11 @@ const MOCK_VIDEOS: Video[] = [
     isPersonalized: true,
     createdAt: new Date().toISOString(),
   },
-  // Doctor Jack's Videos
+  // Second video: Dr. Jack Ellis (different doctor)
   {
     id: "750e8400-e29b-41d4-a716-446655440006",
     title: "Understanding Your Heart Rhythm",
-    description: "Dr. Jack explains the basics of heart rhythm and what to look for in your daily heart health.",
+    description: "Learn the basics of heart rhythm",
     videoUrl: "/videos/doctor-jack-video-1.mp4",
     thumbnailUrl: "/images/doctors/doctor-jack.jpg",
     posterUrl: "/images/doctors/doctor-jack.jpg",
@@ -95,10 +93,26 @@ const MOCK_VIDEOS: Video[] = [
     isPersonalized: false,
     createdAt: new Date().toISOString(),
   },
+  // Third video: Dr. Sarah Johnson (different doctor)
+  {
+    id: "750e8400-e29b-41d4-a716-446655440009",
+    title: "Blood Pressure Basics",
+    description: "Understanding your blood pressure readings",
+    videoUrl: "/videos/doctor-jack-video-2.mp4",
+    thumbnailUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop&q=80",
+    posterUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop&q=80",
+    duration: 150,
+    category: "Education",
+    tags: ["blood pressure", "cardiology", "basics"],
+    doctorId: "550e8400-e29b-41d4-a716-446655440001",
+    isPersonalized: false,
+    createdAt: new Date().toISOString(),
+  },
+  // Fourth video: Dr. Jack Ellis
   {
     id: "750e8400-e29b-41d4-a716-446655440007",
     title: "Managing Cholesterol Levels",
-    description: "Dr. Jack discusses effective strategies for managing cholesterol and protecting your heart.",
+    description: "Effective strategies for cholesterol management",
     videoUrl: "/videos/doctor-jack-video-2.mp4",
     thumbnailUrl: "/images/doctors/doctor-jack.jpg",
     posterUrl: "/images/doctors/doctor-jack.jpg",
@@ -109,10 +123,26 @@ const MOCK_VIDEOS: Video[] = [
     isPersonalized: false,
     createdAt: new Date().toISOString(),
   },
+  // Fifth video: Dr. Michael Chen (different doctor)
+  {
+    id: "750e8400-e29b-41d4-a716-446655440010",
+    title: "Heart-Healthy Diet Tips",
+    description: "Nutrition advice for a healthy heart",
+    videoUrl: "/videos/doctor-jack-video-3.mp4",
+    thumbnailUrl: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&h=400&fit=crop&q=80",
+    posterUrl: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&h=400&fit=crop&q=80",
+    duration: 200,
+    category: "Education",
+    tags: ["nutrition", "diet", "heart health"],
+    doctorId: "550e8400-e29b-41d4-a716-446655440002",
+    isPersonalized: false,
+    createdAt: new Date().toISOString(),
+  },
+  // Sixth video: Dr. Jack Ellis
   {
     id: "750e8400-e29b-41d4-a716-446655440008",
     title: "Signs of Heart Disease to Watch",
-    description: "Dr. Jack outlines the early warning signs of heart disease and when to seek medical attention.",
+    description: "Early warning signs to know",
     videoUrl: "/videos/doctor-jack-video-3.mp4",
     thumbnailUrl: "/images/doctors/doctor-jack.jpg",
     posterUrl: "/images/doctors/doctor-jack.jpg",
@@ -147,27 +177,31 @@ const FeedContent = () => {
   } = useEngagement();
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [healthScore, setHealthScore] = useState(55); // Start at 55%
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
   const [isScheduleOpen, setIsScheduleOpen] = useState(false);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const [authPromptTrigger, setAuthPromptTrigger] = useState<"earned_trust" | "save_progress" | "set_reminder" | "personalized_content" | "follow_doctor">("earned_trust");
+  const [isGlobalMuted, setIsGlobalMuted] = useState(false); // Global mute state
   const containerRef = useRef<HTMLDivElement>(null);
   const watchTimeRef = useRef<number>(0);
   const watchTimeIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Handle global mute change - persists across all videos
+  const handleMuteChange = useCallback((muted: boolean) => {
+    setIsGlobalMuted(muted);
+  }, []);
 
   // Filter videos by doctor if specified
   const filteredVideos = doctorFilter
     ? MOCK_VIDEOS.filter((video) => video.doctorId === doctorFilter)
     : MOCK_VIDEOS;
 
-  // Combined feed with Q&A overlays interspersed between videos
-  // Q&A items overlay on top of the video underneath them
+  // Combined feed with Q&A and reminder cards interspersed between videos
+  // Cards are now inline (not overlays), showing as smaller units
   type FeedItem = 
     | { type: 'video'; data: Video }
-    | { type: 'qa'; data: typeof QA_QUESTIONS[number]; backgroundVideo: Video }
-    | { type: 'reminder'; backgroundVideo: Video };
+    | { type: 'qa'; data: typeof QA_QUESTIONS[number] }
+    | { type: 'reminder' };
 
   const combinedFeed: FeedItem[] = [];
   let qaIndex = 0;
@@ -176,14 +210,14 @@ const FeedContent = () => {
   filteredVideos.forEach((video, index) => {
     combinedFeed.push({ type: 'video', data: video });
     
-    // Insert reminder overlay after the first video (using next video as background)
-    if (index === 0 && !reminderInserted && filteredVideos[index + 1]) {
-      combinedFeed.push({ type: 'reminder', backgroundVideo: filteredVideos[index + 1] });
+    // Insert reminder card after the first video
+    if (index === 0 && !reminderInserted) {
+      combinedFeed.push({ type: 'reminder' });
       reminderInserted = true;
     }
-    // Insert Q&A overlay after every 2nd video
-    else if ((index + 1) % 2 === 0 && qaIndex < QA_QUESTIONS.length && filteredVideos[index + 1]) {
-      combinedFeed.push({ type: 'qa', data: QA_QUESTIONS[qaIndex], backgroundVideo: filteredVideos[index + 1] });
+    // Insert Q&A card after every 3rd video (less frequent)
+    else if ((index + 1) % 3 === 0 && qaIndex < QA_QUESTIONS.length) {
+      combinedFeed.push({ type: 'qa', data: QA_QUESTIONS[qaIndex] });
       qaIndex++;
     }
   });
@@ -272,25 +306,6 @@ const FeedContent = () => {
 
   const handleCloseChat = () => {
     setIsChatOpen(false);
-    // Update health score when onboarding is completed
-    setHealthScore((prev) => Math.min(prev + 10, 100)); // +10% for completing onboarding
-  };
-
-  const handleHeartClick = () => {
-    trackInteraction();
-    
-    // If not authenticated, prompt to sign in for personalized reminders
-    if (!isAuthenticated) {
-      setAuthPromptTrigger("set_reminder");
-      setShowAuthPrompt(true);
-      return;
-    }
-    
-    setIsActionMenuOpen(true);
-  };
-
-  const handleCloseActionMenu = () => {
-    setIsActionMenuOpen(false);
   };
 
   const handleVideoComplete = useCallback(() => {
@@ -299,23 +314,11 @@ const FeedContent = () => {
     if (feedItem && feedItem.type === 'video') {
       trackVideoComplete(feedItem.data.id);
     }
-    
-    // Update health score when video is completed
-    if (currentIndex === 0) {
-      // Completed doctor's personalized video - big boost!
-      setHealthScore((prev) => Math.min(prev + 20, 100));
-    } else {
-      // Completed educational video - small boost
-      setHealthScore((prev) => Math.min(prev + 5, 100));
-    }
   }, [combinedFeed, currentIndex, trackVideoComplete]);
 
   const handleQAAnswer = useCallback((questionId: string, answerId: string) => {
     // Track Q&A interaction
     trackInteraction();
-    
-    // Give a small health score boost for engaging with Q&A
-    setHealthScore((prev) => Math.min(prev + 3, 100));
     
     // In the future, this would send the answer to the backend
     console.log(`Q&A Answer: ${questionId} -> ${answerId}`);
@@ -485,283 +488,198 @@ const FeedContent = () => {
             {combinedFeed.map((feedItem, index) => {
               const isCurrentItem = currentIndex === index;
               
-              // Render Q&A Overlay (with video playing behind)
+              // Render Q&A Inline Card (styled as a message from YOUR doctor)
               if (feedItem.type === 'qa') {
-                const bgVideo = feedItem.backgroundVideo;
-                const bgDoctor = bgVideo.doctorId ? MOCK_DOCTORS[bgVideo.doctorId] : MOCK_DOCTOR;
-                
                 return (
                   <div key={`qa-${feedItem.data.id}`} className="snap-item">
-                    <div className="h-full w-full flex items-center justify-center md:gap-4">
-                      <div className="h-full w-full md:h-[calc(100vh-2rem)] md:max-h-[900px] md:w-auto md:aspect-[9/16] md:rounded-2xl md:overflow-hidden md:shadow-2xl relative">
-                        {/* Video playing in background */}
-                        <VideoCard
-                          video={bgVideo}
-                          doctor={bgDoctor}
-                          isPersonalized={bgVideo.isPersonalized}
-                          patientName={patientName}
-                          isActive={isCurrentItem}
-                          onComplete={handleVideoComplete}
-                          onMessage={handleOpenChat}
-                          onHeartClick={handleHeartClick}
-                          healthScore={healthScore}
-                        />
-                        
-                        {/* Q&A Overlay on top of video */}
-                        <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/40">
-                          <div className="w-[90%] max-w-sm">
-                            {/* Q&A Content */}
-                            <div className="bg-gradient-to-br from-[#00BFA6]/95 via-[#00A6CE]/95 to-[#7C3AED]/95 backdrop-blur-sm rounded-2xl p-5 shadow-2xl overflow-hidden">
-                              {/* Content */}
-                              <div className="relative z-10">
-                                {/* Header */}
-                                <div className="mb-3 text-center">
-                                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full mb-2">
-                                    <span className="text-white/90 text-[10px] font-semibold uppercase tracking-wide">
-                                      Quick Check-in
-                                    </span>
-                                  </div>
-                                  <h2 className="text-white text-lg font-bold drop-shadow-lg">
-                                    {feedItem.data.question}
-                                  </h2>
-                                  {feedItem.data.subtitle && (
-                                    <p className="text-white/80 text-xs mt-1">
-                                      {feedItem.data.subtitle}
-                                    </p>
-                                  )}
-                                </div>
-
-                                {/* Options */}
-                                <div className="space-y-2">
-                                  {feedItem.data.options.map((option) => (
-                                    <button
-                                      key={option.id}
-                                      onClick={() => handleQAAnswer(feedItem.data.id, option.id)}
-                                      className="w-full flex items-center gap-3 px-4 py-2.5 bg-white/20 backdrop-blur-sm rounded-xl text-white hover:bg-white/30 hover:scale-[1.02] active:scale-[0.98] transition-all"
-                                      aria-label={`Select ${option.label}`}
-                                    >
-                                      <span className="text-lg">{option.emoji}</span>
-                                      <span className="font-medium text-sm">{option.label}</span>
-                                    </button>
-                                  ))}
-                                </div>
-
-                                {/* Swipe hint */}
-                                <p className="mt-3 text-white/60 text-[10px] text-center">
-                                  Answer to continue or swipe to skip
-                                </p>
-                              </div>
+                    <div className="h-full w-full flex items-center justify-center md:gap-4 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+                      <div className="h-full w-full md:h-[calc(100vh-2rem)] md:max-h-[900px] md:w-auto md:aspect-[9/16] md:rounded-2xl md:overflow-hidden md:shadow-2xl relative flex items-center justify-center p-6">
+                        {/* Q&A Content - styled as a message from YOUR doctor */}
+                        <div className="w-full max-w-sm">
+                          {/* Doctor message header */}
+                          <div className="flex items-center gap-3 mb-4">
+                            <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-[#00BFA6]/30 shadow-lg">
+                              <Image
+                                src={selectedDoctor.avatarUrl || "/images/doctors/doctor-ryan.jpg"}
+                                alt={selectedDoctor.name}
+                                width={48}
+                                height={48}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            <div>
+                              <p className="text-white font-semibold text-sm">Dr. {selectedDoctor.name}</p>
+                              <p className="text-white/60 text-xs">Your Doctor</p>
                             </div>
                           </div>
+
+                          {/* Message bubble */}
+                          <div className="bg-gradient-to-br from-[#00BFA6] via-[#00A6CE] to-[#0088B4] rounded-2xl rounded-tl-sm p-5 shadow-2xl">
+                            {/* Badge */}
+                            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/20 backdrop-blur-sm rounded-full mb-3">
+                              <MessageCircle className="w-3 h-3 text-white" />
+                              <span className="text-white/90 text-[10px] font-semibold uppercase tracking-wide">
+                                Quick Check-in
+                              </span>
+                            </div>
+                            
+                            <h2 className="text-white text-lg font-bold mb-1">
+                              {feedItem.data.question}
+                            </h2>
+                            {feedItem.data.subtitle && (
+                              <p className="text-white/80 text-xs mb-4">
+                                {feedItem.data.subtitle}
+                              </p>
+                            )}
+
+                            {/* Options */}
+                            <div className="space-y-2">
+                              {feedItem.data.options.map((option) => (
+                                <button
+                                  key={option.id}
+                                  onClick={() => handleQAAnswer(feedItem.data.id, option.id)}
+                                  className="w-full flex items-center gap-3 px-4 py-3 bg-white/20 backdrop-blur-sm rounded-xl text-white hover:bg-white/30 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                                  aria-label={`Select ${option.label}`}
+                                >
+                                  <span className="text-xl">{option.emoji}</span>
+                                  <span className="font-medium">{option.label}</span>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Swipe hint */}
+                          <p className="mt-4 text-white/40 text-xs text-center">
+                            ↑ Swipe to continue ↓
+                          </p>
                         </div>
                       </div>
                       
-                      {/* Desktop sidebar - ORDER: Doctor → Discover → My Heart */}
+                      {/* Desktop sidebar */}
                       <div className="hidden md:flex flex-col gap-6 items-center py-8">
-                        {/* Doctor avatar - FIRST */}
-                        {bgDoctor && (
-                          <button
-                            className="flex flex-col items-center gap-2 group"
-                            onClick={handleOpenChat}
-                            aria-label={`Message Dr. ${bgDoctor.name}`}
-                          >
-                            <div className="relative">
-                              <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-gray-200 shadow-md hover:scale-110 transition-transform">
-                                {bgDoctor.avatarUrl ? (
-                                  <Image
-                                    src={bgDoctor.avatarUrl}
-                                    alt={bgDoctor.name}
-                                    width={56}
-                                    height={56}
-                                    className="w-full h-full object-cover"
-                                  />
-                                ) : (
-                                  <div className="w-full h-full bg-primary-600 flex items-center justify-center">
-                                    <span className="text-white font-bold text-xl">
-                                      {bgDoctor.name.charAt(0)}
-                                    </span>
-                                  </div>
-                                )}
-                              </div>
-                              <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white">
-                                +
-                              </div>
-                            </div>
-                            <span className="text-xs text-gray-700 font-medium max-w-[70px] truncate">Dr. {bgDoctor.name.split(' ')[0]}</span>
-                          </button>
-                        )}
-                        {/* Discover - SECOND */}
+                        <Link href={`/doctor/${selectedDoctor.id}`} className="flex flex-col items-center gap-2 group" aria-label={`View Dr. ${selectedDoctor.name}'s profile`}>
+                          <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-gray-200 shadow-md hover:scale-110 transition-transform">
+                            <Image
+                              src={selectedDoctor.avatarUrl || "/images/doctors/doctor-ryan.jpg"}
+                              alt={selectedDoctor.name}
+                              width={56}
+                              height={56}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <span className="text-xs text-gray-700 font-medium">Dr. {selectedDoctor.name.split(' ')[0]}</span>
+                        </Link>
                         <Link href="/discover" className="flex flex-col items-center gap-2 group" aria-label="Discover Doctors">
                           <div className="flex items-center justify-center w-14 h-14 bg-gray-100 rounded-full shadow-md hover:bg-gray-200 hover:scale-110 transition-all duration-200">
                             <Search className="w-6 h-6 text-gray-700" />
                           </div>
                           <span className="text-xs text-gray-700 font-medium">Discover</span>
                         </Link>
-                        {/* My Heart - THIRD */}
-                        <button onClick={handleHeartClick} className="flex flex-col items-center gap-2 hover:scale-110 transition-transform" aria-label="View action items and reminders">
-                          <HeartScore score={healthScore} className="scale-125" />
-                          <span className="text-xs text-gray-700 font-medium">My Heart</span>
-                        </button>
                       </div>
                     </div>
                   </div>
                 );
               }
               
-              // Render Reminder Overlay (with video playing behind)
+              // Render Reminder Inline Card (smaller unit between videos)
               if (feedItem.type === 'reminder') {
-                const bgVideo = feedItem.backgroundVideo;
-                const bgDoctor = bgVideo.doctorId ? MOCK_DOCTORS[bgVideo.doctorId] : MOCK_DOCTOR;
-                
                 return (
                   <div key="reminder-card" className="snap-item">
-                    <div className="h-full w-full flex items-center justify-center md:gap-4">
-                      <div className="h-full w-full md:h-[calc(100vh-2rem)] md:max-h-[900px] md:w-auto md:aspect-[9/16] md:rounded-2xl md:overflow-hidden md:shadow-2xl relative">
-                        {/* Video playing in background */}
-                        <VideoCard
-                          video={bgVideo}
-                          doctor={bgDoctor}
-                          isPersonalized={bgVideo.isPersonalized}
-                          patientName={patientName}
-                          isActive={isCurrentItem}
-                          onComplete={handleVideoComplete}
-                          onMessage={handleOpenChat}
-                          onHeartClick={handleHeartClick}
-                          healthScore={healthScore}
-                        />
-                        
-                        {/* Reminder Overlay on top of video */}
-                        <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/40">
-                          <div className="w-[90%] max-w-sm">
-                            {/* Reminder Content */}
-                            <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-5 shadow-2xl">
-                              {/* Continuity badge - progression context */}
-                              <div className="flex justify-center mb-3">
-                                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-sky-50 text-sky-700 rounded-full text-[10px] font-semibold">
-                                  <span>🔄</span>
-                                  <span>Coming up next in your care plan</span>
-                                </div>
-                              </div>
-                              
-                              {/* Doctor Avatar */}
-                              <div className="flex justify-center mb-3">
-                                <div className="relative">
-                                  <div className="w-14 h-14 rounded-full overflow-hidden ring-4 ring-sky-100 shadow-lg">
-                                    <Image
-                                      src="/images/doctors/doctor-ryan.jpg"
-                                      alt="Dr. Ryan Mitchell"
-                                      width={56}
-                                      height={56}
-                                      className="w-full h-full object-cover"
-                                    />
-                                  </div>
-                                  <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gradient-to-br from-sky-500 to-emerald-500 rounded-full flex items-center justify-center shadow-md border-2 border-white">
-                                    <span className="text-[10px]">🩺</span>
-                                  </div>
-                                </div>
-                              </div>
-                              
-                              {/* Doctor Name with relationship context */}
-                              <p className="text-center text-xs text-gray-500 mb-2">
-                                Dr. Ryan Mitchell <span className="text-sky-600 font-medium">mentioned this</span>
-                              </p>
-
-                              {/* Title - more directive */}
-                              <h2 className="text-base font-bold text-gray-900 text-center mb-1">
-                                Your Next Step: Colonoscopy
-                              </h2>
-                              
-                              {/* Context from last visit */}
-                              <p className="text-gray-500 text-center text-[11px] mb-2 italic">
-                                &ldquo;Based on your family history, let&apos;s get this scheduled.&rdquo;
-                              </p>
-
-                              {/* Due date badge */}
-                              <div className="flex justify-center mb-2">
-                                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-medium">
-                                  <Calendar className="w-3.5 h-3.5" />
-                                  <span>Due in 60 days</span>
-                                </div>
-                              </div>
-
-                              {/* Score boost */}
-                              <div className="flex justify-center mb-3">
-                                <span className="px-2.5 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-lg">
-                                  +15% Health Score
-                                </span>
-                              </div>
-
-                              {/* Schedule button - clear CTA */}
-                              <button
-                                onClick={() => setIsScheduleOpen(true)}
-                                className="w-full py-2.5 bg-gradient-to-r from-sky-600 to-emerald-600 text-white font-semibold rounded-xl hover:from-sky-700 hover:to-emerald-700 transition-all shadow-lg flex items-center justify-center gap-2 text-sm"
-                              >
-                                <Calendar className="w-4 h-4" />
-                                Schedule Now
-                              </button>
-                              
-                              {/* Alternative action */}
-                              <button
-                                className="w-full mt-2 py-2 text-sky-600 font-medium text-sm hover:text-sky-700 transition-colors"
-                              >
-                                Learn What Happens Next →
-                              </button>
-
-                              {/* Swipe hint */}
-                              <p className="text-center text-[10px] text-gray-400 mt-1">
-                                Swipe to continue
-                              </p>
+                    <div className="h-full w-full flex items-center justify-center md:gap-4 bg-gradient-to-br from-sky-50 via-white to-emerald-50">
+                      <div className="h-full w-full md:h-[calc(100vh-2rem)] md:max-h-[900px] md:w-auto md:aspect-[9/16] md:rounded-2xl md:overflow-hidden md:shadow-2xl relative flex items-center justify-center p-6">
+                        {/* Reminder Content */}
+                        <div className="w-full max-w-sm">
+                          {/* Badge */}
+                          <div className="flex justify-center mb-4">
+                            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-sky-100 text-sky-700 rounded-full text-xs font-semibold">
+                              <span>🔄</span>
+                              <span>Coming up in your care plan</span>
                             </div>
                           </div>
+                          
+                          {/* Doctor info */}
+                          <div className="flex items-center justify-center gap-3 mb-4">
+                            <div className="relative">
+                              <div className="w-14 h-14 rounded-full overflow-hidden ring-4 ring-sky-100 shadow-lg">
+                                <Image
+                                  src={selectedDoctor.avatarUrl || "/images/doctors/doctor-ryan.jpg"}
+                                  alt={selectedDoctor.name}
+                                  width={56}
+                                  height={56}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                              <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gradient-to-br from-sky-500 to-emerald-500 rounded-full flex items-center justify-center shadow-md border-2 border-white">
+                                <span className="text-[10px]">🩺</span>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <p className="text-center text-sm text-gray-500 mb-2">
+                            Dr. {selectedDoctor.name} <span className="text-sky-600 font-medium">recommended</span>
+                          </p>
+
+                          {/* Card */}
+                          <div className="bg-white rounded-2xl p-5 shadow-xl border border-gray-100">
+                            <h2 className="text-lg font-bold text-gray-900 text-center mb-1">
+                              Your Next Step: Colonoscopy
+                            </h2>
+                            
+                            <p className="text-gray-500 text-center text-sm mb-3 italic">
+                              &ldquo;Based on your family history, let&apos;s get this scheduled.&rdquo;
+                            </p>
+
+                            {/* Due date badge */}
+                            <div className="flex justify-center mb-4">
+                              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-medium">
+                                <Calendar className="w-3.5 h-3.5" />
+                                <span>Due in 60 days</span>
+                              </div>
+                            </div>
+
+                            {/* Schedule button */}
+                            <button
+                              onClick={() => setIsScheduleOpen(true)}
+                              className="w-full py-3 bg-gradient-to-r from-[#00BFA6] to-[#00A6CE] text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-lg flex items-center justify-center gap-2"
+                            >
+                              <Calendar className="w-4 h-4" />
+                              Schedule Now
+                            </button>
+                            
+                            <button
+                              className="w-full mt-2 py-2 text-gray-600 font-medium text-sm hover:text-gray-800 transition-colors"
+                            >
+                              Learn What Happens Next →
+                            </button>
+                          </div>
+
+                          {/* Swipe hint */}
+                          <p className="mt-4 text-gray-400 text-xs text-center">
+                            ↑ Swipe to continue ↓
+                          </p>
                         </div>
                       </div>
                       
-                      {/* Desktop sidebar - ORDER: Doctor → Discover → My Heart */}
+                      {/* Desktop sidebar */}
                       <div className="hidden md:flex flex-col gap-6 items-center py-8">
-                        {/* Doctor avatar - FIRST */}
-                        {bgDoctor && (
-                          <button
-                            className="flex flex-col items-center gap-2 group"
-                            onClick={handleOpenChat}
-                            aria-label={`Message Dr. ${bgDoctor.name}`}
-                          >
-                            <div className="relative">
-                              <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-gray-200 shadow-md hover:scale-110 transition-transform">
-                                {bgDoctor.avatarUrl ? (
-                                  <Image
-                                    src={bgDoctor.avatarUrl}
-                                    alt={bgDoctor.name}
-                                    width={56}
-                                    height={56}
-                                    className="w-full h-full object-cover"
-                                  />
-                                ) : (
-                                  <div className="w-full h-full bg-primary-600 flex items-center justify-center">
-                                    <span className="text-white font-bold text-xl">
-                                      {bgDoctor.name.charAt(0)}
-                                    </span>
-                                  </div>
-                                )}
-                              </div>
-                              <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white">
-                                +
-                              </div>
-                            </div>
-                            <span className="text-xs text-gray-700 font-medium max-w-[70px] truncate">Dr. {bgDoctor.name.split(' ')[0]}</span>
-                          </button>
-                        )}
-                        {/* Discover - SECOND */}
+                        <Link href={`/doctor/${selectedDoctor.id}`} className="flex flex-col items-center gap-2 group" aria-label={`View Dr. ${selectedDoctor.name}'s profile`}>
+                          <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-gray-200 shadow-md hover:scale-110 transition-transform">
+                            <Image
+                              src={selectedDoctor.avatarUrl || "/images/doctors/doctor-ryan.jpg"}
+                              alt={selectedDoctor.name}
+                              width={56}
+                              height={56}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <span className="text-xs text-gray-700 font-medium">Dr. {selectedDoctor.name.split(' ')[0]}</span>
+                        </Link>
                         <Link href="/discover" className="flex flex-col items-center gap-2 group" aria-label="Discover Doctors">
                           <div className="flex items-center justify-center w-14 h-14 bg-gray-100 rounded-full shadow-md hover:bg-gray-200 hover:scale-110 transition-all duration-200">
                             <Search className="w-6 h-6 text-gray-700" />
                           </div>
                           <span className="text-xs text-gray-700 font-medium">Discover</span>
                         </Link>
-                        {/* My Heart - THIRD */}
-                        <button onClick={handleHeartClick} className="flex flex-col items-center gap-2 hover:scale-110 transition-transform" aria-label="View action items and reminders">
-                          <HeartScore score={healthScore} className="scale-125" />
-                          <span className="text-xs text-gray-700 font-medium">My Heart</span>
-                        </button>
                       </div>
                     </div>
                   </div>
@@ -784,23 +702,22 @@ const FeedContent = () => {
                         isPersonalized={video.isPersonalized}
                         patientName={patientName}
                         isActive={isCurrentItem}
+                        isMuted={isGlobalMuted}
+                        onMuteChange={handleMuteChange}
                         onComplete={handleVideoComplete}
                         onMessage={handleOpenChat}
-                        onHeartClick={handleHeartClick}
                         onScheduleClick={() => setIsScheduleOpen(true)}
-                        healthScore={healthScore}
                       />
                     </div>
 
-                    {/* Desktop sidebar - buttons outside video */}
-                    {/* ORDER: Doctor Profile → Discover → My Heart (builds relationship first) */}
+                    {/* Desktop sidebar - Doctor Profile → Discover → Share */}
                     <div className="hidden md:flex flex-col gap-6 items-center py-8">
-                      {/* Doctor avatar - FIRST (relationship-focused) */}
+                      {/* Doctor avatar - link to profile */}
                       {videoDoctor && (
-                        <button
+                        <Link
+                          href={`/doctor/${videoDoctor.id}`}
                           className="flex flex-col items-center gap-2 group"
-                          onClick={handleOpenChat}
-                          aria-label={`Message Dr. ${videoDoctor.name}`}
+                          aria-label={`View Dr. ${videoDoctor.name}'s profile`}
                         >
                           <div className="relative">
                             <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-gray-200 shadow-md hover:scale-110 transition-transform">
@@ -825,10 +742,10 @@ const FeedContent = () => {
                             </div>
                           </div>
                           <span className="text-xs text-gray-700 font-medium max-w-[70px] truncate">Dr. {videoDoctor.name.split(' ')[0]}</span>
-                        </button>
+                        </Link>
                       )}
 
-                      {/* Discover button - SECOND */}
+                      {/* Discover button */}
                       <Link
                         href="/discover"
                         className="flex flex-col items-center gap-2 group"
@@ -839,16 +756,6 @@ const FeedContent = () => {
                         </div>
                         <span className="text-xs text-gray-700 font-medium">Discover</span>
                       </Link>
-
-                      {/* Heart score - THIRD (My Heart) */}
-                      <button
-                        onClick={handleHeartClick}
-                        className="flex flex-col items-center gap-2 hover:scale-110 transition-transform"
-                        aria-label="View action items and reminders"
-                      >
-                        <HeartScore score={healthScore} className="scale-125" />
-                        <span className="text-xs text-gray-700 font-medium">My Heart</span>
-                      </button>
 
                       {/* Share button */}
                       {!video.isPersonalized && (
@@ -899,115 +806,6 @@ const FeedContent = () => {
         doctor={selectedDoctor}
         userId={session?.user?.id || patientId || "anonymous"}
       />
-
-      {/* Action Items / Reminders Menu */}
-      {isActionMenuOpen && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
-          {/* Backdrop */}
-          <div 
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-            onClick={handleCloseActionMenu}
-          />
-          
-          {/* Menu Panel */}
-          <div className="relative bg-white rounded-t-3xl sm:rounded-3xl w-full sm:max-w-md max-h-[80vh] overflow-y-auto shadow-2xl">
-            <div className="p-6">
-              {/* Header */}
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Action Items & Reminders</h2>
-                <button
-                  onClick={handleCloseActionMenu}
-                  className="text-gray-400 hover:text-gray-600 transition-colors"
-                  aria-label="Close"
-                >
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-
-              {/* Health Score Summary */}
-              <div className={`mb-6 p-4 rounded-xl ${
-                healthScore >= 100 
-                  ? 'bg-gradient-to-r from-[#00BFA6]/10 to-[#00A6CE]/10 border border-[#00BFA6]/30' 
-                  : 'bg-gradient-to-r from-primary-50 to-primary-100'
-              }`}>
-                <div className="flex items-center gap-4">
-                  <HeartScore score={healthScore} className="scale-150" />
-                  <div>
-                    <h3 className="font-semibold text-gray-900">Heart Health Score</h3>
-                    <p className="text-sm text-gray-600">
-                      {healthScore >= 100 ? "Perfect! You're at 100%! 🎉" :
-                       healthScore >= 70 ? "Great progress!" : 
-                       healthScore >= 40 ? "Keep it up!" : 
-                       "Let's improve together"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Items */}
-              <div className="space-y-4">
-                <h3 className="font-semibold text-gray-900">Today's Actions</h3>
-                
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
-                    <input type="checkbox" className="mt-1 w-4 h-4 text-primary-600 rounded" />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <p className="font-medium text-gray-900">Schedule Colonoscopy</p>
-                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">+10%</span>
-                      </div>
-                      <p className="text-sm text-gray-500">Book your appointment</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
-                    <input type="checkbox" className="mt-1 w-4 h-4 text-primary-600 rounded" />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <p className="font-medium text-gray-900">Schedule Blood Test</p>
-                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">+8%</span>
-                      </div>
-                      <p className="text-sm text-gray-500">Book your lab work</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
-                    <input type="checkbox" className="mt-1 w-4 h-4 text-primary-600 rounded" />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <p className="font-medium text-gray-900">Schedule Follow-Up Visit</p>
-                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">+15%</span>
-                      </div>
-                      <p className="text-sm text-gray-500">Book your next appointment</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
-                    <input type="checkbox" className="mt-1 w-4 h-4 text-primary-600 rounded" />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <p className="font-medium text-gray-900">Schedule Stress Test</p>
-                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">+12%</span>
-                      </div>
-                      <p className="text-sm text-gray-500">Book your cardiac screening</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Close Button */}
-              <button
-                onClick={handleCloseActionMenu}
-                className="mt-6 w-full py-3 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 transition-colors"
-              >
-                Done
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 };

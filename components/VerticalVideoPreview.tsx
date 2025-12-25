@@ -119,7 +119,7 @@ export const VerticalVideoPreview = ({
 
         {/* Duration badge */}
         <div className="absolute bottom-12 right-2 bg-black/70 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded backdrop-blur-sm">
-          {formatDuration(video.duration)}
+          {formatDuration(video.duration || 0)}
         </div>
 
         {/* Doctor info at bottom */}

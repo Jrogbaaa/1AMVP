@@ -476,7 +476,7 @@ export default function DoctorProfilePage() {
 
                 {/* Duration badge */}
                 <div className="absolute bottom-2 right-2 bg-black/70 text-white text-[10px] font-medium px-1.5 py-0.5 rounded">
-                  {Math.floor(video.duration / 60)}:{(video.duration % 60).toString().padStart(2, '0')}
+                  {Math.floor((video.duration || 0) / 60)}:{((video.duration || 0) % 60).toString().padStart(2, '0')}
                 </div>
               </Link>
             ))}

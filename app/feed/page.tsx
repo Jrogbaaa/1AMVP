@@ -210,13 +210,13 @@ const FeedContent = () => {
   filteredVideos.forEach((video, index) => {
     combinedFeed.push({ type: 'video', data: video });
     
-    // Insert reminder card after the first video
-    if (index === 0 && !reminderInserted) {
+    // Insert reminder card after the 4th video
+    if (index === 3 && !reminderInserted) {
       combinedFeed.push({ type: 'reminder' });
       reminderInserted = true;
     }
-    // Insert Q&A card after every 3rd video (less frequent)
-    else if ((index + 1) % 3 === 0 && qaIndex < QA_QUESTIONS.length) {
+    // Insert Q&A card after every 5th video (less frequent)
+    else if ((index + 1) % 5 === 0 && qaIndex < QA_QUESTIONS.length) {
       combinedFeed.push({ type: 'qa', data: QA_QUESTIONS[qaIndex] });
       qaIndex++;
     }
@@ -488,94 +488,67 @@ const FeedContent = () => {
             {combinedFeed.map((feedItem, index) => {
               const isCurrentItem = currentIndex === index;
               
-              // Render Q&A Inline Card (styled as a message from YOUR doctor)
+              // Render Q&A Inline Card (smaller card between videos)
               if (feedItem.type === 'qa') {
                 return (
-                  <div key={`qa-${feedItem.data.id}`} className="snap-item">
-                    <div className="h-full w-full flex items-center justify-center md:gap-4 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-                      <div className="h-full w-full md:h-[calc(100vh-2rem)] md:max-h-[900px] md:w-auto md:aspect-[9/16] md:rounded-2xl md:overflow-hidden md:shadow-2xl relative flex items-center justify-center p-6">
-                        {/* Q&A Content - styled as a message from YOUR doctor */}
-                        <div className="w-full max-w-sm">
-                          {/* Doctor message header */}
-                          <div className="flex items-center gap-3 mb-4">
-                            <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-[#00BFA6]/30 shadow-lg">
-                              <Image
-                                src={selectedDoctor.avatarUrl || "/images/doctors/doctor-ryan.jpg"}
-                                alt={selectedDoctor.name}
-                                width={48}
-                                height={48}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                            <div>
-                              <p className="text-white font-semibold text-sm">Dr. {selectedDoctor.name}</p>
-                              <p className="text-white/60 text-xs">Your Doctor</p>
-                            </div>
-                          </div>
-
-                          {/* Message bubble */}
-                          <div className="bg-gradient-to-br from-[#00BFA6] via-[#00A6CE] to-[#0088B4] rounded-2xl rounded-tl-sm p-5 shadow-2xl">
-                            {/* Badge */}
-                            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/20 backdrop-blur-sm rounded-full mb-3">
-                              <MessageCircle className="w-3 h-3 text-white" />
-                              <span className="text-white/90 text-[10px] font-semibold uppercase tracking-wide">
-                                Quick Check-in
-                              </span>
-                            </div>
-                            
-                            <h2 className="text-white text-lg font-bold mb-1">
-                              {feedItem.data.question}
-                            </h2>
-                            {feedItem.data.subtitle && (
-                              <p className="text-white/80 text-xs mb-4">
-                                {feedItem.data.subtitle}
-                              </p>
-                            )}
-
-                            {/* Options */}
-                            <div className="space-y-2">
-                              {feedItem.data.options.map((option) => (
-                                <button
-                                  key={option.id}
-                                  onClick={() => handleQAAnswer(feedItem.data.id, option.id)}
-                                  className="w-full flex items-center gap-3 px-4 py-3 bg-white/20 backdrop-blur-sm rounded-xl text-white hover:bg-white/30 hover:scale-[1.02] active:scale-[0.98] transition-all"
-                                  aria-label={`Select ${option.label}`}
-                                >
-                                  <span className="text-xl">{option.emoji}</span>
-                                  <span className="font-medium">{option.label}</span>
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Swipe hint */}
-                          <p className="mt-4 text-white/40 text-xs text-center">
-                            ↑ Swipe to continue ↓
-                          </p>
+                  <div key={`qa-${feedItem.data.id}`} className="snap-item-card">
+                    <div className="w-full max-w-md mx-auto px-4">
+                      {/* Doctor message header */}
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-[#00BFA6]/30 shadow-lg">
+                          <Image
+                            src={selectedDoctor.avatarUrl || "/images/doctors/doctor-ryan.jpg"}
+                            alt={selectedDoctor.name}
+                            width={40}
+                            height={40}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div>
+                          <p className="text-white font-semibold text-sm">Dr. {selectedDoctor.name}</p>
+                          <p className="text-white/60 text-xs">Your Doctor</p>
                         </div>
                       </div>
-                      
-                      {/* Desktop sidebar */}
-                      <div className="hidden md:flex flex-col gap-6 items-center py-8">
-                        <Link href={`/doctor/${selectedDoctor.id}`} className="flex flex-col items-center gap-2 group" aria-label={`View Dr. ${selectedDoctor.name}'s profile`}>
-                          <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-gray-200 shadow-md hover:scale-110 transition-transform">
-                            <Image
-                              src={selectedDoctor.avatarUrl || "/images/doctors/doctor-ryan.jpg"}
-                              alt={selectedDoctor.name}
-                              width={56}
-                              height={56}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                          <span className="text-xs text-gray-700 font-medium">Dr. {selectedDoctor.name.split(' ')[0]}</span>
-                        </Link>
-                        <Link href="/discover" className="flex flex-col items-center gap-2 group" aria-label="Discover Doctors">
-                          <div className="flex items-center justify-center w-14 h-14 bg-gray-100 rounded-full shadow-md hover:bg-gray-200 hover:scale-110 transition-all duration-200">
-                            <Search className="w-6 h-6 text-gray-700" />
-                          </div>
-                          <span className="text-xs text-gray-700 font-medium">Discover</span>
-                        </Link>
+
+                      {/* Compact message bubble */}
+                      <div className="bg-gradient-to-br from-[#00BFA6] via-[#00A6CE] to-[#0088B4] rounded-2xl rounded-tl-sm p-4 shadow-2xl">
+                        {/* Badge */}
+                        <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full mb-2">
+                          <MessageCircle className="w-3 h-3 text-white" />
+                          <span className="text-white/90 text-[10px] font-semibold uppercase tracking-wide">
+                            Quick Check-in
+                          </span>
+                        </div>
+                        
+                        <h2 className="text-white text-base font-bold mb-1">
+                          {feedItem.data.question}
+                        </h2>
+                        {feedItem.data.subtitle && (
+                          <p className="text-white/80 text-[11px] mb-3">
+                            {feedItem.data.subtitle}
+                          </p>
+                        )}
+
+                        {/* Compact options */}
+                        <div className="space-y-1.5">
+                          {feedItem.data.options.map((option) => (
+                            <button
+                              key={option.id}
+                              onClick={() => handleQAAnswer(feedItem.data.id, option.id)}
+                              className="w-full flex items-center gap-2.5 px-3 py-2.5 bg-white/20 backdrop-blur-sm rounded-xl text-white hover:bg-white/30 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                              aria-label={`Select ${option.label}`}
+                            >
+                              <span className="text-lg">{option.emoji}</span>
+                              <span className="font-medium text-sm">{option.label}</span>
+                            </button>
+                          ))}
+                        </div>
                       </div>
+
+                      {/* Swipe hint */}
+                      <p className="mt-3 text-white/40 text-xs text-center">
+                        ↑ Swipe to continue ↓
+                      </p>
                     </div>
                   </div>
                 );
@@ -584,103 +557,76 @@ const FeedContent = () => {
               // Render Reminder Inline Card (smaller unit between videos)
               if (feedItem.type === 'reminder') {
                 return (
-                  <div key="reminder-card" className="snap-item">
-                    <div className="h-full w-full flex items-center justify-center md:gap-4 bg-gradient-to-br from-sky-50 via-white to-emerald-50">
-                      <div className="h-full w-full md:h-[calc(100vh-2rem)] md:max-h-[900px] md:w-auto md:aspect-[9/16] md:rounded-2xl md:overflow-hidden md:shadow-2xl relative flex items-center justify-center p-6">
-                        {/* Reminder Content */}
-                        <div className="w-full max-w-sm">
-                          {/* Badge */}
-                          <div className="flex justify-center mb-4">
-                            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-sky-100 text-sky-700 rounded-full text-xs font-semibold">
-                              <span>🔄</span>
-                              <span>Coming up in your care plan</span>
-                            </div>
-                          </div>
-                          
-                          {/* Doctor info */}
-                          <div className="flex items-center justify-center gap-3 mb-4">
-                            <div className="relative">
-                              <div className="w-14 h-14 rounded-full overflow-hidden ring-4 ring-sky-100 shadow-lg">
-                                <Image
-                                  src={selectedDoctor.avatarUrl || "/images/doctors/doctor-ryan.jpg"}
-                                  alt={selectedDoctor.name}
-                                  width={56}
-                                  height={56}
-                                  className="w-full h-full object-cover"
-                                />
-                              </div>
-                              <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gradient-to-br from-sky-500 to-emerald-500 rounded-full flex items-center justify-center shadow-md border-2 border-white">
-                                <span className="text-[10px]">🩺</span>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <p className="text-center text-sm text-gray-500 mb-2">
-                            Dr. {selectedDoctor.name} <span className="text-sky-600 font-medium">recommended</span>
-                          </p>
-
-                          {/* Card */}
-                          <div className="bg-white rounded-2xl p-5 shadow-xl border border-gray-100">
-                            <h2 className="text-lg font-bold text-gray-900 text-center mb-1">
-                              Your Next Step: Colonoscopy
-                            </h2>
-                            
-                            <p className="text-gray-500 text-center text-sm mb-3 italic">
-                              &ldquo;Based on your family history, let&apos;s get this scheduled.&rdquo;
-                            </p>
-
-                            {/* Due date badge */}
-                            <div className="flex justify-center mb-4">
-                              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-medium">
-                                <Calendar className="w-3.5 h-3.5" />
-                                <span>Due in 60 days</span>
-                              </div>
-                            </div>
-
-                            {/* Schedule button */}
-                            <button
-                              onClick={() => setIsScheduleOpen(true)}
-                              className="w-full py-3 bg-gradient-to-r from-[#00BFA6] to-[#00A6CE] text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-lg flex items-center justify-center gap-2"
-                            >
-                              <Calendar className="w-4 h-4" />
-                              Schedule Now
-                            </button>
-                            
-                            <button
-                              className="w-full mt-2 py-2 text-gray-600 font-medium text-sm hover:text-gray-800 transition-colors"
-                            >
-                              Learn What Happens Next →
-                            </button>
-                          </div>
-
-                          {/* Swipe hint */}
-                          <p className="mt-4 text-gray-400 text-xs text-center">
-                            ↑ Swipe to continue ↓
-                          </p>
+                  <div key="reminder-card" className="snap-item-card">
+                    <div className="w-full max-w-md mx-auto px-4">
+                      {/* Badge */}
+                      <div className="flex justify-center mb-3">
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-sky-100/90 text-sky-700 rounded-full text-xs font-semibold backdrop-blur-sm">
+                          <span>🔄</span>
+                          <span>Coming up in your care plan</span>
                         </div>
                       </div>
                       
-                      {/* Desktop sidebar */}
-                      <div className="hidden md:flex flex-col gap-6 items-center py-8">
-                        <Link href={`/doctor/${selectedDoctor.id}`} className="flex flex-col items-center gap-2 group" aria-label={`View Dr. ${selectedDoctor.name}'s profile`}>
-                          <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-gray-200 shadow-md hover:scale-110 transition-transform">
+                      {/* Doctor info */}
+                      <div className="flex items-center justify-center gap-3 mb-3">
+                        <div className="relative">
+                          <div className="w-12 h-12 rounded-full overflow-hidden ring-4 ring-white/50 shadow-lg">
                             <Image
                               src={selectedDoctor.avatarUrl || "/images/doctors/doctor-ryan.jpg"}
                               alt={selectedDoctor.name}
-                              width={56}
-                              height={56}
+                              width={48}
+                              height={48}
                               className="w-full h-full object-cover"
                             />
                           </div>
-                          <span className="text-xs text-gray-700 font-medium">Dr. {selectedDoctor.name.split(' ')[0]}</span>
-                        </Link>
-                        <Link href="/discover" className="flex flex-col items-center gap-2 group" aria-label="Discover Doctors">
-                          <div className="flex items-center justify-center w-14 h-14 bg-gray-100 rounded-full shadow-md hover:bg-gray-200 hover:scale-110 transition-all duration-200">
-                            <Search className="w-6 h-6 text-gray-700" />
+                          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-gradient-to-br from-sky-500 to-emerald-500 rounded-full flex items-center justify-center shadow-md border-2 border-white">
+                            <span className="text-[8px]">🩺</span>
                           </div>
-                          <span className="text-xs text-gray-700 font-medium">Discover</span>
-                        </Link>
+                        </div>
                       </div>
+                      
+                      <p className="text-center text-sm text-white/80 mb-2">
+                        Dr. {selectedDoctor.name} <span className="text-sky-300 font-medium">recommended</span>
+                      </p>
+
+                      {/* Compact Card */}
+                      <div className="bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-2xl border border-white/20">
+                        <h2 className="text-base font-bold text-gray-900 text-center mb-1">
+                          Your Next Step: Colonoscopy
+                        </h2>
+                        
+                        <p className="text-gray-500 text-center text-xs mb-2 italic">
+                          &ldquo;Based on your family history, let&apos;s get this scheduled.&rdquo;
+                        </p>
+
+                        {/* Due date badge */}
+                        <div className="flex justify-center mb-3">
+                          <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full text-[11px] font-medium">
+                            <Calendar className="w-3 h-3" />
+                            <span>Due in 60 days</span>
+                          </div>
+                        </div>
+
+                        {/* Schedule button */}
+                        <button
+                          onClick={() => setIsScheduleOpen(true)}
+                          className="w-full py-2.5 bg-gradient-to-r from-[#00BFA6] to-[#00A6CE] text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-lg flex items-center justify-center gap-2 text-sm"
+                        >
+                          <Calendar className="w-4 h-4" />
+                          Schedule Now
+                        </button>
+                        
+                        <button
+                          className="w-full mt-1.5 py-1.5 text-gray-500 font-medium text-xs hover:text-gray-700 transition-colors"
+                        >
+                          Learn What Happens Next →
+                        </button>
+                      </div>
+
+                      {/* Swipe hint */}
+                      <p className="mt-3 text-white/40 text-xs text-center">
+                        ↑ Swipe to continue ↓
+                      </p>
                     </div>
                   </div>
                 );

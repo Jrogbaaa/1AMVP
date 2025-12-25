@@ -227,6 +227,17 @@ html {
   height: 100dvh;
 }
 
+/* Smaller snap item for inline cards (Q&A, Reminder) */
+.snap-item-card {
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+  height: 70vh;
+  height: 70dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Video card styles */
 .video-card {
   position: relative;

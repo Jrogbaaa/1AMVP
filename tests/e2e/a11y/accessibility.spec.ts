@@ -128,7 +128,7 @@ test.describe("Keyboard Navigation", () => {
     await page.keyboard.press("Enter");
 
     // Page should remain functional
-    await expect(page.getByText("Your Doctors")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Discover" })).toBeVisible();
   });
 
   test("should close modals with Escape key", async ({ page }) => {

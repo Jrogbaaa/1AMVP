@@ -228,10 +228,10 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
               )}
             </div>
 
-            {/* Action Items - Modular Card */}
+            {/* Reminders - Modular Card */}
             <div className="bg-white rounded-2xl p-3 md:p-4 shadow-sm">
               <h2 className="text-base md:text-lg font-bold text-gray-900 mb-3">
-                Action Items & Reminders
+                Reminders
               </h2>
 
               {/* Annual Reminders */}
@@ -250,17 +250,12 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
                         </div>
                         <p className="text-xs text-gray-500 mt-0.5">Due in 60 days</p>
                       </div>
-                      <div className="flex gap-1.5 md:gap-1.5 flex-shrink-0">
-                        <button className="px-3 py-2 md:px-2 md:py-1 bg-white text-primary-600 text-xs md:text-[10px] font-medium rounded-lg border border-primary-200 hover:bg-primary-50 transition-colors">
-                          📅 Add
-                        </button>
-                        <button
-                          onClick={handleScheduleAppointment}
-                          className="px-3 py-2 md:px-2 md:py-1 bg-primary-600 text-white text-xs md:text-[10px] font-medium rounded-lg hover:bg-primary-700 transition-colors"
-                        >
-                          Schedule
-                        </button>
-                      </div>
+                      <button
+                        onClick={handleScheduleAppointment}
+                        className="px-4 py-2.5 bg-primary-600 text-white text-sm font-semibold rounded-xl hover:bg-primary-700 transition-colors shadow-sm flex-shrink-0"
+                      >
+                        Schedule
+                      </button>
                     </div>
                   </div>
 
@@ -273,17 +268,12 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
                         </div>
                         <p className="text-xs text-gray-500 mt-0.5">Due: March 2025</p>
                       </div>
-                      <div className="flex gap-1.5 md:gap-1.5 flex-shrink-0">
-                        <button className="px-3 py-2 md:px-2 md:py-1 bg-white text-primary-600 text-xs md:text-[10px] font-medium rounded-lg border border-primary-200 hover:bg-primary-50 transition-colors">
-                          📅 Add
-                        </button>
-                        <button
-                          onClick={handleScheduleAppointment}
-                          className="px-3 py-2 md:px-2 md:py-1 bg-primary-600 text-white text-xs md:text-[10px] font-medium rounded-lg hover:bg-primary-700 transition-colors"
-                        >
-                          Schedule
-                        </button>
-                      </div>
+                      <button
+                        onClick={handleScheduleAppointment}
+                        className="px-4 py-2.5 bg-primary-600 text-white text-sm font-semibold rounded-xl hover:bg-primary-700 transition-colors shadow-sm flex-shrink-0"
+                      >
+                        Schedule
+                      </button>
                     </div>
                   </div>
 
@@ -296,17 +286,12 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
                         </div>
                         <p className="text-xs text-gray-500 mt-0.5">Due: June 2025</p>
                       </div>
-                      <div className="flex gap-1.5 md:gap-1.5 flex-shrink-0">
-                        <button className="px-3 py-2 md:px-2 md:py-1 bg-white text-primary-600 text-xs md:text-[10px] font-medium rounded-lg border border-primary-200 hover:bg-primary-50 transition-colors">
-                          📅 Add
-                        </button>
-                        <button
-                          onClick={handleScheduleAppointment}
-                          className="px-3 py-2 md:px-2 md:py-1 bg-primary-600 text-white text-xs md:text-[10px] font-medium rounded-lg hover:bg-primary-700 transition-colors"
-                        >
-                          Schedule
-                        </button>
-                      </div>
+                      <button
+                        onClick={handleScheduleAppointment}
+                        className="px-4 py-2.5 bg-primary-600 text-white text-sm font-semibold rounded-xl hover:bg-primary-700 transition-colors shadow-sm flex-shrink-0"
+                      >
+                        Schedule
+                      </button>
                     </div>
                   </div>
 
@@ -319,27 +304,22 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
                         </div>
                         <p className="text-xs text-gray-500 mt-0.5">Due: October 2025</p>
                       </div>
-                      <div className="flex gap-1.5 md:gap-1.5 flex-shrink-0">
-                        <button className="px-3 py-2 md:px-2 md:py-1 bg-white text-primary-600 text-xs md:text-[10px] font-medium rounded-lg border border-primary-200 hover:bg-primary-50 transition-colors">
-                          📅 Add
-                        </button>
-                        <button
-                          onClick={handleScheduleAppointment}
-                          className="px-3 py-2 md:px-2 md:py-1 bg-primary-600 text-white text-xs md:text-[10px] font-medium rounded-lg hover:bg-primary-700 transition-colors"
-                        >
-                          Schedule
-                        </button>
-                      </div>
+                      <button
+                        onClick={handleScheduleAppointment}
+                        className="px-4 py-2.5 bg-primary-600 text-white text-sm font-semibold rounded-xl hover:bg-primary-700 transition-colors shadow-sm flex-shrink-0"
+                      >
+                        Schedule
+                      </button>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Today */}
+              {/* Daily Reminders */}
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-1.5">
-                    <span>✅</span> Today
+                    <span>✅</span> Daily Reminders
                   </h3>
                   <span className="text-[10px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded-lg">
                     {Object.values(checkedItems).filter(Boolean).length}/3 done
@@ -433,10 +413,10 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
                 </div>
               </div>
 
-              {/* This Week */}
+              {/* Weekly Reminders */}
               <div>
                 <h3 className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-1.5">
-                  <span>📆</span> This Week
+                  <span>📆</span> Weekly Reminders
                 </h3>
                 <div className="space-y-2">
                   <div 
@@ -518,7 +498,7 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
             {/* Doctor card - Modular */}
             <div className="bg-white rounded-2xl p-3 shadow-sm">
               <h2 className="text-sm font-bold text-gray-900 mb-2">
-                Your Doctor
+                Your Primary Care Specialist
               </h2>
               <div className="flex items-start gap-3 mb-4">
                 <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0">

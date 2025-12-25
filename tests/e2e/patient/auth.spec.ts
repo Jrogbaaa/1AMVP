@@ -168,7 +168,7 @@ test.describe("Protected Routes", () => {
     await page.goto("/discover");
 
     // Discover should load without auth
-    await expect(page.getByText("Your Doctors")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Discover" })).toBeVisible();
 
     // No forced redirect to auth
     await expect(page).toHaveURL(/\/discover/);

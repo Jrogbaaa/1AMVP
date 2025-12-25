@@ -243,11 +243,6 @@ export const VideoCard = ({
           <div className="flex-1 pr-4">
             {isPersonalized ? (
               <div className="space-y-2">
-                {/* Context badge - continuity */}
-                <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full">
-                  <span className="text-white/90 text-[10px] font-medium">Since your last visit • 2 weeks ago</span>
-                </div>
-                
                 {/* Value-focused headline */}
                 <h3 className="text-white font-bold text-xl drop-shadow-lg">
                   Hey {patientName || "Dave"} — here&apos;s what to do next for your heart health
@@ -257,17 +252,6 @@ export const VideoCard = ({
                 <p className="text-white/80 text-sm drop-shadow-md">
                   Dr. {doctor?.name || "Ryan Mitchell"} explains your upcoming follow-up and what to expect.
                 </p>
-                
-                {/* Clear action button */}
-                <button
-                  onClick={onScheduleClick}
-                  className="mt-3 inline-flex items-center gap-2 px-4 py-2.5 bg-white text-gray-900 font-semibold rounded-xl hover:bg-white/90 active:scale-[0.98] transition-all shadow-lg"
-                  aria-label="Schedule your follow-up visit"
-                >
-                  <Calendar className="w-4 h-4" />
-                  <span>Schedule Visit</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
               </div>
             ) : (
               <>

@@ -7,7 +7,7 @@ test.describe("Discover Page", () => {
 
   test("should load discover page with doctor profiles", async ({ page }) => {
     // Page title should be visible
-    await expect(page.getByText("Your Doctors")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Discover" })).toBeVisible();
 
     // Doctor avatars should be displayed
     const doctorAvatars = page.locator('img[alt*="Dr."], img[alt*="doctor"]');

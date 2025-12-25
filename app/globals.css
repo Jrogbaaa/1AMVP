@@ -190,7 +190,7 @@ html {
   flex: 1;
 }
 
-/* Desktop: wider container to fit video + sidebar */
+/* Desktop: wider container to fit video + sidebar, properly centered */
 @media (min-width: 768px) {
   .feed-container {
     max-width: 100%;
@@ -201,15 +201,20 @@ html {
   }
 }
 
+/* Large screens with left sidebar - center the remaining space */
 @media (min-width: 1024px) {
   .feed-container {
-    margin-left: 0;
+    /* Calculate remaining width after sidebar and center within it */
+    width: calc(100% - 16rem); /* 16rem = sidebar width */
+    margin-left: auto;
+    margin-right: 0;
   }
 }
 
 /* Snap scroll for TikTok-style feed */
 .snap-container {
   height: 100%;
+  width: 100%;
   overflow-y: scroll;
   scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
@@ -225,17 +230,28 @@ html {
   scroll-snap-stop: always;
   height: 100vh;
   height: 100dvh;
-}
-
-/* Snap item for inline cards (Q&A, Reminder) - same height as videos for proper alignment */
-.snap-item-card {
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
-  height: 100vh;
-  height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* Snap item for inline cards (Q&A, Reminder) - shorter height to show peek of adjacent videos */
+.snap-item-card {
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+  height: 70vh;
+  height: 70dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Desktop: Card container matches video form factor */
+@media (min-width: 768px) {
+  .snap-item-card {
+    height: 75vh;
+    height: 75dvh;
+  }
 }
 
 /* Video card styles */

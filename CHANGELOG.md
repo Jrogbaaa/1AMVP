@@ -5,6 +5,25 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.37.2] - 2024-12-25
+
+### 🏥 My Health Page Improvements & E2E Test Fixes
+
+**My Health Page - Reminders Reorganization:**
+- Changed "Your Doctor" label to "Your Primary Care Specialist"
+- Reordered reminder sections: Annual Reminders → Daily Reminders → Weekly Reminders
+- Changed section title from "Action Items & Reminders" to "Reminders"
+- Removed "Add" calendar buttons from annual reminders
+- Made Schedule buttons bigger with improved styling (`px-4 py-2.5`, `text-sm font-semibold`, `rounded-xl shadow-sm`)
+
+**E2E Test Fixes:**
+- Fixed discover page tests to look for "Discover" heading instead of non-existent "Your Doctors"
+- Updated `discover.spec.ts`, `accessibility.spec.ts`, and `auth.spec.ts` tests
+- Fixed feed page heart score test - changed to flexible video interaction test
+- All 8 failing tests should now pass
+
+---
+
 ## [1.37.1] - 2024-12-25
 
 ### 🔧 Survey Card Alignment & Design Fixes

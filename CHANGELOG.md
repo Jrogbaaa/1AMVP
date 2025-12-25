@@ -5,6 +5,94 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.36.0] - 2024-12-25
+
+### 🔐 Complete Authentication & User Profile System
+
+**Major Auth Infrastructure Overhaul:**
+This release implements a complete authentication system with persistent user profiles for both patients and doctors. All user data is now properly saved to the Convex database and linked across sessions.
+
+**New `users` Table in Convex:**
+- Central user storage for all authenticated users (patients, doctors, admins)
+- Fields: `authId`, `email`, `name`, `role`, `healthProvider`, `avatarUrl`, `lastLoginAt`
+- Indexes: by auth ID, email, and role for efficient queries
+- Automatically synced on every login
+
+**User Management Functions (`convex/users.ts`):**
+- `getByAuthId` - Retrieve user by authentication ID
+- `getByEmail` - Retrieve user by email address
+- `upsertOnLogin` - Create or update user on sign-in (also auto-creates doctor profile)
+- `updateProfile` - Update user profile fields
+- `getDoctors` - Get all doctor users
+- `getFullProfile` - Get user with related role-specific data
+
+**User Sync API Route (`/api/auth/sync-user`):**
+- `POST` - Syncs authenticated user to Convex database
+- `GET` - Returns sync status and full profile data
+- Called automatically after login to persist user data
+
+**New `useUserSync` Hook (`hooks/useUserSync.ts`):**
+- Automatically syncs users to Convex when they log in
+- Returns full user profile including role-specific data (doctor profile, preventive care profile)
+- Handles loading and error states gracefully
+- Usage: `const { user, isSyncing, isSynced } = useUserSync();`
+
+**Doctor Portal Updates:**
+- Doctor layout now uses real session data instead of mock "Dr. Jack Ellis"
+- Shows actual logged-in doctor's name, email, specialty
+- Profile dropdown displays user's email
+- Proper sign out functionality
+- Non-doctors redirected away from `/doctor/*` routes
+
+**Doctor Dashboard (`/doctor`):**
+- Personalized greeting using real user name ("Good morning, Dr. Smith 👋")
+- Time-based greeting (morning/afternoon/evening)
+- Connected to real video data from Convex
+- Shows count of doctor's generated videos
+
+**Doctor Settings (`/doctor/settings`):**
+- Profile data initialized from session/Convex
+- Form fields populated with actual user data
+- Saves profile changes to Convex database
+- Saves HeyGen avatar/voice credentials to doctor profile
+- Specialty and clinic name persist across sessions
+
+**OnboardingForm Updates:**
+- Removed localStorage dependency (data was being lost)
+- Syncs user to Convex after successful login
+- Uses proper redirect handling with `redirect: false`
+
+**Admin Functions (`convex/admin.ts`):**
+- `clearAllUserData` - Wipe all user-related data for fresh start
+- Clears: users, doctorProfiles, preventiveCareProfiles, onboardingProgress, chatMessages, feedItems, userSessions, videoEvents, generatedVideos, videoGenerationJobs
+
+**Role Detection Logic:**
+- **Admin**: Specific admin emails (e.g., `admin@1another.com`)
+- **Doctor**: Email domain `@1another.com` or `@1another.health`
+- **Patient**: Everyone else (default role)
+
+**Technical Implementation:**
+- JWT sessions with 8-hour expiry (configured in `auth.ts`)
+- Convex auth integration via `ConvexProviderWithAuth`
+- TypeScript types extended for session user (`types/next-auth.d.ts`)
+- Secure cookie handling for production (`__Secure-` prefix)
+
+**New Files:**
+- `convex/users.ts` - User management functions
+- `convex/admin.ts` - Admin utilities for data management
+- `app/api/auth/sync-user/route.ts` - User sync API endpoint
+- `hooks/useUserSync.ts` - Client-side user sync hook
+- `app/doctor/DoctorLayoutClient.tsx` - Client component for doctor layout
+
+**Data Flow:**
+1. User signs in → NextAuth creates JWT session
+2. `useUserSync` hook triggers → Calls `upsertOnLogin` mutation
+3. User record created/updated in Convex → Doctor profile auto-created if applicable
+4. All subsequent data (videos, health profiles, etc.) linked via `authId`
+5. Settings changes persist to Convex → Available on next login
+
+---
+
 ## [1.35.0] - 2024-12-21
 
 ### 🩺 Preventive Care Onboarding & Personalized Health Checklist

@@ -11,6 +11,16 @@ A mobile-first patient communication and education platform that puts **the doct
 5. **My Health = health actions** - Time-based reminders and healthcare provider tracking
 6. **Simplicity above all** - Remove complexity unless it adds compounding advantage
 
+## 🔐 Authentication System
+
+The platform features a complete authentication system with role-based access:
+
+- **Patients**: Sign in with any email → Get personalized health content
+- **Doctors**: Sign in with `@1another.com` or `@1another.health` → Access Doctor Portal
+- **Automatic Profile Creation**: User profiles persisted to Convex on first login
+- **Doctor Auto-Setup**: Doctor profiles auto-created with HeyGen integration fields
+- **Persistent Data**: All user data (videos, health profiles, settings) linked to user
+
 ## 🏗️ Tech Stack
 
 - **Next.js 16** (App Router) - React framework
@@ -18,8 +28,8 @@ A mobile-first patient communication and education platform that puts **the doct
 - **TypeScript** - Type safety
 - **Tailwind CSS** - Styling
 - **Shadcn/UI** - Component library
-- **Convex** - Real-time database, feed algorithms, engagement tracking
-- **NextAuth.js** - Authentication
+- **Convex** - Real-time database, feed algorithms, engagement tracking, user profiles
+- **NextAuth.js v5** - Authentication with JWT sessions
 - **HeyGen API** - AI avatar video generation
 - **Lucide React** - Icons
 - **GitHub Actions** - CI/CD quality gate
@@ -75,8 +85,16 @@ A mobile-first patient communication and education platform that puts **the doct
 │   ├── chapters/          # Video library
 │   ├── send/              # Send content wizard
 │   └── settings/          # Doctor settings & preferences
+├── hooks/
+│   ├── useUserSync.ts     # Auto-sync users to Convex on login
+│   ├── useEngagement.ts   # Engagement tracking
+│   └── useOffline.ts      # Offline detection
 ├── convex/
-│   ├── schema.ts          # Convex database schema
+│   ├── schema.ts          # Convex database schema (users, doctors, videos, etc.)
+│   ├── users.ts           # User CRUD operations & profile sync
+│   ├── admin.ts           # Admin utilities (data reset)
+│   ├── doctorProfiles.ts  # Doctor profile management
+│   ├── preventiveCare.ts  # Preventive care profiles
 │   ├── feed.ts            # Feed logic & rate limiting
 │   ├── videoEngagement.ts # Video tracking
 │   └── chat.ts            # Chat & onboarding

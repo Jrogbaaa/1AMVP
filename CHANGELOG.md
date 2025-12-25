@@ -5,6 +5,27 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.37.1] - 2024-12-25
+
+### 🔧 Survey Card Alignment & Design Fixes
+
+**Feed Page - Improved Survey Card Layout:**
+- Fixed survey cards (Q&A and Reminder) to align properly with video scroll
+- Cards now use same snap alignment as videos (`scroll-snap-align: start`)
+- Eliminated overlap between survey cards and videos
+- Cards take full viewport height with content centered vertically
+- Simplified card layout with `max-w-md` for consistent width
+- Removed nested containers that caused sizing issues
+- Added doctor names to card headers ("Dr. X asks:" / "Dr. X recommends:")
+- Removed "Learn What Happens Next" button from Reminder cards
+- Cards appear every 4-5 videos instead of every 2-3
+
+**Doctor Profile Page:**
+- Removed followers count, kept only video count
+- Rating now displays with 5 gold stars (4.9★★★★★) instead of just number
+
+---
+
 ## [1.37.0] - 2024-12-25
 
 ### 🎨 Major UI/UX Overhaul & TikTok-Style Discovery

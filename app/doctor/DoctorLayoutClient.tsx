@@ -21,6 +21,8 @@ import {
   Sparkles,
   UserPlus,
   Loader2,
+  Stethoscope,
+  AlertTriangle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -82,12 +84,14 @@ export function DoctorLayoutClient({
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
-  // Redirect if not a doctor
-  useEffect(() => {
-    if (isSynced && user && user.role !== "doctor" && user.role !== "admin") {
-      router.push("/feed");
-    }
-  }, [isSynced, user, router]);
+  // Check if user has doctor access
+  const hasAccess = !isSynced || !user || user.role === "doctor" || user.role === "admin";
+  
+  // Handle re-login as doctor
+  const handleDoctorLogin = async () => {
+    await signOut({ redirect: false });
+    router.push("/auth?callbackUrl=/doctor");
+  };
 
   const handleToggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -118,6 +122,68 @@ export function DoctorLayoutClient({
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-8 h-8 animate-spin text-sky-600" />
           <p className="text-gray-600">Loading your profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show access denied screen for non-doctors
+  if (!hasAccess) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-100 flex items-center justify-center px-4">
+        <div className="w-full max-w-md">
+          <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
+            {/* Logo */}
+            <div className="flex justify-center mb-6">
+              <Image
+                src="/images/1another-logo.png?v=2"
+                alt="1Another"
+                width={160}
+                height={48}
+                className="h-10 w-auto"
+                unoptimized
+              />
+            </div>
+
+            {/* Warning Icon */}
+            <div className="mx-auto w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mb-4">
+              <AlertTriangle className="w-8 h-8 text-amber-600" />
+            </div>
+
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+              Doctor Portal Access Required
+            </h1>
+            <p className="text-gray-600 mb-2">
+              You&apos;re currently signed in as a patient.
+            </p>
+            <p className="text-sm text-gray-500 mb-6">
+              To access the Doctor Portal, please sign in with an <span className="font-semibold text-sky-600">@1another.com</span>, <span className="font-semibold text-sky-600">@1another.health</span>, or <span className="font-semibold text-sky-600">@1another.ai</span> email address.
+            </p>
+
+            {/* Current User Info */}
+            <div className="bg-gray-50 rounded-xl p-4 mb-6">
+              <p className="text-sm text-gray-500">Currently signed in as:</p>
+              <p className="font-medium text-gray-900">{user?.name || user?.email}</p>
+              <p className="text-sm text-gray-500">{user?.email}</p>
+            </div>
+
+            {/* Actions */}
+            <div className="space-y-3">
+              <button
+                onClick={handleDoctorLogin}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-sky-600 text-white rounded-xl font-semibold hover:bg-sky-700 transition-colors"
+              >
+                <Stethoscope className="w-5 h-5" />
+                Sign in to Doctor Portal
+              </button>
+              <Link
+                href="/feed"
+                className="w-full flex items-center justify-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-xl font-medium transition-colors"
+              >
+                Return to Patient Feed
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     );

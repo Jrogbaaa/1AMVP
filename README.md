@@ -16,7 +16,7 @@ A mobile-first patient communication and education platform that puts **the doct
 The platform features a complete authentication system with role-based access:
 
 - **Patients**: Sign in with any email → Get personalized health content
-- **Doctors**: Sign in with `@1another.com` or `@1another.health` → Access Doctor Portal
+- **Doctors**: Sign in with `@1another.com`, `@1another.health`, or `@1another.ai` → Access Doctor Portal
 - **Automatic Profile Creation**: User profiles persisted to Convex on first login
 - **Doctor Auto-Setup**: Doctor profiles auto-created with HeyGen integration fields
 - **Persistent Data**: All user data (videos, health profiles, settings) linked to user

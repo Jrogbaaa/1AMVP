@@ -1,6 +1,6 @@
 {
   "name": "1a-mvp",
-  "version": "1.37.2",
+  "version": "1.37.4",
   "description": "1Another MVP - Doctor-first patient communication and education platform",
   "private": true,
   "scripts": {

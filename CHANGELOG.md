@@ -5,6 +5,30 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.37.4] - 2024-12-27
+
+### 🏥 Doctor Portal Access Improvements
+
+**Added @1another.ai Domain Support:**
+- Added `@1another.ai` to the list of accepted doctor email domains
+- Doctor portal now accepts: `@1another.com`, `@1another.health`, `@1another.ai`
+
+**Improved Doctor Portal Access Denied UX:**
+- Instead of silently redirecting non-doctors to `/feed`, now shows a clear "Access Denied" screen
+- Shows which email domains are accepted for doctor access
+- Displays current user's account info
+- Provides "Sign in to Doctor Portal" button to re-authenticate
+- Includes "Return to Patient Feed" link
+
+**Files Modified:**
+- `auth.ts` - Added `1another.ai` to DOCTOR_EMAIL_DOMAINS
+- `app/doctor/DoctorLayoutClient.tsx` - Added access denied screen with helpful messaging
+- `README.md` - Updated doctor domain documentation
+- `CHANGELOG.md` - Updated doctor domain references
+- `AUTH_SETUP_NEXTAUTH.md` - Updated role documentation
+
+---
+
 ## [1.37.3] - 2024-12-25
 
 ### 🐛 Convex Production Deployment Fix & Error Boundary
@@ -219,7 +243,7 @@ This release implements a complete authentication system with persistent user pr
 
 **Role Detection Logic:**
 - **Admin**: Specific admin emails (e.g., `admin@1another.com`)
-- **Doctor**: Email domain `@1another.com` or `@1another.health`
+- **Doctor**: Email domain `@1another.com`, `@1another.health`, or `@1another.ai`
 - **Patient**: Everyone else (default role)
 
 **Technical Implementation:**
@@ -633,7 +657,7 @@ import { Badge } from "@/components/ui/badge"
 **Role-Based Access Control:**
 - Added user roles: `patient`, `doctor`, `admin`
 - Role determined by email domain:
-  - `@1another.com` or `@1another.health` → doctor
+  - `@1another.com`, `@1another.health`, or `@1another.ai` → doctor
   - Specific admin emails → admin
   - Everyone else → patient
 - Session now includes `role` property for authorization checks

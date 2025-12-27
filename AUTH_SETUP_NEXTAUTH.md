@@ -150,7 +150,7 @@ That's it! ✅
 | Role | Access | How to Get |
 |------|--------|------------|
 | `patient` | Feed, Discover, My Health | Default role (any email) |
-| `doctor` | Patient areas + Doctor Portal | Email @1another.com or @1another.health |
+| `doctor` | Patient areas + Doctor Portal | Email @1another.com, @1another.health, or @1another.ai |
 | `admin` | Everything | Specific admin emails (admin@1another.com) |
 
 ### Protected Routes

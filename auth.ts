@@ -5,7 +5,7 @@ import Credentials from "next-auth/providers/credentials";
 export type UserRole = "patient" | "doctor" | "admin";
 
 // Doctor email domains - users with these domains are treated as doctors
-const DOCTOR_EMAIL_DOMAINS = ["1another.com", "1another.health"];
+const DOCTOR_EMAIL_DOMAINS = ["1another.com", "1another.health", "1another.ai"];
 
 // Admin emails - specific emails that have admin access
 const ADMIN_EMAILS = ["admin@1another.com"];
@@ -56,7 +56,7 @@ const providers = [
           ? credentials.healthProvider
           : undefined;
         
-        // Determine role based on email
+        // Determine role based on email domain
         const role = determineRole(email);
         
         return {

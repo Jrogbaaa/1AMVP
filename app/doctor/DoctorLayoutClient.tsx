@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -11,7 +11,6 @@ import {
   Users,
   MessageSquare,
   Film,
-  Send,
   Settings,
   LogOut,
   Menu,
@@ -19,57 +18,90 @@ import {
   Bell,
   ChevronDown,
   Sparkles,
-  UserPlus,
   Loader2,
   Stethoscope,
   AlertTriangle,
+  Activity,
+  BookOpen,
+  User,
+  Wand2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface NavItem {
+  id: string;
   label: string;
   href: string;
   icon: React.ReactNode;
-  badge?: number;
+  hasNotification?: boolean;
+  notificationCount?: number;
+  isScrollTarget?: boolean; // If true, this is a scroll target on the dashboard
 }
 
+// Navigation items - dashboard sections use hash links for scroll-to behavior
 const NAV_ITEMS: NavItem[] = [
   {
-    label: "Onboarding",
-    href: "/doctor/onboarding",
-    icon: <UserPlus className="w-5 h-5" />,
-  },
-  {
-    label: "Send Content",
-    href: "/doctor/send",
-    icon: <Send className="w-5 h-5" />,
-  },
-  {
-    label: "Dashboard",
+    id: "dashboard",
+    label: "My Dashboard",
     href: "/doctor",
     icon: <LayoutDashboard className="w-5 h-5" />,
+    isScrollTarget: true,
   },
   {
-    label: "AI Studio",
-    href: "/doctor/create-chapters",
-    icon: <Sparkles className="w-5 h-5" />,
+    id: "activity",
+    label: "Patient Activity",
+    href: "/doctor#activity",
+    icon: <Activity className="w-5 h-5" />,
+    hasNotification: true,
+    notificationCount: 2,
+    isScrollTarget: true,
   },
   {
-    label: "Patients",
-    href: "/doctor/patients",
+    id: "patients",
+    label: "My Patients",
+    href: "/doctor#patients",
     icon: <Users className="w-5 h-5" />,
-    badge: 24,
+    hasNotification: true,
+    notificationCount: 3,
+    isScrollTarget: true,
   },
   {
-    label: "Messages",
-    href: "/doctor/messages",
-    icon: <MessageSquare className="w-5 h-5" />,
-    badge: 5,
-  },
-  {
-    label: "Video Library",
-    href: "/doctor/chapters",
+    id: "my-videos",
+    label: "My Videos",
+    href: "/doctor#my-videos",
     icon: <Film className="w-5 h-5" />,
+    isScrollTarget: true,
+  },
+  {
+    id: "browse",
+    label: "Browse 1A Videos",
+    href: "/doctor#browse",
+    icon: <BookOpen className="w-5 h-5" />,
+    isScrollTarget: true,
+  },
+  {
+    id: "train-ai",
+    label: "Train AI on Me",
+    href: "/doctor#train-ai",
+    icon: <Wand2 className="w-5 h-5" />,
+    isScrollTarget: true,
+  },
+  {
+    id: "profile",
+    label: "My Profile",
+    href: "/doctor#profile",
+    icon: <User className="w-5 h-5" />,
+    isScrollTarget: true,
+  },
+];
+
+// Secondary navigation items (separate pages)
+const SECONDARY_NAV_ITEMS: NavItem[] = [
+  {
+    id: "onboarding",
+    label: "Onboarding",
+    href: "/doctor/onboarding",
+    icon: <Sparkles className="w-5 h-5" />,
   },
 ];
 
@@ -83,10 +115,58 @@ export function DoctorLayoutClient({
   const { user, isSyncing, isSynced } = useUserSync();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("dashboard");
+
+  // Check if we're on the main dashboard page
+  const isOnDashboard = pathname === "/doctor";
 
   // Check if user has doctor access
   const hasAccess = !isSynced || !user || user.role === "doctor" || user.role === "admin";
-  
+
+  // Handle scroll spy for active section
+  useEffect(() => {
+    if (!isOnDashboard) return;
+
+    const handleScroll = () => {
+      const sections = NAV_ITEMS.filter(item => item.isScrollTarget).map(item => item.id);
+      const scrollPosition = window.scrollY + 150; // Offset for header
+
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const section = document.getElementById(sections[i]);
+        if (section && section.offsetTop <= scrollPosition) {
+          setActiveSection(sections[i]);
+          break;
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll(); // Initial check
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isOnDashboard]);
+
+  // Handle nav item click with smooth scroll
+  const handleNavClick = useCallback((e: React.MouseEvent, item: NavItem) => {
+    if (item.isScrollTarget && isOnDashboard) {
+      e.preventDefault();
+      const sectionId = item.id;
+      const element = document.getElementById(sectionId);
+      if (element) {
+        const offsetTop = element.offsetTop - 100; // Account for fixed header
+        window.scrollTo({
+          top: offsetTop,
+          behavior: "smooth",
+        });
+        setActiveSection(sectionId);
+      }
+    } else if (item.isScrollTarget && !isOnDashboard) {
+      // Navigate to dashboard first, then scroll will happen
+      router.push(item.href);
+    }
+    setIsSidebarOpen(false);
+  }, [isOnDashboard, router]);
+
   // Handle re-login as doctor
   const handleDoctorLogin = async () => {
     await signOut({ redirect: false });
@@ -113,6 +193,14 @@ export function DoctorLayoutClient({
     clinic: user?.doctorProfile?.clinicName || "1Another Health",
     avatarUrl: user?.doctorProfile?.avatarUrl || user?.avatarUrl || "/images/doctors/doctor-jack.jpg",
     email: user?.email || "",
+  };
+
+  // Check if nav item is active
+  const isNavItemActive = (item: NavItem) => {
+    if (item.isScrollTarget && isOnDashboard) {
+      return activeSection === item.id;
+    }
+    return pathname === item.href || pathname.startsWith(item.href + "/");
   };
 
   // Show loading state while syncing
@@ -237,28 +325,28 @@ export function DoctorLayoutClient({
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed top-0 left-0 z-50 h-full w-72 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0",
+          "fixed top-0 left-0 z-50 h-full w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0 flex flex-col",
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         {/* Sidebar Header */}
-        <div className="flex items-center justify-between h-20 px-6 border-b border-gray-100">
+        <div className="flex items-center justify-between h-16 px-4 border-b border-gray-100">
           <Link href="/doctor" className="flex flex-col items-center">
             <Image
               src="/images/1another-logo.png?v=2"
               alt="1Another"
-              width={140}
-              height={42}
-              className="h-10 w-auto"
+              width={120}
+              height={36}
+              className="h-8 w-auto"
               unoptimized
             />
-            <span className="text-[#00BCD4] font-semibold text-xs tracking-wide">
+            <span className="text-[#00BCD4] font-semibold text-[10px] tracking-wide">
               Intelligent Health
             </span>
           </Link>
           <button
             onClick={handleCloseSidebar}
-            className="lg:hidden p-2 text-gray-400 hover:text-gray-600"
+            className="lg:hidden p-1.5 text-gray-400 hover:text-gray-600"
             aria-label="Close sidebar"
           >
             <X className="w-5 h-5" />
@@ -266,92 +354,125 @@ export function DoctorLayoutClient({
         </div>
 
         {/* Doctor Info */}
-        <div className="p-4 border-b border-gray-100">
-          <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-sky-50 to-blue-50 rounded-xl">
-            <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-sky-200 bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center">
+        <div className="px-3 py-2 border-b border-gray-100">
+          <div className="flex items-center gap-2.5 p-2 bg-gradient-to-r from-sky-50 to-blue-50 rounded-lg">
+            <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-sky-200 bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center flex-shrink-0">
               {currentDoctor.avatarUrl && currentDoctor.avatarUrl !== "/images/doctors/doctor-jack.jpg" ? (
                 <Image
                   src={currentDoctor.avatarUrl}
                   alt={currentDoctor.name}
-                  width={48}
-                  height={48}
+                  width={40}
+                  height={40}
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <span className="text-white font-bold text-lg">
+                <span className="text-white font-bold text-sm">
                   {currentDoctor.fullName.charAt(0).toUpperCase()}
                 </span>
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-semibold text-gray-900 truncate">
+              <p className="font-semibold text-gray-900 truncate text-sm">
                 {currentDoctor.name}
               </p>
-              <p className="text-sm text-gray-500 truncate">
+              <p className="text-xs text-gray-500 truncate">
                 {currentDoctor.specialty}
               </p>
             </div>
           </div>
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+        {/* Main Navigation - Dashboard Sections */}
+        <nav className="flex-1 px-3 py-4 space-y-1">
+          <p className="px-3 py-2 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+            Dashboard
+          </p>
           {NAV_ITEMS.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive = isNavItemActive(item);
             return (
-              <Link
-                key={item.href}
+              <a
+                key={item.id}
                 href={item.href}
-                onClick={handleCloseSidebar}
+                onClick={(e) => handleNavClick(e, item)}
                 className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-xl transition-all",
+                  "flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-all cursor-pointer",
                   isActive
                     ? "bg-sky-600 text-white shadow-md shadow-sky-200"
                     : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                 )}
               >
-                {item.icon}
+                <div className="relative flex-shrink-0">
+                  {item.icon}
+                  {item.hasNotification && !isActive && (
+                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />
+                  )}
+                </div>
                 <span className="font-medium">{item.label}</span>
-                {item.badge && (
+                {item.notificationCount && item.notificationCount > 0 && (
                   <span
                     className={cn(
-                      "ml-auto px-2 py-0.5 text-xs font-bold rounded-full",
+                      "ml-auto px-1.5 py-0.5 text-xs font-bold rounded-full",
                       isActive
                         ? "bg-white/20 text-white"
-                        : "bg-sky-100 text-sky-700"
+                        : "bg-red-100 text-red-700"
                     )}
                   >
-                    {item.badge}
+                    {item.notificationCount}
                   </span>
                 )}
-              </Link>
+              </a>
             );
           })}
-        </nav>
 
-        {/* Footer */}
-        <div className="p-4 border-t border-gray-100">
-          <Link
-            href="/doctor/settings"
-            className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-xl transition-colors"
-          >
-            <Settings className="w-5 h-5" />
-            <span className="font-medium">Settings</span>
-          </Link>
-          <button
-            onClick={handleSignOut}
-            className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-xl transition-colors w-full"
-          >
-            <LogOut className="w-5 h-5" />
-            <span className="font-medium">Sign Out</span>
-          </button>
-        </div>
+          {/* Secondary Navigation */}
+          <div className="pt-3 mt-3 border-t border-gray-100">
+            <p className="px-3 py-2 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+              Other
+            </p>
+            {SECONDARY_NAV_ITEMS.map((item) => {
+              const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+              return (
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  onClick={handleCloseSidebar}
+                  className={cn(
+                    "flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-all",
+                    isActive
+                      ? "bg-sky-600 text-white shadow-md shadow-sky-200"
+                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                  )}
+                >
+                  <div className="relative flex-shrink-0">
+                    {item.icon}
+                    {item.hasNotification && !isActive && (
+                      <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />
+                    )}
+                  </div>
+                  <span className="font-medium">{item.label}</span>
+                  {item.notificationCount && item.notificationCount > 0 && (
+                    <span
+                      className={cn(
+                        "ml-auto px-1.5 py-0.5 text-xs font-bold rounded-full",
+                        isActive
+                          ? "bg-white/20 text-white"
+                          : "bg-red-100 text-red-700"
+                      )}
+                    >
+                      {item.notificationCount}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
       </aside>
 
       {/* Main Content */}
-      <main className="lg:ml-72 min-h-screen pt-16 lg:pt-0">
+      <main className="lg:ml-64 min-h-screen pt-16 lg:pt-0">
         {/* Desktop Header */}
-        <header className="hidden lg:flex items-center justify-between h-16 px-8 bg-white border-b border-gray-200">
+        <header className="hidden lg:flex items-center justify-between h-16 px-8 bg-white border-b border-gray-200 sticky top-0 z-40">
           <div>
             <h1 className="text-lg font-semibold text-gray-900">
               Doctor Portal

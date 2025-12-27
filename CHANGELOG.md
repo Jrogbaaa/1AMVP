@@ -5,6 +5,29 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.37.5] - 2024-12-27
+
+### 🎨 Doctor Dashboard Sidebar UI Improvements
+
+**Sidebar Layout Optimization:**
+- Made sidebar non-scrollable (all items now fit without scrolling)
+- Reduced sidebar width from `w-72` (288px) to `w-64` (256px)
+- Removed Settings and Sign Out buttons from sidebar footer (already in top-right profile dropdown)
+- Increased spacing between nav items for better readability (`space-y-1`, `py-2.5`)
+- Maintained text size while reducing padding for compact layout
+- Updated main content margin to `lg:ml-64` to match new sidebar width
+
+**Navigation Refinements:**
+- Reordered nav items: "Train AI on Me" now appears before "My Profile"
+- Removed "Messages" nav element (integrated into Patient Activity)
+- Renamed "Latest Activity" to "Patient Activity"
+
+**Files Modified:**
+- `app/doctor/DoctorLayoutClient.tsx` - Sidebar layout and navigation updates
+- `app/doctor/page.tsx` - Section reordering and renaming
+
+---
+
 ## [1.37.4] - 2024-12-27
 
 ### 🏥 Doctor Portal Access Improvements

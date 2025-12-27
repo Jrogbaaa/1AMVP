@@ -19,6 +19,11 @@ import {
   Filter,
   BarChart3,
   Folder,
+  Bookmark,
+  BookmarkCheck,
+  Globe,
+  Wand2,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -378,6 +383,9 @@ export default function ChaptersPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [expandedChapters, setExpandedChapters] = useState<Set<string>>(new Set(["1"]));
+  const [savedVideos, setSavedVideos] = useState<Set<string>>(new Set(["v1-1", "v2-1"]));
+  const [publicVideos, setPublicVideos] = useState<Set<string>>(new Set(["v1-1"]));
+  const [activeVideoMenu, setActiveVideoMenu] = useState<string | null>(null);
 
   const filteredChapters = MOCK_CHAPTERS.filter((chapter) => {
     const matchesSearch =
@@ -397,6 +405,42 @@ export default function ChaptersPage() {
       }
       return newSet;
     });
+  };
+
+  const handleToggleSaved = (videoId: string) => {
+    setSavedVideos((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(videoId)) {
+        newSet.delete(videoId);
+        // Also remove from public if removing from saved
+        setPublicVideos((p) => {
+          const ps = new Set(p);
+          ps.delete(videoId);
+          return ps;
+        });
+      } else {
+        newSet.add(videoId);
+      }
+      return newSet;
+    });
+    setActiveVideoMenu(null);
+  };
+
+  const handleTogglePublic = (videoId: string) => {
+    // First ensure it's in saved
+    if (!savedVideos.has(videoId)) {
+      setSavedVideos((prev) => new Set(prev).add(videoId));
+    }
+    setPublicVideos((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(videoId)) {
+        newSet.delete(videoId);
+      } else {
+        newSet.add(videoId);
+      }
+      return newSet;
+    });
+    setActiveVideoMenu(null);
   };
 
   const totalVideos = MOCK_CHAPTERS.reduce((sum, ch) => sum + ch.videos.length, 0);
@@ -530,71 +574,176 @@ export default function ChaptersPage() {
               {/* Videos List */}
               {isExpanded && (
                 <div className="border-t border-gray-100 divide-y divide-gray-100">
-                  {chapter.videos.map((video) => (
-                    <div
-                      key={video.id}
-                      className="flex items-start gap-4 p-4 hover:bg-gray-50 transition-colors"
-                    >
-                      {/* Thumbnail */}
-                      <div className="relative w-32 sm:w-40 aspect-video rounded-lg overflow-hidden flex-shrink-0 bg-gray-200">
-                        <Image
-                          src={video.thumbnailUrl}
-                          alt={video.title}
-                          fill
-                          className="object-cover"
-                        />
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 hover:opacity-100 transition-opacity">
-                          <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
-                            <Play className="w-4 h-4 text-gray-800 ml-0.5" fill="currentColor" />
-                          </div>
-                        </div>
-                        <div className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-black/70 text-white text-xs rounded">
-                          {video.duration}
-                        </div>
-                      </div>
+                  {chapter.videos.map((video) => {
+                    const isSaved = savedVideos.has(video.id);
+                    const isPublic = publicVideos.has(video.id);
+                    const isMenuOpen = activeVideoMenu === video.id;
 
-                      {/* Video Info */}
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-gray-900">{video.title}</h4>
-                        <p className="text-sm text-gray-500 mt-1 line-clamp-2">
-                          {video.description}
-                        </p>
-                        <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
-                          <div className="flex items-center gap-1">
-                            <Eye className="w-4 h-4" />
-                            <span>{video.views} views</span>
+                    return (
+                      <div
+                        key={video.id}
+                        className="flex items-start gap-4 p-4 hover:bg-gray-50 transition-colors"
+                      >
+                        {/* Thumbnail */}
+                        <div className="relative w-32 sm:w-40 aspect-video rounded-lg overflow-hidden flex-shrink-0 bg-gray-200 group cursor-pointer">
+                          <Image
+                            src={video.thumbnailUrl}
+                            alt={video.title}
+                            fill
+                            className="object-cover"
+                          />
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+                              <Play className="w-4 h-4 text-gray-800 ml-0.5" fill="currentColor" />
+                            </div>
                           </div>
-                          <div className="flex items-center gap-1">
-                            <CheckCircle className="w-4 h-4" />
-                            <span>{video.completionRate}% completed</span>
+                          <div className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-black/70 text-white text-xs rounded">
+                            {video.duration}
+                          </div>
+                          {/* Badge indicators */}
+                          {isSaved && (
+                            <div className="absolute top-1 left-1 flex gap-1">
+                              <span className="px-1.5 py-0.5 bg-sky-500 text-white text-[10px] font-medium rounded">
+                                Saved
+                              </span>
+                              {isPublic && (
+                                <span className="px-1.5 py-0.5 bg-emerald-500 text-white text-[10px] font-medium rounded flex items-center gap-0.5">
+                                  <Globe className="w-2.5 h-2.5" />
+                                  Public
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Video Info */}
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-medium text-gray-900">{video.title}</h4>
+                          <p className="text-sm text-gray-500 mt-1 line-clamp-2">
+                            {video.description}
+                          </p>
+                          <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
+                            <div className="flex items-center gap-1">
+                              <Eye className="w-4 h-4" />
+                              <span>{video.views} views</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <CheckCircle className="w-4 h-4" />
+                              <span>{video.completionRate}% completed</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex items-center gap-1">
+                          {/* Quick Add/Remove Button */}
+                          <button
+                            onClick={() => handleToggleSaved(video.id)}
+                            className={cn(
+                              "p-2 rounded-lg transition-colors",
+                              isSaved
+                                ? "text-sky-600 bg-sky-50 hover:bg-sky-100"
+                                : "text-gray-400 hover:text-sky-600 hover:bg-sky-50"
+                            )}
+                            aria-label={isSaved ? "Remove from My Videos" : "Add to My Videos"}
+                            title={isSaved ? "Remove from My Videos" : "Add to My Videos"}
+                          >
+                            {isSaved ? (
+                              <BookmarkCheck className="w-4 h-4" />
+                            ) : (
+                              <Bookmark className="w-4 h-4" />
+                            )}
+                          </button>
+
+                          {/* Send Button */}
+                          <Link
+                            href={`/doctor/send?video=${video.id}`}
+                            className="p-2 text-gray-500 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors"
+                            aria-label="Send video"
+                            title="Send to Patient"
+                          >
+                            <Send className="w-4 h-4" />
+                          </Link>
+
+                          {/* More Options Menu */}
+                          <div className="relative">
+                            <button
+                              onClick={() => setActiveVideoMenu(isMenuOpen ? null : video.id)}
+                              className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                              aria-label="More options"
+                            >
+                              <MoreVertical className="w-4 h-4" />
+                            </button>
+
+                            {isMenuOpen && (
+                              <>
+                                <div
+                                  className="fixed inset-0 z-10"
+                                  onClick={() => setActiveVideoMenu(null)}
+                                />
+                                <div className="absolute right-0 top-full mt-1 w-56 bg-white rounded-xl shadow-lg border border-gray-100 z-20 py-1">
+                                  <button
+                                    onClick={() => handleToggleSaved(video.id)}
+                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                                  >
+                                    {isSaved ? (
+                                      <>
+                                        <BookmarkCheck className="w-4 h-4 text-sky-600" />
+                                        <span>Remove from My Videos</span>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Bookmark className="w-4 h-4" />
+                                        <span>Add to My Videos</span>
+                                      </>
+                                    )}
+                                  </button>
+                                  
+                                  <button
+                                    onClick={() => handleTogglePublic(video.id)}
+                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                                  >
+                                    <Globe className={cn("w-4 h-4", isPublic && "text-emerald-600")} />
+                                    <span>{isPublic ? "Remove from Public Profile" : "Add to Public Profile"}</span>
+                                  </button>
+
+                                  <div className="border-t border-gray-100 my-1" />
+                                  
+                                  <Link
+                                    href={`/doctor/send?video=${video.id}`}
+                                    onClick={() => setActiveVideoMenu(null)}
+                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                                  >
+                                    <Send className="w-4 h-4" />
+                                    <span>Send to Patient</span>
+                                  </Link>
+
+                                  <Link
+                                    href={`/doctor/create-chapters?clone=${video.id}`}
+                                    onClick={() => setActiveVideoMenu(null)}
+                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                                  >
+                                    <Wand2 className="w-4 h-4 text-violet-600" />
+                                    <span>AI Clone with My Avatar</span>
+                                  </Link>
+
+                                  <div className="border-t border-gray-100 my-1" />
+
+                                  <button
+                                    onClick={() => setActiveVideoMenu(null)}
+                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                                  >
+                                    <Edit className="w-4 h-4" />
+                                    <span>Edit Video</span>
+                                  </button>
+                                </div>
+                              </>
+                            )}
                           </div>
                         </div>
                       </div>
-
-                      {/* Actions */}
-                      <div className="flex items-center gap-2">
-                        <Link
-                          href={`/doctor/send?video=${video.id}`}
-                          className="p-2 text-gray-500 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors"
-                          aria-label="Send video"
-                        >
-                          <Send className="w-4 h-4" />
-                        </Link>
-                        <button
-                          className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-                          aria-label="Edit video"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </button>
-                        <button
-                          className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-                          aria-label="More options"
-                        >
-                          <MoreVertical className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
 
                   {/* Chapter Actions */}
                   <div className="p-4 bg-gray-50 flex items-center justify-between">

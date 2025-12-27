@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useUserSync } from "@/hooks/useUserSync";
@@ -15,7 +15,6 @@ import {
   CheckCircle,
   MessageSquare,
   ArrowRight,
-  Calendar,
   Activity,
   Sparkles,
   Video,
@@ -23,6 +22,20 @@ import {
   Wand2,
   UserCircle,
   Film,
+  Plus,
+  Heart,
+  Send,
+  BookOpen,
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Building2,
+  Search,
+  MoreVertical,
+  Bookmark,
+  BookmarkCheck,
+  Globe,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -71,7 +84,14 @@ const RECENT_PATIENTS = [
     videosWatched: 8,
     totalVideos: 10,
     status: "active",
+    hasNewActivity: true,
     avatarUrl: "https://images.unsplash.com/photo-1599566150163-29194dcabd36?w=100&h=100&fit=crop",
+    lastMessage: {
+      type: "from_patient" as const,
+      content: "Thank you for the follow-up video! I have a question about my medication...",
+      time: "2 min ago",
+      isUnread: true,
+    },
   },
   {
     id: "2",
@@ -81,7 +101,14 @@ const RECENT_PATIENTS = [
     videosWatched: 5,
     totalVideos: 10,
     status: "active",
+    hasNewActivity: true,
     avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
+    lastMessage: {
+      type: "to_patient" as const,
+      content: "Great progress on the videos! Let me know if you have any questions.",
+      time: "1 hour ago",
+      isUnread: false,
+    },
   },
   {
     id: "3",
@@ -91,7 +118,14 @@ const RECENT_PATIENTS = [
     videosWatched: 10,
     totalVideos: 10,
     status: "completed",
+    hasNewActivity: false,
     avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
+    lastMessage: {
+      type: "check_in" as const,
+      content: "Feeling good today 🙂",
+      time: "3 hours ago",
+      isUnread: false,
+    },
   },
   {
     id: "4",
@@ -101,7 +135,14 @@ const RECENT_PATIENTS = [
     videosWatched: 3,
     totalVideos: 10,
     status: "inactive",
+    hasNewActivity: false,
     avatarUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
+    lastMessage: {
+      type: "to_patient" as const,
+      content: "Hi Emily, just checking in - how are you feeling this week?",
+      time: "Yesterday",
+      isUnread: false,
+    },
   },
   {
     id: "5",
@@ -111,45 +152,113 @@ const RECENT_PATIENTS = [
     videosWatched: 7,
     totalVideos: 10,
     status: "active",
+    hasNewActivity: false,
     avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop",
+    lastMessage: {
+      type: "check_in" as const,
+      content: "Took all my medications ✅",
+      time: "2 days ago",
+      isUnread: false,
+    },
   },
 ];
 
-const RECENT_MESSAGES = [
+// Mock My Videos data
+const MY_VIDEOS = [
   {
-    id: "1",
-    patientName: "Dave Thompson",
-    message: "Thank you for the follow-up video, Dr. Ellis! I have a question about my medication schedule...",
-    time: "5 min ago",
-    unread: true,
-    avatarUrl: "https://images.unsplash.com/photo-1599566150163-29194dcabd36?w=100&h=100&fit=crop",
+    id: "mv-1",
+    title: "Welcome to Your Heart Health Journey",
+    description: "Introduction video for new patients",
+    thumbnailUrl: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400&h=225&fit=crop",
+    duration: "3:45",
+    views: 234,
+    isOnPublicProfile: true,
+    addedAt: "Dec 20, 2024",
   },
   {
-    id: "2",
-    patientName: "Sarah Mitchell",
-    message: "I watched the blood pressure video. Very informative! When should I start monitoring daily?",
-    time: "2 hours ago",
-    unread: true,
-    avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
+    id: "mv-2",
+    title: "Understanding Blood Pressure",
+    description: "What your numbers mean and how to improve them",
+    thumbnailUrl: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=400&h=225&fit=crop",
+    duration: "5:20",
+    views: 189,
+    isOnPublicProfile: true,
+    addedAt: "Dec 18, 2024",
   },
   {
-    id: "3",
-    patientName: "Michael Chen",
-    message: "All done with the recommended videos. Feeling much more informed about my condition.",
-    time: "Yesterday",
-    unread: false,
-    avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
+    id: "mv-3",
+    title: "Medication Guide",
+    description: "How to take your heart medications properly",
+    thumbnailUrl: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&h=225&fit=crop",
+    duration: "4:15",
+    views: 156,
+    isOnPublicProfile: false,
+    addedAt: "Dec 15, 2024",
   },
 ];
 
-const POPULAR_CHAPTERS = [
-  { id: "1", title: "Heart Health Basics", views: 456, completionRate: 85 },
-  { id: "2", title: "Blood Pressure Management", views: 389, completionRate: 78 },
-  { id: "3", title: "Diet & Nutrition", views: 312, completionRate: 72 },
+// Mock 1A Video Library
+const BROWSE_1A_VIDEOS = [
+  {
+    id: "1a-1",
+    title: "Heart Health Basics",
+    description: "Essential information about cardiovascular health",
+    thumbnailUrl: "https://images.unsplash.com/photo-1559757175-5700dde675bc?w=400&h=225&fit=crop",
+    duration: "4:32",
+    category: "Foundation",
+    isAdded: false,
+  },
+  {
+    id: "1a-2",
+    title: "Managing Stress for Heart Health",
+    description: "Evidence-based techniques for stress management",
+    thumbnailUrl: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&h=225&fit=crop",
+    duration: "5:30",
+    category: "Lifestyle",
+    isAdded: true,
+  },
+  {
+    id: "1a-3",
+    title: "Sodium and Your Heart",
+    description: "How sodium affects your cardiovascular system",
+    thumbnailUrl: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&h=225&fit=crop",
+    duration: "4:50",
+    category: "Nutrition",
+    isAdded: false,
+  },
+  {
+    id: "1a-4",
+    title: "Exercise After a Heart Event",
+    description: "Safe ways to return to physical activity",
+    thumbnailUrl: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&h=225&fit=crop",
+    duration: "6:45",
+    category: "Recovery",
+    isAdded: true,
+  },
+  {
+    id: "1a-5",
+    title: "Understanding Cholesterol Numbers",
+    description: "What your cholesterol test results mean",
+    thumbnailUrl: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=400&h=225&fit=crop",
+    duration: "4:15",
+    category: "Education",
+    isAdded: false,
+  },
+  {
+    id: "1a-6",
+    title: "Living with Atrial Fibrillation",
+    description: "Managing AFib in your daily life",
+    thumbnailUrl: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400&h=225&fit=crop",
+    duration: "7:20",
+    category: "Conditions",
+    isAdded: false,
+  },
 ];
 
 export default function DoctorDashboard() {
   const [timeFilter, setTimeFilter] = useState<"week" | "month" | "year">("week");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [addedVideos, setAddedVideos] = useState<Set<string>>(new Set(["1a-2", "1a-4"]));
   const { user } = useUserSync();
   
   // Get doctor's videos from Convex
@@ -171,6 +280,8 @@ export default function DoctorDashboard() {
     ? `Dr. ${user.name.split(" ").slice(-1)[0]}`
     : "Doctor";
 
+  const doctorFullName = user?.name || "Doctor";
+
   // Count videos by status
   const videoStats = {
     total: doctorVideos?.length || 0,
@@ -178,119 +289,145 @@ export default function DoctorDashboard() {
     generating: doctorVideos?.filter(v => v.status === "generating").length || 0,
   };
 
+  // Toggle add video to My Videos
+  const handleToggleVideo = (videoId: string) => {
+    setAddedVideos(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(videoId)) {
+        newSet.delete(videoId);
+      } else {
+        newSet.add(videoId);
+      }
+      return newSet;
+    });
+  };
+
+  // Filter 1A videos
+  const filtered1AVideos = BROWSE_1A_VIDEOS.filter(video =>
+    video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    video.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Notification counts
+  const newActivityCount = RECENT_PATIENTS.filter(p => p.hasNewActivity).length;
+
   return (
-    <div className="space-y-8">
-      {/* Welcome Section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            {getGreeting()}, {doctorName} 👋
-          </h1>
-          <p className="text-gray-500 mt-1">
-            Here&apos;s what&apos;s happening with your patients today
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="flex bg-gray-100 rounded-lg p-1">
-            {(["week", "month", "year"] as const).map((filter) => (
-              <button
-                key={filter}
-                onClick={() => setTimeFilter(filter)}
-                className={cn(
-                  "px-4 py-2 text-sm font-medium rounded-md transition-all",
-                  timeFilter === filter
-                    ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-600 hover:text-gray-900"
-                )}
-              >
-                {filter.charAt(0).toUpperCase() + filter.slice(1)}
-              </button>
-            ))}
+    <div className="space-y-12 pb-12">
+      {/* ========== SECTION: Dashboard Header ========== */}
+      <section id="dashboard" className="scroll-mt-20">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">
+              {getGreeting()}, {doctorName} 👋
+            </h1>
+            <p className="text-gray-500 mt-1">
+              Here&apos;s what&apos;s happening with your patients today
+            </p>
           </div>
-          <Link
-            href="/doctor/send"
-            className="px-4 py-2 bg-sky-600 text-white font-medium rounded-lg hover:bg-sky-700 transition-colors"
-          >
-            Send Content
-          </Link>
+          <div className="flex items-center gap-3">
+            <div className="flex bg-gray-100 rounded-lg p-1">
+              {(["week", "month", "year"] as const).map((filter) => (
+                <button
+                  key={filter}
+                  onClick={() => setTimeFilter(filter)}
+                  className={cn(
+                    "px-4 py-2 text-sm font-medium rounded-md transition-all",
+                    timeFilter === filter
+                      ? "bg-white text-gray-900 shadow-sm"
+                      : "text-gray-600 hover:text-gray-900"
+                  )}
+                >
+                  {filter.charAt(0).toUpperCase() + filter.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {DASHBOARD_STATS.map((stat, index) => (
-          <div
-            key={index}
-            className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
-          >
-            <div className="flex items-start justify-between">
-              <div
-                className={cn(
-                  "p-3 rounded-xl text-white",
-                  stat.color
-                )}
-              >
-                {stat.icon}
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+          {DASHBOARD_STATS.map((stat, index) => (
+            <div
+              key={index}
+              className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+            >
+              <div className="flex items-start justify-between">
+                <div
+                  className={cn(
+                    "p-3 rounded-xl text-white",
+                    stat.color
+                  )}
+                >
+                  {stat.icon}
+                </div>
+                <span
+                  className={cn(
+                    "text-sm font-medium px-2 py-1 rounded-full",
+                    stat.trend === "up"
+                      ? "text-emerald-700 bg-emerald-50"
+                      : "text-red-700 bg-red-50"
+                  )}
+                >
+                  {stat.change}
+                </span>
               </div>
-              <span
-                className={cn(
-                  "text-sm font-medium px-2 py-1 rounded-full",
-                  stat.trend === "up"
-                    ? "text-emerald-700 bg-emerald-50"
-                    : "text-red-700 bg-red-50"
-                )}
-              >
-                {stat.change}
-              </span>
+              <div className="mt-4">
+                <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
+                <p className="text-sm text-gray-500 mt-1">{stat.label}</p>
+              </div>
             </div>
-            <div className="mt-4">
-              <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
-              <p className="text-sm text-gray-500 mt-1">{stat.label}</p>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      </section>
 
-      {/* Main Content - Stacked Vertically */}
-      <div className="space-y-6">
-        {/* Recent Patients */}
+      {/* ========== SECTION: Patient Activity ========== */}
+      <section id="activity" className="scroll-mt-20">
         <div className="bg-white rounded-xl shadow-sm border border-gray-100">
           <div className="flex items-center justify-between p-6 border-b border-gray-100">
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900">
-                Recent Patient Activity
-              </h2>
-              <p className="text-sm text-gray-500">Video engagement tracking</p>
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <Activity className="w-6 h-6 text-sky-600" />
+                {newActivityCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center">
+                    {newActivityCount}
+                  </span>
+                )}
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Patient Activity
+                </h2>
+                <p className="text-sm text-gray-500">Recent engagement and messages</p>
+              </div>
             </div>
-            <Link
-              href="/doctor/patients"
-              className="flex items-center gap-1 text-sm font-medium text-sky-600 hover:text-sky-700"
-            >
-              View All
-              <ArrowRight className="w-4 h-4" />
-            </Link>
           </div>
 
           <div className="divide-y divide-gray-100">
             {RECENT_PATIENTS.map((patient) => (
-              <div
+              <Link
                 key={patient.id}
-                className="p-4 hover:bg-gray-50 transition-colors"
+                href={`/doctor/patients/${patient.id}`}
+                className="p-4 hover:bg-gray-50 transition-colors block"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-100 flex-shrink-0 bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center">
-                    {patient.avatarUrl ? (
-                      <Image
-                        src={patient.avatarUrl}
-                        alt={patient.name}
-                        width={40}
-                        height={40}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <span className="text-white font-bold text-sm">
-                        {patient.name.split(' ').map(n => n[0]).join('')}
-                      </span>
+                  <div className="relative">
+                    <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-gray-100 flex-shrink-0 bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center">
+                      {patient.avatarUrl ? (
+                        <Image
+                          src={patient.avatarUrl}
+                          alt={patient.name}
+                          width={48}
+                          height={48}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-white font-bold text-sm">
+                          {patient.name.split(' ').map(n => n[0]).join('')}
+                        </span>
+                      )}
+                    </div>
+                    {patient.hasNewActivity && (
+                      <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-red-500 rounded-full border-2 border-white" />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -317,9 +454,9 @@ export default function DoctorDashboard() {
                     </div>
                     <p className="text-sm text-gray-500">{patient.lastActivity}</p>
                   </div>
-                  <div className="text-right">
+                  <div className="text-right hidden sm:block">
                     <div className="flex items-center gap-2">
-                      <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
                         <div
                           className={cn(
                             "h-full rounded-full transition-all",
@@ -332,27 +469,84 @@ export default function DoctorDashboard() {
                           }}
                         />
                       </div>
-                      <span className="text-sm font-medium text-gray-600 whitespace-nowrap">
+                      <span className="text-xs font-medium text-gray-500 whitespace-nowrap">
                         {patient.videosWatched}/{patient.totalVideos}
                       </span>
                     </div>
-                    <p className="text-xs text-gray-400 mt-1">Videos watched</p>
                   </div>
+                  <ArrowRight className="w-5 h-5 text-gray-400 flex-shrink-0" />
                 </div>
-              </div>
+                {/* Last Message */}
+                {patient.lastMessage && (
+                  <div className="mt-3 ml-16 flex items-start gap-2">
+                    <div className={cn(
+                      "flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center",
+                      patient.lastMessage.type === "from_patient" 
+                        ? "bg-sky-100" 
+                        : patient.lastMessage.type === "check_in"
+                        ? "bg-purple-100"
+                        : "bg-gray-100"
+                    )}>
+                      <MessageSquare className={cn(
+                        "w-3 h-3",
+                        patient.lastMessage.type === "from_patient" 
+                          ? "text-sky-600" 
+                          : patient.lastMessage.type === "check_in"
+                          ? "text-purple-600"
+                          : "text-gray-500"
+                      )} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className={cn(
+                          "text-xs font-medium",
+                          patient.lastMessage.type === "from_patient" 
+                            ? "text-sky-600" 
+                            : patient.lastMessage.type === "check_in"
+                            ? "text-purple-600"
+                            : "text-gray-500"
+                        )}>
+                          {patient.lastMessage.type === "from_patient" 
+                            ? "From patient" 
+                            : patient.lastMessage.type === "check_in"
+                            ? "Check-in response"
+                            : "You sent"}
+                        </span>
+                        <span className="text-xs text-gray-400">{patient.lastMessage.time}</span>
+                        {patient.lastMessage.isUnread && (
+                          <span className="w-2 h-2 bg-red-500 rounded-full" />
+                        )}
+                      </div>
+                      <p className={cn(
+                        "text-sm line-clamp-1 mt-0.5",
+                        patient.lastMessage.isUnread ? "text-gray-900 font-medium" : "text-gray-600"
+                      )}>
+                        {patient.lastMessage.content}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </Link>
             ))}
           </div>
         </div>
+      </section>
 
-        {/* Recent Messages */}
+      {/* ========== SECTION: My Patients ========== */}
+      <section id="patients" className="scroll-mt-20">
         <div className="bg-white rounded-xl shadow-sm border border-gray-100">
           <div className="flex items-center justify-between p-6 border-b border-gray-100">
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900">Messages</h2>
-              <p className="text-sm text-gray-500">Patient inquiries</p>
+            <div className="flex items-center gap-3">
+              <Users className="w-6 h-6 text-emerald-600" />
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">
+                  My Patients
+                </h2>
+                <p className="text-sm text-gray-500">{RECENT_PATIENTS.length} patients in your care</p>
+              </div>
             </div>
             <Link
-              href="/doctor/messages"
+              href="/doctor/patients"
               className="flex items-center gap-1 text-sm font-medium text-sky-600 hover:text-sky-700"
             >
               View All
@@ -360,337 +554,479 @@ export default function DoctorDashboard() {
             </Link>
           </div>
 
-          <div className="divide-y divide-gray-100">
-            {RECENT_MESSAGES.map((message) => (
-              <Link
-                key={message.id}
-                href={`/doctor/messages?patient=${message.id}`}
-                className="block p-4 hover:bg-gray-50 transition-colors"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="relative flex-shrink-0">
-                    <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center">
-                      {message.avatarUrl ? (
-                        <Image
-                          src={message.avatarUrl}
-                          alt={message.patientName}
-                          width={40}
-                          height={40}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span className="text-white font-bold text-sm">
-                          {message.patientName.split(' ').map(n => n[0]).join('')}
-                        </span>
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {RECENT_PATIENTS.slice(0, 6).map((patient) => (
+                <Link
+                  key={patient.id}
+                  href={`/doctor/patients/${patient.id}`}
+                  className="p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="relative">
+                      <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-white bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center">
+                        {patient.avatarUrl ? (
+                          <Image
+                            src={patient.avatarUrl}
+                            alt={patient.name}
+                            width={48}
+                            height={48}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-white font-bold">
+                            {patient.name.split(' ').map(n => n[0]).join('')}
+                          </span>
+                        )}
+                      </div>
+                      {patient.hasNewActivity && (
+                        <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-red-500 rounded-full border-2 border-white" />
                       )}
                     </div>
-                    {message.unread && (
-                      <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-sky-500 rounded-full border-2 border-white" />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-2">
-                      <p
-                        className={cn(
-                          "text-sm truncate",
-                          message.unread
-                            ? "font-semibold text-gray-900"
-                            : "font-medium text-gray-700"
-                        )}
-                      >
-                        {message.patientName}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-gray-900 truncate group-hover:text-sky-600 transition-colors">
+                        {patient.name}
                       </p>
-                      <span className="text-xs text-gray-400 whitespace-nowrap">
-                        {message.time}
+                      <p className="text-sm text-gray-500 truncate">{patient.email}</p>
+                    </div>
+                  </div>
+                  <div className="mt-3 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                        <div
+                          className={cn(
+                            "h-full rounded-full",
+                            patient.videosWatched === patient.totalVideos
+                              ? "bg-emerald-500"
+                              : "bg-sky-500"
+                          )}
+                          style={{
+                            width: `${(patient.videosWatched / patient.totalVideos) * 100}%`,
+                          }}
+                        />
+                      </div>
+                      <span className="text-xs text-gray-500">
+                        {patient.videosWatched}/{patient.totalVideos}
                       </span>
                     </div>
-                    <p
+                    <span
                       className={cn(
-                        "text-sm mt-1 line-clamp-2",
-                        message.unread ? "text-gray-700" : "text-gray-500"
+                        "px-2 py-0.5 text-xs font-medium rounded-full",
+                        patient.status === "completed"
+                          ? "bg-emerald-100 text-emerald-700"
+                          : patient.status === "active"
+                          ? "bg-sky-100 text-sky-700"
+                          : "bg-gray-200 text-gray-600"
                       )}
                     >
-                      {message.message}
+                      {patient.status}
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========== SECTION: My Videos ========== */}
+      <section id="my-videos" className="scroll-mt-20">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+          <div className="flex items-center justify-between p-6 border-b border-gray-100">
+            <div className="flex items-center gap-3">
+              <Film className="w-6 h-6 text-violet-600" />
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">
+                  My Videos
+                </h2>
+                <p className="text-sm text-gray-500">Videos you&apos;ve added to your library</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-6">
+            {MY_VIDEOS.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {MY_VIDEOS.map((video) => (
+                  <div
+                    key={video.id}
+                    className="bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow group"
+                  >
+                    <div className="relative aspect-video bg-gray-200">
+                      <Image
+                        src={video.thumbnailUrl}
+                        alt={video.title}
+                        fill
+                        className="object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                      <div className="absolute bottom-2 right-2 px-2 py-1 bg-black/70 text-white text-xs rounded">
+                        {video.duration}
+                      </div>
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/30">
+                        <button className="p-3 bg-white rounded-full shadow-lg hover:scale-110 transition-transform">
+                          <Play className="w-6 h-6 text-gray-800 ml-0.5" fill="currentColor" />
+                        </button>
+                      </div>
+                      {video.isOnPublicProfile && (
+                        <div className="absolute top-2 left-2 px-2 py-1 bg-emerald-500 text-white text-xs rounded-full flex items-center gap-1">
+                          <Globe className="w-3 h-3" />
+                          Public
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-gray-900 line-clamp-1">{video.title}</h3>
+                      <p className="text-sm text-gray-500 line-clamp-1 mt-1">{video.description}</p>
+                      <div className="flex items-center justify-between mt-3">
+                        <div className="flex items-center gap-1 text-xs text-gray-500">
+                          <Eye className="w-3.5 h-3.5" />
+                          {video.views} views
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <button
+                            className="p-1.5 text-gray-500 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors"
+                            aria-label="Send video"
+                          >
+                            <Send className="w-4 h-4" />
+                          </button>
+                          <button
+                            className="p-1.5 text-gray-500 hover:text-violet-600 hover:bg-violet-50 rounded-lg transition-colors"
+                            aria-label="More options"
+                          >
+                            <MoreVertical className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <Film className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">No videos yet</h3>
+                <p className="text-gray-500 mb-4">
+                  Browse the 1A video library below and add videos to your collection.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* ========== SECTION: Browse 1A Videos ========== */}
+      <section id="browse" className="scroll-mt-20">
+        <div className="bg-gradient-to-br from-sky-50 via-blue-50 to-indigo-50 rounded-2xl border border-sky-200">
+          <div className="flex items-center justify-between p-6 border-b border-sky-200">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-br from-sky-500 to-blue-600 rounded-xl">
+                <BookOpen className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Browse 1A Video Library
+                </h2>
+                <p className="text-sm text-gray-600">Add videos to your collection</p>
+              </div>
+            </div>
+            <div className="relative w-64">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search videos..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-4 py-2 border border-sky-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all bg-white/80"
+              />
+            </div>
+          </div>
+
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filtered1AVideos.map((video) => {
+                const isAdded = addedVideos.has(video.id);
+                return (
+                  <div
+                    key={video.id}
+                    className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                  >
+                    <div className="relative aspect-video bg-gray-200">
+                      <Image
+                        src={video.thumbnailUrl}
+                        alt={video.title}
+                        fill
+                        className="object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                      <div className="absolute bottom-2 right-2 px-2 py-1 bg-black/70 text-white text-xs rounded">
+                        {video.duration}
+                      </div>
+                      <div className="absolute top-2 left-2 px-2 py-1 bg-white/90 text-gray-700 text-xs rounded-full font-medium">
+                        {video.category}
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-gray-900 line-clamp-1">{video.title}</h3>
+                      <p className="text-sm text-gray-500 line-clamp-2 mt-1">{video.description}</p>
+                      <div className="flex items-center gap-2 mt-4">
+                        <button
+                          onClick={() => handleToggleVideo(video.id)}
+                          className={cn(
+                            "flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg font-medium text-sm transition-all",
+                            isAdded
+                              ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
+                              : "bg-sky-600 text-white hover:bg-sky-700"
+                          )}
+                        >
+                          {isAdded ? (
+                            <>
+                              <BookmarkCheck className="w-4 h-4" />
+                              Added
+                            </>
+                          ) : (
+                            <>
+                              <Plus className="w-4 h-4" />
+                              Add to My Videos
+                            </>
+                          )}
+                        </button>
+                        <button
+                          className="p-2 text-gray-500 hover:text-violet-600 hover:bg-violet-50 rounded-lg transition-colors"
+                          aria-label="AI Clone"
+                          title="Make my version with AI"
+                        >
+                          <Wand2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========== SECTION: Train AI on Me ========== */}
+      <section id="train-ai" className="scroll-mt-20">
+        <div className="bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 rounded-2xl border border-violet-200">
+          <div className="flex items-center justify-between p-6 border-b border-violet-200">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl">
+                <Wand2 className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Train AI on Me
+                </h2>
+                <p className="text-sm text-gray-600">Create your AI avatar for personalized videos</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Train AI Avatar Card */}
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-violet-100 hover:shadow-md transition-all group">
+                <div className="flex items-start gap-4">
+                  <div className="p-3 bg-gradient-to-br from-pink-500 to-rose-600 rounded-xl text-white group-hover:scale-110 transition-transform">
+                    <UserCircle className="w-8 h-8" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                      Train AI on Your Likeness
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-4">
+                      Create a realistic AI avatar that looks and sounds like you. Upload a short video sample to get started.
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <a
+                        href="https://www.heygen.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-rose-600 text-white font-medium rounded-lg hover:from-pink-600 hover:to-rose-700 transition-all"
+                      >
+                        <Wand2 className="w-4 h-4" />
+                        Train with HeyGen
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    </div>
+                    <p className="text-xs text-gray-400 mt-3">
+                      Powered by HeyGen AI video generation
                     </p>
                   </div>
                 </div>
-              </Link>
-            ))}
-          </div>
+              </div>
 
-          <div className="p-4 border-t border-gray-100">
+              {/* Create Videos Card */}
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-violet-100 hover:shadow-md transition-all group">
+                <div className="flex items-start gap-4">
+                  <div className="p-3 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl text-white group-hover:scale-110 transition-transform">
+                    <Film className="w-8 h-8" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                      Create AI Videos
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-4">
+                      Once trained, clone any video from the 1A library with your own avatar. Your face, your voice.
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <Link
+                        href="/doctor/create-chapters"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-violet-500 to-purple-600 text-white font-medium rounded-lg hover:from-violet-600 hover:to-purple-700 transition-all"
+                      >
+                        <Video className="w-4 h-4" />
+                        Create My Videos
+                      </Link>
+                    </div>
+                    <p className="text-xs text-gray-400 mt-3">
+                      10 template chapters available for personalization
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* How it Works */}
+            <div className="mt-6 pt-6 border-t border-violet-200">
+              <h4 className="text-sm font-semibold text-gray-700 mb-4">How it works:</h4>
+              <div className="grid md:grid-cols-3 gap-4">
+                <div className="flex items-start gap-3">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 text-violet-700 font-bold text-sm flex-shrink-0">
+                    1
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900 text-sm">Train Your Avatar</p>
+                    <p className="text-xs text-gray-500">Upload a video to HeyGen to create your AI twin</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 text-violet-700 font-bold text-sm flex-shrink-0">
+                    2
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900 text-sm">Clone Videos</p>
+                    <p className="text-xs text-gray-500">Select videos from the 1A library to personalize</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 text-violet-700 font-bold text-sm flex-shrink-0">
+                    3
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900 text-sm">Send to Patients</p>
+                    <p className="text-xs text-gray-500">Your personalized videos are ready to share</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========== SECTION: My Profile ========== */}
+      <section id="profile" className="scroll-mt-20">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+          <div className="flex items-center justify-between p-6 border-b border-gray-100">
+            <div className="flex items-center gap-3">
+              <User className="w-6 h-6 text-pink-600" />
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">
+                  My Profile
+                </h2>
+                <p className="text-sm text-gray-500">Your public doctor profile</p>
+              </div>
+            </div>
             <Link
-              href="/doctor/messages"
-              className="flex items-center justify-center gap-2 w-full py-2 text-sm font-medium text-sky-600 hover:text-sky-700 hover:bg-sky-50 rounded-lg transition-colors"
+              href="/doctor/settings"
+              className="text-sm font-medium text-sky-600 hover:text-sky-700"
             >
-              <MessageSquare className="w-4 h-4" />
-              View All Messages
+              Edit Profile
             </Link>
           </div>
-        </div>
-      </div>
 
-      {/* Popular Chapters */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
-          <div>
-            <h2 className="text-lg font-semibold text-gray-900">
-              Popular Chapters
-            </h2>
-            <p className="text-sm text-gray-500">Most viewed content this {timeFilter}</p>
-          </div>
-          <Link
-            href="/doctor/chapters"
-            className="flex items-center gap-1 text-sm font-medium text-sky-600 hover:text-sky-700"
-          >
-            Manage Library
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-
-        <div className="divide-y divide-gray-100">
-          {POPULAR_CHAPTERS.map((chapter, index) => (
-            <Link
-              key={chapter.id}
-              href={`/doctor/chapters#${chapter.id}`}
-              className="p-6 hover:bg-gray-50 transition-colors group block"
-            >
-              <div className="flex items-start gap-4">
-                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-sky-100 text-sky-600 font-bold text-lg group-hover:bg-sky-600 group-hover:text-white transition-colors flex-shrink-0">
-                  {index + 1}
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-medium text-gray-900 group-hover:text-sky-600 transition-colors">
-                    {chapter.title}
-                  </h3>
-                  <div className="flex items-center gap-4 mt-2">
-                    <div className="flex items-center gap-1 text-sm text-gray-500">
-                      <Eye className="w-4 h-4" />
-                      <span>{chapter.views} views</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-sm text-gray-500">
-                      <Activity className="w-4 h-4" />
-                      <span>{chapter.completionRate}% completed</span>
+          <div className="p-6">
+            <div className="flex flex-col md:flex-row gap-6">
+              {/* Profile Info */}
+              <div className="flex-1">
+                <div className="flex items-start gap-4">
+                  <div className="w-20 h-20 rounded-full overflow-hidden ring-4 ring-gray-100 bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center flex-shrink-0">
+                    {user?.avatarUrl ? (
+                      <Image
+                        src={user.avatarUrl}
+                        alt={doctorFullName}
+                        width={80}
+                        height={80}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-white font-bold text-2xl">
+                        {doctorFullName.charAt(0).toUpperCase()}
+                      </span>
+                    )}
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900">{doctorName}</h3>
+                    <p className="text-gray-600">{user?.doctorProfile?.specialty || "Healthcare Provider"}</p>
+                    <p className="text-sm text-gray-500 mt-1">{user?.doctorProfile?.clinicName || "1Another Health"}</p>
+                    
+                    <div className="flex items-center gap-4 mt-3 text-sm text-gray-500">
+                      {user?.email && (
+                        <div className="flex items-center gap-1">
+                          <Mail className="w-4 h-4" />
+                          {user.email}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
 
-      {/* AI Studio Section */}
-      <div className="bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 rounded-2xl border border-violet-200 overflow-hidden">
-        <div className="p-6 border-b border-violet-200">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl">
-              <Sparkles className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-gray-900">AI Studio</h2>
-              <p className="text-sm text-gray-600">Create personalized videos with your AI avatar</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="p-6">
-          <div className="space-y-6">
-            {/* Train AI Avatar Card */}
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-violet-100 hover:shadow-md transition-all group">
-              <div className="flex items-start gap-4">
-                <div className="p-3 bg-gradient-to-br from-pink-500 to-rose-600 rounded-xl text-white group-hover:scale-110 transition-transform">
-                  <UserCircle className="w-8 h-8" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                    Train AI on Your Likeness
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-4">
-                    Create a realistic AI avatar that looks and sounds like you. Upload a short video sample to get started.
-                  </p>
-                  <div className="flex items-center gap-3">
-                    <a
-                      href="https://www.heygen.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label="Train with HeyGen (opens in new tab)"
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-rose-600 text-white font-medium rounded-lg hover:from-pink-600 hover:to-rose-700 transition-all"
-                    >
-                      <Wand2 className="w-4 h-4" />
-                      Train with HeyGen
-                      <ExternalLink className="w-3 h-3" />
-                    </a>
+                {/* Public Profile Stats */}
+                <div className="grid grid-cols-3 gap-4 mt-6 p-4 bg-gray-50 rounded-xl">
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-gray-900">{MY_VIDEOS.filter(v => v.isOnPublicProfile).length}</p>
+                    <p className="text-sm text-gray-500">Public Videos</p>
                   </div>
-                  <p className="text-xs text-gray-400 mt-3">
-                    Powered by HeyGen AI video generation
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Create Personalized Chapters Card */}
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-violet-100 hover:shadow-md transition-all group">
-              <div className="flex items-start gap-4">
-                <div className="p-3 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl text-white group-hover:scale-110 transition-transform">
-                  <Film className="w-8 h-8" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                    Create Your Chapter Videos
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-4">
-                    Take our pre-made educational videos and personalize them with your AI avatar. Your face, your voice, your patients.
-                  </p>
-                  <div className="flex items-center gap-3">
-                    <Link
-                      href="/doctor/create-chapters"
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-violet-500 to-purple-600 text-white font-medium rounded-lg hover:from-violet-600 hover:to-purple-700 transition-all"
-                    >
-                      <Video className="w-4 h-4" />
-                      Create My Chapters
-                    </Link>
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-gray-900">{RECENT_PATIENTS.length}</p>
+                    <p className="text-sm text-gray-500">Patients</p>
                   </div>
-                  <p className="text-xs text-gray-400 mt-3">
-                    10 template chapters available for personalization
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Discover Videos from Other Doctors */}
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-violet-100 hover:shadow-md transition-all group">
-              <div className="flex items-start gap-4">
-                <div className="p-3 bg-gradient-to-br from-sky-500 to-blue-600 rounded-xl text-white group-hover:scale-110 transition-transform">
-                  <Sparkles className="w-8 h-8" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                    Discover & Clone Videos
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-4">
-                    Browse videos from other doctors and clone them with your own avatar. One click to make their content yours.
-                  </p>
-                  <div className="flex items-center gap-3">
-                    <Link
-                      href="/doctor/discover-videos"
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-sky-500 to-blue-600 text-white font-medium rounded-lg hover:from-sky-600 hover:to-blue-700 transition-all"
-                    >
-                      <Sparkles className="w-4 h-4" />
-                      Discover Videos
-                    </Link>
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-gray-900">4.9</p>
+                    <p className="text-sm text-gray-500">Rating</p>
                   </div>
-                  <p className="text-xs text-gray-400 mt-3">
-                    6 public videos available from other doctors
-                  </p>
                 </div>
               </div>
-            </div>
-          </div>
 
-          {/* How it Works */}
-          <div className="mt-6 pt-6 border-t border-violet-200">
-            <h4 className="text-sm font-semibold text-gray-700 mb-4">How it works:</h4>
-            <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 text-violet-700 font-bold text-sm flex-shrink-0">
-                  1
-                </div>
-                <div>
-                  <p className="font-medium text-gray-900 text-sm">Train Your Avatar</p>
-                  <p className="text-xs text-gray-500">Upload a video to HeyGen to create your AI twin</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 text-violet-700 font-bold text-sm flex-shrink-0">
-                  2
-                </div>
-                <div>
-                  <p className="font-medium text-gray-900 text-sm">Select Templates</p>
-                  <p className="text-xs text-gray-500">Choose from our pre-made educational chapters</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 text-violet-700 font-bold text-sm flex-shrink-0">
-                  3
-                </div>
-                <div>
-                  <p className="font-medium text-gray-900 text-sm">Send to Patients</p>
-                  <p className="text-xs text-gray-500">Your personalized videos are ready to share</p>
+              {/* Public Videos Preview */}
+              <div className="flex-1">
+                <h4 className="font-semibold text-gray-900 mb-3">Videos on Public Profile</h4>
+                <div className="space-y-3">
+                  {MY_VIDEOS.filter(v => v.isOnPublicProfile).slice(0, 3).map((video) => (
+                    <div key={video.id} className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
+                      <div className="relative w-16 h-10 rounded overflow-hidden flex-shrink-0">
+                        <Image
+                          src={video.thumbnailUrl}
+                          alt={video.title}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 truncate">{video.title}</p>
+                        <p className="text-xs text-gray-500">{video.views} views</p>
+                      </div>
+                      <Globe className="w-4 h-4 text-emerald-500" />
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Quick Actions */}
-      <div className="space-y-4">
-        <Link
-          href="/doctor/content"
-          className="flex items-center gap-4 p-4 bg-gradient-to-br from-pink-500 to-rose-600 text-white rounded-xl hover:shadow-lg transition-shadow"
-        >
-          <div className="p-3 bg-white/20 rounded-xl">
-            <Sparkles className="w-6 h-6" />
-          </div>
-          <div>
-            <p className="font-semibold">Create Content</p>
-            <p className="text-sm text-pink-100">AI scripts & videos</p>
-          </div>
-        </Link>
-
-        <Link
-          href="/doctor/send"
-          className="flex items-center gap-4 p-4 bg-gradient-to-br from-sky-500 to-blue-600 text-white rounded-xl hover:shadow-lg transition-shadow"
-        >
-          <div className="p-3 bg-white/20 rounded-xl">
-            <Play className="w-6 h-6" />
-          </div>
-          <div>
-            <p className="font-semibold">Send Videos</p>
-            <p className="text-sm text-sky-100">To patients</p>
-          </div>
-        </Link>
-
-        <Link
-          href="/doctor/patients"
-          className="flex items-center gap-4 p-4 bg-gradient-to-br from-emerald-500 to-green-600 text-white rounded-xl hover:shadow-lg transition-shadow"
-        >
-          <div className="p-3 bg-white/20 rounded-xl">
-            <Users className="w-6 h-6" />
-          </div>
-          <div>
-            <p className="font-semibold">Manage Patients</p>
-            <p className="text-sm text-emerald-100">View all</p>
-          </div>
-        </Link>
-
-        <Link
-          href="/doctor/chapters"
-          className="flex items-center gap-4 p-4 bg-gradient-to-br from-violet-500 to-purple-600 text-white rounded-xl hover:shadow-lg transition-shadow"
-        >
-          <div className="p-3 bg-white/20 rounded-xl">
-            <Calendar className="w-6 h-6" />
-          </div>
-          <div>
-            <p className="font-semibold">Video Library</p>
-            <p className="text-sm text-violet-100">10 chapters</p>
-          </div>
-        </Link>
-
-        <Link
-          href="/doctor/messages"
-          className="flex items-center gap-4 p-4 bg-gradient-to-br from-amber-500 to-orange-600 text-white rounded-xl hover:shadow-lg transition-shadow"
-        >
-          <div className="p-3 bg-white/20 rounded-xl">
-            <MessageSquare className="w-6 h-6" />
-          </div>
-          <div>
-            <p className="font-semibold">Messages</p>
-            <p className="text-sm text-amber-100">5 unread</p>
-          </div>
-        </Link>
-      </div>
+      </section>
     </div>
   );
 }

@@ -21,6 +21,12 @@ import {
   TrendingUp,
   Users,
   X,
+  Plus,
+  Bookmark,
+  BookmarkCheck,
+  Send,
+  MoreVertical,
+  Globe,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -164,6 +170,8 @@ export default function DiscoverVideosPage() {
   const [cloneError, setCloneError] = useState<string | null>(null);
   const [clonedVideos, setClonedVideos] = useState<Set<string>>(new Set());
   const [showScriptModal, setShowScriptModal] = useState<string | null>(null);
+  const [savedVideos, setSavedVideos] = useState<Set<string>>(new Set(["dv-2", "dv-4"]));
+  const [activeVideoMenu, setActiveVideoMenu] = useState<string | null>(null);
 
   // Filter and sort videos
   const filteredVideos = MOCK_DOCTOR_VIDEOS
@@ -187,6 +195,20 @@ export default function DiscoverVideosPage() {
           return 0;
       }
     });
+
+  // Toggle video in saved list
+  const handleToggleSaved = (videoId: string) => {
+    setSavedVideos((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(videoId)) {
+        newSet.delete(videoId);
+      } else {
+        newSet.add(videoId);
+      }
+      return newSet;
+    });
+    setActiveVideoMenu(null);
+  };
 
   // Clone a video (generate with current doctor's avatar)
   const handleCloneVideo = useCallback(async (video: DoctorVideo) => {
@@ -453,43 +475,120 @@ export default function DiscoverVideosPage() {
 
               {/* Actions */}
               <div className="flex gap-2">
+                {/* Primary Action: Add to My Videos */}
                 <button
-                  onClick={() => setShowScriptModal(video.id)}
-                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-                >
-                  <Eye className="w-4 h-4" />
-                  View Script
-                </button>
-                <button
-                  onClick={() => handleCloneVideo(video)}
-                  disabled={cloningVideoId === video.id || !isAvatarTrained || clonedVideos.has(video.id)}
+                  onClick={() => handleToggleSaved(video.id)}
                   className={cn(
                     "flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition-all",
-                    clonedVideos.has(video.id)
-                      ? "bg-emerald-100 text-emerald-700"
-                      : cloningVideoId === video.id
-                      ? "bg-violet-100 text-violet-700"
-                      : "bg-violet-600 text-white hover:bg-violet-700",
-                    (!isAvatarTrained && !clonedVideos.has(video.id)) && "opacity-50 cursor-not-allowed"
+                    savedVideos.has(video.id)
+                      ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
+                      : "bg-sky-600 text-white hover:bg-sky-700"
                   )}
                 >
-                  {cloningVideoId === video.id ? (
+                  {savedVideos.has(video.id) ? (
                     <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Cloning...
-                    </>
-                  ) : clonedVideos.has(video.id) ? (
-                    <>
-                      <CheckCircle className="w-4 h-4" />
-                      Cloned
+                      <BookmarkCheck className="w-4 h-4" />
+                      Added
                     </>
                   ) : (
                     <>
-                      <Wand2 className="w-4 h-4" />
-                      Make My Version
+                      <Plus className="w-4 h-4" />
+                      Add to My Videos
                     </>
                   )}
                 </button>
+
+                {/* More Options Menu */}
+                <div className="relative">
+                  <button
+                    onClick={() => setActiveVideoMenu(activeVideoMenu === video.id ? null : video.id)}
+                    className="flex items-center justify-center p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                    aria-label="More options"
+                  >
+                    <MoreVertical className="w-4 h-4" />
+                  </button>
+
+                  {activeVideoMenu === video.id && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-10"
+                        onClick={() => setActiveVideoMenu(null)}
+                      />
+                      <div className="absolute right-0 bottom-full mb-1 w-52 bg-white rounded-xl shadow-lg border border-gray-100 z-20 py-1">
+                        <button
+                          onClick={() => {
+                            setShowScriptModal(video.id);
+                            setActiveVideoMenu(null);
+                          }}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                        >
+                          <Eye className="w-4 h-4" />
+                          <span>View Script</span>
+                        </button>
+                        
+                        <button
+                          onClick={() => handleToggleSaved(video.id)}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                        >
+                          {savedVideos.has(video.id) ? (
+                            <>
+                              <BookmarkCheck className="w-4 h-4 text-emerald-600" />
+                              <span>Remove from My Videos</span>
+                            </>
+                          ) : (
+                            <>
+                              <Bookmark className="w-4 h-4" />
+                              <span>Add to My Videos</span>
+                            </>
+                          )}
+                        </button>
+
+                        <div className="border-t border-gray-100 my-1" />
+
+                        <button
+                          onClick={() => {
+                            handleCloneVideo(video);
+                            setActiveVideoMenu(null);
+                          }}
+                          disabled={cloningVideoId === video.id || !isAvatarTrained || clonedVideos.has(video.id)}
+                          className={cn(
+                            "w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm hover:bg-gray-50 transition-colors",
+                            clonedVideos.has(video.id)
+                              ? "text-emerald-700"
+                              : "text-gray-700",
+                            (!isAvatarTrained && !clonedVideos.has(video.id)) && "opacity-50 cursor-not-allowed"
+                          )}
+                        >
+                          {cloningVideoId === video.id ? (
+                            <>
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                              <span>Cloning...</span>
+                            </>
+                          ) : clonedVideos.has(video.id) ? (
+                            <>
+                              <CheckCircle className="w-4 h-4" />
+                              <span>Already Cloned</span>
+                            </>
+                          ) : (
+                            <>
+                              <Wand2 className="w-4 h-4 text-violet-600" />
+                              <span>AI Clone with My Avatar</span>
+                            </>
+                          )}
+                        </button>
+
+                        <Link
+                          href={`/doctor/send?video=${video.id}`}
+                          onClick={() => setActiveVideoMenu(null)}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                        >
+                          <Send className="w-4 h-4" />
+                          <span>Send to Patient</span>
+                        </Link>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -545,27 +644,25 @@ export default function DiscoverVideosPage() {
               </button>
               <button
                 onClick={() => {
-                  handleCloneVideo(selectedVideoForScript);
+                  handleToggleSaved(selectedVideoForScript.id);
                   setShowScriptModal(null);
                 }}
-                disabled={!isAvatarTrained || clonedVideos.has(selectedVideoForScript.id)}
                 className={cn(
-                  "px-4 py-2 text-sm font-medium rounded-lg transition-colors",
-                  clonedVideos.has(selectedVideoForScript.id)
-                    ? "bg-emerald-100 text-emerald-700"
-                    : "bg-violet-600 text-white hover:bg-violet-700",
-                  !isAvatarTrained && "opacity-50 cursor-not-allowed"
+                  "px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-1.5",
+                  savedVideos.has(selectedVideoForScript.id)
+                    ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
+                    : "bg-sky-600 text-white hover:bg-sky-700"
                 )}
               >
-                {clonedVideos.has(selectedVideoForScript.id) ? (
+                {savedVideos.has(selectedVideoForScript.id) ? (
                   <>
-                    <CheckCircle className="w-4 h-4 inline mr-1.5" />
-                    Already Cloned
+                    <BookmarkCheck className="w-4 h-4" />
+                    Added to My Videos
                   </>
                 ) : (
                   <>
-                    <Wand2 className="w-4 h-4 inline mr-1.5" />
-                    Clone This Video
+                    <Plus className="w-4 h-4" />
+                    Add to My Videos
                   </>
                 )}
               </button>

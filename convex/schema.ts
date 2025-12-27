@@ -28,6 +28,10 @@ export default defineSchema({
     specialty: v.optional(v.string()),
     clinicName: v.optional(v.string()),
     avatarUrl: v.optional(v.string()),
+    // Health system group (Kaiser, United, etc.)
+    healthSystemGroup: v.optional(v.string()),
+    // Onboarding status
+    onboardingCompleted: v.optional(v.boolean()),
     // HeyGen integration fields
     heygenAvatarId: v.optional(v.string()),
     heygenVoiceId: v.optional(v.string()),
@@ -41,7 +45,8 @@ export default defineSchema({
     updatedAt: v.number(),
   })
     .index("by_doctor", ["doctorId"])
-    .index("by_email", ["email"]),
+    .index("by_email", ["email"])
+    .index("by_health_system", ["healthSystemGroup"]),
 
   // Video templates (pre-made scripts doctors can clone)
   videoTemplates: defineTable({
@@ -237,5 +242,70 @@ export default defineSchema({
     updatedAt: v.number(),
   })
     .index("by_user", ["userId"]),
+
+  // Doctor message templates (consistent messages to send)
+  doctorMessageTemplates: defineTable({
+    doctorId: v.string(),
+    title: v.string(), // e.g., "Post-visit follow-up"
+    content: v.string(),
+    usageCount: v.number(), // Track how often used
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_doctor", ["doctorId"]),
+
+  // Doctor-to-patient messages (one-way text messages from doctor)
+  // Note: Patients can ONLY respond via check-in surveys, not free text
+  doctorMessages: defineTable({
+    doctorId: v.string(),
+    patientId: v.string(),
+    content: v.string(),
+    templateId: v.optional(v.id("doctorMessageTemplates")), // If sent from template
+    timestamp: v.number(),
+    readAt: v.optional(v.number()),
+  })
+    .index("by_doctor", ["doctorId"])
+    .index("by_patient", ["patientId"])
+    .index("by_doctor_patient", ["doctorId", "patientId"])
+    .index("by_timestamp", ["timestamp"]),
+
+  // Doctor's saved videos (My Videos)
+  doctorSavedVideos: defineTable({
+    doctorId: v.string(),
+    videoId: v.string(), // Can reference videoTemplates or generatedVideos
+    videoType: v.union(v.literal("template"), v.literal("generated")), // Source type
+    isOnPublicProfile: v.boolean(), // Show on doctor's public profile
+    addedAt: v.number(),
+  })
+    .index("by_doctor", ["doctorId"])
+    .index("by_video", ["videoId"])
+    .index("by_doctor_video", ["doctorId", "videoId"])
+    .index("by_public_profile", ["doctorId", "isOnPublicProfile"]),
+
+  // Videos sent to patients
+  videosSentToPatients: defineTable({
+    doctorId: v.string(),
+    patientId: v.string(),
+    videoId: v.string(),
+    videoType: v.union(v.literal("template"), v.literal("generated")),
+    sentAt: v.number(),
+    viewedAt: v.optional(v.number()),
+  })
+    .index("by_doctor", ["doctorId"])
+    .index("by_patient", ["patientId"])
+    .index("by_doctor_patient", ["doctorId", "patientId"])
+    .index("by_video", ["videoId"]),
+
+  // Patient check-in responses (for tracking survey answers)
+  patientCheckInResponses: defineTable({
+    doctorId: v.string(),
+    patientId: v.string(),
+    questionId: v.string(), // Reference to check-in question
+    answerId: v.string(), // Selected option
+    timestamp: v.number(),
+  })
+    .index("by_doctor", ["doctorId"])
+    .index("by_patient", ["patientId"])
+    .index("by_doctor_patient", ["doctorId", "patientId"]),
 });
 

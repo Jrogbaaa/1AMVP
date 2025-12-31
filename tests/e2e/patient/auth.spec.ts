@@ -46,8 +46,9 @@ test.describe("Authentication Flows", () => {
   test("should display benefits list on auth prompt", async ({ page }) => {
     await page.goto("/my-health");
 
-    // Benefits should be listed - look for any benefit text
-    await expect(page.getByText(/Track|Save|Schedule|personalized/i).first()).toBeVisible();
+    // Benefits should be listed - look for visible benefit text in the main content area
+    // The my-health page shows "What you'll get:" with benefits listed
+    await expect(page.getByText(/What you'll get/i)).toBeVisible();
   });
 });
 
@@ -141,9 +142,10 @@ test.describe("Protected Routes", () => {
   }) => {
     await page.goto("/my-health");
 
-    // Should show sign in button for unauthenticated users
+    // Should show the main sign in button for unauthenticated users
+    // Use exact match for "Sign In to Continue" to avoid matching multiple buttons
     await expect(
-      page.getByRole("button", { name: /Sign In/i })
+      page.getByRole("button", { name: "Sign In to Continue" })
     ).toBeVisible();
   });
 

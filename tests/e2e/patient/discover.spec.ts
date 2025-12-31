@@ -89,13 +89,10 @@ test.describe("Discover Page", () => {
   });
 
   test("should display insurance logos", async ({ page }) => {
-    // Desktop only - insurance logos
-    const kaisorLogo = page.locator('img[alt*="Kaiser"]');
-    const isDesktop = await page.viewportSize();
-
-    if (isDesktop && isDesktop.width > 768) {
-      await expect(kaisorLogo).toBeVisible();
-    }
+    // Insurance info is displayed as text labels under doctor profiles, not as logos
+    // Check for insurance provider text instead
+    const insurerText = page.getByText(/Kaiser|UnitedHealthcare|Aetna|Cigna|Blue Cross/i).first();
+    await expect(insurerText).toBeVisible();
   });
 
   test("should have functional message button", async ({ page }) => {

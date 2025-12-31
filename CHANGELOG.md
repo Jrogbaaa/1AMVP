@@ -45,6 +45,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed position shift when transitioning from MessagesDrawer to ChatOnboarding
 - Consistent `items-end` positioning for both modals
 
+### 🎨 New SVG Logo Component
+
+**Dynamic Logo System (`components/Logo.tsx`):**
+- Created reusable SVG logo component using exact brand SVG paths
+- Supports 4 variants: `icon`, `full`, `wordmark`, `withTagline`
+- Gradient "1A" with green (#66b36c) → teal (#0ba999) → cyan (#3ac1e1)
+- Cyan "nother" text and "Intelligent Health" tagline
+- Fully scalable vector - no pixelation at any size
+- Uses `useId()` hook for stable gradient IDs (SSR-compatible)
+
+**Logo Usage Examples:**
+```tsx
+<Logo variant="icon" />         // Just "1A" gradient icon (watermarks)
+<Logo variant="full" />         // "1Another" wordmark
+<Logo variant="withTagline" />  // Full logo with "Intelligent Health"
+```
+
+**Files Updated to Use SVG Logo:**
+- `components/VideoCard.tsx` - Icon watermark on videos
+- `components/QACard.tsx` - Icon watermark on Q&A cards
+- `components/SignInForm.tsx` - Full wordmark
+- `components/OnboardingForm.tsx` - Full wordmark
+- `app/feed/page.tsx` - Sidebar logo with tagline
+- `app/discover/page.tsx` - Sidebar & mobile header
+- `app/my-health/page.tsx` - Sidebar & mobile header
+- `app/my-health/AuthenticatedDashboard.tsx` - Sidebar & mobile header
+- `app/doctor/DoctorLayoutClient.tsx` - Multiple locations
+
+**Benefits:**
+- Vector SVG scales perfectly without pixelation
+- No external image file requests needed
+- Consistent branding across all pages
+- Dynamic styling via className prop
+- Unique gradient IDs prevent conflicts with multiple logos
+
 ### 🐛 Bug Fixes
 
 **Hydration Mismatch Fix (`Logo.tsx`):**

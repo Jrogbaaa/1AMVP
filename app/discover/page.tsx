@@ -13,6 +13,7 @@ import { VerticalVideoPreview } from "@/components/VerticalVideoPreview";
 import { useEngagement } from "@/hooks/useEngagement";
 import Image from "next/image";
 import Link from "next/link";
+import { Logo } from "@/components/Logo";
 import type { Doctor, Video } from "@/lib/types";
 
 // Extended doctor type with insurer info
@@ -351,18 +352,7 @@ export default function DiscoverPage() {
         {/* Logo */}
         <div className="p-6 border-b border-gray-100">
           <Link href="/feed" className="flex flex-col items-center justify-center">
-            <Image
-              src="/images/1another-logo.png?v=2"
-              alt="1Another"
-              width={280}
-              height={80}
-              className="h-12 w-auto"
-              priority
-              unoptimized
-            />
-            <span className="text-[#00BCD4] font-semibold text-sm tracking-wide">
-              Intelligent Health
-            </span>
+            <Logo variant="withTagline" className="h-16 w-auto" />
           </Link>
         </div>
 
@@ -474,18 +464,7 @@ export default function DiscoverPage() {
           <div className="flex items-center justify-between py-2">
             {/* Left: Logo */}
             <Link href="/feed" className="flex flex-col items-center">
-              <Image
-                src="/images/1another-logo.png?v=2"
-                alt="1Another"
-                width={140}
-                height={40}
-                className="h-8 w-auto"
-                priority
-                unoptimized
-              />
-              <span className="text-[#00BCD4] font-semibold text-[10px] tracking-wide">
-                Intelligent Health
-              </span>
+              <Logo variant="withTagline" className="h-12 w-auto" />
             </Link>
 
             {/* Right: Sign In on mobile */}

@@ -143,7 +143,7 @@ export const ChatOnboarding = ({
   return (
     <>
       <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm animate-fade-in">
-      <div className="w-full max-w-md h-[80vh] bg-white rounded-t-3xl shadow-2xl flex flex-col animate-slide-up">
+      <div className="w-full sm:max-w-md h-[80vh] bg-white rounded-t-3xl shadow-2xl flex flex-col animate-slide-up">
         {/* Header */}
         <div className="border-b border-gray-200">
           <div className="flex items-center justify-between p-4">

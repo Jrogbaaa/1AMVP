@@ -5,6 +5,52 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.39.0] - 2024-12-31
+
+### 🎨 Patient Side UI Overhaul
+
+**Sidebar Navigation Consistency:**
+- Added Feed page sidebar to Discover and My Health pages (desktop)
+- Replaced top navigation header with sidebar on desktop views
+- Mobile header retained for tablet/mobile screens
+- Sidebar includes navigation links, doctor list, and user section
+
+**Discover Page Improvements:**
+- Removed secondary cardiology topics filter (cleaner filtering UX)
+- Fixed empty space appearing after filter selection
+- Increased doctor profile circles from `w-14` to `w-16` on mobile
+- Reduced search bar size on mobile (shorter placeholder, smaller padding)
+
+**Preventive Care Checklist Enhancements:**
+- Increased font sizes: header `text-xl`, screening names `text-base`, reasons `text-sm`
+- Improved spacing: `p-5` padding, `space-y-4` between items
+- Changed "Best places near you" background from blue to white with border
+- Replaced zip code display with place count ("3 places")
+- Added "See more" button for locations when more than 2 exist
+
+**Onboarding Progress Indicator:**
+- Changed from percentage to step count format ("Step 1 of 12")
+- Dynamic calculation accounting for conditional pregnancy screen
+
+**Reminders Consistency:**
+- Added "0/4 done" counter to Annual Reminders section
+- Added "X/2 done" counter to Weekly Reminders section
+- Fixed Daily Reminders counter to only count daily items
+
+**My Health Page Mobile:**
+- Removed white card wrapper around "Your info is secure" text on mobile
+- User profile details now hidden by default, shown only when Edit clicked
+
+**Messages Window Fix:**
+- Fixed position shift when transitioning from MessagesDrawer to ChatOnboarding
+- Consistent `items-end` positioning for both modals
+
+### 🐛 Bug Fixes
+
+**Hydration Mismatch Fix (`Logo.tsx`):**
+- Replaced `Math.random()` with React's `useId()` hook for gradient IDs
+- Fixes hydration error where server/client gradient IDs didn't match
+
 ## [1.38.0] - 2024-12-31
 
 ### 🎨 Comprehensive Doctor Portal UI Overhaul

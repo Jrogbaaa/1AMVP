@@ -368,11 +368,16 @@ const ScreeningCard = ({
   onSchedule?: (screeningId: string, locationId?: string) => void;
 }) => {
   const [showLocations, setShowLocations] = useState(false);
+  const [showAllLocations, setShowAllLocations] = useState(false);
   
   const nearbyLocations = useMemo(
     () => getNearbyHealthCenters(zipCode, screening.id, insurancePlan),
     [zipCode, screening.id, insurancePlan]
   );
+  
+  // Show only first 2 locations unless "See more" is clicked
+  const displayedLocations = showAllLocations ? nearbyLocations : nearbyLocations.slice(0, 2);
+  const hasMoreLocations = nearbyLocations.length > 2;
 
   const statusStyles: Record<ScreeningStatus, string> = {
     due_now: "border-l-red-500 bg-red-50/50",
@@ -427,20 +432,20 @@ const ScreeningCard = ({
           <div className="mt-4">
             <button
               onClick={() => setShowLocations(!showLocations)}
-              className="w-full flex items-center justify-between px-3 py-2 bg-sky-50 hover:bg-sky-100 rounded-lg transition-colors group"
+              className="w-full flex items-center justify-between px-3 py-2 bg-white hover:bg-gray-50 rounded-lg transition-colors group border border-gray-200"
             >
               <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-sky-600" />
-                <span className="text-sm font-medium text-sky-700">
+                <MapPin className="w-4 h-4 text-gray-600" />
+                <span className="text-sm font-medium text-gray-700">
                   Best places near you
                 </span>
-                {zipCode && (
-                  <span className="text-xs text-sky-500">({zipCode})</span>
-                )}
+                <span className="text-xs text-gray-500">
+                  ({nearbyLocations.length} {nearbyLocations.length === 1 ? "place" : "places"})
+                </span>
               </div>
               <ChevronDown 
                 className={cn(
-                  "w-4 h-4 text-sky-600 transition-transform",
+                  "w-4 h-4 text-gray-600 transition-transform",
                   showLocations && "rotate-180"
                 )} 
               />
@@ -448,7 +453,7 @@ const ScreeningCard = ({
             
             {showLocations && (
               <div className="mt-2 space-y-2">
-                {nearbyLocations.map((location) => (
+                {displayedLocations.map((location) => (
                   <div
                     key={location.id}
                     className="flex items-center justify-between gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100"
@@ -485,6 +490,20 @@ const ScreeningCard = ({
                     </button>
                   </div>
                 ))}
+                
+                {/* See more / See less button */}
+                {hasMoreLocations && (
+                  <button
+                    onClick={() => setShowAllLocations(!showAllLocations)}
+                    className="w-full py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors flex items-center justify-center gap-1"
+                  >
+                    {showAllLocations ? (
+                      <>Show fewer</>
+                    ) : (
+                      <>See {nearbyLocations.length - 2} more</>
+                    )}
+                  </button>
+                )}
               </div>
             )}
           </div>

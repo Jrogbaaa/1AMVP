@@ -25,6 +25,7 @@ import {
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import Image from "next/image";
 import Link from "next/link";
+import { Logo } from "@/components/Logo";
 import type { Doctor, User as UserType } from "@/lib/types";
 import type { PreventiveCareProfile } from "@/lib/preventive-care-logic";
 import type { Session } from "next-auth";
@@ -96,6 +97,7 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
   const [isScheduleOpen, setIsScheduleOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
+  const [isProfileExpanded, setIsProfileExpanded] = useState(false);
 
   // Get user ID safely - ensure it's a valid string
   const userId = session?.user?.id && typeof session.user.id === "string" ? session.user.id : null;
@@ -184,18 +186,7 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
         {/* Logo */}
         <div className="p-6 border-b border-gray-100">
           <Link href="/feed" className="flex flex-col items-center justify-center">
-            <Image
-              src="/images/1another-logo.png?v=2"
-              alt="1Another"
-              width={280}
-              height={80}
-              className="h-12 w-auto"
-              priority
-              unoptimized
-            />
-            <span className="text-[#00BCD4] font-semibold text-sm tracking-wide">
-              Intelligent Health
-            </span>
+            <Logo variant="withTagline" className="h-16 w-auto" />
           </Link>
         </div>
 
@@ -289,18 +280,7 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
           <div className="flex items-center justify-between py-2">
             {/* Left: Logo */}
             <Link href="/feed" className="flex flex-col items-center">
-              <Image
-                src="/images/1another-logo.png?v=2"
-                alt="1Another"
-                width={140}
-                height={40}
-                className="h-8 w-auto"
-                priority
-                unoptimized
-              />
-              <span className="text-[#00BCD4] font-semibold text-[10px] tracking-wide">
-                Intelligent Health
-              </span>
+              <Logo variant="withTagline" className="h-12 w-auto" />
             </Link>
 
             {/* Right: User Menu on mobile */}
@@ -783,7 +763,7 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
 
         {/* Account Information Section - Below */}
         <div className="card max-w-3xl mx-auto">
-          <div className="flex items-start justify-between mb-6">
+          <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center">
                 <span className="text-white text-2xl font-bold">
@@ -797,52 +777,59 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
                 <p className="text-gray-500">Patient Profile</p>
               </div>
             </div>
-            <button className="btn-ghost">
+            <button 
+              onClick={() => setIsProfileExpanded(!isProfileExpanded)}
+              className={`btn-ghost ${isProfileExpanded ? 'bg-gray-100' : ''}`}
+            >
               <Settings className="w-5 h-5 mr-2 inline" />
-              Edit
+              {isProfileExpanded ? 'Close' : 'Edit'}
             </button>
           </div>
 
-          {/* User details */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex items-center gap-3 text-gray-700 p-3 bg-gray-50 rounded-lg">
-              <Mail className="w-5 h-5 text-gray-400" />
-              <div>
-                <p className="text-xs text-gray-500 font-medium">Email</p>
-                <span>{currentUser.email}</span>
-              </div>
-            </div>
-            {currentUser.phone && (
-              <div className="flex items-center gap-3 text-gray-700 p-3 bg-gray-50 rounded-lg">
-                <Phone className="w-5 h-5 text-gray-400" />
-                <div>
-                  <p className="text-xs text-gray-500 font-medium">Phone</p>
-                  <span>{currentUser.phone}</span>
+          {/* User details - Only shown when Edit is clicked */}
+          {isProfileExpanded && (
+            <div className="animate-in fade-in slide-in-from-top-2 duration-200">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div className="flex items-center gap-3 text-gray-700 p-3 bg-gray-50 rounded-lg">
+                  <Mail className="w-5 h-5 text-gray-400" />
+                  <div>
+                    <p className="text-xs text-gray-500 font-medium">Email</p>
+                    <span>{currentUser.email}</span>
+                  </div>
+                </div>
+                {currentUser.phone && (
+                  <div className="flex items-center gap-3 text-gray-700 p-3 bg-gray-50 rounded-lg">
+                    <Phone className="w-5 h-5 text-gray-400" />
+                    <div>
+                      <p className="text-xs text-gray-500 font-medium">Phone</p>
+                      <span>{currentUser.phone}</span>
+                    </div>
+                  </div>
+                )}
+                {currentUser.dateOfBirth && (
+                  <div className="flex items-center gap-3 text-gray-700 p-3 bg-gray-50 rounded-lg">
+                    <Calendar className="w-5 h-5 text-gray-400" />
+                    <div>
+                      <p className="text-xs text-gray-500 font-medium">Date of Birth</p>
+                      <span>{new Date(currentUser.dateOfBirth).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                )}
+                <div className="flex items-center gap-3 text-gray-700 p-3 bg-gray-50 rounded-lg">
+                  <User className="w-5 h-5 text-gray-400" />
+                  <div>
+                    <p className="text-xs text-gray-500 font-medium">Patient ID</p>
+                    <span className="text-sm font-mono">{currentUser.id.slice(0, 8)}...</span>
+                  </div>
                 </div>
               </div>
-            )}
-            {currentUser.dateOfBirth && (
-              <div className="flex items-center gap-3 text-gray-700 p-3 bg-gray-50 rounded-lg">
-                <Calendar className="w-5 h-5 text-gray-400" />
-                <div>
-                  <p className="text-xs text-gray-500 font-medium">Date of Birth</p>
-                  <span>{new Date(currentUser.dateOfBirth).toLocaleDateString()}</span>
-                </div>
-              </div>
-            )}
-            <div className="flex items-center gap-3 text-gray-700 p-3 bg-gray-50 rounded-lg">
-              <User className="w-5 h-5 text-gray-400" />
-              <div>
-                <p className="text-xs text-gray-500 font-medium">Patient ID</p>
-                <span className="text-sm font-mono">{currentUser.id.slice(0, 8)}...</span>
-              </div>
             </div>
-          </div>
+          )}
 
           {/* Sign out */}
           <button 
             onClick={handleSignOut}
-            className="w-full mt-6 btn-ghost text-red-600 hover:bg-red-50"
+            className="w-full btn-ghost text-red-600 hover:bg-red-50"
           >
             <LogOut className="w-5 h-5 mr-2 inline" />
             Sign Out

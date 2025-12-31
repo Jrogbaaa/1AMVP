@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Check, MessageCircle, Sparkles } from "lucide-react";
 import Image from "next/image";
+import { Logo } from "@/components/Logo";
 
 interface QAOption {
   id: string;
@@ -123,14 +124,7 @@ export const QACard = ({ question, onAnswer, isActive = false }: QACardProps) =>
 
       {/* 1A Logo Watermark */}
       <div className="absolute top-5 left-5 z-10 pointer-events-none">
-        <Image
-          src="/images/1a-icon.png?v=2"
-          alt="1Another"
-          width={44}
-          height={44}
-          className="drop-shadow-lg"
-          unoptimized
-        />
+        <Logo variant="icon" width={44} height={44} className="drop-shadow-lg" />
       </div>
 
       {/* Content */}

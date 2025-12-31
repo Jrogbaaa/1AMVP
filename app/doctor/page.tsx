@@ -344,25 +344,27 @@ export default function DoctorDashboard() {
           </div>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+        {/* Stats Grid - 2x2 on mobile, 4 columns on desktop */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mt-6">
           {DASHBOARD_STATS.map((stat, index) => (
             <div
               key={index}
-              className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+              className="bg-white rounded-xl p-3 md:p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
             >
               <div className="flex items-start justify-between">
                 <div
                   className={cn(
-                    "p-3 rounded-xl text-white",
+                    "p-2 md:p-3 rounded-xl text-white",
                     stat.color
                   )}
                 >
-                  {stat.icon}
+                  <div className="w-4 h-4 md:w-6 md:h-6 [&>svg]:w-full [&>svg]:h-full">
+                    {stat.icon}
+                  </div>
                 </div>
                 <span
                   className={cn(
-                    "text-sm font-medium px-2 py-1 rounded-full",
+                    "text-xs md:text-sm font-medium px-1.5 md:px-2 py-0.5 md:py-1 rounded-full",
                     stat.trend === "up"
                       ? "text-emerald-700 bg-emerald-50"
                       : "text-red-700 bg-red-50"
@@ -371,9 +373,9 @@ export default function DoctorDashboard() {
                   {stat.change}
                 </span>
               </div>
-              <div className="mt-4">
-                <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
-                <p className="text-sm text-gray-500 mt-1">{stat.label}</p>
+              <div className="mt-2 md:mt-4">
+                <p className="text-xl md:text-3xl font-bold text-gray-900">{stat.value}</p>
+                <p className="text-xs md:text-sm text-gray-500 mt-0.5 md:mt-1 truncate">{stat.label}</p>
               </div>
             </div>
           ))}
@@ -383,12 +385,12 @@ export default function DoctorDashboard() {
       {/* ========== SECTION: Patient Activity ========== */}
       <section id="activity" className="scroll-mt-20">
         <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between p-6 border-b border-gray-100">
+          <div className="flex items-center justify-between p-6">
             <div className="flex items-center gap-3">
-              <div className="relative">
+              <div className="relative p-2 bg-sky-100 rounded-full">
                 <Activity className="w-6 h-6 text-sky-600" />
                 {newActivityCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center">
+                  <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center">
                     {newActivityCount}
                   </span>
                 )}
@@ -435,24 +437,15 @@ export default function DoctorDashboard() {
                       <p className="font-medium text-gray-900 truncate">
                         {patient.name}
                       </p>
-                      <span
-                        className={cn(
-                          "px-2 py-0.5 text-xs font-medium rounded-full",
-                          patient.status === "completed"
-                            ? "bg-emerald-100 text-emerald-700"
-                            : patient.status === "active"
-                            ? "bg-sky-100 text-sky-700"
-                            : "bg-gray-100 text-gray-600"
-                        )}
-                      >
-                        {patient.status === "completed"
-                          ? "Completed"
-                          : patient.status === "active"
-                          ? "Active"
-                          : "Inactive"}
-                      </span>
+                      {patient.status === "completed" && (
+                        <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-emerald-100 text-emerald-700">
+                          Completed
+                        </span>
+                      )}
                     </div>
-                    <p className="text-sm text-gray-500">{patient.lastActivity}</p>
+                    {!patient.lastMessage && (
+                      <p className="text-sm text-gray-500">{patient.lastActivity}</p>
+                    )}
                   </div>
                   <div className="text-right hidden sm:block">
                     <div className="flex items-center gap-2">
@@ -535,9 +528,11 @@ export default function DoctorDashboard() {
       {/* ========== SECTION: My Patients ========== */}
       <section id="patients" className="scroll-mt-20">
         <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between p-6 border-b border-gray-100">
+          <div className="flex items-center justify-between p-6">
             <div className="flex items-center gap-3">
-              <Users className="w-6 h-6 text-emerald-600" />
+              <div className="p-2 bg-emerald-100 rounded-full">
+                <Users className="w-6 h-6 text-emerald-600" />
+              </div>
               <div>
                 <h2 className="text-lg font-semibold text-gray-900">
                   My Patients
@@ -560,7 +555,7 @@ export default function DoctorDashboard() {
                 <Link
                   key={patient.id}
                   href={`/doctor/patients/${patient.id}`}
-                  className="p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors group"
+                  className="p-4 bg-gray-50 rounded-xl hover:shadow-md hover:-translate-y-1 transition-all group"
                 >
                   <div className="flex items-center gap-3">
                     <div className="relative">
@@ -609,18 +604,11 @@ export default function DoctorDashboard() {
                         {patient.videosWatched}/{patient.totalVideos}
                       </span>
                     </div>
-                    <span
-                      className={cn(
-                        "px-2 py-0.5 text-xs font-medium rounded-full",
-                        patient.status === "completed"
-                          ? "bg-emerald-100 text-emerald-700"
-                          : patient.status === "active"
-                          ? "bg-sky-100 text-sky-700"
-                          : "bg-gray-200 text-gray-600"
-                      )}
-                    >
-                      {patient.status}
-                    </span>
+                    {patient.status === "completed" && (
+                      <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-emerald-100 text-emerald-700">
+                        Completed
+                      </span>
+                    )}
                   </div>
                 </Link>
               ))}
@@ -632,9 +620,11 @@ export default function DoctorDashboard() {
       {/* ========== SECTION: My Videos ========== */}
       <section id="my-videos" className="scroll-mt-20">
         <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between p-6 border-b border-gray-100">
+          <div className="flex items-center justify-between p-6">
             <div className="flex items-center gap-3">
-              <Film className="w-6 h-6 text-violet-600" />
+              <div className="p-2 bg-violet-100 rounded-full">
+                <Film className="w-6 h-6 text-violet-600" />
+              </div>
               <div>
                 <h2 className="text-lg font-semibold text-gray-900">
                   My Videos
@@ -650,7 +640,7 @@ export default function DoctorDashboard() {
                 {MY_VIDEOS.map((video) => (
                   <div
                     key={video.id}
-                    className="bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow group"
+                    className="bg-gray-50 rounded-xl overflow-hidden hover:shadow-md hover:-translate-y-1 transition-all group"
                   >
                     <div className="relative aspect-video bg-gray-200">
                       <Image
@@ -660,7 +650,7 @@ export default function DoctorDashboard() {
                         className="object-cover"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                      <div className="absolute bottom-2 right-2 px-2 py-1 bg-black/70 text-white text-xs rounded">
+                      <div className="absolute bottom-2 right-2 px-2 py-1 bg-black/70 text-white text-xs rounded-xl">
                         {video.duration}
                       </div>
                       <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/30">
@@ -669,7 +659,7 @@ export default function DoctorDashboard() {
                         </button>
                       </div>
                       {video.isOnPublicProfile && (
-                        <div className="absolute top-2 left-2 px-2 py-1 bg-emerald-500 text-white text-xs rounded-full flex items-center gap-1">
+                        <div className="absolute top-2 left-2 px-2 py-1 bg-emerald-500 text-white text-xs rounded-xl flex items-center gap-1">
                           <Globe className="w-3 h-3" />
                           Public
                         </div>
@@ -685,13 +675,13 @@ export default function DoctorDashboard() {
                         </div>
                         <div className="flex items-center gap-1">
                           <button
-                            className="p-1.5 text-gray-500 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors"
+                            className="p-1.5 text-gray-500 hover:text-sky-600 hover:bg-sky-50 rounded-xl transition-colors"
                             aria-label="Send video"
                           >
                             <Send className="w-4 h-4" />
                           </button>
                           <button
-                            className="p-1.5 text-gray-500 hover:text-violet-600 hover:bg-violet-50 rounded-lg transition-colors"
+                            className="p-1.5 text-gray-500 hover:text-violet-600 hover:bg-violet-50 rounded-xl transition-colors"
                             aria-label="More options"
                           >
                             <MoreVertical className="w-4 h-4" />
@@ -717,10 +707,10 @@ export default function DoctorDashboard() {
 
       {/* ========== SECTION: Browse 1A Videos ========== */}
       <section id="browse" className="scroll-mt-20">
-        <div className="bg-gradient-to-br from-sky-50 via-blue-50 to-indigo-50 rounded-2xl border border-sky-200">
-          <div className="flex items-center justify-between p-6 border-b border-sky-200">
+        <div className="bg-gradient-to-r from-emerald-50 via-teal-50 to-sky-50 rounded-2xl border border-emerald-200">
+          <div className="flex items-center justify-between p-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-gradient-to-br from-sky-500 to-blue-600 rounded-xl">
+              <div className="p-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full">
                 <BookOpen className="w-6 h-6 text-white" />
               </div>
               <div>
@@ -737,7 +727,7 @@ export default function DoctorDashboard() {
                 placeholder="Search videos..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 border border-sky-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all bg-white/80"
+                className="w-full pl-9 pr-4 py-2 border border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all bg-white/80"
               />
             </div>
           </div>
@@ -749,7 +739,7 @@ export default function DoctorDashboard() {
                 return (
                   <div
                     key={video.id}
-                    className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                    className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-1 transition-all"
                   >
                     <div className="relative aspect-video bg-gray-200">
                       <Image
@@ -759,10 +749,10 @@ export default function DoctorDashboard() {
                         className="object-cover"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                      <div className="absolute bottom-2 right-2 px-2 py-1 bg-black/70 text-white text-xs rounded">
+                      <div className="absolute bottom-2 right-2 px-2 py-1 bg-black/70 text-white text-xs rounded-xl">
                         {video.duration}
                       </div>
-                      <div className="absolute top-2 left-2 px-2 py-1 bg-white/90 text-gray-700 text-xs rounded-full font-medium">
+                      <div className="absolute top-2 left-2 px-2 py-1 bg-white/90 text-gray-700 text-xs rounded-xl font-medium">
                         {video.category}
                       </div>
                     </div>
@@ -773,10 +763,10 @@ export default function DoctorDashboard() {
                         <button
                           onClick={() => handleToggleVideo(video.id)}
                           className={cn(
-                            "flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg font-medium text-sm transition-all",
+                            "flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl font-medium text-sm transition-all",
                             isAdded
                               ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
-                              : "bg-sky-600 text-white hover:bg-sky-700"
+                              : "bg-emerald-600 text-white hover:bg-emerald-700"
                           )}
                         >
                           {isAdded ? (
@@ -792,7 +782,7 @@ export default function DoctorDashboard() {
                           )}
                         </button>
                         <button
-                          className="p-2 text-gray-500 hover:text-violet-600 hover:bg-violet-50 rounded-lg transition-colors"
+                          className="p-2 text-gray-500 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors"
                           aria-label="AI Clone"
                           title="Make my version with AI"
                         >
@@ -810,10 +800,10 @@ export default function DoctorDashboard() {
 
       {/* ========== SECTION: Train AI on Me ========== */}
       <section id="train-ai" className="scroll-mt-20">
-        <div className="bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 rounded-2xl border border-violet-200">
-          <div className="flex items-center justify-between p-6 border-b border-violet-200">
+        <div className="bg-gradient-to-r from-red-50 via-rose-50 to-pink-50 rounded-2xl border border-rose-200">
+          <div className="flex items-center justify-between p-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl">
+              <div className="p-2 bg-gradient-to-br from-red-500 to-rose-600 rounded-full">
                 <Wand2 className="w-6 h-6 text-white" />
               </div>
               <div>
@@ -828,9 +818,9 @@ export default function DoctorDashboard() {
           <div className="p-6">
             <div className="grid md:grid-cols-2 gap-6">
               {/* Train AI Avatar Card */}
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-violet-100 hover:shadow-md transition-all group">
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-rose-100 hover:shadow-md hover:-translate-y-1 transition-all group">
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-gradient-to-br from-pink-500 to-rose-600 rounded-xl text-white group-hover:scale-110 transition-transform">
+                  <div className="p-3 bg-gradient-to-br from-red-500 to-rose-600 rounded-xl text-white group-hover:scale-110 transition-transform">
                     <UserCircle className="w-8 h-8" />
                   </div>
                   <div className="flex-1">
@@ -845,7 +835,7 @@ export default function DoctorDashboard() {
                         href="https://www.heygen.com"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-rose-600 text-white font-medium rounded-lg hover:from-pink-600 hover:to-rose-700 transition-all"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500 to-rose-600 text-white font-medium rounded-xl hover:from-red-600 hover:to-rose-700 transition-all"
                       >
                         <Wand2 className="w-4 h-4" />
                         Train with HeyGen
@@ -860,9 +850,9 @@ export default function DoctorDashboard() {
               </div>
 
               {/* Create Videos Card */}
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-violet-100 hover:shadow-md transition-all group">
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-rose-100 hover:shadow-md hover:-translate-y-1 transition-all group">
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl text-white group-hover:scale-110 transition-transform">
+                  <div className="p-3 bg-gradient-to-br from-rose-500 to-pink-600 rounded-xl text-white group-hover:scale-110 transition-transform">
                     <Film className="w-8 h-8" />
                   </div>
                   <div className="flex-1">
@@ -875,7 +865,7 @@ export default function DoctorDashboard() {
                     <div className="flex items-center gap-3">
                       <Link
                         href="/doctor/create-chapters"
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-violet-500 to-purple-600 text-white font-medium rounded-lg hover:from-violet-600 hover:to-purple-700 transition-all"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-rose-500 to-pink-600 text-white font-medium rounded-xl hover:from-rose-600 hover:to-pink-700 transition-all"
                       >
                         <Video className="w-4 h-4" />
                         Create My Videos
@@ -890,11 +880,11 @@ export default function DoctorDashboard() {
             </div>
 
             {/* How it Works */}
-            <div className="mt-6 pt-6 border-t border-violet-200">
+            <div className="mt-6 pt-6 border-t border-rose-200">
               <h4 className="text-sm font-semibold text-gray-700 mb-4">How it works:</h4>
               <div className="grid md:grid-cols-3 gap-4">
                 <div className="flex items-start gap-3">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 text-violet-700 font-bold text-sm flex-shrink-0">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-rose-100 text-rose-700 font-bold text-sm flex-shrink-0">
                     1
                   </div>
                   <div>
@@ -903,7 +893,7 @@ export default function DoctorDashboard() {
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 text-violet-700 font-bold text-sm flex-shrink-0">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-rose-100 text-rose-700 font-bold text-sm flex-shrink-0">
                     2
                   </div>
                   <div>
@@ -912,7 +902,7 @@ export default function DoctorDashboard() {
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 text-violet-700 font-bold text-sm flex-shrink-0">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-rose-100 text-rose-700 font-bold text-sm flex-shrink-0">
                     3
                   </div>
                   <div>
@@ -929,9 +919,11 @@ export default function DoctorDashboard() {
       {/* ========== SECTION: My Profile ========== */}
       <section id="profile" className="scroll-mt-20">
         <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between p-6 border-b border-gray-100">
+          <div className="flex items-center justify-between p-6">
             <div className="flex items-center gap-3">
-              <User className="w-6 h-6 text-pink-600" />
+              <div className="p-2 bg-pink-100 rounded-full">
+                <User className="w-6 h-6 text-pink-600" />
+              </div>
               <div>
                 <h2 className="text-lg font-semibold text-gray-900">
                   My Profile
@@ -1005,8 +997,8 @@ export default function DoctorDashboard() {
                 <h4 className="font-semibold text-gray-900 mb-3">Videos on Public Profile</h4>
                 <div className="space-y-3">
                   {MY_VIDEOS.filter(v => v.isOnPublicProfile).slice(0, 3).map((video) => (
-                    <div key={video.id} className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
-                      <div className="relative w-16 h-10 rounded overflow-hidden flex-shrink-0">
+                    <div key={video.id} className="flex items-center gap-3 p-2 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                      <div className="relative w-16 h-10 rounded-xl overflow-hidden flex-shrink-0">
                         <Image
                           src={video.thumbnailUrl}
                           alt={video.title}

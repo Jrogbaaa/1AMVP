@@ -390,26 +390,26 @@ const ScreeningCard = ({
         statusStyles[screening.status]
       )}
     >
-      <div className="p-4">
-        <div className="flex items-start justify-between gap-3">
+      <div className="p-5">
+        <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-lg">{screening.emoji}</span>
-              <h4 className="font-semibold text-gray-900 text-sm">{screening.name}</h4>
+            <div className="flex items-center gap-2.5 mb-2">
+              <span className="text-xl">{screening.emoji}</span>
+              <h4 className="font-semibold text-gray-900 text-base">{screening.name}</h4>
             </div>
-            <p className="text-xs text-gray-600 mb-2">{screening.reason}</p>
+            <p className="text-sm text-gray-600 mb-3 leading-relaxed">{screening.reason}</p>
             {screening.frequency && (
-              <p className="text-xs text-gray-500">
-                <Clock className="w-3 h-3 inline mr-1" />
+              <p className="text-sm text-gray-500">
+                <Clock className="w-3.5 h-3.5 inline mr-1.5" />
                 {screening.frequency}
               </p>
             )}
             {screening.options && screening.options.length > 0 && (
-              <div className="mt-2 flex flex-wrap gap-1">
+              <div className="mt-3 flex flex-wrap gap-1.5">
                 {screening.options.map((option, i) => (
                   <span
                     key={i}
-                    className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full"
+                    className="text-sm bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full"
                   >
                     {option}
                   </span>
@@ -530,9 +530,9 @@ const SectionHeader = ({
   const config = configs[variant];
 
   return (
-    <div className={cn("flex items-center gap-2 px-3 py-2 rounded-lg mb-3", config.bgClass)}>
-      <h3 className={cn("font-semibold text-sm", config.textClass)}>{title}</h3>
-      <span className={cn("text-xs font-bold px-2 py-0.5 rounded-full", config.countClass)}>
+    <div className={cn("flex items-center gap-2.5 px-4 py-3 rounded-lg mb-4", config.bgClass)}>
+      <h3 className={cn("font-semibold text-base", config.textClass)}>{title}</h3>
+      <span className={cn("text-sm font-bold px-2.5 py-0.5 rounded-full", config.countClass)}>
         {count}
       </span>
     </div>
@@ -556,19 +556,19 @@ export const PreventiveCareChecklist = ({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-sky-50 to-teal-50 rounded-2xl p-4 border border-sky-100">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="p-2 bg-gradient-to-br from-sky-500 to-teal-500 rounded-xl">
-            <Sparkles className="w-5 h-5 text-white" />
+      <div className="bg-gradient-to-r from-sky-50 to-teal-50 rounded-2xl p-5 border border-sky-100">
+        <div className="flex items-center gap-4 mb-3">
+          <div className="p-2.5 bg-gradient-to-br from-sky-500 to-teal-500 rounded-xl">
+            <Sparkles className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-gray-900">Your Preventive Care Checklist</h2>
-            <p className="text-sm text-gray-600">Based on USPSTF A/B recommendations</p>
+            <h2 className="text-xl font-bold text-gray-900">Your Preventive Care Checklist</h2>
+            <p className="text-base text-gray-600">Based on USPSTF A/B recommendations</p>
           </div>
         </div>
         {totalDue > 0 && (
-          <div className="mt-3 flex items-center gap-2 text-sm">
-            <AlertCircle className="w-4 h-4 text-red-500" />
+          <div className="mt-4 flex items-center gap-2.5 text-base">
+            <AlertCircle className="w-5 h-5 text-red-500" />
             <span className="text-gray-700">
               <strong className="text-red-600">{totalDue}</strong> screening
               {totalDue !== 1 ? "s" : ""} need attention
@@ -576,8 +576,8 @@ export const PreventiveCareChecklist = ({
           </div>
         )}
         {profile.zipCode && (
-          <div className="mt-2 flex items-center gap-2 text-sm">
-            <MapPin className="w-4 h-4 text-sky-500" />
+          <div className="mt-3 flex items-center gap-2.5 text-base">
+            <MapPin className="w-5 h-5 text-sky-500" />
             <span className="text-gray-600">
               Showing locations near <strong>{profile.zipCode}</strong>
             </span>
@@ -589,7 +589,7 @@ export const PreventiveCareChecklist = ({
       {grouped.dueNow.length > 0 && (
         <div>
           <SectionHeader title="Due Now" count={grouped.dueNow.length} variant="due_now" />
-          <div className="space-y-3">
+          <div className="space-y-4">
             {grouped.dueNow.map((screening) => (
               <ScreeningCard
                 key={screening.id}
@@ -607,7 +607,7 @@ export const PreventiveCareChecklist = ({
       {grouped.dueSoon.length > 0 && (
         <div>
           <SectionHeader title="Due Soon" count={grouped.dueSoon.length} variant="due_soon" />
-          <div className="space-y-3">
+          <div className="space-y-4">
             {grouped.dueSoon.map((screening) => (
               <ScreeningCard
                 key={screening.id}
@@ -625,7 +625,7 @@ export const PreventiveCareChecklist = ({
       {grouped.upToDate.length > 0 && (
         <div>
           <SectionHeader title="Up to Date" count={grouped.upToDate.length} variant="up_to_date" />
-          <div className="space-y-3">
+          <div className="space-y-4">
             {grouped.upToDate.map((screening) => (
               <ScreeningCard 
                 key={screening.id} 
@@ -641,15 +641,15 @@ export const PreventiveCareChecklist = ({
       {grouped.notApplicable.length > 0 && (
         <details className="group">
           <summary className="cursor-pointer list-none">
-            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-100 hover:bg-gray-150 transition-colors">
-              <h3 className="font-semibold text-sm text-gray-700">Not Applicable</h3>
-              <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-gray-200 text-gray-800">
+            <div className="flex items-center gap-2.5 px-4 py-3 rounded-lg bg-gray-100 hover:bg-gray-150 transition-colors">
+              <h3 className="font-semibold text-base text-gray-700">Not Applicable</h3>
+              <span className="text-sm font-bold px-2.5 py-0.5 rounded-full bg-gray-200 text-gray-800">
                 {grouped.notApplicable.length}
               </span>
               <ChevronRight className="w-4 h-4 text-gray-500 ml-auto group-open:rotate-90 transition-transform" />
             </div>
           </summary>
-          <div className="mt-3 space-y-3">
+          <div className="mt-4 space-y-4">
             {grouped.notApplicable.map((screening) => (
               <ScreeningCard 
                 key={screening.id} 
@@ -662,8 +662,8 @@ export const PreventiveCareChecklist = ({
       )}
 
       {/* Footer */}
-      <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-        <p className="text-xs text-gray-500 leading-relaxed">
+      <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
+        <p className="text-sm text-gray-500 leading-relaxed">
           <strong>Disclaimer:</strong> This checklist is based on U.S. Preventive Services Task
           Force (USPSTF) A and B recommendations and your self-reported information. It is not
           medical advice. Please consult your healthcare provider for personalized guidance.
@@ -672,10 +672,10 @@ export const PreventiveCareChecklist = ({
           href="https://www.uspreventiveservicestaskforce.org/uspstf/recommendation-topics/uspstf-a-and-b-recommendations"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 mt-2 text-xs text-sky-600 hover:text-sky-700 font-medium"
+          className="inline-flex items-center gap-1.5 mt-3 text-sm text-sky-600 hover:text-sky-700 font-medium"
         >
           View USPSTF Guidelines
-          <ChevronRight className="w-3 h-3" />
+          <ChevronRight className="w-4 h-4" />
         </Link>
       </div>
     </div>

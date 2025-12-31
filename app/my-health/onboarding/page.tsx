@@ -121,6 +121,10 @@ const calculateAge = (dob: string): number => {
   return age;
 };
 
+// Total number of steps (excluding step 0 which is intro)
+const TOTAL_STEPS = 12; // Steps 1-12
+const TOTAL_STEPS_WITHOUT_PREGNANCY = 11; // Steps 1-12 minus step 2
+
 // Progress percentages for each step
 const STEP_PROGRESS: Record<number, number> = {
   0: 0,
@@ -298,6 +302,22 @@ export default function PreventiveCareOnboarding() {
   }
 
   const progress = STEP_PROGRESS[currentStep] || 0;
+  
+  // Calculate step display number (step 0 is intro, so we show step 1 for currentStep 1, etc.)
+  // Account for pregnancy screen being conditional
+  const getTotalSteps = () => showPregnancyScreen ? TOTAL_STEPS : TOTAL_STEPS_WITHOUT_PREGNANCY;
+  
+  const getCurrentStepDisplay = () => {
+    if (currentStep === 0) return 0; // Intro screen
+    if (!showPregnancyScreen && currentStep >= 3) {
+      // If pregnancy screen is skipped, adjust step number
+      return currentStep - 1;
+    }
+    return currentStep;
+  };
+
+  const stepDisplay = getCurrentStepDisplay();
+  const totalStepsDisplay = getTotalSteps();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-teal-50">
@@ -320,9 +340,11 @@ export default function PreventiveCareOnboarding() {
       {/* Progress Bar */}
       <div className="bg-white border-b border-gray-100">
         <div className="max-w-2xl mx-auto px-4 py-2">
-          <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+          <div className="flex items-center justify-between text-sm text-gray-500 mb-1">
             <span>Progress</span>
-            <span>{progress}%</span>
+            <span className="font-medium">
+              {stepDisplay === 0 ? "Getting started" : `Step ${stepDisplay} of ${totalStepsDisplay}`}
+            </span>
           </div>
           <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
             <div

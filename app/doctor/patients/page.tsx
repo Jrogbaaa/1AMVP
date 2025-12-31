@@ -6,18 +6,15 @@ import Link from "next/link";
 import {
   Search,
   Filter,
-  MoreVertical,
   Mail,
   Phone,
-  Play,
   CheckCircle,
   Clock,
-  AlertCircle,
   Send,
-  Eye,
   Calendar,
   ChevronDown,
   X,
+  Play,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -162,7 +159,7 @@ const MOCK_PATIENTS: Patient[] = [
 
 export default function PatientsPage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive" | "completed">("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | "in_progress" | "completed">("all");
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
@@ -170,34 +167,14 @@ export default function PatientsPage() {
     const matchesSearch =
       patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       patient.email.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === "all" || patient.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    if (statusFilter === "all") return matchesSearch;
+    if (statusFilter === "completed") return matchesSearch && patient.status === "completed";
+    if (statusFilter === "in_progress") return matchesSearch && patient.status !== "completed";
+    return matchesSearch;
   });
 
   const handleCloseDetail = () => {
     setSelectedPatient(null);
-  };
-
-  const getStatusColor = (status: Patient["status"]) => {
-    switch (status) {
-      case "completed":
-        return "bg-emerald-100 text-emerald-700";
-      case "active":
-        return "bg-sky-100 text-sky-700";
-      case "inactive":
-        return "bg-gray-100 text-gray-600";
-    }
-  };
-
-  const getStatusIcon = (status: Patient["status"]) => {
-    switch (status) {
-      case "completed":
-        return <CheckCircle className="w-4 h-4" />;
-      case "active":
-        return <Play className="w-4 h-4" />;
-      case "inactive":
-        return <AlertCircle className="w-4 h-4" />;
-    }
   };
 
   return (
@@ -238,7 +215,7 @@ export default function PatientsPage() {
           >
             <Filter className="w-5 h-5 text-gray-500" />
             <span className="font-medium text-gray-700">
-              {statusFilter === "all" ? "All Status" : statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)}
+              {statusFilter === "all" ? "All Patients" : statusFilter === "completed" ? "Completed" : "In Progress"}
             </span>
             <ChevronDown className="w-4 h-4 text-gray-400" />
           </button>
@@ -247,7 +224,7 @@ export default function PatientsPage() {
             <>
               <div className="fixed inset-0 z-40" onClick={() => setIsFilterOpen(false)} />
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 z-50">
-                {(["all", "active", "inactive", "completed"] as const).map((status) => (
+                {(["all", "in_progress", "completed"] as const).map((status) => (
                   <button
                     key={status}
                     onClick={() => {
@@ -259,7 +236,7 @@ export default function PatientsPage() {
                       statusFilter === status && "bg-sky-50 text-sky-700"
                     )}
                   >
-                    {status === "all" ? "All Status" : status.charAt(0).toUpperCase() + status.slice(1)}
+                    {status === "all" ? "All Patients" : status === "completed" ? "Completed" : "In Progress"}
                   </button>
                 ))}
               </div>
@@ -273,12 +250,9 @@ export default function PatientsPage() {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-gray-50 border-b border-gray-100">
+              <tr className="bg-gray-50">
                 <th className="text-left px-6 py-4 text-sm font-semibold text-gray-600">
                   Patient
-                </th>
-                <th className="text-left px-6 py-4 text-sm font-semibold text-gray-600">
-                  Status
                 </th>
                 <th className="text-left px-6 py-4 text-sm font-semibold text-gray-600">
                   Progress
@@ -313,21 +287,18 @@ export default function PatientsPage() {
                         />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">{patient.name}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium text-gray-900">{patient.name}</p>
+                          {patient.status === "completed" && (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-emerald-100 text-emerald-700">
+                              <CheckCircle className="w-3 h-3" />
+                              Completed
+                            </span>
+                          )}
+                        </div>
                         <p className="text-sm text-gray-500">{patient.email}</p>
                       </div>
                     </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={cn(
-                        "inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-full",
-                        getStatusColor(patient.status)
-                      )}
-                    >
-                      {getStatusIcon(patient.status)}
-                      {patient.status.charAt(0).toUpperCase() + patient.status.slice(1)}
-                    </span>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
@@ -365,7 +336,7 @@ export default function PatientsPage() {
                           e.stopPropagation();
                           window.location.href = `/doctor/send?patient=${patient.id}`;
                         }}
-                        className="p-2 text-gray-500 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors"
+                        className="p-2 text-gray-500 hover:text-sky-600 hover:bg-sky-50 rounded-xl transition-colors"
                         aria-label="Send content"
                       >
                         <Send className="w-4 h-4" />
@@ -375,7 +346,7 @@ export default function PatientsPage() {
                           e.stopPropagation();
                           window.location.href = `/doctor/messages?patient=${patient.id}`;
                         }}
-                        className="p-2 text-gray-500 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors"
+                        className="p-2 text-gray-500 hover:text-sky-600 hover:bg-sky-50 rounded-xl transition-colors"
                         aria-label="Send message"
                       >
                         <Mail className="w-4 h-4" />
@@ -424,15 +395,12 @@ export default function PatientsPage() {
                   <h3 className="text-xl font-semibold text-gray-900">
                     {selectedPatient.name}
                   </h3>
-                  <span
-                    className={cn(
-                      "inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-full mt-1",
-                      getStatusColor(selectedPatient.status)
-                    )}
-                  >
-                    {getStatusIcon(selectedPatient.status)}
-                    {selectedPatient.status.charAt(0).toUpperCase() + selectedPatient.status.slice(1)}
-                  </span>
+                  {selectedPatient.status === "completed" && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-full mt-1 bg-emerald-100 text-emerald-700">
+                      <CheckCircle className="w-3.5 h-3.5" />
+                      Completed
+                    </span>
+                  )}
                 </div>
               </div>
 

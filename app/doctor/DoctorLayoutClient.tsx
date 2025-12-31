@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { Logo } from "@/components/Logo";
 import { usePathname, useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useUserSync } from "@/hooks/useUserSync";
@@ -223,14 +224,7 @@ export function DoctorLayoutClient({
           <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
             {/* Logo */}
             <div className="flex justify-center mb-6">
-              <Image
-                src="/images/1another-logo.png?v=2"
-                alt="1Another"
-                width={160}
-                height={48}
-                className="h-10 w-auto"
-                unoptimized
-              />
+              <Logo variant="full" className="h-10 w-auto" />
             </div>
 
             {/* Warning Icon */}
@@ -280,7 +274,7 @@ export function DoctorLayoutClient({
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Mobile Header */}
-      <header className="lg:hidden fixed top-0 inset-x-0 z-50 bg-white border-b border-gray-200">
+      <header className="lg:hidden fixed top-0 inset-x-0 z-50 bg-white">
         <div className="flex items-center justify-between h-16 px-4">
           <button
             onClick={handleToggleSidebar}
@@ -291,22 +285,23 @@ export function DoctorLayoutClient({
           </button>
 
           <div className="flex flex-col items-center">
-            <Image
-              src="/images/1another-logo.png?v=2"
-              alt="1Another"
-              width={120}
-              height={36}
-              className="h-7 w-auto"
-              unoptimized
-            />
-            <span className="text-[#00BCD4] font-semibold text-[9px] tracking-wide">
-              Intelligent Health
-            </span>
+            <Logo variant="withTagline" className="h-10 w-auto" />
           </div>
 
           <button
+            onClick={() => {
+              if (isOnDashboard) {
+                const element = document.getElementById("activity");
+                if (element) {
+                  const offsetTop = element.offsetTop - 100;
+                  window.scrollTo({ top: offsetTop, behavior: "smooth" });
+                }
+              } else {
+                router.push("/doctor#activity");
+              }
+            }}
             className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg relative"
-            aria-label="Notifications"
+            aria-label="View notifications"
           >
             <Bell className="w-6 h-6" />
             <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
@@ -325,28 +320,18 @@ export function DoctorLayoutClient({
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed top-0 left-0 z-50 h-full w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0 flex flex-col",
+          "fixed top-0 left-0 z-50 h-full w-64 bg-white transform transition-transform duration-300 ease-in-out lg:translate-x-0 flex flex-col",
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         {/* Sidebar Header */}
-        <div className="flex items-center justify-between h-16 px-4 border-b border-gray-100">
+        <div className="flex items-center justify-center h-16 px-4 relative">
           <Link href="/doctor" className="flex flex-col items-center">
-            <Image
-              src="/images/1another-logo.png?v=2"
-              alt="1Another"
-              width={120}
-              height={36}
-              className="h-8 w-auto"
-              unoptimized
-            />
-            <span className="text-[#00BCD4] font-semibold text-[10px] tracking-wide">
-              Intelligent Health
-            </span>
+            <Logo variant="withTagline" className="h-12 w-auto" />
           </Link>
           <button
             onClick={handleCloseSidebar}
-            className="lg:hidden p-1.5 text-gray-400 hover:text-gray-600"
+            className="lg:hidden absolute right-4 p-1.5 text-gray-400 hover:text-gray-600"
             aria-label="Close sidebar"
           >
             <X className="w-5 h-5" />
@@ -354,7 +339,7 @@ export function DoctorLayoutClient({
         </div>
 
         {/* Doctor Info */}
-        <div className="px-3 py-2 border-b border-gray-100">
+        <div className="px-3 py-2">
           <div className="flex items-center gap-2.5 p-2 bg-gradient-to-r from-sky-50 to-blue-50 rounded-lg">
             <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-sky-200 bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center flex-shrink-0">
               {currentDoctor.avatarUrl && currentDoctor.avatarUrl !== "/images/doctors/doctor-jack.jpg" ? (
@@ -401,20 +386,17 @@ export function DoctorLayoutClient({
                     : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                 )}
               >
-                <div className="relative flex-shrink-0">
+                <div className="flex-shrink-0">
                   {item.icon}
-                  {item.hasNotification && !isActive && (
-                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />
-                  )}
                 </div>
-                <span className="font-medium">{item.label}</span>
+                <span className="font-medium flex-1">{item.label}</span>
                 {item.notificationCount && item.notificationCount > 0 && (
                   <span
                     className={cn(
-                      "ml-auto px-1.5 py-0.5 text-xs font-bold rounded-full",
+                      "px-2 py-0.5 text-xs font-bold rounded-full min-w-[20px] text-center",
                       isActive
                         ? "bg-white/20 text-white"
-                        : "bg-red-100 text-red-700"
+                        : "bg-red-500 text-white"
                     )}
                   >
                     {item.notificationCount}
@@ -425,7 +407,7 @@ export function DoctorLayoutClient({
           })}
 
           {/* Secondary Navigation */}
-          <div className="pt-3 mt-3 border-t border-gray-100">
+          <div className="pt-3 mt-3">
             <p className="px-3 py-2 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
               Other
             </p>
@@ -443,20 +425,17 @@ export function DoctorLayoutClient({
                       : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                   )}
                 >
-                  <div className="relative flex-shrink-0">
+                  <div className="flex-shrink-0">
                     {item.icon}
-                    {item.hasNotification && !isActive && (
-                      <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />
-                    )}
                   </div>
-                  <span className="font-medium">{item.label}</span>
+                  <span className="font-medium flex-1">{item.label}</span>
                   {item.notificationCount && item.notificationCount > 0 && (
                     <span
                       className={cn(
-                        "ml-auto px-1.5 py-0.5 text-xs font-bold rounded-full",
+                        "px-2 py-0.5 text-xs font-bold rounded-full min-w-[20px] text-center",
                         isActive
                           ? "bg-white/20 text-white"
-                          : "bg-red-100 text-red-700"
+                          : "bg-red-500 text-white"
                       )}
                     >
                       {item.notificationCount}
@@ -472,21 +451,23 @@ export function DoctorLayoutClient({
       {/* Main Content */}
       <main className="lg:ml-64 min-h-screen pt-16 lg:pt-0">
         {/* Desktop Header */}
-        <header className="hidden lg:flex items-center justify-between h-16 px-8 bg-white border-b border-gray-200 sticky top-0 z-40">
-          <div>
-            <h1 className="text-lg font-semibold text-gray-900">
-              Doctor Portal
-            </h1>
-            <p className="text-sm text-gray-500">
-              Manage your patients and content
-            </p>
-          </div>
-
+        <header className="hidden lg:flex items-center justify-end h-16 px-8 bg-white sticky top-0 z-40">
           <div className="flex items-center gap-4">
-            {/* Notifications */}
+            {/* Notifications - scrolls to Patient Activity */}
             <button
+              onClick={() => {
+                if (isOnDashboard) {
+                  const element = document.getElementById("activity");
+                  if (element) {
+                    const offsetTop = element.offsetTop - 100;
+                    window.scrollTo({ top: offsetTop, behavior: "smooth" });
+                  }
+                } else {
+                  router.push("/doctor#activity");
+                }
+              }}
               className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg relative"
-              aria-label="Notifications"
+              aria-label="View notifications"
             >
               <Bell className="w-5 h-5" />
               <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />

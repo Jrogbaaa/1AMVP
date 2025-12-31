@@ -15,6 +15,7 @@ import { Calendar, Search, Share2, User, MessageCircle } from "lucide-react";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import type { Video, Doctor } from "@/lib/types";
 import Image from "next/image";
+import { Logo } from "@/components/Logo";
 
 // Mock doctors data
 const MOCK_DOCTORS: Record<string, Doctor> = {
@@ -361,18 +362,7 @@ const FeedContent = () => {
           {/* Logo */}
           <div className="p-6 border-b border-gray-100">
             <Link href="/feed" className="flex flex-col items-center justify-center">
-              <Image
-                src="/images/1another-logo.png?v=2"
-                alt="1Another"
-                width={280}
-                height={80}
-                className="h-12 w-auto"
-                priority
-                unoptimized
-              />
-              <span className="text-[#00BCD4] font-semibold text-sm tracking-wide">
-                Intelligent Health
-              </span>
+              <Logo variant="withTagline" className="h-16 w-auto" />
             </Link>
           </div>
 

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { Mail, Loader2, CheckCircle } from "lucide-react";
-import Image from "next/image";
+import { Logo } from "@/components/Logo";
 
 interface SignInFormProps {
   callbackUrl?: string;
@@ -36,14 +36,7 @@ export const SignInForm = ({ callbackUrl = "/feed" }: SignInFormProps) => {
     <div className="w-full max-w-md mx-auto p-8 bg-white rounded-2xl shadow-xl">
       {/* Logo */}
       <div className="flex justify-center mb-6">
-        <Image
-          src="/images/1another-logo.png"
-          alt="1Another"
-          width={200}
-          height={60}
-          className="h-12 w-auto"
-          priority
-        />
+        <Logo variant="full" className="h-12 w-auto" />
       </div>
 
       {/* Header */}

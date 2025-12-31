@@ -5,6 +5,76 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.38.0] - 2024-12-31
+
+### 🎨 Comprehensive Doctor Portal UI Overhaul
+
+**Layout & Navigation (`DoctorLayoutClient.tsx`):**
+- Removed "Doctor Portal" header text from desktop header
+- Removed sectional dividing lines from sidebar and header (cleaner look)
+- Replaced red dot notifications with notification count badges showing total number
+- Made bell icon functional - now scrolls to Patient Activity section on click
+- Centered logo in sidebar using `Logo` component
+
+**Section Icons & Styling (`page.tsx`):**
+- Added consistent circular background to all section title icons
+- Updated Browse 1A Videos section to green-to-blue gradient (`from-emerald-500 to-sky-500`)
+- Updated Train AI section to red/rose tint (`from-red-500 to-rose-600`)
+- Fixed activity recency showing only once (not duplicated when lastMessage exists)
+
+**Status Labels Removed:**
+- Removed "Active" and "Inactive" status labels from Patient Activity section
+- Removed status labels from My Patients section
+- Removed status column from patients table
+- Filter now shows only "All Patients", "In Progress", and "Completed"
+
+**Hover Effects Standardized:**
+- Cards use lift effect (`hover:-translate-y-1 hover:shadow-lg`)
+- Video modules use lift effect with image darkening (`group-hover:brightness-90`)
+- Healthcare provider buttons use subtle lift on hover
+
+**Corner Roundness (`rounded-xl`):**
+- Applied consistent `rounded-xl` to video duration badges
+- Applied `rounded-xl` to category tags
+- Applied to all card components
+
+**Messages Section (`messages/page.tsx`):**
+- Removed duplicate timestamp display from patient list
+- Restructured to full chat history layout with chat bubbles
+- Doctor messages aligned right with green-to-blue gradient
+- Patient responses aligned left with avatar
+- Pending messages show animated "Awaiting response" indicator
+
+**Patient Profile Page (`patients/[id]/page.tsx`):**
+- CV-style redesign with large photo on left
+- SVG progress ring around photo showing video completion percentage
+- All patient details on the right side
+- Name appears only once (removed from header above)
+- Quick action buttons with gradient styling
+
+**Mobile Stats Grid:**
+- Changed to 2x2 grid on mobile (`grid-cols-2`)
+- Smaller padding and text sizes on mobile
+- Responsive icon sizes
+
+**Onboarding Healthcare Providers (`onboarding/page.tsx`):**
+- Added styled text logos with brand colors for healthcare providers:
+  - Blue Cross Blue Shield (#0066B3)
+  - Aetna (#7D3F98)
+  - Cigna (#00A4E4)
+  - Humana (#4DB848)
+- Updated gradient on final dashboard button to green-to-blue
+
+**Files Modified:**
+- `app/doctor/DoctorLayoutClient.tsx` - Navigation, logo, notifications
+- `app/doctor/page.tsx` - Section icons, gradients, status removal, mobile grid
+- `app/doctor/patients/page.tsx` - Status removal, filter update
+- `app/doctor/patients/[id]/page.tsx` - CV-style redesign with progress ring
+- `app/doctor/messages/page.tsx` - Chat history layout, timestamp fix
+- `app/doctor/onboarding/page.tsx` - Healthcare provider logos
+
+---
+
 ## [1.37.5] - 2024-12-27
 
 ### 🎨 Doctor Dashboard Sidebar UI Improvements

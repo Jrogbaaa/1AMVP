@@ -31,16 +31,16 @@ import {
 import { cn } from "@/lib/utils";
 import { VideoRecorder } from "@/components/VideoRecorder";
 
-// Health system groups
+// Health system groups with brand colors for styled text logos
 const HEALTH_SYSTEM_GROUPS = [
-  { id: "kaiser", name: "Kaiser Permanente", logo: "/images/kaiser-logo.png" },
-  { id: "united", name: "United Healthcare", logo: "/images/united-healthcare-logo.svg" },
-  { id: "bcbs", name: "Blue Cross Blue Shield", logo: null },
-  { id: "aetna", name: "Aetna", logo: null },
-  { id: "cigna", name: "Cigna", logo: null },
-  { id: "humana", name: "Humana", logo: null },
-  { id: "independent", name: "Independent Practice", logo: null },
-  { id: "other", name: "Other", logo: null },
+  { id: "kaiser", name: "Kaiser Permanente", logo: "/images/kaiser-logo.png", brandColor: null },
+  { id: "united", name: "United Healthcare", logo: "/images/united-healthcare-logo.svg", brandColor: null },
+  { id: "bcbs", name: "Blue Cross Blue Shield", logo: null, brandColor: "#0066B3", shortName: "BCBS" },
+  { id: "aetna", name: "Aetna", logo: null, brandColor: "#7D3F98", shortName: "Aetna" },
+  { id: "cigna", name: "Cigna", logo: null, brandColor: "#00A4E4", shortName: "Cigna" },
+  { id: "humana", name: "Humana", logo: null, brandColor: "#4DB848", shortName: "Humana" },
+  { id: "independent", name: "Independent Practice", logo: null, brandColor: null },
+  { id: "other", name: "Other", logo: null, brandColor: null },
 ];
 
 // Steps for the onboarding flow - updated with new steps
@@ -242,7 +242,7 @@ export default function DoctorOnboarding() {
         <div className="max-w-5xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-gradient-to-br from-sky-500 to-violet-600 rounded-xl">
+              <div className="p-2 bg-gradient-to-br from-emerald-500 to-sky-500 rounded-xl">
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
               <div>
@@ -353,28 +353,37 @@ export default function DoctorOnboarding() {
                         key={group.id}
                         onClick={() => setPracticeInfo({ ...practiceInfo, healthSystemGroup: group.id })}
                         className={cn(
-                          "p-4 rounded-xl border-2 transition-all text-center",
+                          "p-4 rounded-xl border-2 transition-all text-center hover:-translate-y-0.5",
                           practiceInfo.healthSystemGroup === group.id
-                            ? "border-sky-500 bg-sky-50"
-                            : "border-gray-200 hover:border-gray-300"
+                            ? "border-sky-500 bg-sky-50 shadow-md"
+                            : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
                         )}
                       >
                         {group.logo ? (
-                          <div className="h-8 flex items-center justify-center mb-2">
+                          <div className="h-10 flex items-center justify-center mb-2">
                             <Image
                               src={group.logo}
                               alt={group.name}
-                              width={80}
-                              height={32}
-                              className="max-h-8 w-auto object-contain"
+                              width={100}
+                              height={40}
+                              className="max-h-10 w-auto object-contain"
                             />
                           </div>
+                        ) : group.brandColor ? (
+                          <div className="h-10 flex items-center justify-center mb-2">
+                            <span 
+                              className="text-base font-bold"
+                              style={{ color: group.brandColor }}
+                            >
+                              {group.shortName}
+                            </span>
+                          </div>
                         ) : (
-                          <div className="h-8 flex items-center justify-center mb-2">
-                            <Building2 className="w-6 h-6 text-gray-400" />
+                          <div className="h-10 flex items-center justify-center mb-2">
+                            <Building2 className="w-7 h-7 text-gray-400" />
                           </div>
                         )}
-                        <p className="text-xs font-medium text-gray-700">{group.name}</p>
+                        <p className="text-xs font-medium text-gray-700 truncate">{group.name}</p>
                       </button>
                     ))}
                   </div>
@@ -875,7 +884,7 @@ export default function DoctorOnboarding() {
             {currentStep === STEPS.length ? (
               <Link
                 href="/doctor"
-                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-sky-600 to-violet-600 text-white font-semibold rounded-xl hover:from-sky-700 hover:to-violet-700 transition-all shadow-lg"
+                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-sky-600 transition-all shadow-lg"
               >
                 Go to Dashboard
                 <ArrowRight className="w-5 h-5" />

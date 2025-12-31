@@ -4,7 +4,7 @@ import { useState, Component, ReactNode } from "react";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import { AuthPrompt } from "@/components/AuthPrompt";
-import { CheckCircle2, Lock, Loader2, AlertCircle, RefreshCw } from "lucide-react";
+import { CheckCircle2, Lock, Loader2, AlertCircle, RefreshCw, User } from "lucide-react";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import Image from "next/image";
 import Link from "next/link";
@@ -77,41 +77,113 @@ const UnauthenticatedView = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-100">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-30">
-        <div className="dashboard-container">
-          <div className="flex items-center justify-between py-4">
+      {/* Desktop Left Sidebar */}
+      <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-gray-200 h-screen fixed left-0 top-0 z-40">
+        {/* Logo */}
+        <div className="p-6 border-b border-gray-100">
+          <Link href="/feed" className="flex flex-col items-center justify-center">
+            <Image
+              src="/images/1another-logo.png?v=2"
+              alt="1Another"
+              width={280}
+              height={80}
+              className="h-12 w-auto"
+              priority
+              unoptimized
+            />
+            <span className="text-[#00BCD4] font-semibold text-sm tracking-wide">
+              Intelligent Health
+            </span>
+          </Link>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 p-4 space-y-1">
+          <Link
+            href="/feed"
+            className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+          >
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="7" height="7" rx="1" />
+              <rect x="14" y="3" width="7" height="7" rx="1" />
+              <rect x="3" y="14" width="7" height="7" rx="1" />
+              <rect x="14" y="14" width="7" height="7" rx="1" />
+            </svg>
+            <span>My Feed</span>
+          </Link>
+          <Link
+            href="/discover"
+            className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+          >
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M16.24 7.76l-2.12 6.36-6.36 2.12 2.12-6.36 6.36-2.12z" />
+            </svg>
+            <span>Discover</span>
+          </Link>
+          <Link
+            href="/my-health"
+            className="flex items-center gap-3 px-4 py-3 rounded-xl bg-gray-100 text-gray-900 font-semibold transition-all"
+          >
+            <svg className="w-6 h-6 text-[#00BFA6]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+            </svg>
+            <span>My Health</span>
+          </Link>
+        </nav>
+
+        {/* User Section */}
+        <div className="p-4 border-t border-gray-100">
+          <button
+            onClick={() => setShowAuthPrompt(true)}
+            className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors w-full"
+          >
+            <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+              <User className="w-5 h-5 text-gray-500" />
+            </div>
+            <div className="flex-1 text-left">
+              <p className="font-medium text-gray-900 text-sm">Sign In</p>
+              <p className="text-xs text-gray-500">Save your progress</p>
+            </div>
+          </button>
+        </div>
+      </aside>
+
+      {/* Mobile Header - only visible on mobile/tablet */}
+      <header className="lg:hidden bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-30">
+        <div className="px-3">
+          <div className="flex items-center justify-between py-2">
             <Link href="/feed" className="flex flex-col items-center">
               <Image
                 src="/images/1another-logo.png?v=2"
                 alt="1Another"
-                width={280}
-                height={80}
-                className="h-12 w-auto"
+                width={140}
+                height={40}
+                className="h-8 w-auto"
                 priority
                 unoptimized
               />
-              <span className="text-[#00BCD4] font-semibold text-sm tracking-wide">
+              <span className="text-[#00BCD4] font-semibold text-[10px] tracking-wide">
                 Intelligent Health
               </span>
             </Link>
-            <nav className="hidden md:flex items-center gap-6">
-              <Link href="/feed" className="text-gray-600 hover:text-gray-900 font-medium">
-                My Feed
-              </Link>
-              <Link href="/discover" className="text-gray-600 hover:text-gray-900 font-medium">
-                Discover
-              </Link>
-              <Link href="/my-health" className="text-primary-600 font-semibold border-b-2 border-primary-600 pb-1">
-                My Health
-              </Link>
-            </nav>
+
+            {/* Right: Sign In on mobile */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowAuthPrompt(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-sky-600 text-white rounded-lg text-sm font-medium hover:bg-sky-700 transition-colors"
+              >
+                <User className="w-3.5 h-3.5" />
+                Sign In
+              </button>
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Main content */}
-      <main className="dashboard-container py-16">
+      {/* Main content - offset for sidebar on desktop */}
+      <main className="lg:ml-64 dashboard-container py-16">
         <div className="max-w-lg mx-auto text-center">
           {/* Lock icon */}
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-white shadow-lg mb-6">

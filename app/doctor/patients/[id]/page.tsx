@@ -240,17 +240,6 @@ export default function PatientProfilePage() {
     );
   }
 
-  const getStatusColor = (status: typeof patient.status) => {
-    switch (status) {
-      case "completed":
-        return "bg-emerald-100 text-emerald-700";
-      case "active":
-        return "bg-sky-100 text-sky-700";
-      case "inactive":
-        return "bg-gray-100 text-gray-600";
-    }
-  };
-
   const handleSendMessage = () => {
     if (!messageContent.trim()) return;
     // In production, this would send to Convex
@@ -265,114 +254,137 @@ export default function PatientProfilePage() {
     setShowCheckInModal(false);
   };
 
+  // Calculate progress percentage for the ring
+  const progressPercent = Math.round((patient.videosWatched / patient.totalVideos) * 100);
+  const circumference = 2 * Math.PI * 58; // radius of 58
+  const strokeDashoffset = circumference - (progressPercent / 100) * circumference;
+
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <button
-          onClick={() => router.back()}
-          className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-          aria-label="Go back"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">{patient.name}</h1>
-          <p className="text-gray-500">Patient Profile</p>
-        </div>
-      </div>
+      {/* Back Button */}
+      <button
+        onClick={() => router.back()}
+        className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition-colors"
+        aria-label="Go back"
+      >
+        <ArrowLeft className="w-5 h-5" />
+      </button>
 
-      {/* Patient Header Card */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <div className="flex flex-col md:flex-row md:items-start gap-6">
-          {/* Avatar & Basic Info */}
-          <div className="flex items-start gap-4">
-            <div className="w-20 h-20 rounded-full overflow-hidden ring-4 ring-gray-100 flex-shrink-0">
-              <Image
-                src={patient.avatarUrl}
-                alt={patient.name}
-                width={80}
-                height={80}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-gray-900">{patient.name}</h2>
-              <span
-                className={cn(
-                  "inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-full mt-1",
-                  getStatusColor(patient.status)
-                )}
-              >
-                {patient.status === "completed" && <CheckCircle className="w-3 h-3" />}
-                {patient.status === "active" && <Play className="w-3 h-3" />}
-                {patient.status === "inactive" && <Clock className="w-3 h-3" />}
-                {patient.status.charAt(0).toUpperCase() + patient.status.slice(1)}
-              </span>
-              
-              <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-gray-600">
-                <div className="flex items-center gap-1.5">
-                  <Mail className="w-4 h-4 text-gray-400" />
-                  {patient.email}
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Phone className="w-4 h-4 text-gray-400" />
-                  {patient.phone}
+      {/* Patient CV-Style Header Card */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+        <div className="flex flex-col md:flex-row gap-8">
+          {/* Left Side - Large Photo with Progress Ring */}
+          <div className="flex flex-col items-center md:items-start">
+            <div className="relative">
+              {/* Progress Ring SVG */}
+              <svg className="w-36 h-36 md:w-40 md:h-40 transform -rotate-90" viewBox="0 0 128 128">
+                {/* Background circle */}
+                <circle
+                  cx="64"
+                  cy="64"
+                  r="58"
+                  fill="none"
+                  stroke="#e5e7eb"
+                  strokeWidth="8"
+                />
+                {/* Progress circle */}
+                <circle
+                  cx="64"
+                  cy="64"
+                  r="58"
+                  fill="none"
+                  stroke={progressPercent === 100 ? "#10b981" : "#0ea5e9"}
+                  strokeWidth="8"
+                  strokeLinecap="round"
+                  strokeDasharray={circumference}
+                  strokeDashoffset={strokeDashoffset}
+                  className="transition-all duration-500"
+                />
+              </svg>
+              {/* Photo in the center */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-white shadow-lg">
+                  <Image
+                    src={patient.avatarUrl}
+                    alt={patient.name}
+                    width={128}
+                    height={128}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               </div>
             </div>
+            {/* Progress label */}
+            <div className="mt-4 text-center">
+              <p className="text-2xl font-bold text-gray-900">{progressPercent}%</p>
+              <p className="text-sm text-gray-500">{patient.videosWatched}/{patient.totalVideos} videos</p>
+            </div>
           </div>
 
-          {/* Quick Actions */}
-          <div className="flex flex-wrap gap-2 md:ml-auto">
-            <button
-              onClick={() => setShowMessageModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-sky-600 text-white font-medium rounded-lg hover:bg-sky-700 transition-colors"
-            >
-              <MessageSquare className="w-4 h-4" />
-              Send Message
-            </button>
-            <button
-              onClick={() => setShowCheckInModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition-colors"
-            >
-              <Heart className="w-4 h-4" />
-              Send Check-in
-            </button>
-            <Link
-              href={`/doctor/send?patient=${patient.id}`}
-              className="flex items-center gap-2 px-4 py-2 border border-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
-            >
-              <Video className="w-4 h-4" />
-              Send Video
-            </Link>
-          </div>
-        </div>
-
-        {/* Progress Bar */}
-        <div className="mt-6 pt-6 border-t border-gray-100">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-700">Video Progress</span>
-            <span className="text-sm font-bold text-gray-900">
-              {Math.round((patient.videosWatched / patient.totalVideos) * 100)}%
-            </span>
-          </div>
-          <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-            <div
-              className={cn(
-                "h-full rounded-full transition-all",
-                patient.videosWatched === patient.totalVideos
-                  ? "bg-emerald-500"
-                  : "bg-sky-500"
+          {/* Right Side - All Patient Info */}
+          <div className="flex-1 min-w-0">
+            {/* Name and completion badge */}
+            <div className="flex flex-wrap items-center gap-3 mb-4">
+              <h1 className="text-3xl font-bold text-gray-900">{patient.name}</h1>
+              {patient.status === "completed" && (
+                <span className="inline-flex items-center gap-1 px-3 py-1 text-sm font-medium rounded-full bg-emerald-100 text-emerald-700">
+                  <CheckCircle className="w-4 h-4" />
+                  Course Completed
+                </span>
               )}
-              style={{
-                width: `${(patient.videosWatched / patient.totalVideos) * 100}%`,
-              }}
-            />
+            </div>
+
+            {/* Contact and provider info */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+              <div className="flex items-center gap-2 text-gray-600">
+                <Mail className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                <span className="truncate">{patient.email}</span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-600">
+                <Phone className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                <span>{patient.phone}</span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-600">
+                <Building2 className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                <span>{patient.healthSystemGroup}</span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-600">
+                <Calendar className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                <span>Joined {patient.joinedDate}</span>
+              </div>
+            </div>
+
+            {/* Last activity */}
+            <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
+              <Clock className="w-4 h-4" />
+              <span>Last activity: {patient.lastActivity}</span>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={() => setShowMessageModal(true)}
+                className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-medium rounded-xl hover:from-emerald-600 hover:to-sky-600 transition-all shadow-md"
+              >
+                <MessageSquare className="w-4 h-4" />
+                Send Message
+              </button>
+              <button
+                onClick={() => setShowCheckInModal(true)}
+                className="flex items-center gap-2 px-4 py-2.5 bg-white border-2 border-emerald-500 text-emerald-600 font-medium rounded-xl hover:bg-emerald-50 transition-colors"
+              >
+                <Heart className="w-4 h-4" />
+                Send Check-in
+              </button>
+              <Link
+                href={`/doctor/send?patient=${patient.id}`}
+                className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors"
+              >
+                <Video className="w-4 h-4" />
+                Send Video
+              </Link>
+            </div>
           </div>
-          <p className="text-sm text-gray-500 mt-1">
-            {patient.videosWatched} of {patient.totalVideos} videos watched
-          </p>
         </div>
       </div>
 

@@ -42,6 +42,43 @@ const MOCK_DOCTOR: Doctor = {
   createdAt: new Date().toISOString(),
 };
 
+// Mock doctors for sidebar
+const MOCK_DOCTORS: Doctor[] = [
+  MOCK_DOCTOR,
+  {
+    id: "550e8400-e29b-41d4-a716-446655440002",
+    name: "Michael Chen",
+    specialty: "Cardiology",
+    avatarUrl: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&h=400&fit=crop&q=80",
+    clinicName: "Boston Cardiology Center",
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: "550e8400-e29b-41d4-a716-446655440003",
+    name: "Emily Rodriguez",
+    specialty: "Cardiology",
+    avatarUrl: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=400&h=400&fit=crop&q=80",
+    clinicName: "Advanced Heart Care",
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: "550e8400-e29b-41d4-a716-446655440004",
+    name: "James Martinez",
+    specialty: "Cardiology",
+    avatarUrl: "https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=400&h=400&fit=crop&q=80",
+    clinicName: "Cardiovascular Associates",
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: "550e8400-e29b-41d4-a716-446655440005",
+    name: "Lisa Thompson",
+    specialty: "Cardiology",
+    avatarUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop&q=80&sat=-100",
+    clinicName: "Heart & Vascular Institute",
+    createdAt: new Date().toISOString(),
+  },
+];
+
 // Score values for each action item
 const ACTION_SCORES: Record<string, number> = {
   med1: 2,
@@ -142,10 +179,114 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Compact Mobile Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
-        <div className="px-3 md:px-6">
-          <div className="flex items-center justify-between py-2 md:py-4">
+      {/* Desktop Left Sidebar */}
+      <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-gray-200 h-screen fixed left-0 top-0 z-40">
+        {/* Logo */}
+        <div className="p-6 border-b border-gray-100">
+          <Link href="/feed" className="flex flex-col items-center justify-center">
+            <Image
+              src="/images/1another-logo.png?v=2"
+              alt="1Another"
+              width={280}
+              height={80}
+              className="h-12 w-auto"
+              priority
+              unoptimized
+            />
+            <span className="text-[#00BCD4] font-semibold text-sm tracking-wide">
+              Intelligent Health
+            </span>
+          </Link>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 p-4 space-y-1">
+          <Link
+            href="/feed"
+            className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+          >
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="7" height="7" rx="1" />
+              <rect x="14" y="3" width="7" height="7" rx="1" />
+              <rect x="3" y="14" width="7" height="7" rx="1" />
+              <rect x="14" y="14" width="7" height="7" rx="1" />
+            </svg>
+            <span>My Feed</span>
+          </Link>
+          <Link
+            href="/discover"
+            className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+          >
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M16.24 7.76l-2.12 6.36-6.36 2.12 2.12-6.36 6.36-2.12z" />
+            </svg>
+            <span>Discover</span>
+          </Link>
+          <Link
+            href="/my-health"
+            className="flex items-center gap-3 px-4 py-3 rounded-xl bg-gray-100 text-gray-900 font-semibold transition-all"
+          >
+            <svg className="w-6 h-6 text-[#00BFA6]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+            </svg>
+            <span>My Health</span>
+          </Link>
+          
+          <div className="pt-4 border-t border-gray-100 mt-4">
+            <p className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Your Doctors</p>
+            {MOCK_DOCTORS.map((doctor) => (
+              <Link
+                key={doctor.id}
+                href={`/feed?doctor=${doctor.id}`}
+                className="flex items-center gap-3 px-4 py-2 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+              >
+                <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-gray-100">
+                  {doctor.avatarUrl ? (
+                    <Image
+                      src={doctor.avatarUrl}
+                      alt={doctor.name}
+                      width={32}
+                      height={32}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-[#00BFA6] to-[#00A6CE] flex items-center justify-center">
+                      <span className="text-white text-xs font-bold">{doctor.name.charAt(0)}</span>
+                    </div>
+                  )}
+                </div>
+                <span className="text-sm">Dr. {doctor.name}</span>
+              </Link>
+            ))}
+          </div>
+        </nav>
+
+        {/* User Section */}
+        <div className="p-4 border-t border-gray-100">
+          <Link
+            href="/my-health"
+            className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+          >
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#00BFA6] to-[#00A6CE] flex items-center justify-center">
+              <span className="text-white font-bold text-sm">
+                {session?.user?.name?.charAt(0) || "U"}
+              </span>
+            </div>
+            <div className="flex-1">
+              <p className="font-medium text-gray-900 text-sm">
+                {session?.user?.name || "User"}
+              </p>
+              <p className="text-xs text-gray-500">View Profile</p>
+            </div>
+          </Link>
+        </div>
+      </aside>
+
+      {/* Mobile Header - only visible on mobile/tablet */}
+      <header className="lg:hidden bg-white border-b border-gray-200 sticky top-0 z-30">
+        <div className="px-3">
+          <div className="flex items-center justify-between py-2">
             {/* Left: Logo */}
             <Link href="/feed" className="flex flex-col items-center">
               <Image
@@ -153,58 +294,25 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
                 alt="1Another"
                 width={140}
                 height={40}
-                className="h-8 md:h-12 w-auto"
+                className="h-8 w-auto"
                 priority
                 unoptimized
               />
-              <span className="text-[#00BCD4] font-semibold text-[10px] md:text-sm tracking-wide">
+              <span className="text-[#00BCD4] font-semibold text-[10px] tracking-wide">
                 Intelligent Health
               </span>
             </Link>
-            
-            {/* Desktop Nav */}
-            <nav className="hidden md:flex items-center gap-6">
-              <Link href="/feed" className="text-gray-600 hover:text-gray-900 font-medium">
-                My Feed
-              </Link>
-              <Link href="/discover" className="text-gray-600 hover:text-gray-900 font-medium">
-                Discover
-              </Link>
-              <Link href="/my-health" className="text-primary-600 font-semibold border-b-2 border-primary-600 pb-1">
-                My Health
-              </Link>
-            </nav>
 
-            {/* Right: Insurance Logos + Menu (No HeartScore - already on page) */}
-            <div className="flex items-center gap-2 md:gap-4">
-              <div className="hidden md:flex items-center gap-2">
-                <div className="bg-[#003A70] rounded px-2 py-1">
-                  <Image
-                    src="/images/kaiser-logo.png"
-                    alt="Kaiser Permanente"
-                    width={80}
-                    height={22}
-                    className="h-5 w-auto"
-                  />
-                </div>
-                <Image
-                  src="/images/united-healthcare-logo.svg"
-                  alt="UnitedHealthcare"
-                  width={120}
-                  height={28}
-                  className="h-6 w-auto"
-                />
-              </div>
-              <div className="hidden sm:block">
-                <UserMenu />
-              </div>
+            {/* Right: User Menu on mobile */}
+            <div className="flex items-center gap-2">
+              <UserMenu />
             </div>
           </div>
         </div>
       </header>
 
-      {/* Main content - tighter padding on mobile */}
-      <main className="px-3 md:px-6 py-3 md:py-6 pb-16 max-w-7xl mx-auto">
+      {/* Main content - offset for sidebar on desktop */}
+      <main className="lg:ml-64 px-3 md:px-6 py-3 md:py-6 pb-16 max-w-7xl mx-auto">
         {/* Top row */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 mb-3">
           {/* Left column */}
@@ -239,9 +347,14 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
 
               {/* Annual Reminders */}
               <div className="mb-4">
-                <h3 className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-1.5">
-                  <span>📅</span> Annual Reminders
-                </h3>
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-1.5">
+                    <span>📅</span> Annual Reminders
+                  </h3>
+                  <span className="text-[10px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded-lg">
+                    0/4 done
+                  </span>
+                </div>
                 <div className="space-y-2">
                   {/* Schedule Colonoscopy - Top Priority */}
                   <div className="p-3 rounded-xl bg-sky-50 border border-sky-100">
@@ -325,7 +438,7 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
                     <span>✅</span> Daily Reminders
                   </h3>
                   <span className="text-[10px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded-lg">
-                    {Object.values(checkedItems).filter(Boolean).length}/3 done
+                    {[checkedItems.med1, checkedItems.bp, checkedItems.walk].filter(Boolean).length}/3 done
                   </span>
                 </div>
               
@@ -418,9 +531,14 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
 
               {/* Weekly Reminders */}
               <div>
-                <h3 className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-1.5">
-                  <span>📆</span> Weekly Reminders
-                </h3>
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-1.5">
+                    <span>📆</span> Weekly Reminders
+                  </h3>
+                  <span className="text-[10px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded-lg">
+                    {[checkedItems.video, checkedItems.water].filter(Boolean).length}/2 done
+                  </span>
+                </div>
                 <div className="space-y-2">
                   <div 
                     className={`flex items-center gap-3 p-3 rounded-xl transition-all cursor-pointer ${
@@ -558,8 +676,11 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
               </button>
             </div>
 
-            {/* Trust badge */}
-            <div className="card">
+            {/* Trust badge - no card wrapper on mobile */}
+            <div className="hidden md:block card">
+              <TrustBadge />
+            </div>
+            <div className="md:hidden py-2">
               <TrustBadge />
             </div>
           </div>

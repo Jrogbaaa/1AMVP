@@ -241,7 +241,6 @@ export default function DiscoverPage() {
   const [isMessagesOpen, setIsMessagesOpen] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [selectedTopic, setSelectedTopic] = useState<string>("all");
   const [selectedSpecialty, setSelectedSpecialty] = useState<string>("all");
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const [authPromptTrigger, setAuthPromptTrigger] = useState<"earned_trust" | "save_progress" | "set_reminder" | "personalized_content" | "follow_doctor">("follow_doctor");
@@ -260,7 +259,6 @@ export default function DiscoverPage() {
 
   const [searchQuery, setSearchQuery] = useState("");
   
-  const cardiologyTopics = ["all", "blood-pressure", "heart-disease", "arrhythmia", "cholesterol"];
   const specialties = ["all", "cardiology", "primary-care", "endocrinology", "gastroenterology", "pulmonology", "mental-health"];
   
   // Filter specialties based on search query
@@ -348,10 +346,132 @@ export default function DiscoverPage() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Compact Mobile Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
-        <div className="px-3 md:px-6">
-          <div className="flex items-center justify-between py-2 md:py-4">
+      {/* Desktop Left Sidebar */}
+      <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-gray-200 h-screen fixed left-0 top-0 z-40">
+        {/* Logo */}
+        <div className="p-6 border-b border-gray-100">
+          <Link href="/feed" className="flex flex-col items-center justify-center">
+            <Image
+              src="/images/1another-logo.png?v=2"
+              alt="1Another"
+              width={280}
+              height={80}
+              className="h-12 w-auto"
+              priority
+              unoptimized
+            />
+            <span className="text-[#00BCD4] font-semibold text-sm tracking-wide">
+              Intelligent Health
+            </span>
+          </Link>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 p-4 space-y-1">
+          <Link
+            href="/feed"
+            className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+          >
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="7" height="7" rx="1" />
+              <rect x="14" y="3" width="7" height="7" rx="1" />
+              <rect x="3" y="14" width="7" height="7" rx="1" />
+              <rect x="14" y="14" width="7" height="7" rx="1" />
+            </svg>
+            <span>My Feed</span>
+          </Link>
+          <Link
+            href="/discover"
+            className="flex items-center gap-3 px-4 py-3 rounded-xl bg-gray-100 text-gray-900 font-semibold transition-all"
+          >
+            <svg className="w-6 h-6 text-[#00BFA6]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M16.24 7.76l-2.12 6.36-6.36 2.12 2.12-6.36 6.36-2.12z" />
+            </svg>
+            <span>Discover</span>
+          </Link>
+          <Link
+            href="/my-health"
+            className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+          >
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+            </svg>
+            <span>My Health</span>
+          </Link>
+          
+          <div className="pt-4 border-t border-gray-100 mt-4">
+            <p className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Your Doctors</p>
+            {MOCK_DOCTORS.slice(0, 5).map((doctor) => (
+              <Link
+                key={doctor.id}
+                href={`/feed?doctor=${doctor.id}`}
+                className="flex items-center gap-3 px-4 py-2 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+              >
+                <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-gray-100">
+                  {doctor.avatarUrl ? (
+                    <Image
+                      src={doctor.avatarUrl}
+                      alt={doctor.name}
+                      width={32}
+                      height={32}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-[#00BFA6] to-[#00A6CE] flex items-center justify-center">
+                      <span className="text-white text-xs font-bold">{doctor.name.charAt(0)}</span>
+                    </div>
+                  )}
+                </div>
+                <span className="text-sm">Dr. {doctor.name}</span>
+              </Link>
+            ))}
+          </div>
+        </nav>
+
+        {/* User Section */}
+        <div className="p-4 border-t border-gray-100">
+          {isAuthenticated ? (
+            <Link
+              href="/my-health"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+            >
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#00BFA6] to-[#00A6CE] flex items-center justify-center">
+                <span className="text-white font-bold text-sm">
+                  {session?.user?.name?.charAt(0) || "U"}
+                </span>
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-gray-900 text-sm">
+                  {session?.user?.name || "User"}
+                </p>
+                <p className="text-xs text-gray-500">View Profile</p>
+              </div>
+            </Link>
+          ) : (
+            <button
+              onClick={() => {
+                setAuthPromptTrigger("save_progress");
+                setShowAuthPrompt(true);
+              }}
+              className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors w-full"
+            >
+              <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                <User className="w-5 h-5 text-gray-500" />
+              </div>
+              <div className="flex-1 text-left">
+                <p className="font-medium text-gray-900 text-sm">Sign In</p>
+                <p className="text-xs text-gray-500">Save your progress</p>
+              </div>
+            </button>
+          )}
+        </div>
+      </aside>
+
+      {/* Mobile Header - only visible on mobile/tablet */}
+      <header className="lg:hidden bg-white border-b border-gray-200 sticky top-0 z-30">
+        <div className="px-3">
+          <div className="flex items-center justify-between py-2">
             {/* Left: Logo */}
             <Link href="/feed" className="flex flex-col items-center">
               <Image
@@ -359,72 +479,38 @@ export default function DiscoverPage() {
                 alt="1Another"
                 width={140}
                 height={40}
-                className="h-8 md:h-12 w-auto"
+                className="h-8 w-auto"
                 priority
                 unoptimized
               />
-              <span className="text-[#00BCD4] font-semibold text-[10px] md:text-sm tracking-wide">
+              <span className="text-[#00BCD4] font-semibold text-[10px] tracking-wide">
                 Intelligent Health
               </span>
             </Link>
-            
-            {/* Desktop Nav - hidden on mobile */}
-            <nav className="hidden md:flex items-center gap-6">
-              <Link href="/feed" className="text-gray-600 hover:text-gray-900 font-medium">
-                My Feed
-              </Link>
-              <Link href="/discover" className="text-primary-600 font-semibold border-b-2 border-primary-600 pb-1">
-                Discover
-              </Link>
-              <Link href="/my-health" className="text-gray-600 hover:text-gray-900 font-medium">
-                My Health
-              </Link>
-            </nav>
 
-            {/* Right: Menu */}
-            <div className="flex items-center gap-2 md:gap-4">
-              {/* Insurance Logos - hidden on mobile */}
-              <div className="hidden md:flex items-center gap-2">
-                <div className="bg-[#003A70] rounded px-2 py-1">
-                  <Image
-                    src="/images/kaiser-logo.png"
-                    alt="Kaiser Permanente"
-                    width={80}
-                    height={22}
-                    className="h-5 w-auto"
-                  />
-                </div>
-                <Image
-                  src="/images/united-healthcare-logo.svg"
-                  alt="UnitedHealthcare"
-                  width={120}
-                  height={28}
-                  className="h-6 w-auto"
-                />
-              </div>
-              <div className="hidden sm:block">
-                {isAuthenticated ? (
-                  <UserMenu />
-                ) : (
-                  <button
-                    onClick={() => {
-                      setAuthPromptTrigger("save_progress");
-                      setShowAuthPrompt(true);
-                    }}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-sky-600 text-white rounded-lg text-sm font-medium hover:bg-sky-700 transition-colors"
-                  >
-                    <User className="w-3.5 h-3.5" />
-                    Sign In
-                  </button>
-                )}
-              </div>
+            {/* Right: Sign In on mobile */}
+            <div className="flex items-center gap-2">
+              {isAuthenticated ? (
+                <UserMenu />
+              ) : (
+                <button
+                  onClick={() => {
+                    setAuthPromptTrigger("save_progress");
+                    setShowAuthPrompt(true);
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-sky-600 text-white rounded-lg text-sm font-medium hover:bg-sky-700 transition-colors"
+                >
+                  <User className="w-3.5 h-3.5" />
+                  Sign In
+                </button>
+              )}
             </div>
           </div>
         </div>
       </header>
 
-      {/* Main content - tighter padding on mobile */}
-      <main className="px-3 md:px-6 py-3 md:py-6 pb-16 max-w-7xl mx-auto">
+      {/* Main content - offset for sidebar on desktop */}
+      <main className="lg:ml-64 px-3 md:px-6 py-3 md:py-6 pb-16 max-w-7xl mx-auto">
         {/* Header Card - Modular */}
         <div className="bg-white rounded-2xl p-4 mb-3 shadow-sm">
           <div className="flex items-center justify-between mb-3">
@@ -438,15 +524,15 @@ export default function DiscoverPage() {
             </div>
           </div>
           
-          {/* Search Input */}
+          {/* Search Input - smaller on mobile */}
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 md:w-4 md:h-4 text-gray-400" />
             <input
               type="text"
-              placeholder="Search topics (e.g., heart, mental health, diabetes...)"
+              placeholder="Search topics..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00BFA6]/30 focus:border-[#00BFA6] transition-all"
+              className="w-full pl-8 md:pl-10 pr-3 md:pr-4 py-1.5 md:py-2.5 bg-gray-50 border border-gray-200 rounded-lg md:rounded-xl text-xs md:text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00BFA6]/30 focus:border-[#00BFA6] transition-all"
             />
             {searchQuery && (
               <button
@@ -489,7 +575,7 @@ export default function DiscoverPage() {
                       }}
                     >
                       <div className="relative">
-                        <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-tr from-sky-500 via-blue-500 to-sky-600 p-[2px] group-hover:scale-105 transition-transform duration-200">
+                        <div className="w-16 h-16 md:w-16 md:h-16 rounded-full bg-gradient-to-tr from-sky-500 via-blue-500 to-sky-600 p-[2px] group-hover:scale-105 transition-transform duration-200">
                           <div className="w-full h-full rounded-full bg-white p-[2px]">
                             <div className="relative w-full h-full rounded-full overflow-hidden">
                               <Image
@@ -531,7 +617,7 @@ export default function DiscoverPage() {
                       <div className="flex flex-col items-center gap-1">
                         <div className="relative">
                           {/* Grayscale ring for premium */}
-                          <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-tr from-gray-400 via-gray-300 to-gray-400 p-[2px]">
+                          <div className="w-16 h-16 md:w-16 md:h-16 rounded-full bg-gradient-to-tr from-gray-400 via-gray-300 to-gray-400 p-[2px]">
                             <div className="w-full h-full rounded-full bg-white p-[2px]">
                               <div className="relative w-full h-full rounded-full overflow-hidden">
                                 {doctor.avatarUrl ? (
@@ -576,8 +662,8 @@ export default function DiscoverPage() {
                       onClick={() => handleDoctorClick(doctor, false)}
                     >
                       <div className="relative">
-                        {/* Gradient ring - smaller on mobile */}
-                        <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-tr from-primary-500 via-pink-500 to-yellow-500 p-[2px] group-hover:scale-105 transition-transform duration-200">
+                        {/* Gradient ring */}
+                        <div className="w-16 h-16 md:w-16 md:h-16 rounded-full bg-gradient-to-tr from-primary-500 via-pink-500 to-yellow-500 p-[2px] group-hover:scale-105 transition-transform duration-200">
                           <div className="w-full h-full rounded-full bg-white p-[2px]">
                             <div className="relative w-full h-full rounded-full overflow-hidden">
                               {doctor.avatarUrl ? (
@@ -664,25 +750,6 @@ export default function DiscoverPage() {
               </button>
             ))}
           </div>
-
-          {/* Cardiology topics filter */}
-          {selectedSpecialty === "cardiology" && (
-            <div className="mt-2 flex flex-wrap gap-1.5">
-              {cardiologyTopics.map((topic) => (
-                <button
-                  key={topic}
-                  onClick={() => setSelectedTopic(topic)}
-                  className={`px-2.5 py-1 rounded-lg text-[10px] font-medium transition-colors ${
-                    selectedTopic === topic
-                      ? "bg-primary-100 text-primary-700 border border-primary-200"
-                      : "bg-gray-50 text-gray-500 border border-gray-200"
-                  }`}
-                >
-                  {topic === "all" ? "All Topics" : topic.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
-                </button>
-              ))}
-            </div>
-          )}
         </div>
 
         {/* Trending Videos - TikTok-style Vertical Previews */}

@@ -75,13 +75,16 @@ The platform features a complete authentication system with role-based access:
 │   ├── TrustBadge.tsx     # Privacy/security badge
 │   ├── ScheduleAppointment.tsx  # Appointment scheduler
 │   ├── RateLimitMessage.tsx     # Rate limit UI
-│   └── SchemaMarkup.tsx   # SEO schema markup
+│   ├── SchemaMarkup.tsx   # SEO schema markup
+│   ├── DoctorMessagesWidget.tsx  # Patient-side messages from doctors
+│   └── DoctorRemindersWidget.tsx # Patient-side reminders from doctors
 ├── app/doctor/            # Doctor Portal
 │   ├── page.tsx           # Doctor dashboard
 │   ├── layout.tsx         # Portal layout with sidebar navigation
 │   ├── create-chapters/   # AI Studio - personalized video creation
 │   ├── patients/          # Patient management
-│   ├── messages/          # Messaging center
+│   ├── messages/          # Messaging center (check-ins)
+│   ├── my-messages/       # My Messages & Reminders management
 │   ├── chapters/          # Video library
 │   ├── send/              # Send content wizard
 │   └── settings/          # Doctor settings & preferences
@@ -95,6 +98,10 @@ The platform features a complete authentication system with role-based access:
 │   ├── admin.ts           # Admin utilities (data reset)
 │   ├── doctorProfiles.ts  # Doctor profile management
 │   ├── preventiveCare.ts  # Preventive care profiles
+│   ├── doctorMessageTemplates.ts  # Doctor message templates
+│   ├── doctorMessages.ts  # Doctor-to-patient messages
+│   ├── doctorReminderTemplates.ts # Doctor reminder templates
+│   ├── patientReminders.ts # Patient reminders
 │   ├── feed.ts            # Feed logic & rate limiting
 │   ├── videoEngagement.ts # Video tracking
 │   └── chat.ts            # Chat & onboarding
@@ -105,13 +112,37 @@ The platform features a complete authentication system with role-based access:
 │   ├── types.ts           # TypeScript types
 │   ├── utils.ts           # Utility functions
 │   ├── schema.ts          # SEO schema generators
-│   └── reminders.ts       # Shared reminders data
+│   ├── reminders.ts       # Shared reminders data
+│   └── calendar-utils.ts  # ICS calendar file generation
 └── public/
     ├── robots.txt         # SEO crawler config
     └── images/            # Static assets
 ```
 
-## ✨ Latest Updates (v1.32.0 - Dec 18, 2024)
+## ✨ Latest Updates (v1.40.0 - Jan 2, 2026)
+
+### 📬 Messages & Reminders System
+
+**Doctor Portal - My Messages & Reminders:**
+- New unified page for managing message and reminder templates
+- Tabbed interface with Message Templates, Reminder Templates, and Suggested
+- Create, edit, delete custom templates with usage analytics
+- Frequency options: daily, weekly, one-time
+- Category tagging: medication, appointment, lifestyle, custom
+
+**Patient Widgets:**
+- `DoctorMessagesWidget` - Shows messages from doctors with unread indicators
+- `DoctorRemindersWidget` - Shows assigned reminders grouped by frequency
+- Mark complete with animations, doctor attribution, due date badges
+
+**Calendar Integration:**
+- `.ics` file generation for adding reminders to any calendar
+- Works with Google Calendar, Apple Calendar, Outlook
+- "Add to Calendar" button on each reminder
+
+---
+
+### Previous Updates (v1.32.0 - Dec 18, 2024)
 
 ### 🎨 Shadcn CLI 3.0 Upgrade & New Components
 

@@ -99,6 +99,12 @@ const NAV_ITEMS: NavItem[] = [
 // Secondary navigation items (separate pages)
 const SECONDARY_NAV_ITEMS: NavItem[] = [
   {
+    id: "my-messages",
+    label: "My Messages & Reminders",
+    href: "/doctor/my-messages",
+    icon: <MessageSquare className="w-5 h-5" />,
+  },
+  {
     id: "onboarding",
     label: "Onboarding",
     href: "/doctor/onboarding",

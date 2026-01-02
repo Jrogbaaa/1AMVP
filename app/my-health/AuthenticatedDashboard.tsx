@@ -9,6 +9,8 @@ import { ScheduleAppointment } from "@/components/ScheduleAppointment";
 import { ChatOnboarding } from "@/components/ChatOnboarding";
 import { UserMenu } from "@/components/UserMenu";
 import { PreventiveCareChecklist } from "@/components/PreventiveCareChecklist";
+import { DoctorMessagesWidget } from "@/components/DoctorMessagesWidget";
+import { DoctorRemindersWidget } from "@/components/DoctorRemindersWidget";
 import {
   User,
   Mail,
@@ -319,10 +321,20 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
               )}
             </div>
 
-            {/* Reminders - Modular Card */}
+            {/* Messages from Your Doctor */}
+            {userId && (
+              <DoctorMessagesWidget patientId={userId} />
+            )}
+
+            {/* Reminders from Your Doctor */}
+            {userId && (
+              <DoctorRemindersWidget patientId={userId} />
+            )}
+
+            {/* System Reminders - Modular Card */}
             <div className="bg-white rounded-2xl p-3 md:p-4 shadow-sm">
               <h2 className="text-base md:text-lg font-bold text-gray-900 mb-3">
-                Reminders
+                Health Reminders
               </h2>
 
               {/* Annual Reminders */}

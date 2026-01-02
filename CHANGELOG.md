@@ -5,6 +5,63 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.40.0] - 2026-01-02
+
+### 📬 Messages & Reminders System
+
+**Doctor Portal - My Messages & Reminders Page (`/doctor/my-messages`):**
+- New unified page for managing message and reminder templates
+- Tabbed interface: Message Templates, Reminder Templates, Suggested
+- Create, edit, delete custom message templates
+- Create, edit, delete custom reminder templates with frequency (daily, weekly, one-time)
+- Category tagging: medication, appointment, lifestyle, custom
+- Usage analytics tracking (most-used templates)
+- Suggested templates that doctors can quickly adopt
+- Send button for each template (ready for patient selection)
+
+**Database Schema Updates (`convex/schema.ts`):**
+- Added `doctorReminderTemplates` table for reusable reminder templates
+- Added `patientReminders` table for reminders sent to patients
+- Indexes for efficient querying by doctor, patient, and completion status
+
+**Convex Functions:**
+- `convex/doctorReminderTemplates.ts` - Full CRUD for reminder templates
+- `convex/patientReminders.ts` - Send, complete, and query patient reminders
+- Completion stats and frequency filtering
+
+**Patient Widgets:**
+- `DoctorMessagesWidget` - Polished widget showing messages from doctors
+  - Unread indicators with count badge
+  - Expandable message view
+  - Doctor attribution with avatars
+  - Mark as read on expand
+- `DoctorRemindersWidget` - Feature-rich reminder widget
+  - Grouped by frequency (Daily / Weekly / One-time)
+  - Checkbox completion with animation
+  - Doctor attribution with small avatars
+  - Due date badges for one-time reminders
+  - "Add to Calendar" button on each reminder
+  - "Add All to Calendar" bulk action
+
+**Calendar Integration (`lib/calendar-utils.ts`):**
+- `.ics` file generation for calendar downloads
+- Works with Google Calendar, Apple Calendar, Outlook
+- Recurring event support (daily/weekly)
+- `downloadICS()` function for browser downloads
+- `generateGoogleCalendarURL()` for direct Google Calendar links
+
+**Dashboard Integration:**
+- Integrated `DoctorMessagesWidget` and `DoctorRemindersWidget` into patient My Health page
+- Widgets appear prominently at top of left column
+- Real-time data from Convex queries
+
+**Navigation Update:**
+- Added "My Messages & Reminders" to Doctor Portal sidebar
+- Uses MessageSquare icon
+- Positioned in Secondary navigation section
+
+---
+
 ## [1.39.1] - 2024-12-31
 
 ### 🧪 E2E Test Fixes

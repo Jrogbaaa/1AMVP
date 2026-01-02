@@ -307,5 +307,45 @@ export default defineSchema({
     .index("by_doctor", ["doctorId"])
     .index("by_patient", ["patientId"])
     .index("by_doctor_patient", ["doctorId", "patientId"]),
+
+  // Doctor reminder templates (reusable reminders)
+  doctorReminderTemplates: defineTable({
+    doctorId: v.string(),
+    title: v.string(),
+    description: v.optional(v.string()),
+    frequency: v.union(
+      v.literal("one-time"),
+      v.literal("daily"),
+      v.literal("weekly")
+    ),
+    category: v.optional(v.string()), // "medication", "appointment", "lifestyle", "custom"
+    usageCount: v.number(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_doctor", ["doctorId"])
+    .index("by_category", ["doctorId", "category"]),
+
+  // Reminders sent to patients
+  patientReminders: defineTable({
+    doctorId: v.string(),
+    patientId: v.string(),
+    templateId: v.optional(v.id("doctorReminderTemplates")),
+    title: v.string(),
+    description: v.optional(v.string()),
+    frequency: v.union(
+      v.literal("one-time"),
+      v.literal("daily"),
+      v.literal("weekly")
+    ),
+    dueDate: v.optional(v.number()), // For one-time reminders
+    isCompleted: v.boolean(),
+    completedAt: v.optional(v.number()),
+    createdAt: v.number(),
+  })
+    .index("by_doctor", ["doctorId"])
+    .index("by_patient", ["patientId"])
+    .index("by_doctor_patient", ["doctorId", "patientId"])
+    .index("by_completed", ["patientId", "isCompleted"]),
 });
 

@@ -330,10 +330,10 @@ export function DoctorLayoutClient({
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        {/* Sidebar Header */}
-        <div className="flex items-center justify-center h-16 px-4 relative">
+        {/* Sidebar Header - Logo with more spacing */}
+        <div className="flex items-center justify-center h-20 px-4 relative border-b border-gray-100">
           <Link href="/doctor" className="flex flex-col items-center">
-            <Logo variant="withTagline" className="h-12 w-auto" />
+            <Logo variant="withTagline" className="h-14 w-auto" />
           </Link>
           <button
             onClick={handleCloseSidebar}
@@ -342,35 +342,6 @@ export function DoctorLayoutClient({
           >
             <X className="w-5 h-5" />
           </button>
-        </div>
-
-        {/* Doctor Info */}
-        <div className="px-3 py-2">
-          <div className="flex items-center gap-2.5 p-2 bg-gradient-to-r from-sky-50 to-blue-50 rounded-lg">
-            <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-sky-200 bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center flex-shrink-0">
-              {currentDoctor.avatarUrl && currentDoctor.avatarUrl !== "/images/doctors/doctor-jack.jpg" ? (
-                <Image
-                  src={currentDoctor.avatarUrl}
-                  alt={currentDoctor.name}
-                  width={40}
-                  height={40}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <span className="text-white font-bold text-sm">
-                  {currentDoctor.fullName.charAt(0).toUpperCase()}
-                </span>
-              )}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-semibold text-gray-900 truncate text-sm">
-                {currentDoctor.name}
-              </p>
-              <p className="text-xs text-gray-500 truncate">
-                {currentDoctor.specialty}
-              </p>
-            </div>
-          </div>
         </div>
 
         {/* Main Navigation - Dashboard Sections */}

@@ -28,11 +28,11 @@ export const MobileBottomNav = () => {
 
   return (
     <nav
-      className="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-gray-100 z-30 safe-area-bottom mobile-nav-shadow"
+      className="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-gray-100 z-30 safe-area-bottom"
       role="navigation"
       aria-label="Main navigation"
     >
-      <div className="flex items-center justify-around py-1 px-4">
+      <div className="flex items-center justify-around py-1.5 px-4">
         {navItems.map((item) => {
           const active = isActive(item.href);
           
@@ -40,8 +40,10 @@ export const MobileBottomNav = () => {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex flex-col items-center gap-0.5 min-w-[64px] py-0.5 transition-all duration-200 ${
-                active ? "text-[#00BFA6]" : "text-[#6B7280] hover:text-gray-700"
+              className={`flex flex-col items-center gap-0.5 min-w-[64px] py-1 transition-all duration-200 ${
+                active 
+                  ? "text-[#00BFA6]" 
+                  : "text-[#9CA3AF] hover:text-gray-600"
               }`}
               aria-current={active ? "page" : undefined}
               aria-label={item.label}
@@ -57,18 +59,20 @@ export const MobileBottomNav = () => {
               {item.icon === "discover" && (
                 <Compass
                   className="w-5 h-5"
-                  fill={active ? "currentColor" : "none"}
-                  strokeWidth={active ? 1.25 : 1.75}
+                  fill="none"
+                  strokeWidth={active ? 2.25 : 1.75}
                 />
               )}
               {item.icon === "health" && (
                 <Heart
                   className="w-5 h-5"
                   fill={active ? "currentColor" : "none"}
-                  strokeWidth={1.75}
+                  strokeWidth={active ? 0 : 1.75}
                 />
               )}
-              <span className={`text-[10px] font-medium ${active ? "text-[#00BFA6]" : "text-[#6B7280]"}`}>
+              <span className={`text-[10px] font-medium ${
+                active ? "text-[#00BFA6]" : "text-[#9CA3AF]"
+              }`}>
                 {item.label}
               </span>
             </Link>

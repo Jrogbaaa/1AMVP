@@ -231,8 +231,8 @@ export const VideoCard = ({
         <div className="flex items-center justify-center pointer-events-auto">
         </div>
 
-        {/* Bottom section */}
-        <div className="flex justify-between items-center pointer-events-auto pb-8">
+        {/* Bottom section - extra bottom padding on mobile for bottom nav */}
+        <div className="flex justify-between items-end pointer-events-auto pb-16 md:pb-8">
           {/* Left side - Video info */}
           <div className="flex-1 pr-4">
             {isPersonalized ? (
@@ -262,7 +262,7 @@ export const VideoCard = ({
           </div>
 
           {/* Right side - Actions (mobile only, hidden on desktop) */}
-          <div className="flex flex-col gap-6 items-center md:hidden">
+          <div className="flex flex-col gap-4 items-center md:hidden">
             {/* Doctor avatar - FIRST (builds relationship) */}
             {doctor && (
               <Link
@@ -271,25 +271,25 @@ export const VideoCard = ({
                 aria-label={`View Dr. ${doctor.name}'s profile`}
               >
                 <div className="relative">
-                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-lg hover:scale-110 transition-transform">
+                  <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-white shadow-lg hover:scale-110 transition-transform">
                     {doctor.avatarUrl ? (
                       <Image
                         src={doctor.avatarUrl}
                         alt={doctor.name}
-                        width={48}
-                        height={48}
+                        width={44}
+                        height={44}
                         className="w-full h-full object-cover"
                       />
                     ) : (
                       <div className="w-full h-full bg-primary-600 flex items-center justify-center">
-                        <span className="text-white font-bold text-lg">
+                        <span className="text-white font-bold text-base">
                           {doctor.name.charAt(0)}
                         </span>
                       </div>
                     )}
                   </div>
                   {/* Follow indicator */}
-                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white">
+                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-4 bg-primary-500 rounded-full flex items-center justify-center text-white text-[10px] font-bold border-2 border-white">
                     +
                   </div>
                 </div>
@@ -299,22 +299,21 @@ export const VideoCard = ({
             {/* Discover button - SECOND */}
             <Link
               href="/discover"
-              className="flex items-center justify-center w-12 h-12 bg-white/50 backdrop-blur-sm rounded-full shadow-lg hover:bg-white/70 hover:scale-110 transition-all duration-200"
+              className="flex items-center justify-center w-11 h-11 bg-white/40 backdrop-blur-sm rounded-full shadow-lg hover:bg-white/60 hover:scale-110 transition-all duration-200"
               aria-label="Discover Doctors"
               tabIndex={0}
             >
-              <Search className="w-5 h-5 text-gray-700" />
+              <Search className="w-5 h-5 text-white" />
             </Link>
 
             {/* Share button - only show for non-personalized videos */}
             {!isPersonalized && (
               <button
                 onClick={handleShare}
-                className="flex flex-col items-center gap-1"
+                className="flex items-center justify-center w-11 h-11 bg-white/40 backdrop-blur-sm rounded-full shadow-lg hover:bg-white/60 hover:scale-110 transition-all duration-200"
                 aria-label="Share video"
               >
-                <Share2 className="w-8 h-8 text-white" />
-                <span className="text-white text-xs">Share</span>
+                <Share2 className="w-5 h-5 text-white" />
               </button>
             )}
           </div>

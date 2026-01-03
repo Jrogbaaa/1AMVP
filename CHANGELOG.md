@@ -5,6 +5,29 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.48.0] - 2026-01-03
+
+### 🎨 Landing Page Redesign
+
+**Hero Section Updates (`app/page.tsx`):**
+- New headline: "Intelligent Health" with gradient styling
+- Updated tagline focused on patient comprehension, adherence, and experience
+- Added three feature bullets with icons:
+  - Trusted video information from doctors and specialists
+  - Real-time check-ins
+  - Simple and effective reminders
+- Moved hero content higher on desktop (reduced top padding from pt-16/pt-24 to pt-8/pt-12)
+
+**Features Section Improvements:**
+- Replaced asymmetric grid layout with clean 2x2 even grid
+- Removed offset margins that caused unbalanced appearance on desktop
+- Standardized all feature cards with consistent:
+  - Padding (p-8)
+  - Icon sizes (w-14 h-14)
+  - Title sizes (text-xl)
+  - Description styling
+- Cards now stretch to equal heights with h-full
+
 ## [1.47.0] - 2026-01-03
 
 ### 🌐 Cross-Browser Compatibility & Mobile Video Fixes

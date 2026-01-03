@@ -121,22 +121,37 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative z-10 px-6 pt-16 pb-24 md:pt-24 md:pb-32 max-w-7xl mx-auto">
+      <section className="relative z-10 px-6 pt-8 pb-20 md:pt-12 md:pb-28 max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           {/* Left: Text content */}
           <div className="text-center lg:text-left">
             <h1 className="animate-reveal reveal-delay-1 text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight tracking-tight">
-              Your Doctor.{" "}
-              <span className="text-gradient">Your Screen.</span>{" "}
-              Your Health.
+              <span className="text-gradient">Intelligent</span>{" "}
+              Health
             </h1>
             
             <p className="animate-reveal reveal-delay-2 mt-6 text-lg sm:text-xl text-white/70 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-              Personalized video care that fits in your pocket. Stay connected with your healthcare team like never before.
+              Improving patient comprehension, adherence, and experience using trusted videos delivered by your doctor.
             </p>
 
+            {/* Feature bullets */}
+            <ul className="animate-reveal reveal-delay-3 mt-8 space-y-4 text-left max-w-xl mx-auto lg:mx-0">
+              <li className="flex items-start gap-3">
+                <Video className="w-5 h-5 text-[#00BFA6] mt-0.5 flex-shrink-0" />
+                <span className="text-white/80">Trusted video information from your doctors and other specialists</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <MessageSquare className="w-5 h-5 text-[#3ac1e1] mt-0.5 flex-shrink-0" />
+                <span className="text-white/80">Real-time check-ins to keep you on track</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0" />
+                <span className="text-white/80">Simple and effective reminders for your care</span>
+              </li>
+            </ul>
+
             {/* CTAs */}
-            <div className="animate-reveal reveal-delay-3 mt-10 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+            <div className="animate-reveal reveal-delay-4 mt-10 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Link
                 href="/auth?role=patient"
                 className="group relative px-8 py-4 bg-brand-gradient text-white font-bold text-lg rounded-2xl hover:scale-105 transition-all duration-300 glow-brand flex items-center justify-center gap-3"
@@ -156,7 +171,7 @@ export default function LandingPage() {
             </div>
 
             {/* Trust indicators */}
-            <div className="animate-reveal reveal-delay-4 mt-10 flex items-center justify-center lg:justify-start gap-6 text-white/50 text-sm">
+            <div className="animate-reveal reveal-delay-5 mt-10 flex items-center justify-center lg:justify-start gap-6 text-white/50 text-sm">
               <div className="flex items-center gap-2">
                 <Shield className="w-4 h-4 text-emerald-400" />
                 <span>HIPAA Compliant</span>
@@ -225,65 +240,57 @@ export default function LandingPage() {
             </p>
           </div>
 
-          {/* Asymmetric feature grid */}
-          <div className="grid md:grid-cols-12 gap-6">
-            {/* Large feature card */}
-            <div className="md:col-span-7 animate-reveal reveal-delay-2">
+          {/* Even 2x2 feature grid */}
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Personalized Videos */}
+            <div className="animate-reveal reveal-delay-2">
               <div className="h-full p-8 rounded-2xl glass gradient-border-hover hover-lift group">
-                <div className="w-16 h-16 rounded-2xl bg-brand-gradient flex items-center justify-center mb-6 group-hover:glow-brand transition-all">
-                  <Video className="w-8 h-8 text-white" />
+                <div className="w-14 h-14 rounded-xl bg-brand-gradient flex items-center justify-center mb-5 group-hover:glow-brand transition-all">
+                  <Video className="w-7 h-7 text-white" />
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-3">Personalized Videos</h3>
-                <p className="text-white/60 text-lg leading-relaxed">
-                  Doctors create custom follow-up videos tailored to each patient's care plan, conditions, and progress. No more generic advice.
+                <h3 className="text-xl font-bold text-white mb-3">Personalized Videos</h3>
+                <p className="text-white/60 leading-relaxed">
+                  Doctors create custom follow-up videos tailored to each patient's care plan, conditions, and progress.
                 </p>
-                <div className="mt-6 flex items-center gap-2 text-[#3ac1e1] font-medium">
-                  <span>See how it works</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </div>
               </div>
             </div>
 
-            {/* Medium feature card - offset */}
-            <div className="md:col-span-5 md:mt-12 animate-reveal reveal-delay-3">
-              <div className="h-full p-6 rounded-2xl glass gradient-border-hover hover-lift group">
+            {/* AI-Powered Avatars */}
+            <div className="animate-reveal reveal-delay-3">
+              <div className="h-full p-8 rounded-2xl glass gradient-border-hover hover-lift group">
                 <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#66b36c] to-[#0ba999] flex items-center justify-center mb-5 group-hover:glow-teal transition-all">
                   <Sparkles className="w-7 h-7 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-2">AI-Powered Avatars</h3>
+                <h3 className="text-xl font-bold text-white mb-3">AI-Powered Avatars</h3>
                 <p className="text-white/60 leading-relaxed">
                   Generate videos with your likeness using cutting-edge AI. Your face, your voice, scaled infinitely.
                 </p>
               </div>
             </div>
 
-            {/* Small feature card - floating bottom left */}
-            <div className="md:col-span-5 md:-mt-8 animate-reveal reveal-delay-4">
-              <div className="p-6 rounded-2xl glass gradient-border-hover hover-lift group">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0ba999] to-[#3ac1e1] flex items-center justify-center mb-4 group-hover:glow-cyan transition-all">
-                  <MessageSquare className="w-6 h-6 text-white" />
+            {/* Secure Messaging */}
+            <div className="animate-reveal reveal-delay-4">
+              <div className="h-full p-8 rounded-2xl glass gradient-border-hover hover-lift group">
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#0ba999] to-[#3ac1e1] flex items-center justify-center mb-5 group-hover:glow-cyan transition-all">
+                  <MessageSquare className="w-7 h-7 text-white" />
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2">Secure Messaging</h3>
-                <p className="text-white/60 text-sm leading-relaxed">
-                  HIPAA-compliant communication between doctors and patients.
+                <h3 className="text-xl font-bold text-white mb-3">Secure Messaging</h3>
+                <p className="text-white/60 leading-relaxed">
+                  HIPAA-compliant communication between doctors and patients with end-to-end encryption.
                 </p>
               </div>
             </div>
 
-            {/* Fourth feature - spans remaining space */}
-            <div className="md:col-span-7 md:-mt-8 animate-reveal reveal-delay-5">
-              <div className="p-6 rounded-2xl glass gradient-border-hover hover-lift group">
-                <div className="flex items-start gap-5">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center flex-shrink-0 group-hover:glow-teal transition-all">
-                    <CheckCircle className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-white mb-2">Health Tracking</h3>
-                    <p className="text-white/60 text-sm leading-relaxed">
-                      Track progress, set reminders, and stay on top of your health journey with personalized dashboards.
-                    </p>
-                  </div>
+            {/* Health Tracking */}
+            <div className="animate-reveal reveal-delay-5">
+              <div className="h-full p-8 rounded-2xl glass gradient-border-hover hover-lift group">
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mb-5 group-hover:glow-teal transition-all">
+                  <CheckCircle className="w-7 h-7 text-white" />
                 </div>
+                <h3 className="text-xl font-bold text-white mb-3">Health Tracking</h3>
+                <p className="text-white/60 leading-relaxed">
+                  Track progress, set reminders, and stay on top of your health journey with personalized dashboards.
+                </p>
               </div>
             </div>
           </div>

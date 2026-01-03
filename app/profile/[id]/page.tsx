@@ -328,8 +328,9 @@ export default function DoctorProfilePage() {
                   className="bg-gray-50 rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
                 >
                   <div className="relative aspect-video bg-gray-200 overflow-hidden">
+                    {/* Use the doctor's avatar as the thumbnail to maintain consistency */}
                     <Image
-                      src={video.thumbnailUrl || video.posterUrl || ""}
+                      src={doctor.avatarUrl || video.thumbnailUrl || video.posterUrl || ""}
                       alt={video.title}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-300"

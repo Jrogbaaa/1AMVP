@@ -22,7 +22,6 @@ import {
   Loader2,
   Stethoscope,
   AlertTriangle,
-  Activity,
   BookOpen,
   User,
   Wand2,
@@ -50,21 +49,12 @@ const NAV_ITEMS: NavItem[] = [
     isScrollTarget: true,
   },
   {
-    id: "activity",
-    label: "Patient Activity",
-    href: "/doctor#activity",
-    icon: <Activity className="w-5 h-5" />,
-    hasNotification: true,
-    notificationCount: 2,
-    isScrollTarget: true,
-  },
-  {
     id: "patients",
     label: "My Patients",
     href: "/doctor#patients",
     icon: <Users className="w-5 h-5" />,
     hasNotification: true,
-    notificationCount: 3,
+    notificationCount: 2,
     isScrollTarget: true,
   },
   {
@@ -298,13 +288,13 @@ export function DoctorLayoutClient({
           <button
             onClick={() => {
               if (isOnDashboard) {
-                const element = document.getElementById("activity");
+                const element = document.getElementById("patients");
                 if (element) {
                   const offsetTop = element.offsetTop - 100;
                   window.scrollTo({ top: offsetTop, behavior: "smooth" });
                 }
               } else {
-                router.push("/doctor#activity");
+                router.push("/doctor#patients");
               }
             }}
             className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg relative"
@@ -431,26 +421,26 @@ export function DoctorLayoutClient({
         {/* Desktop Header */}
         <header className="hidden lg:flex items-center justify-end h-16 px-8 bg-white sticky top-0 z-40">
           <div className="flex items-center gap-4">
-            {/* Send Video Button */}
+            {/* Send Button */}
             <Link
               href="/doctor/send"
               className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-sky-600 to-emerald-600 text-white text-sm font-semibold rounded-xl hover:from-sky-700 hover:to-emerald-700 transition-all shadow-sm"
             >
               <Send className="w-4 h-4" />
-              Send Video
+              Send
             </Link>
 
-            {/* Notifications - scrolls to Patient Activity */}
+            {/* Notifications - scrolls to My Patients */}
             <button
               onClick={() => {
                 if (isOnDashboard) {
-                  const element = document.getElementById("activity");
+                  const element = document.getElementById("patients");
                   if (element) {
                     const offsetTop = element.offsetTop - 100;
                     window.scrollTo({ top: offsetTop, behavior: "smooth" });
                   }
                 } else {
-                  router.push("/doctor#activity");
+                  router.push("/doctor#patients");
                 }
               }}
               className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg relative"

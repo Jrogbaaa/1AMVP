@@ -8,7 +8,7 @@ import { useUserSync } from "@/hooks/useUserSync";
 import { cn } from "@/lib/utils";
 import {
   MessageSquare,
-  Bell,
+  CheckCircle2,
   Sparkles,
   Plus,
   Edit2,
@@ -353,7 +353,7 @@ export default function MyMessagesPage() {
 
   const tabs = [
     { id: "messages" as TabType, label: "Message Templates", icon: <MessageSquare className="w-4 h-4" /> },
-    { id: "reminders" as TabType, label: "Reminder Templates", icon: <Bell className="w-4 h-4" /> },
+    { id: "reminders" as TabType, label: "Reminder Templates", icon: <CheckCircle2 className="w-4 h-4" /> },
     { id: "suggested" as TabType, label: "Suggested", icon: <Sparkles className="w-4 h-4" /> },
   ];
 
@@ -488,7 +488,7 @@ export default function MyMessagesPage() {
             <div className="space-y-3">
               {filteredReminders?.length === 0 ? (
                 <div className="text-center py-12">
-                  <Bell className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                  <CheckCircle2 className="w-12 h-12 text-gray-300 mx-auto mb-3" />
                   <h3 className="text-lg font-semibold text-gray-900 mb-1">No reminder templates yet</h3>
                   <p className="text-gray-500 mb-4">Create your first template or use a suggested one</p>
                   <button
@@ -600,7 +600,7 @@ export default function MyMessagesPage() {
               {/* Suggested Reminders */}
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                  <Bell className="w-5 h-5 text-emerald-600" />
+                  <CheckCircle2 className="w-5 h-5 text-emerald-600" />
                   Suggested Reminder Templates
                 </h3>
                 <div className="space-y-3">

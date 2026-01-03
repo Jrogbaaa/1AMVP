@@ -11,7 +11,7 @@ import { AuthPrompt } from "@/components/AuthPrompt";
 import { ScheduleAppointment } from "@/components/ScheduleAppointment";
 import { FeedSkeleton } from "@/components/FeedSkeleton";
 import { useEngagement } from "@/hooks/useEngagement";
-import { Calendar, Search, Share2, User, MessageCircle, CheckCircle2 } from "lucide-react";
+import { Calendar, Search, Share2, User, MessageCircle, CheckCircle2, Check } from "lucide-react";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import type { Video, Doctor } from "@/lib/types";
 import Image from "next/image";
@@ -464,21 +464,21 @@ const FeedContent = () => {
                   <div key={`qa-${feedItem.data.id}`} className="snap-item-card">
                     {/* Desktop: Flex container matching video layout */}
                     <div className="h-full w-full flex items-center justify-center md:gap-4">
-                      {/* Card container - matches video aspect ratio - DARK background */}
-                      <div className="h-full w-full max-w-[calc(70vh*9/16)] md:max-w-none md:h-full md:w-auto md:aspect-[9/16] md:rounded-2xl md:overflow-hidden md:shadow-2xl relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+                      {/* Card container - matches video width, keeps card height - DARK background */}
+                      <div className="h-full w-full md:h-full md:w-[calc((100vh-2rem)*9/16)] md:max-w-[506px] md:rounded-2xl md:overflow-hidden md:shadow-2xl relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
                         {/* Inner content with padding */}
                         <div className="absolute inset-0 flex flex-col items-center justify-center p-6">
                           {/* Doctor photo with message icon */}
                           <div className="flex items-center gap-4 mb-6">
                             <div className="relative flex-shrink-0">
                               <div className="w-16 h-16 rounded-full overflow-hidden ring-4 ring-white/20 shadow-xl">
-                                <Image
+                              <Image
                                   src={selectedDoctor.avatarUrl || "/images/doctors/doctor-jack.jpg"}
-                                  alt={selectedDoctor.name}
+                                alt={selectedDoctor.name}
                                   width={64}
                                   height={64}
-                                  className="w-full h-full object-cover"
-                                />
+                                className="w-full h-full object-cover"
+                              />
                               </div>
                               <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-sky-500 rounded-full flex items-center justify-center shadow-lg border-2 border-slate-900">
                                 <MessageCircle className="w-3.5 h-3.5 text-white" />
@@ -535,8 +535,8 @@ const FeedContent = () => {
                   <div key="message-card" className="snap-item-card">
                     {/* Desktop: Flex container matching video layout */}
                     <div className="h-full w-full flex items-center justify-center md:gap-4">
-                      {/* Card container - matches video aspect ratio - DARK background */}
-                      <div className="h-full w-full max-w-[calc(70vh*9/16)] md:max-w-none md:h-full md:w-auto md:aspect-[9/16] md:rounded-2xl md:overflow-hidden md:shadow-2xl relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+                      {/* Card container - matches video width, keeps card height - DARK background */}
+                      <div className="h-full w-full md:h-full md:w-[calc((100vh-2rem)*9/16)] md:max-w-[506px] md:rounded-2xl md:overflow-hidden md:shadow-2xl relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
                         {/* Inner content with padding */}
                         <div className="absolute inset-0 flex flex-col items-center justify-center p-6">
                           {/* Doctor photo with message icon */}
@@ -616,8 +616,8 @@ const FeedContent = () => {
                   <div key="reminder-card" className="snap-item-card">
                     {/* Desktop: Flex container matching video layout */}
                     <div className="h-full w-full flex items-center justify-center md:gap-4">
-                      {/* Card container - matches video aspect ratio - DARK background */}
-                      <div className="h-full w-full max-w-[calc(70vh*9/16)] md:max-w-none md:h-full md:w-auto md:aspect-[9/16] md:rounded-2xl md:overflow-hidden md:shadow-2xl relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+                      {/* Card container - matches video width, keeps card height - DARK background */}
+                      <div className="h-full w-full md:h-full md:w-[calc((100vh-2rem)*9/16)] md:max-w-[506px] md:rounded-2xl md:overflow-hidden md:shadow-2xl relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
                         {/* Inner content with padding */}
                         <div className="absolute inset-0 flex flex-col items-center justify-center p-6">
                           {/* Doctor photo with check mark icon */}
@@ -632,8 +632,8 @@ const FeedContent = () => {
                                   className="w-full h-full object-cover"
                                 />
                               </div>
-                              <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg border-2 border-slate-900">
-                                <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+                              <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg border-2 border-slate-900">
+                                <Check className="w-5 h-5 text-white stroke-[3]" />
                               </div>
                             </div>
                             <div>

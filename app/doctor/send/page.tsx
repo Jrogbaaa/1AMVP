@@ -147,9 +147,12 @@ const SendContentPage = () => {
   const preselectedChapterId = searchParams.get("chapter");
   const preselectedVideoId = searchParams.get("video");
 
-  // If coming from a patient profile, skip step 1 (patient selection)
+  // New flow: Step 1 = Videos, Step 2 = Patients, Step 3 = Review & Send
   const isFromPatientProfile = !!preselectedPatientId;
-  const [step, setStep] = useState<1 | 2 | 3>(isFromPatientProfile ? 2 : 1);
+  const hasPreselectedVideo = !!preselectedVideoId || !!preselectedChapterId;
+  
+  // Start at step 1 (Videos) always - show preselected videos if any
+  const [step, setStep] = useState<1 | 2 | 3>(1);
   const [selectedPatients, setSelectedPatients] = useState<Set<string>>(
     preselectedPatientId ? new Set([preselectedPatientId]) : new Set()
   );
@@ -163,7 +166,17 @@ const SendContentPage = () => {
     }
     return new Set();
   });
-  const [expandedChapters, setExpandedChapters] = useState<Set<string>>(new Set(["1"]));
+  const [expandedChapters, setExpandedChapters] = useState<Set<string>>(() => {
+    // Auto-expand chapters containing preselected videos
+    if (preselectedVideoId) {
+      const chapter = MOCK_CHAPTERS.find((c) => c.videos.some(v => v.id === preselectedVideoId));
+      return new Set(chapter ? [chapter.id] : ["1"]);
+    }
+    if (preselectedChapterId) {
+      return new Set([preselectedChapterId]);
+    }
+    return new Set(["1"]);
+  });
   const [patientSearch, setPatientSearch] = useState("");
   const [contentSearch, setContentSearch] = useState("");
   const [personalMessage, setPersonalMessage] = useState("");
@@ -329,7 +342,7 @@ const SendContentPage = () => {
                 s === step ? "text-gray-900" : "text-gray-400"
               )}
             >
-              {s === 1 ? "Select Patients" : s === 2 ? "Choose Content" : "Review & Send"}
+              {s === 1 ? "Choose Videos" : s === 2 ? "Select Patients" : "Review & Send"}
             </span>
             {s < 3 && (
               <div className="flex-1 h-0.5 bg-gray-200 hidden sm:block">
@@ -345,87 +358,8 @@ const SendContentPage = () => {
         ))}
       </div>
 
-      {/* Step 1: Select Patients */}
+      {/* Step 1: Choose Videos */}
       {step === 1 && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="p-6 border-b border-gray-100">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">Select Patients</h2>
-              <button
-                onClick={handleSelectAllPatients}
-                className="text-sm font-medium text-sky-600 hover:text-sky-700"
-              >
-                {selectedPatients.size === filteredPatients.length ? "Deselect All" : "Select All"}
-              </button>
-            </div>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search patients..."
-                value={patientSearch}
-                onChange={(e) => setPatientSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all"
-              />
-            </div>
-          </div>
-
-          <div className="max-h-[400px] overflow-y-auto divide-y divide-gray-100">
-            {filteredPatients.map((patient) => (
-              <button
-                key={patient.id}
-                onClick={() => handleTogglePatient(patient.id)}
-                className={cn(
-                  "w-full flex items-center gap-4 p-4 hover:bg-gray-50 transition-colors text-left",
-                  selectedPatients.has(patient.id) && "bg-sky-50"
-                )}
-              >
-                <div
-                  className={cn(
-                    "w-6 h-6 rounded-md border-2 flex items-center justify-center transition-colors",
-                    selectedPatients.has(patient.id)
-                      ? "bg-sky-600 border-sky-600"
-                      : "border-gray-300"
-                  )}
-                >
-                  {selectedPatients.has(patient.id) && (
-                    <Check className="w-4 h-4 text-white" />
-                  )}
-                </div>
-                <div className="w-10 h-10 rounded-full overflow-hidden">
-                  <Image
-                    src={patient.avatarUrl}
-                    alt={patient.name}
-                    width={40}
-                    height={40}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-gray-900">{patient.name}</p>
-                  <p className="text-sm text-gray-500">{patient.email}</p>
-                </div>
-              </button>
-            ))}
-          </div>
-
-          <div className="p-6 border-t border-gray-100 flex items-center justify-between">
-            <p className="text-sm text-gray-500">
-              {selectedPatients.size} patient{selectedPatients.size !== 1 ? "s" : ""} selected
-            </p>
-            <button
-              onClick={() => setStep(2)}
-              disabled={selectedPatients.size === 0}
-              className="px-6 py-2.5 bg-sky-600 text-white font-medium rounded-xl hover:bg-sky-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-            >
-              Continue
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Step 2: Choose Content */}
-      {step === 2 && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="p-6 border-b border-gray-100">
             <div className="flex items-center justify-between mb-4">
@@ -434,6 +368,14 @@ const SendContentPage = () => {
                 {selectedVideos.size} video{selectedVideos.size !== 1 ? "s" : ""} selected
               </p>
             </div>
+            {hasPreselectedVideo && (
+              <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+                <p className="text-sm text-emerald-700">
+                  <CheckCircle className="w-4 h-4 inline-block mr-1" />
+                  Video preselected from your library. You can add more videos below.
+                </p>
+              </div>
+            )}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
@@ -546,20 +488,104 @@ const SendContentPage = () => {
 
           <div className="p-6 border-t border-gray-100 flex items-center justify-between">
             <button
-              onClick={() => {
-                if (isFromPatientProfile) {
-                  router.back();
-                } else {
-                  setStep(1);
-                }
-              }}
+              onClick={() => router.back()}
+              className="px-6 py-2.5 border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => setStep(2)}
+              disabled={selectedVideos.size === 0}
+              className="px-6 py-2.5 bg-sky-600 text-white font-medium rounded-xl hover:bg-sky-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Step 2: Select Patients */}
+      {step === 2 && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="p-6 border-b border-gray-100">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-gray-900">Select Patients</h2>
+              <button
+                onClick={handleSelectAllPatients}
+                className="text-sm font-medium text-sky-600 hover:text-sky-700"
+              >
+                {selectedPatients.size === filteredPatients.length ? "Deselect All" : "Select All"}
+              </button>
+            </div>
+            {isFromPatientProfile && (
+              <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+                <p className="text-sm text-emerald-700">
+                  <CheckCircle className="w-4 h-4 inline-block mr-1" />
+                  Patient preselected. You can add more patients below.
+                </p>
+              </div>
+            )}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search patients..."
+                value={patientSearch}
+                onChange={(e) => setPatientSearch(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all"
+              />
+            </div>
+          </div>
+
+          <div className="max-h-[400px] overflow-y-auto divide-y divide-gray-100">
+            {filteredPatients.map((patient) => (
+              <button
+                key={patient.id}
+                onClick={() => handleTogglePatient(patient.id)}
+                className={cn(
+                  "w-full flex items-center gap-4 p-4 hover:bg-gray-50 transition-colors text-left",
+                  selectedPatients.has(patient.id) && "bg-sky-50"
+                )}
+              >
+                <div
+                  className={cn(
+                    "w-6 h-6 rounded-md border-2 flex items-center justify-center transition-colors",
+                    selectedPatients.has(patient.id)
+                      ? "bg-sky-600 border-sky-600"
+                      : "border-gray-300"
+                  )}
+                >
+                  {selectedPatients.has(patient.id) && (
+                    <Check className="w-4 h-4 text-white" />
+                  )}
+                </div>
+                <div className="w-10 h-10 rounded-full overflow-hidden">
+                  <Image
+                    src={patient.avatarUrl}
+                    alt={patient.name}
+                    width={40}
+                    height={40}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-gray-900">{patient.name}</p>
+                  <p className="text-sm text-gray-500">{patient.email}</p>
+                </div>
+              </button>
+            ))}
+          </div>
+
+          <div className="p-6 border-t border-gray-100 flex items-center justify-between">
+            <button
+              onClick={() => setStep(1)}
               className="px-6 py-2.5 border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors"
             >
               Back
             </button>
             <button
               onClick={() => setStep(3)}
-              disabled={selectedVideos.size === 0}
+              disabled={selectedPatients.size === 0}
               className="px-6 py-2.5 bg-sky-600 text-white font-medium rounded-xl hover:bg-sky-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
             >
               Continue
@@ -573,48 +599,7 @@ const SendContentPage = () => {
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Selected Items Summary */}
           <div className="space-y-6">
-            {/* Patients Summary */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Users className="w-5 h-5 text-sky-600" />
-                  <h3 className="font-semibold text-gray-900">
-                    {selectedPatientsList.length} Patient{selectedPatientsList.length !== 1 ? "s" : ""}
-                  </h3>
-                </div>
-                {!isFromPatientProfile && (
-                  <button
-                    onClick={() => setStep(1)}
-                    className="text-sm text-sky-600 hover:text-sky-700"
-                  >
-                    Edit
-                  </button>
-                )}
-              </div>
-              <div className="p-4 flex flex-wrap gap-2">
-                {selectedPatientsList.map((patient) => (
-                  <div
-                    key={patient.id}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-full"
-                  >
-                    <div className="w-6 h-6 rounded-full overflow-hidden">
-                      <Image
-                        src={patient.avatarUrl}
-                        alt={patient.name}
-                        width={24}
-                        height={24}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <span className="text-sm font-medium text-gray-700">
-                      {patient.name}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Videos Summary */}
+            {/* Videos Summary (now first since videos are selected first) */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
               <div className="p-4 border-b border-gray-100 flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -624,7 +609,7 @@ const SendContentPage = () => {
                   </h3>
                 </div>
                 <button
-                  onClick={() => setStep(2)}
+                  onClick={() => setStep(1)}
                   className="text-sm text-sky-600 hover:text-sky-700"
                 >
                   Edit
@@ -648,6 +633,45 @@ const SendContentPage = () => {
                       <p className="text-xs text-gray-500">{video.chapterTitle}</p>
                     </div>
                     <span className="text-xs text-gray-400">{video.duration}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Patients Summary */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+              <div className="p-4 border-b border-gray-100 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Users className="w-5 h-5 text-sky-600" />
+                  <h3 className="font-semibold text-gray-900">
+                    {selectedPatientsList.length} Patient{selectedPatientsList.length !== 1 ? "s" : ""}
+                  </h3>
+                </div>
+                <button
+                  onClick={() => setStep(2)}
+                  className="text-sm text-sky-600 hover:text-sky-700"
+                >
+                  Edit
+                </button>
+              </div>
+              <div className="p-4 flex flex-wrap gap-2">
+                {selectedPatientsList.map((patient) => (
+                  <div
+                    key={patient.id}
+                    className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-full"
+                  >
+                    <div className="w-6 h-6 rounded-full overflow-hidden">
+                      <Image
+                        src={patient.avatarUrl}
+                        alt={patient.name}
+                        width={24}
+                        height={24}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <span className="text-sm font-medium text-gray-700">
+                      {patient.name}
+                    </span>
                   </div>
                 ))}
               </div>

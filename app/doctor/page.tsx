@@ -15,7 +15,6 @@ import {
   CheckCircle,
   MessageSquare,
   ArrowRight,
-  Activity,
   Sparkles,
   Video,
   ExternalLink,
@@ -86,6 +85,7 @@ const RECENT_PATIENTS = [
     status: "active",
     hasNewActivity: true,
     avatarUrl: "https://images.unsplash.com/photo-1599566150163-29194dcabd36?w=100&h=100&fit=crop",
+    healthProvider: "Kaiser Permanente",
     lastMessage: {
       type: "from_patient" as const,
       content: "Thank you for the follow-up video! I have a question about my medication...",
@@ -103,6 +103,7 @@ const RECENT_PATIENTS = [
     status: "active",
     hasNewActivity: true,
     avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
+    healthProvider: "United Healthcare",
     lastMessage: {
       type: "to_patient" as const,
       content: "Great progress on the videos! Let me know if you have any questions.",
@@ -120,6 +121,7 @@ const RECENT_PATIENTS = [
     status: "completed",
     hasNewActivity: false,
     avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
+    healthProvider: "Blue Cross",
     lastMessage: {
       type: "check_in" as const,
       content: "Feeling good today 🙂",
@@ -131,16 +133,17 @@ const RECENT_PATIENTS = [
     id: "4",
     name: "Emily Rodriguez",
     email: "emily.r@email.com",
-    lastActivity: "Yesterday",
+    lastActivity: "5 days ago",
     videosWatched: 3,
     totalVideos: 10,
     status: "inactive",
     hasNewActivity: false,
     avatarUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
+    healthProvider: "Aetna",
     lastMessage: {
       type: "to_patient" as const,
       content: "Hi Emily, just checking in - how are you feeling this week?",
-      time: "Yesterday",
+      time: "5 days ago",
       isUnread: false,
     },
   },
@@ -154,12 +157,26 @@ const RECENT_PATIENTS = [
     status: "active",
     hasNewActivity: false,
     avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop",
+    healthProvider: "Cigna",
     lastMessage: {
       type: "check_in" as const,
       content: "Took all my medications ✅",
       time: "2 days ago",
       isUnread: false,
     },
+  },
+  {
+    id: "6",
+    name: "Lisa Anderson",
+    email: "lisa.a@email.com",
+    lastActivity: "4 hours ago",
+    videosWatched: 6,
+    totalVideos: 10,
+    status: "active",
+    hasNewActivity: false,
+    avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop",
+    healthProvider: "Humana",
+    lastMessage: null,
   },
 ];
 
@@ -265,6 +282,88 @@ const HEALTH_TOPICS = [
   { id: "Recovery", label: "Recovery" },
   { id: "Education", label: "Education" },
   { id: "Conditions", label: "Conditions" },
+];
+
+// Vertical videos for TikTok-style preview
+const VERTICAL_VIDEOS = [
+  {
+    id: "vv-1",
+    title: "Quick Heart Health Tip",
+    thumbnailUrl: "https://images.unsplash.com/photo-1559757175-5700dde675bc?w=180&h=320&fit=crop",
+    videoUrl: "/videos/heart-health.mp4",
+    duration: 45,
+    category: "Cardiology",
+    views: 12400,
+    doctor: {
+      name: "Sarah Chen",
+      avatarUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&h=100&fit=crop",
+    },
+  },
+  {
+    id: "vv-2",
+    title: "Morning Stretches for Back Pain",
+    thumbnailUrl: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=180&h=320&fit=crop",
+    videoUrl: "/videos/stretches.mp4",
+    duration: 60,
+    category: "Recovery",
+    views: 8900,
+    doctor: {
+      name: "James Wilson",
+      avatarUrl: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=100&h=100&fit=crop",
+    },
+  },
+  {
+    id: "vv-3",
+    title: "Understanding Your Blood Pressure",
+    thumbnailUrl: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=180&h=320&fit=crop",
+    videoUrl: "/videos/blood-pressure.mp4",
+    duration: 90,
+    category: "Education",
+    views: 15200,
+    doctor: {
+      name: "Michael Rodriguez",
+      avatarUrl: "https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=100&h=100&fit=crop",
+    },
+  },
+  {
+    id: "vv-4",
+    title: "Heart-Healthy Breakfast Ideas",
+    thumbnailUrl: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=180&h=320&fit=crop",
+    videoUrl: "/videos/breakfast.mp4",
+    duration: 55,
+    category: "Nutrition",
+    views: 21000,
+    doctor: {
+      name: "Emily Foster",
+      avatarUrl: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=100&h=100&fit=crop",
+    },
+  },
+  {
+    id: "vv-5",
+    title: "Managing Stress in 60 Seconds",
+    thumbnailUrl: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=180&h=320&fit=crop",
+    videoUrl: "/videos/stress.mp4",
+    duration: 60,
+    category: "Lifestyle",
+    views: 18500,
+    doctor: {
+      name: "David Kim",
+      avatarUrl: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=100&h=100&fit=crop",
+    },
+  },
+  {
+    id: "vv-6",
+    title: "Post-Surgery Exercise Guide",
+    thumbnailUrl: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=180&h=320&fit=crop",
+    videoUrl: "/videos/exercise.mp4",
+    duration: 75,
+    category: "Recovery",
+    views: 9800,
+    doctor: {
+      name: "Rachel Martinez",
+      avatarUrl: "https://images.unsplash.com/photo-1614608682850-e0d6ed316d47?w=100&h=100&fit=crop",
+    },
+  },
 ];
 
 export default function DoctorDashboard() {
@@ -406,156 +505,18 @@ export default function DoctorDashboard() {
         </div>
       </section>
 
-      {/* ========== SECTION: Patient Activity ========== */}
-      <section id="activity" className="scroll-mt-20">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+      {/* ========== SECTION: My Patients (Combined with Activity) ========== */}
+      <section id="patients" className="scroll-mt-20">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="flex items-center justify-between p-6">
             <div className="flex items-center gap-3">
               <div className="relative p-2 bg-sky-100 rounded-full">
-                <Activity className="w-6 h-6 text-sky-600" />
+                <Users className="w-6 h-6 text-sky-600" />
                 {newActivityCount > 0 && (
                   <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center">
                     {newActivityCount}
                   </span>
                 )}
-              </div>
-              <div>
-                <h2 className="text-lg font-semibold text-gray-900">
-                  Patient Activity
-                </h2>
-                <p className="text-sm text-gray-500">Recent engagement and messages</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="divide-y divide-gray-100">
-            {RECENT_PATIENTS.map((patient) => (
-              <Link
-                key={patient.id}
-                href={`/doctor/patients/${patient.id}`}
-                className="p-4 hover:bg-gray-50 transition-colors block"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="relative">
-                    <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-gray-100 flex-shrink-0 bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center">
-                      {patient.avatarUrl ? (
-                        <Image
-                          src={patient.avatarUrl}
-                          alt={patient.name}
-                          width={48}
-                          height={48}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span className="text-white font-bold text-sm">
-                          {patient.name.split(' ').map(n => n[0]).join('')}
-                        </span>
-                      )}
-                    </div>
-                    {patient.hasNewActivity && (
-                      <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-red-500 rounded-full border-2 border-white" />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p className="font-medium text-gray-900 truncate">
-                        {patient.name}
-                      </p>
-                      {patient.status === "completed" && (
-                        <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-emerald-100 text-emerald-700">
-                          Completed
-                        </span>
-                      )}
-                    </div>
-                    {!patient.lastMessage && (
-                      <p className="text-sm text-gray-500">{patient.lastActivity}</p>
-                    )}
-                  </div>
-                  <div className="text-right hidden sm:block">
-                    <div className="flex items-center gap-2">
-                      <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
-                        <div
-                          className={cn(
-                            "h-full rounded-full transition-all",
-                            patient.videosWatched === patient.totalVideos
-                              ? "bg-emerald-500"
-                              : "bg-sky-500"
-                          )}
-                          style={{
-                            width: `${(patient.videosWatched / patient.totalVideos) * 100}%`,
-                          }}
-                        />
-                      </div>
-                      <span className="text-xs font-medium text-gray-500 whitespace-nowrap">
-                        {patient.videosWatched}/{patient.totalVideos}
-                      </span>
-                    </div>
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-gray-400 flex-shrink-0" />
-                </div>
-                {/* Last Message */}
-                {patient.lastMessage && (
-                  <div className="mt-3 ml-16 flex items-start gap-2">
-                    <div className={cn(
-                      "flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center",
-                      patient.lastMessage.type === "from_patient" 
-                        ? "bg-sky-100" 
-                        : patient.lastMessage.type === "check_in"
-                        ? "bg-purple-100"
-                        : "bg-gray-100"
-                    )}>
-                      <MessageSquare className={cn(
-                        "w-3 h-3",
-                        patient.lastMessage.type === "from_patient" 
-                          ? "text-sky-600" 
-                          : patient.lastMessage.type === "check_in"
-                          ? "text-purple-600"
-                          : "text-gray-500"
-                      )} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className={cn(
-                          "text-xs font-medium",
-                          patient.lastMessage.type === "from_patient" 
-                            ? "text-sky-600" 
-                            : patient.lastMessage.type === "check_in"
-                            ? "text-purple-600"
-                            : "text-gray-500"
-                        )}>
-                          {patient.lastMessage.type === "from_patient" 
-                            ? "From patient" 
-                            : patient.lastMessage.type === "check_in"
-                            ? "Check-in response"
-                            : "You sent"}
-                        </span>
-                        <span className="text-xs text-gray-400">{patient.lastMessage.time}</span>
-                        {patient.lastMessage.isUnread && (
-                          <span className="w-2 h-2 bg-red-500 rounded-full" />
-                        )}
-                      </div>
-                      <p className={cn(
-                        "text-sm line-clamp-1 mt-0.5",
-                        patient.lastMessage.isUnread ? "text-gray-900 font-medium" : "text-gray-600"
-                      )}>
-                        {patient.lastMessage.content}
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ========== SECTION: My Patients ========== */}
-      <section id="patients" className="scroll-mt-20">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between p-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-emerald-100 rounded-full">
-                <Users className="w-6 h-6 text-emerald-600" />
               </div>
               <div>
                 <h2 className="text-lg font-semibold text-gray-900">
@@ -565,78 +526,130 @@ export default function DoctorDashboard() {
               </div>
             </div>
             <Link
-              href="/doctor/patients"
-              className="flex items-center gap-1 text-sm font-medium text-sky-600 hover:text-sky-700"
+              href="/doctor/send"
+              className="flex items-center gap-2 px-4 py-2 bg-sky-600 text-white font-medium rounded-lg hover:bg-sky-700 transition-colors"
             >
-              View All
-              <ArrowRight className="w-4 h-4" />
+              <Send className="w-4 h-4" />
+              Send Content
             </Link>
           </div>
 
-          <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {RECENT_PATIENTS.slice(0, 6).map((patient) => (
-                <Link
-                  key={patient.id}
-                  href={`/doctor/patients/${patient.id}`}
-                  className="p-4 bg-gray-50 rounded-xl hover:shadow-md hover:-translate-y-1 transition-all group"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="relative">
-                      <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-white bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center">
-                        {patient.avatarUrl ? (
-                          <Image
-                            src={patient.avatarUrl}
-                            alt={patient.name}
-                            width={48}
-                            height={48}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <span className="text-white font-bold">
-                            {patient.name.split(' ').map(n => n[0]).join('')}
-                          </span>
-                        )}
-                      </div>
-                      {patient.hasNewActivity && (
-                        <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-red-500 rounded-full border-2 border-white" />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-gray-900 truncate group-hover:text-sky-600 transition-colors">
-                        {patient.name}
-                      </p>
-                      <p className="text-sm text-gray-500 truncate">{patient.email}</p>
-                    </div>
-                  </div>
-                  <div className="mt-3 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                        <div
-                          className={cn(
-                            "h-full rounded-full",
-                            patient.videosWatched === patient.totalVideos
-                              ? "bg-emerald-500"
-                              : "bg-sky-500"
+          {/* Patients Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-gray-50">
+                  <th className="text-left px-6 py-4 text-sm font-semibold text-gray-600">
+                    Patient
+                  </th>
+                  <th className="text-left px-6 py-4 text-sm font-semibold text-gray-600">
+                    Progress
+                  </th>
+                  <th className="text-left px-6 py-4 text-sm font-semibold text-gray-600 hidden md:table-cell">
+                    Last Activity
+                  </th>
+                  <th className="text-left px-6 py-4 text-sm font-semibold text-gray-600 hidden lg:table-cell">
+                    Provider
+                  </th>
+                  <th className="text-right px-6 py-4 text-sm font-semibold text-gray-600">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {RECENT_PATIENTS.map((patient) => (
+                  <tr
+                    key={patient.id}
+                    className="hover:bg-gray-50 transition-colors cursor-pointer"
+                    onClick={() => window.location.href = `/doctor/patients/${patient.id}`}
+                  >
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="relative">
+                          <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-100 flex-shrink-0">
+                            <Image
+                              src={patient.avatarUrl}
+                              alt={patient.name}
+                              width={40}
+                              height={40}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          {patient.hasNewActivity && (
+                            <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-red-500 rounded-full border-2 border-white" />
                           )}
-                          style={{
-                            width: `${(patient.videosWatched / patient.totalVideos) * 100}%`,
-                          }}
-                        />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <p className="font-medium text-gray-900">{patient.name}</p>
+                            {patient.status === "completed" && (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-emerald-100 text-emerald-700">
+                                <CheckCircle className="w-3 h-3" />
+                                Completed
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-500">{patient.email}</p>
+                        </div>
                       </div>
-                      <span className="text-xs text-gray-500">
-                        {patient.videosWatched}/{patient.totalVideos}
-                      </span>
-                    </div>
-                    {patient.status === "completed" && (
-                      <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-emerald-100 text-emerald-700">
-                        Completed
-                      </span>
-                    )}
-                  </div>
-                </Link>
-              ))}
-            </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                          <div
+                            className={cn(
+                              "h-full rounded-full transition-all",
+                              patient.videosWatched === patient.totalVideos
+                                ? "bg-emerald-500"
+                                : "bg-sky-500"
+                            )}
+                            style={{
+                              width: `${(patient.videosWatched / patient.totalVideos) * 100}%`,
+                            }}
+                          />
+                        </div>
+                        <span className="text-sm text-gray-600 whitespace-nowrap">
+                          {patient.videosWatched}/{patient.totalVideos} videos
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 hidden md:table-cell">
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <Clock className="w-4 h-4 text-gray-400" />
+                        {patient.lastActivity}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 hidden lg:table-cell">
+                      <span className="text-sm text-gray-600">{patient.healthProvider}</span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            window.location.href = `/doctor/send?patient=${patient.id}`;
+                          }}
+                          className="p-2 text-gray-500 hover:text-sky-600 hover:bg-sky-50 rounded-xl transition-colors"
+                          aria-label="Send content"
+                        >
+                          <Send className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            window.location.href = `/doctor/messages?patient=${patient.id}`;
+                          }}
+                          className="p-2 text-gray-500 hover:text-sky-600 hover:bg-sky-50 rounded-xl transition-colors"
+                          aria-label="Send message"
+                        >
+                          <Mail className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
@@ -753,6 +766,84 @@ export default function DoctorDashboard() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-9 pr-4 py-2 border border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all bg-white/80"
               />
+            </div>
+          </div>
+
+          {/* Trending Vertical Videos */}
+          <div className="px-6 pb-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-rose-500" />
+                <h3 className="font-semibold text-gray-900">Trending Short Videos</h3>
+              </div>
+              <span className="text-sm text-gray-500">{VERTICAL_VIDEOS.length} videos</span>
+            </div>
+            <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+              {VERTICAL_VIDEOS.map((video) => (
+                <div
+                  key={video.id}
+                  className="flex-shrink-0 w-36 group cursor-pointer"
+                  onClick={() => window.location.href = `/doctor/discover?video=${video.id}`}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === 'Enter' && (window.location.href = `/doctor/discover?video=${video.id}`)}
+                  aria-label={`Watch ${video.title}`}
+                >
+                  <div className="relative aspect-[9/16] bg-gray-900 rounded-xl overflow-hidden shadow-lg transition-transform duration-200 group-hover:scale-[1.02] group-hover:shadow-xl">
+                    <Image
+                      src={video.thumbnailUrl}
+                      alt={video.title}
+                      fill
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                    
+                    {/* Play indicator */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30">
+                        <Play className="w-5 h-5 text-white ml-0.5" fill="white" />
+                      </div>
+                    </div>
+                    
+                    {/* Duration badge */}
+                    <div className="absolute bottom-14 right-2 bg-black/70 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">
+                      {Math.floor(video.duration / 60)}:{String(video.duration % 60).padStart(2, '0')}
+                    </div>
+                    
+                    {/* Category badge */}
+                    <div className="absolute top-2 left-2 px-2 py-0.5 bg-white/90 text-gray-700 text-[10px] rounded-full font-medium">
+                      {video.category}
+                    </div>
+                    
+                    {/* Doctor info at bottom */}
+                    <div className="absolute bottom-0 left-0 right-0 p-2">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <div className="w-5 h-5 rounded-full overflow-hidden bg-white/20 flex-shrink-0 border border-white/30">
+                          <Image
+                            src={video.doctor.avatarUrl}
+                            alt={video.doctor.name}
+                            width={20}
+                            height={20}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <span className="text-white text-[10px] font-medium truncate">
+                          Dr. {video.doctor.name.split(" ")[0]}
+                        </span>
+                      </div>
+                      <h3 className="text-white text-xs font-semibold line-clamp-2 leading-tight">
+                        {video.title}
+                      </h3>
+                    </div>
+                    
+                    {/* Views */}
+                    <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/50 text-white text-[10px] px-1.5 py-0.5 rounded-full">
+                      <Eye className="w-3 h-3" />
+                      {video.views >= 1000 ? `${(video.views / 1000).toFixed(1)}k` : video.views}
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 

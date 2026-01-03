@@ -546,7 +546,7 @@ export default function DiscoverPage() {
                   {/* Suggested Doctor - appears before first premium doctor */}
                   {isFirstPremium && (
                     <Link
-                      href="/doctor/550e8400-e29b-41d4-a716-446655440006"
+                      href="/profile/550e8400-e29b-41d4-a716-446655440006"
                       className="flex flex-col items-center gap-1 flex-shrink-0 group cursor-pointer"
                       onClick={() => {
                         setAddedDoctors((prev) => new Set(prev).add("550e8400-e29b-41d4-a716-446655440006"));

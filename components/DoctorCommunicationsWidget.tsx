@@ -69,7 +69,51 @@ const MOCK_DOCTORS: Record<string, { name: string; avatarUrl: string; specialty:
     avatarUrl: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=100&h=100&fit=crop",
     specialty: "Primary Care",
   },
+  "550e8400-e29b-41d4-a716-446655440001": {
+    name: "Sarah Johnson",
+    avatarUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&h=100&fit=crop",
+    specialty: "Cardiology",
+  },
 };
+
+// Demo data shown when no real messages/reminders exist
+const DEMO_MESSAGES = [
+  {
+    _id: "demo-msg-1" as Id<"doctorMessages">,
+    doctorId: "550e8400-e29b-41d4-a716-446655440001",
+    patientId: "demo",
+    content: "Have you started taking your medicine? Please let me know how you're doing with the new prescription.",
+    timestamp: Date.now() - 2 * 60 * 60 * 1000, // 2 hours ago
+    readAt: undefined,
+  },
+];
+
+const DEMO_REMINDERS = [
+  {
+    _id: "demo-rem-1" as Id<"patientReminders">,
+    doctorId: "550e8400-e29b-41d4-a716-446655440001",
+    patientId: "demo",
+    title: "Schedule Colonoscopy",
+    description: "Based on your age and family history, it's time to schedule your colonoscopy screening.",
+    frequency: "one-time" as const,
+    dueDate: Date.now() + 60 * 24 * 60 * 60 * 1000, // 60 days from now
+    isCompleted: false,
+    completedAt: undefined,
+    createdAt: Date.now() - 24 * 60 * 60 * 1000, // 1 day ago
+  },
+  {
+    _id: "demo-rem-2" as Id<"patientReminders">,
+    doctorId: "550e8400-e29b-41d4-a716-446655440001",
+    patientId: "demo",
+    title: "Annual Physical Due",
+    description: "Your annual physical exam is coming up. Let's make sure everything is on track.",
+    frequency: "one-time" as const,
+    dueDate: Date.now() + 30 * 24 * 60 * 60 * 1000, // 30 days from now
+    isCompleted: false,
+    completedAt: undefined,
+    createdAt: Date.now() - 3 * 24 * 60 * 60 * 1000, // 3 days ago
+  },
+];
 
 const formatTimestamp = (timestamp: number): string => {
   const date = new Date(timestamp);
@@ -147,14 +191,25 @@ const DoctorCommunicationsWidgetInner = ({
   const combinedItems: CommunicationItem[] = useMemo(() => {
     const items: CommunicationItem[] = [];
 
-    if (messages) {
+    // Use real data if available
+    if (messages && messages.length > 0) {
       messages.forEach((msg) => {
         items.push({ type: "message", data: msg, timestamp: msg.timestamp });
       });
     }
 
-    if (reminders) {
+    if (reminders && reminders.length > 0) {
       reminders.forEach((rem) => {
+        items.push({ type: "reminder", data: rem, timestamp: rem.createdAt });
+      });
+    }
+
+    // If no real data, use demo data as fallback
+    if (items.length === 0) {
+      DEMO_MESSAGES.forEach((msg) => {
+        items.push({ type: "message", data: msg, timestamp: msg.timestamp });
+      });
+      DEMO_REMINDERS.forEach((rem) => {
         items.push({ type: "reminder", data: rem, timestamp: rem.createdAt });
       });
     }
@@ -403,10 +458,13 @@ const DoctorCommunicationsWidgetInner = ({
 
           return (
             <div key={`rem-${reminder._id}`}>
-              <button
+              <div
                 onClick={() => handleExpandItem(item)}
+                onKeyDown={(e) => e.key === 'Enter' && handleExpandItem(item)}
+                role="button"
+                tabIndex={0}
                 className={cn(
-                  "w-full p-4 text-left transition-colors hover:bg-gray-50",
+                  "w-full p-4 text-left transition-colors hover:bg-gray-50 cursor-pointer",
                   !reminder.isCompleted && "bg-emerald-50/50"
                 )}
                 aria-expanded={isExpanded}
@@ -488,7 +546,7 @@ const DoctorCommunicationsWidgetInner = ({
                     )}
                   </button>
                 </div>
-              </button>
+              </div>
 
               {/* Expanded View */}
               {isExpanded && (

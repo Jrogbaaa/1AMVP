@@ -5,6 +5,51 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.44.0] - 2026-01-03
+
+### 🎨 Patient UI Updates & Bug Fixes
+
+**Feed Card Improvements (`app/feed/page.tsx`):**
+- Fixed card width to match video width using explicit width calculation
+- Cards now use `md:w-[calc((100vh-2rem)*9/16)]` to match video aspect ratio
+- Kept 70vh height for cards to allow adjacent video peeking
+- Updated reminder checkmark: larger icon (w-5 h-5), bolder stroke, single circle design
+- Changed from `CheckCircle2` to `Check` icon to remove double-circle effect
+
+**Dr. Kim Profile Navigation (`app/discover/page.tsx`):**
+- Fixed "Add" button to navigate to `/profile/` instead of `/doctor/`
+
+**My Health Dashboard (`app/my-health/AuthenticatedDashboard.tsx`):**
+- Removed Health Reminders section (Daily/Weekly/Annual) - now handled by DoctorCommunicationsWidget
+- Removed My Profile section from bottom of page
+- Added Sign Out to sidebar with expandable popup menu
+- Profile popup shows user details, Edit Health Profile link, and Sign Out button
+- Popup appears above profile button with backdrop for easy dismissal
+- Widened healthcare sections to full-width stacked layout (Your Doctors, Your Insurer, Doctor Groups)
+
+**Communications Widget (`components/DoctorCommunicationsWidget.tsx`):**
+- Added demo data fallback when no real messages/reminders exist
+- Demo includes: "Schedule Colonoscopy" reminder, "Annual Physical Due" reminder, sample message
+- Fixed nested button hydration error - changed outer button to div with role="button"
+- All demo items include doctor images
+
+**Profile Page (`app/profile/[id]/page.tsx`):**
+- Video thumbnails now use doctor's avatar for consistency
+- Sarah Johnson profile shows her image on all video thumbnails
+
+**Onboarding Updates (`app/my-health/onboarding/page.tsx`):**
+- Replaced explicit anatomy question with less personal "Have you had any of these surgeries?"
+- Female: Shows hysterectomy/oophorectomy options
+- Male: Shows prostatectomy option
+- Auto-infers anatomy from sex at birth selection
+- Updated pregnancy screen and cervical screening logic accordingly
+
+### Bug Fixes
+- Fixed hydration error: nested `<button>` inside `<button>` in DoctorCommunicationsWidget
+- Fixed sidebar profile menu being cut off - now uses popup that appears above
+
+---
+
 ## [1.43.0] - 2026-01-03
 
 ### 🩺 Doctor Portal UI Tweaks

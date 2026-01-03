@@ -13,6 +13,7 @@ import {
   Play,
   Eye,
   CheckCircle,
+  CheckCircle2,
   Clock,
   Send,
   MessageSquare,
@@ -383,8 +384,8 @@ export default function PatientProfilePage() {
                 onClick={() => setShowMessageModal(true)}
                 className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-medium rounded-xl hover:from-emerald-600 hover:to-sky-600 transition-all shadow-md"
               >
-                <MessageSquare className="w-4 h-4" />
-                Send Message
+                <CheckCircle2 className="w-4 h-4" />
+                Send Check In
               </button>
               <Link
                 href={`/doctor/send?patient=${patient.id}`}
@@ -560,17 +561,73 @@ export default function PatientProfilePage() {
       {activeTab === "communication" && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100">
           <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-            <h3 className="font-semibold text-gray-900">Communication History</h3>
-            <button
-              onClick={() => setShowMessageModal(true)}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-sky-600 hover:bg-sky-50 rounded-lg transition-colors"
-            >
-              <MessageSquare className="w-4 h-4" />
-              Send Message
-            </button>
+            <h3 className="font-semibold text-gray-900">Messages & Videos</h3>
+            <div className="flex items-center gap-2">
+              <Link
+                href={`/doctor/send?patient=${patient.id}`}
+                className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <Video className="w-4 h-4" />
+                Send Video
+              </Link>
+              <button
+                onClick={() => setShowMessageModal(true)}
+                className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors"
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                Send Check In
+              </button>
+            </div>
           </div>
           
+          {/* Full messaging timeline */}
           <div className="divide-y divide-gray-100">
+            {/* Videos Sent (shown at top as featured) */}
+            {MOCK_VIDEOS_SENT.length > 0 && (
+              <div className="p-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center flex-shrink-0">
+                    <Video className="w-4 h-4 text-violet-600" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="font-medium text-gray-900">Videos You Sent</span>
+                      <span className="px-2 py-0.5 text-xs font-medium bg-violet-100 text-violet-700 rounded-full">
+                        {MOCK_VIDEOS_SENT.length} videos
+                      </span>
+                    </div>
+                    <div className="flex gap-3 overflow-x-auto pb-2">
+                      {MOCK_VIDEOS_SENT.map((video) => (
+                        <div key={video.id} className="flex-shrink-0 w-40 bg-gray-50 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+                          <div className="relative aspect-video">
+                            <Image
+                              src={video.thumbnailUrl}
+                              alt={video.title}
+                              fill
+                              className="object-cover"
+                            />
+                            <div className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-black/70 text-white text-xs rounded">
+                              {video.duration}
+                            </div>
+                            {video.completedAt && (
+                              <div className="absolute top-1 right-1 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center">
+                                <CheckCircle className="w-3 h-3 text-white" />
+                              </div>
+                            )}
+                          </div>
+                          <div className="p-2">
+                            <p className="text-xs font-medium text-gray-900 line-clamp-1">{video.title}</p>
+                            <p className="text-[10px] text-gray-500 mt-0.5">{video.sentAt}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Communication timeline */}
             {MOCK_COMMUNICATION.map((item) => (
               <div key={item.id} className="p-4">
                 {item.type === "doctor_message" ? (
@@ -601,8 +658,9 @@ export default function PatientProfilePage() {
                       <div className="flex items-center gap-2 mb-1">
                         <span className="font-medium text-gray-900">{patient.name.split(" ")[0]}</span>
                         <span className="text-xs text-gray-400">{item.timestamp}</span>
-                        <span className="px-2 py-0.5 text-xs font-medium bg-purple-100 text-purple-700 rounded-full">
-                          Check-in Response
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-emerald-100 text-emerald-700 rounded-full">
+                          <CheckCircle2 className="w-3 h-3" />
+                          Check-in
                         </span>
                       </div>
                       <div className="bg-gray-50 rounded-lg p-3">
@@ -626,7 +684,7 @@ export default function PatientProfilePage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
           <div className="bg-white rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] flex flex-col">
             <div className="p-6 border-b border-gray-100">
-              <h3 className="text-lg font-semibold text-gray-900">Send Message to {patient.name.split(" ")[0]}</h3>
+              <h3 className="text-lg font-semibold text-gray-900">Send Check In to {patient.name.split(" ")[0]}</h3>
               <p className="text-sm text-gray-500 mt-1">Choose a template, check-in question, or write your own message.</p>
             </div>
             

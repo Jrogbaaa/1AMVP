@@ -5,6 +5,64 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.46.0] - 2026-01-03
+
+### 🏥 Doctor Portal UX Overhaul
+
+**Combined Patient Activity + My Patients (`app/doctor/page.tsx`):**
+- Merged "Patient Activity" and "My Patients" sections into single enhanced table view
+- Full patient table with columns: Patient, Progress, Last Activity, Provider, Actions
+- Red notification dots on patient avatars indicating new activity/messages
+- Inline action buttons for Send content and Send message per patient
+- Removed separate Patient Activity section from navigation
+
+**Vertical Videos in Browse Section (`app/doctor/page.tsx`):**
+- NEW: TikTok-style vertical video preview row in Browse Videos section
+- 6 trending short videos with doctor avatars, view counts, categories
+- Horizontal scrolling with play-on-hover-ready structure
+- Category badges and duration indicators on each video
+
+**Patient Check-ins Section (`app/doctor/page.tsx`):**
+- NEW: Full messaging UI for check-ins added to main dashboard scroll
+- Split-panel design: patient list on left, check-in details on right
+- Patient list with pending response counts and "All caught up" status
+- Gradient message bubbles (emerald-cyan) for check-in questions
+- Question types: wellness (Heart icon), medication (Pill icon)
+- "Awaiting response..." status for pending, answer bubbles for completed
+- "Send Check-in Question" CTA button
+
+**Standardized Icon Design:**
+- Changed reminder icons from Bell to CheckCircle2 across doctor views
+- Consistent emerald badge styling for check-in indicators
+- Matches patient-side ReminderCard design pattern
+
+**Full Messaging UI in Patient Profile (`app/doctor/patients/[id]/page.tsx`):**
+- Redesigned Communication tab with videos sent as horizontal scroll
+- Combined video history with message timeline
+- "Send Check In" button (renamed from "Send Message")
+- Check-in badges use emerald CheckCircle2 for consistency
+
+**Consistent Send Content Flow (`app/doctor/send/page.tsx`):**
+- Reordered steps: Videos first → Patients → Review & Send
+- Preselected video indicator when coming from video library
+- Preselected patient indicator when coming from patient profile
+- Auto-expand chapters containing preselected videos
+
+**Navigation Updates (`app/doctor/DoctorLayoutClient.tsx`):**
+- Header action button changed from "Send Video" to "Send"
+- Removed Patient Activity nav item (combined with My Patients)
+- Reordered nav to match scroll sections: Dashboard → Patients → Check-ins → Videos → Browse → Train AI → Profile
+- Red notification badge only on My Patients (removed from Check-ins)
+
+**Onboarding Flow Updates (`app/doctor/onboarding/page.tsx`):**
+- Added category filtering to Browse Videos step (matches dashboard)
+- Topic filter buttons: All, Foundation, Lifestyle, Education, etc.
+- Videos filter when clicking categories
+- Reordered steps: Practice Setup → Browse Videos → Message Templates → Train AI Avatar → Invite Patients
+- Added "Skip for now →" button to Train AI Avatar step
+
+---
+
 ## [1.45.0] - 2026-01-03
 
 ### 🎨 Landing Page Redesign - Tech-Forward Dark Theme

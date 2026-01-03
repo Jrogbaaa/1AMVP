@@ -20,14 +20,44 @@ export default defineConfig({
   },
 
   projects: [
+    // Desktop browsers
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
     },
-    // Mobile viewport for responsive testing
+    {
+      name: "firefox",
+      use: { ...devices["Desktop Firefox"] },
+    },
+    {
+      name: "webkit",
+      use: { ...devices["Desktop Safari"] },
+    },
+
+    // Mobile Chrome emulation (Android)
     {
       name: "mobile-chrome",
       use: { ...devices["Pixel 5"] },
+    },
+    {
+      name: "mobile-chrome-landscape",
+      use: { ...devices["Pixel 5 landscape"] },
+    },
+
+    // Mobile Safari emulation (iOS) - IMPORTANT for Safari-specific bugs
+    {
+      name: "mobile-safari",
+      use: { ...devices["iPhone 12"] },
+    },
+    {
+      name: "mobile-safari-landscape",
+      use: { ...devices["iPhone 12 landscape"] },
+    },
+
+    // Tablet testing
+    {
+      name: "tablet-safari",
+      use: { ...devices["iPad Pro 11"] },
     },
   ],
 

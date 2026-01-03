@@ -63,8 +63,6 @@ const NAV_ITEMS: NavItem[] = [
     label: "My Check-ins and Reminders",
     href: "/doctor#check-ins",
     icon: <MessageSquare className="w-5 h-5" />,
-    hasNotification: true,
-    notificationCount: 5,
     isScrollTarget: true,
   },
   {

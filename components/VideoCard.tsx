@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import { Play, Pause, Share2, Search, Volume2, VolumeX, Calendar, ArrowRight } from "lucide-react";
 import type { Video, Doctor } from "@/lib/types";
 import Image from "next/image";
@@ -41,54 +41,114 @@ export const VideoCard = ({
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasVideoError, setHasVideoError] = useState(false);
+  const [isVideoReady, setIsVideoReady] = useState(false);
+
+  // Handle video ready state (fires when enough data is loaded)
+  const handleCanPlay = useCallback(() => {
+    setIsVideoReady(true);
+  }, []);
+
+  // Handle video loaded metadata
+  const handleLoadedMetadata = useCallback(() => {
+    // Video metadata is loaded - dimensions, duration available
+    setIsVideoReady(true);
+  }, []);
 
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video || hasVideoError) return;
+    const videoElement = videoRef.current;
+    if (!videoElement || hasVideoError) return;
 
     let mounted = true;
+    let playAttemptTimeout: NodeJS.Timeout | null = null;
 
-    const playVideo = async () => {
-      if (!mounted || !video || hasVideoError) return;
-      
-      if (isActive) {
-        try {
-          // Check if video is still connected to DOM
-          if (video.isConnected && video.readyState >= 1) {
-            // Restart video from beginning when becoming active
-            video.currentTime = 0;
-            await video.play();
-            if (mounted) {
-              setIsPlaying(true);
-              onPlay?.();
-            }
-          }
-        } catch (error) {
-          // Ignore if play was interrupted or video source failed
+    const attemptPlay = async () => {
+      if (!mounted || !videoElement || hasVideoError) return;
+
+      try {
+        // Ensure video is muted for autoplay (required by Chrome policy)
+        videoElement.muted = true;
+        
+        // Reset to beginning
+        videoElement.currentTime = 0;
+        
+        // Use play() promise with proper error handling for mobile browsers
+        const playPromise = videoElement.play();
+        
+        if (playPromise !== undefined) {
+          await playPromise;
           if (mounted) {
-            console.log("Video play interrupted:", error);
-            // Check if it's a source error
-            if (error instanceof Error && error.name === 'NotSupportedError') {
-              setHasVideoError(true);
-            }
+            setIsPlaying(true);
+            // Restore mute state after successful play
+            videoElement.muted = controlledMuted;
+            onPlay?.();
           }
         }
-      } else {
-        if (video.isConnected) {
-          video.pause();
-        }
-        if (mounted) {
-          setIsPlaying(false);
+      } catch (error) {
+        if (!mounted) return;
+        
+        // Handle specific error types
+        if (error instanceof Error) {
+          if (error.name === 'NotAllowedError') {
+            // Autoplay blocked - this is normal on some browsers
+            // User will need to tap to play
+            console.log("Autoplay blocked - waiting for user interaction");
+            setIsPlaying(false);
+          } else if (error.name === 'NotSupportedError') {
+            // Source not supported
+            console.error("Video format not supported");
+            setHasVideoError(true);
+          } else if (error.name === 'AbortError') {
+            // Play was interrupted (e.g., by scrolling away)
+            // This is normal, don't treat as error
+            console.log("Video play interrupted");
+          } else {
+            console.log("Video play error:", error.message);
+          }
         }
       }
     };
 
-    playVideo();
+    if (isActive) {
+      // Wait for video to be ready before attempting to play
+      if (isVideoReady || videoElement.readyState >= 2) {
+        attemptPlay();
+      } else {
+        // Set up listener for when video becomes ready
+        const onCanPlayThrough = () => {
+          if (mounted && isActive) {
+            attemptPlay();
+          }
+        };
+        videoElement.addEventListener('canplaythrough', onCanPlayThrough, { once: true });
+        
+        // Also try after a short delay as fallback
+        playAttemptTimeout = setTimeout(() => {
+          if (mounted && isActive && videoElement.readyState >= 1) {
+            attemptPlay();
+          }
+        }, 500);
+
+        return () => {
+          mounted = false;
+          videoElement.removeEventListener('canplaythrough', onCanPlayThrough);
+          if (playAttemptTimeout) clearTimeout(playAttemptTimeout);
+        };
+      }
+    } else {
+      // Not active - pause the video
+      if (videoElement.isConnected && !videoElement.paused) {
+        videoElement.pause();
+      }
+      if (mounted) {
+        setIsPlaying(false);
+      }
+    }
 
     return () => {
       mounted = false;
+      if (playAttemptTimeout) clearTimeout(playAttemptTimeout);
     };
-  }, [isActive, onPlay, hasVideoError]);
+  }, [isActive, onPlay, hasVideoError, isVideoReady, controlledMuted]);
 
   const handlePlayPause = () => {
     if (!videoRef.current) return;
@@ -168,6 +228,12 @@ export const VideoCard = ({
           loop
           muted={controlledMuted}
           playsInline
+          preload="auto"
+          // Cross-browser compatibility attributes
+          // @ts-expect-error - webkit-playsinline is a Safari-specific attribute
+          webkit-playsinline="true"
+          onCanPlay={handleCanPlay}
+          onLoadedMetadata={handleLoadedMetadata}
           onEnded={handleVideoEnd}
           onClick={handlePlayPause}
           onError={handleVideoError}

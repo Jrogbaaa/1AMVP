@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { OnboardingForm } from "@/components/OnboardingForm";
 import { Logo } from "@/components/Logo";
@@ -9,12 +9,12 @@ import {
   Heart, 
   Stethoscope, 
   Video,
-  CheckCircle,
   Activity,
   Users,
   BarChart3,
   Sparkles,
-  ArrowLeft
+  ArrowLeft,
+  Loader2
 } from "lucide-react";
 import Link from "next/link";
 
@@ -32,7 +32,15 @@ const DOCTOR_BENEFITS = [
   { icon: <BarChart3 className="w-5 h-5" />, text: "Track engagement analytics" },
 ];
 
-export default function AuthPage() {
+// Loading fallback component
+const AuthLoading = () => (
+  <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
+    <Loader2 className="w-8 h-8 text-[#3ac1e1] animate-spin" />
+  </div>
+);
+
+// Main auth content component that uses useSearchParams
+const AuthContent = () => {
   const searchParams = useSearchParams();
   const roleParam = searchParams.get("role");
   const callbackUrlParam = searchParams.get("callbackUrl");
@@ -226,5 +234,14 @@ export default function AuthPage() {
         <span className="text-white/70 text-sm font-medium">HIPAA Compliant</span>
       </div>
     </div>
+  );
+};
+
+// Main page component with Suspense boundary
+export default function AuthPage() {
+  return (
+    <Suspense fallback={<AuthLoading />}>
+      <AuthContent />
+    </Suspense>
   );
 }

@@ -13,6 +13,7 @@ import {
   TrendingUp,
   Clock,
   CheckCircle,
+  CheckCircle2,
   MessageSquare,
   ArrowRight,
   Sparkles,
@@ -35,6 +36,8 @@ import {
   Bookmark,
   BookmarkCheck,
   Globe,
+  Pill,
+  AlertCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -366,11 +369,145 @@ const VERTICAL_VIDEOS = [
   },
 ];
 
+// Patient check-ins data for the Check-ins section
+const PATIENT_CHECK_INS = [
+  {
+    id: "1",
+    name: "Dave Thompson",
+    avatarUrl: "https://images.unsplash.com/photo-1599566150163-29194dcabd36?w=100&h=100&fit=crop",
+    pendingResponses: 2,
+    lastCheckIn: "2 min ago",
+    checkIns: [
+      {
+        id: "ci-1",
+        type: "wellness" as const,
+        question: "How are you feeling today?",
+        status: "pending" as const,
+        sentAt: "2 min ago",
+      },
+      {
+        id: "ci-2",
+        type: "medication" as const,
+        question: "Did you take your medications today?",
+        status: "pending" as const,
+        sentAt: "1 hour ago",
+      },
+    ],
+  },
+  {
+    id: "2",
+    name: "Sarah Mitchell",
+    avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
+    pendingResponses: 0,
+    lastCheckIn: "Yesterday",
+    checkIns: [
+      {
+        id: "ci-3",
+        type: "wellness" as const,
+        question: "How are you feeling today?",
+        status: "answered" as const,
+        answer: "Good",
+        emoji: "🙂",
+        sentAt: "Yesterday",
+        answeredAt: "Yesterday",
+      },
+    ],
+  },
+  {
+    id: "3",
+    name: "Michael Chen",
+    avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
+    pendingResponses: 3,
+    lastCheckIn: "3 hours ago",
+    checkIns: [
+      {
+        id: "ci-4",
+        type: "wellness" as const,
+        question: "How are you feeling today?",
+        status: "pending" as const,
+        sentAt: "3 hours ago",
+      },
+      {
+        id: "ci-5",
+        type: "medication" as const,
+        question: "Did you take your medications today?",
+        status: "pending" as const,
+        sentAt: "3 hours ago",
+      },
+      {
+        id: "ci-6",
+        type: "medication" as const,
+        question: "How are your medications working?",
+        status: "pending" as const,
+        sentAt: "3 hours ago",
+      },
+    ],
+  },
+  {
+    id: "4",
+    name: "Emily Rodriguez",
+    avatarUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
+    pendingResponses: 4,
+    lastCheckIn: "3 days ago",
+    checkIns: [
+      {
+        id: "ci-7",
+        type: "wellness" as const,
+        question: "How are you feeling today?",
+        status: "pending" as const,
+        sentAt: "3 days ago",
+      },
+      {
+        id: "ci-8",
+        type: "medication" as const,
+        question: "Did you take your medications today?",
+        status: "pending" as const,
+        sentAt: "3 days ago",
+      },
+      {
+        id: "ci-9",
+        type: "medication" as const,
+        question: "How are your medications working?",
+        status: "pending" as const,
+        sentAt: "3 days ago",
+      },
+    ],
+  },
+  {
+    id: "5",
+    name: "James Wilson",
+    avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop",
+    pendingResponses: 0,
+    lastCheckIn: "1 day ago",
+    checkIns: [
+      {
+        id: "ci-10",
+        type: "medication" as const,
+        question: "Did you take your medications today?",
+        status: "answered" as const,
+        answer: "Yes, all of them",
+        emoji: "✅",
+        sentAt: "1 day ago",
+        answeredAt: "1 day ago",
+      },
+    ],
+  },
+];
+
+// Check-in question templates
+const CHECK_IN_TEMPLATES = [
+  { id: "wellness", type: "wellness" as const, question: "How are you feeling today?", icon: Heart, color: "from-emerald-400 to-cyan-500" },
+  { id: "medication", type: "medication" as const, question: "Did you take your medications today?", icon: Pill, color: "from-emerald-400 to-cyan-500" },
+  { id: "medication-effect", type: "medication" as const, question: "How are your medications working?", icon: Pill, color: "from-emerald-400 to-cyan-500" },
+];
+
 export default function DoctorDashboard() {
   const [timeFilter, setTimeFilter] = useState<"week" | "month" | "year">("week");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTopic, setSelectedTopic] = useState<string>("all");
   const [addedVideos, setAddedVideos] = useState<Set<string>>(new Set(["1a-2", "1a-4"]));
+  const [selectedCheckInPatient, setSelectedCheckInPatient] = useState<string | null>("4");
+  const [checkInSearch, setCheckInSearch] = useState("");
   const { user } = useUserSync();
   
   // Get doctor's videos from Convex
@@ -650,6 +787,167 @@ export default function DoctorDashboard() {
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      </section>
+
+      {/* ========== SECTION: Patient Check-ins ========== */}
+      <section id="check-ins" className="scroll-mt-20">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr]">
+            {/* Left Panel - Patient List */}
+            <div className="border-r border-gray-100">
+              <div className="p-6 border-b border-gray-100">
+                <div className="flex items-center gap-3 mb-1">
+                  <h2 className="text-lg font-semibold text-gray-900">My Check-ins and Reminders</h2>
+                </div>
+                <p className="text-sm text-gray-500">Automated health monitoring</p>
+              </div>
+              
+              {/* Search */}
+              <div className="p-4 border-b border-gray-100">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search patients..."
+                    value={checkInSearch}
+                    onChange={(e) => setCheckInSearch(e.target.value)}
+                    className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all text-sm"
+                  />
+                </div>
+              </div>
+
+              {/* Patient List */}
+              <div className="max-h-[400px] overflow-y-auto divide-y divide-gray-100">
+                {PATIENT_CHECK_INS.filter(p => 
+                  p.name.toLowerCase().includes(checkInSearch.toLowerCase())
+                ).map((patient) => (
+                  <button
+                    key={patient.id}
+                    onClick={() => setSelectedCheckInPatient(patient.id)}
+                    className={cn(
+                      "w-full flex items-center gap-3 p-4 hover:bg-gray-50 transition-colors text-left",
+                      selectedCheckInPatient === patient.id && "bg-sky-50 border-l-4 border-l-sky-500"
+                    )}
+                  >
+                    <div className="relative">
+                      <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200">
+                        <Image
+                          src={patient.avatarUrl}
+                          alt={patient.name}
+                          width={48}
+                          height={48}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      {patient.pendingResponses > 0 && (
+                        <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-amber-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center">
+                          {patient.pendingResponses}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-gray-900">{patient.name}</p>
+                      {patient.pendingResponses > 0 ? (
+                        <p className="text-sm text-amber-600 font-medium">
+                          {patient.pendingResponses} pending response{patient.pendingResponses !== 1 ? 's' : ''}
+                        </p>
+                      ) : (
+                        <p className="text-sm text-emerald-600 flex items-center gap-1">
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          All caught up
+                        </p>
+                      )}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Right Panel - Check-in Details */}
+            <div className="flex flex-col min-h-[500px]">
+              {selectedCheckInPatient ? (
+                <>
+                  {/* Selected Patient Header */}
+                  {(() => {
+                    const patient = PATIENT_CHECK_INS.find(p => p.id === selectedCheckInPatient);
+                    if (!patient) return null;
+                    return (
+                      <div className="p-6 border-b border-gray-100 flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-full overflow-hidden">
+                          <Image
+                            src={patient.avatarUrl}
+                            alt={patient.name}
+                            width={48}
+                            height={48}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-gray-900">{patient.name}</h3>
+                          <p className="text-sm text-gray-500">Last check-in: {patient.lastCheckIn}</p>
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                  {/* Check-in Messages */}
+                  <div className="flex-1 p-6 overflow-y-auto space-y-4">
+                    {(() => {
+                      const patient = PATIENT_CHECK_INS.find(p => p.id === selectedCheckInPatient);
+                      if (!patient) return null;
+                      return patient.checkIns.map((checkIn) => (
+                        <div key={checkIn.id} className="flex flex-col items-end gap-2">
+                          {/* Check-in Question Bubble */}
+                          <div className="bg-gradient-to-r from-emerald-400 to-cyan-500 rounded-2xl rounded-tr-sm px-4 py-3 max-w-[320px] text-white shadow-md">
+                            <div className="flex items-center gap-2 mb-1 text-white/90">
+                              {checkIn.type === "wellness" ? (
+                                <Heart className="w-4 h-4" />
+                              ) : (
+                                <Pill className="w-4 h-4" />
+                              )}
+                              <span className="text-sm font-medium">{checkIn.type}</span>
+                            </div>
+                            <p className="font-medium">{checkIn.question}</p>
+                          </div>
+                          
+                          {/* Status */}
+                          {checkIn.status === "pending" ? (
+                            <div className="flex items-center gap-1.5 text-gray-400 text-sm">
+                              <Clock className="w-3.5 h-3.5" />
+                              <span>Awaiting response...</span>
+                            </div>
+                          ) : (
+                            <div className="bg-gray-100 rounded-2xl rounded-tl-sm px-4 py-3 max-w-[280px]">
+                              <div className="flex items-center gap-2">
+                                <span className="text-xl">{checkIn.emoji}</span>
+                                <span className="font-medium text-gray-900">{checkIn.answer}</span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ));
+                    })()}
+                  </div>
+
+                  {/* Send Check-in Button */}
+                  <div className="p-4 border-t border-gray-100">
+                    <button className="w-full py-3 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-cyan-600 transition-all shadow-md flex items-center justify-center gap-2">
+                      <Sparkles className="w-5 h-5" />
+                      Send Check-in Question
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="flex-1 flex items-center justify-center">
+                  <div className="text-center">
+                    <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                    <p className="text-gray-500">Select a patient to view check-ins</p>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </section>

@@ -5,6 +5,68 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.45.0] - 2026-01-03
+
+### 🎨 Landing Page Redesign - Tech-Forward Dark Theme
+
+**Complete Landing Page Overhaul (`app/page.tsx`):**
+- NEW: Cinematic dark mode design with animated gradient mesh background
+- Headline: "Your Doctor. Your Screen. Your Health." with gradient text effect
+- Two primary CTAs: "I'm a Patient" (gradient button) / "I'm a Provider" (outline button)
+- Staggered reveal animations on page load (animation-delay cascade)
+- Floating phone mockup with glow effect and subtle animation
+- Trust indicators: HIPAA Compliant & End-to-End Encrypted badges
+
+**Features Section:**
+- Asymmetric grid-breaking layout (not standard 3-column)
+- Glass morphism cards with gradient borders on hover
+- Four feature cards: Personalized Videos, AI-Powered Avatars, Secure Messaging, Health Tracking
+- Hover lift effects with brand-colored glow
+
+**Trust & Social Proof:**
+- Animated stat counters (50,000+ videos, 10,000+ patients, 500+ providers)
+- Partner logos: Kaiser Permanente, UnitedHealthcare
+- Editorial testimonial section with doctor photo and pull quote
+
+**Final CTA & Footer:**
+- Full-width gradient banner: "Ready to transform your practice?"
+- Dark minimal footer with logo and essential links
+- Monospace copyright text
+
+**Split-Screen Auth Page (`app/auth/page.tsx`):**
+- NEW: Dramatic split-screen role selection (Patient vs Doctor)
+- Patient panel: Warm teal-cyan gradient, heart icon, 3 benefits, white CTA
+- Doctor panel: Dark with geometric pattern, stethoscope icon, 3 benefits, gradient border CTA
+- Mobile: Stacked vertically with patient on top
+- Both panels trigger existing OnboardingForm with appropriate callbacks
+- Back button to return to role selection
+- HIPAA Compliant badge centered at bottom
+
+**New CSS Utilities (`app/globals.css`):**
+- `.landing-dark` - Dark cinematic background
+- `.gradient-mesh` - Animated gradient blob background
+- `.grain-overlay` - Subtle noise texture animation
+- `.glass` / `.glass-strong` - Glass morphism with backdrop blur
+- `.glow-teal` / `.glow-cyan` / `.glow-brand` - Brand-colored glow effects
+- `.text-glow` - Glowing text shadow
+- `.gradient-border` / `.gradient-border-hover` - Gradient border utilities
+- `.geo-pattern` / `.geo-dots` - Geometric pattern backgrounds
+- `.animate-reveal` with `.reveal-delay-1` through `.reveal-delay-8` - Staggered animations
+- `.hover-lift` / `.hover-glow` - Interactive hover effects
+- `.auth-split` / `.auth-panel` - Split-screen layout
+- `.text-gradient` - Gradient text utility
+- `.bg-brand-gradient` / `.bg-logo-gradient` - Brand gradient backgrounds
+- `.animate-float` - Floating animation for hero elements
+- `.animate-border-glow` - Animated border glow
+
+**Brand Consistency:**
+- Uses existing fonts: Plus Jakarta Sans, Lora, IBM Plex Mono
+- Exact logo gradient: #66b36c → #0ba999 → #3ac1e1
+- UI gradient: #00BFA6 → #00A6CE
+- No new dependencies - all CSS-only animations
+
+---
+
 ## [1.44.0] - 2026-01-03
 
 ### 🎨 Patient UI Updates & Bug Fixes

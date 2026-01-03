@@ -43,8 +43,8 @@ const HEALTH_SYSTEM_GROUPS = [
   { id: "other", name: "Other", logo: null, brandColor: null },
 ];
 
-// Steps for the onboarding flow - updated with new steps
-// Order: Practice Setup → Browse Videos → Train AI Avatar → Message Templates → Invite Patients
+// Steps for the onboarding flow - updated with new order
+// Order: Practice Setup → Browse Videos → Message Templates → Train AI Avatar → Invite Patients
 const STEPS = [
   {
     id: 1,
@@ -60,15 +60,15 @@ const STEPS = [
   },
   {
     id: 3,
-    title: "Train AI Avatar",
-    description: "Create your AI likeness",
-    icon: UserCircle,
-  },
-  {
-    id: 4,
     title: "Message Templates",
     description: "Set up quick messages",
     icon: MessageSquare,
+  },
+  {
+    id: 4,
+    title: "Train AI Avatar",
+    description: "Create your AI likeness",
+    icon: UserCircle,
   },
   {
     id: 5,
@@ -76,6 +76,17 @@ const STEPS = [
     description: "Share with patients",
     icon: Users,
   },
+];
+
+// Health topic categories for Browse by Topic (matching dashboard)
+const HEALTH_TOPICS = [
+  { id: "all", label: "All Topics" },
+  { id: "Foundation", label: "Foundation" },
+  { id: "Lifestyle", label: "Lifestyle" },
+  { id: "Education", label: "Education" },
+  { id: "Treatment", label: "Treatment" },
+  { id: "Recovery", label: "Recovery" },
+  { id: "Nutrition", label: "Nutrition" },
 ];
 
 // 1A Video library for browsing step
@@ -159,8 +170,9 @@ export default function DoctorOnboarding() {
   const [newTemplateTitle, setNewTemplateTitle] = useState("");
   const [newTemplateContent, setNewTemplateContent] = useState("");
   
-  // State for step 4 - Video Library
+  // State for step 2 - Video Library
   const [selectedVideos, setSelectedVideos] = useState<Set<string>>(new Set());
+  const [selectedTopic, setSelectedTopic] = useState<string>("all");
   
   // State for step 5
   const [patientEmails, setPatientEmails] = useState("");
@@ -510,8 +522,31 @@ export default function DoctorOnboarding() {
                 </div>
               </div>
 
+              {/* Browse by Topic Filters */}
+              <div>
+                <p className="text-sm font-medium text-gray-700 mb-3">Browse by Topic</p>
+                <div className="flex flex-wrap gap-2">
+                  {HEALTH_TOPICS.map((topic) => (
+                    <button
+                      key={topic.id}
+                      onClick={() => setSelectedTopic(topic.id)}
+                      className={cn(
+                        "px-4 py-2 rounded-xl text-sm font-medium transition-all",
+                        selectedTopic === topic.id
+                          ? "bg-sky-600 text-white shadow-md"
+                          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      )}
+                    >
+                      {topic.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {VIDEO_LIBRARY.map((video) => {
+                {VIDEO_LIBRARY.filter(video => 
+                  selectedTopic === "all" || video.category === selectedTopic
+                ).map((video) => {
                   const isSelected = selectedVideos.has(video.id);
                   return (
                     <button
@@ -553,14 +588,135 @@ export default function DoctorOnboarding() {
                 })}
               </div>
 
+              {/* Show message if no videos match the filter */}
+              {VIDEO_LIBRARY.filter(video => 
+                selectedTopic === "all" || video.category === selectedTopic
+              ).length === 0 && (
+                <div className="text-center py-8">
+                  <Film className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-500">No videos in this category yet.</p>
+                  <button
+                    onClick={() => setSelectedTopic("all")}
+                    className="text-sky-600 font-medium mt-2 hover:underline"
+                  >
+                    View all videos
+                  </button>
+                </div>
+              )}
+
               <p className="text-xs text-gray-500 text-center">
                 You can browse and add more videos from your dashboard anytime.
               </p>
             </div>
           )}
 
-          {/* Step 3: Train AI Avatar */}
+          {/* Step 3: Message Templates */}
           {currentStep === 3 && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  Set Up Message Templates
+                </h2>
+                <p className="text-gray-600">
+                  Are there any consistent messages you like to send to patients? Create templates to quickly send them later.
+                </p>
+              </div>
+
+              {/* Suggested Templates */}
+              {messageTemplates.length === 0 && (
+                <div className="bg-sky-50 rounded-xl p-6 border border-sky-100">
+                  <h4 className="font-semibold text-gray-900 mb-3">Quick Start - Add Suggested Templates</h4>
+                  <div className="grid md:grid-cols-2 gap-3">
+                    {SUGGESTED_TEMPLATES.map((template, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleAddSuggestedTemplate(template)}
+                        className="p-3 bg-white rounded-lg border border-sky-200 hover:border-sky-400 transition-all text-left"
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <Plus className="w-4 h-4 text-sky-600" />
+                          <span className="font-medium text-gray-900 text-sm">{template.title}</span>
+                        </div>
+                        <p className="text-xs text-gray-500 line-clamp-2">{template.content}</p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Existing Templates */}
+              {messageTemplates.length > 0 && (
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-gray-900">Your Templates ({messageTemplates.length})</h4>
+                  {messageTemplates.map((template) => (
+                    <div
+                      key={template.id}
+                      className="p-4 bg-gray-50 rounded-xl border border-gray-200 flex items-start gap-3"
+                    >
+                      <MessageSquare className="w-5 h-5 text-sky-600 mt-0.5 flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <h5 className="font-medium text-gray-900">{template.title}</h5>
+                        <p className="text-sm text-gray-600 line-clamp-2">{template.content}</p>
+                      </div>
+                      <button
+                        onClick={() => handleRemoveTemplate(template.id)}
+                        className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        aria-label="Remove template"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Add Custom Template */}
+              <div className="border-t border-gray-100 pt-6">
+                <h4 className="font-semibold text-gray-900 mb-3">Add Custom Template</h4>
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Template Name
+                    </label>
+                    <input
+                      type="text"
+                      value={newTemplateTitle}
+                      onChange={(e) => setNewTemplateTitle(e.target.value)}
+                      placeholder="e.g., Post-Visit Follow-Up"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Message Content
+                    </label>
+                    <textarea
+                      value={newTemplateContent}
+                      onChange={(e) => setNewTemplateContent(e.target.value)}
+                      placeholder="Type your message template here..."
+                      rows={4}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all resize-none"
+                    />
+                  </div>
+                  <button
+                    onClick={handleAddTemplate}
+                    disabled={!newTemplateTitle.trim() || !newTemplateContent.trim()}
+                    className="flex items-center gap-2 px-4 py-2 bg-sky-600 text-white font-medium rounded-lg hover:bg-sky-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Add Template
+                  </button>
+                </div>
+              </div>
+
+              <p className="text-xs text-gray-500 text-center">
+                You can add more templates later from Settings.
+              </p>
+            </div>
+          )}
+
+          {/* Step 4: Train AI Avatar */}
+          {currentStep === 4 && (
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">
@@ -688,113 +844,18 @@ export default function DoctorOnboarding() {
                 </div>
               )}
 
-              <p className="text-xs text-gray-500 text-center">
-                Don't have time now? You can skip this step and complete it later.
-              </p>
-            </div>
-          )}
-
-          {/* Step 4: Message Templates */}
-          {currentStep === 4 && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  Set Up Message Templates
-                </h2>
-                <p className="text-gray-600">
-                  Are there any consistent messages you like to send to patients? Create templates to quickly send them later.
-                </p>
-              </div>
-
-              {/* Suggested Templates */}
-              {messageTemplates.length === 0 && (
-                <div className="bg-sky-50 rounded-xl p-6 border border-sky-100">
-                  <h4 className="font-semibold text-gray-900 mb-3">Quick Start - Add Suggested Templates</h4>
-                  <div className="grid md:grid-cols-2 gap-3">
-                    {SUGGESTED_TEMPLATES.map((template, index) => (
-                      <button
-                        key={index}
-                        onClick={() => handleAddSuggestedTemplate(template)}
-                        className="p-3 bg-white rounded-lg border border-sky-200 hover:border-sky-400 transition-all text-left"
-                      >
-                        <div className="flex items-center gap-2 mb-1">
-                          <Plus className="w-4 h-4 text-sky-600" />
-                          <span className="font-medium text-gray-900 text-sm">{template.title}</span>
-                        </div>
-                        <p className="text-xs text-gray-500 line-clamp-2">{template.content}</p>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Existing Templates */}
-              {messageTemplates.length > 0 && (
-                <div className="space-y-3">
-                  <h4 className="font-semibold text-gray-900">Your Templates ({messageTemplates.length})</h4>
-                  {messageTemplates.map((template) => (
-                    <div
-                      key={template.id}
-                      className="p-4 bg-gray-50 rounded-xl border border-gray-200 flex items-start gap-3"
-                    >
-                      <MessageSquare className="w-5 h-5 text-sky-600 mt-0.5 flex-shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <h5 className="font-medium text-gray-900">{template.title}</h5>
-                        <p className="text-sm text-gray-600 line-clamp-2">{template.content}</p>
-                      </div>
-                      <button
-                        onClick={() => handleRemoveTemplate(template.id)}
-                        className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                        aria-label="Remove template"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Add Custom Template */}
-              <div className="border-t border-gray-100 pt-6">
-                <h4 className="font-semibold text-gray-900 mb-3">Add Custom Template</h4>
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Template Name
-                    </label>
-                    <input
-                      type="text"
-                      value={newTemplateTitle}
-                      onChange={(e) => setNewTemplateTitle(e.target.value)}
-                      placeholder="e.g., Post-Visit Follow-Up"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Message Content
-                    </label>
-                    <textarea
-                      value={newTemplateContent}
-                      onChange={(e) => setNewTemplateContent(e.target.value)}
-                      placeholder="Type your message template here..."
-                      rows={4}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all resize-none"
-                    />
-                  </div>
-                  <button
-                    onClick={handleAddTemplate}
-                    disabled={!newTemplateTitle.trim() || !newTemplateContent.trim()}
-                    className="flex items-center gap-2 px-4 py-2 bg-sky-600 text-white font-medium rounded-lg hover:bg-sky-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <Plus className="w-4 h-4" />
-                    Add Template
-                  </button>
-                </div>
+              {/* Skip for now button */}
+              <div className="flex items-center justify-center gap-4 pt-4 border-t border-gray-100">
+                <button
+                  onClick={handleNextStep}
+                  className="text-gray-500 hover:text-gray-700 text-sm font-medium"
+                >
+                  Skip for now →
+                </button>
               </div>
 
               <p className="text-xs text-gray-500 text-center">
-                You can add more templates later from Settings.
+                You can complete this step anytime from your dashboard.
               </p>
             </div>
           )}

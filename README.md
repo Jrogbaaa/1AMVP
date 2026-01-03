@@ -119,7 +119,32 @@ The platform features a complete authentication system with role-based access:
     └── images/            # Static assets
 ```
 
-## ✨ Latest Updates (v1.40.0 - Jan 2, 2026)
+## ✨ Latest Updates (v1.45.0 - Jan 3, 2026)
+
+### 🎨 Landing Page Redesign - Tech-Forward Dark Theme
+
+**Complete Marketing Landing Page:**
+- Cinematic dark mode design with animated gradient mesh background
+- "Your Doctor. Your Screen. Your Health." headline with gradient text
+- Split CTAs: "I'm a Patient" / "I'm a Provider"
+- Floating phone mockup with glow effects
+- Asymmetric features section with glass morphism cards
+- Animated stat counters and partner logos
+- Editorial testimonial section
+
+**Split-Screen Authentication:**
+- Dramatic role selection: Patient (teal gradient) vs Doctor (dark professional)
+- Each panel shows benefits and leads to existing onboarding flow
+- Mobile-responsive with stacked layout
+
+**New CSS Utilities:**
+- Glass morphism, gradient borders, glow effects
+- Staggered reveal animations
+- Geometric patterns and animated backgrounds
+
+---
+
+### Previous Updates (v1.40.0 - Jan 2, 2026)
 
 ### 📬 Messages & Reminders System
 

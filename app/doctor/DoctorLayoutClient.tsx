@@ -40,6 +40,7 @@ interface NavItem {
 }
 
 // Navigation items - dashboard sections use hash links for scroll-to behavior
+// Order matches the main scroll section order on the dashboard
 const NAV_ITEMS: NavItem[] = [
   {
     id: "dashboard",
@@ -58,17 +59,20 @@ const NAV_ITEMS: NavItem[] = [
     isScrollTarget: true,
   },
   {
+    id: "check-ins",
+    label: "My Check-ins and Reminders",
+    href: "/doctor#check-ins",
+    icon: <MessageSquare className="w-5 h-5" />,
+    hasNotification: true,
+    notificationCount: 5,
+    isScrollTarget: true,
+  },
+  {
     id: "my-videos",
     label: "My Video Library",
     href: "/doctor#my-videos",
     icon: <Film className="w-5 h-5" />,
     isScrollTarget: true,
-  },
-  {
-    id: "my-messages",
-    label: "My Check-ins and Reminders",
-    href: "/doctor/my-messages",
-    icon: <MessageSquare className="w-5 h-5" />,
   },
   {
     id: "browse",

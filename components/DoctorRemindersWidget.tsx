@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
@@ -18,6 +18,7 @@ import {
   Activity,
   Heart,
   Download,
+  AlertCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -120,7 +121,29 @@ const formatDueDate = (dueDate: number): string => {
   return date.toLocaleDateString();
 };
 
-export const DoctorRemindersWidget = ({
+// Error fallback component for the widget
+const RemindersErrorFallback = ({ className }: { className?: string }) => (
+  <div className={cn("bg-white rounded-2xl p-4 shadow-sm", className)}>
+    <div className="flex items-center justify-between mb-4">
+      <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">
+        <Bell className="w-5 h-5 text-emerald-600" />
+        Reminders from Your Doctor
+      </h3>
+    </div>
+    <div className="text-center py-6">
+      <div className="w-12 h-12 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-3">
+        <AlertCircle className="w-6 h-6 text-amber-400" />
+      </div>
+      <p className="text-gray-500 text-sm">Unable to load reminders</p>
+      <p className="text-gray-400 text-xs mt-1">
+        Please try again later
+      </p>
+    </div>
+  </div>
+);
+
+// Inner widget component that handles the query
+const DoctorRemindersWidgetInner = ({
   patientId,
   className,
 }: DoctorRemindersWidgetProps) => {
@@ -408,6 +431,44 @@ export const DoctorRemindersWidget = ({
         </Link>
       </div>
     </div>
+  );
+};
+
+// Error Boundary class component for catching render errors
+class RemindersErrorBoundary extends React.Component<
+  { children: React.ReactNode; fallback: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode; fallback: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error("DoctorRemindersWidget error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
+}
+
+// Exported wrapper component with error boundary
+export const DoctorRemindersWidget = ({
+  patientId,
+  className,
+}: DoctorRemindersWidgetProps) => {
+  return (
+    <RemindersErrorBoundary fallback={<RemindersErrorFallback className={className} />}>
+      <DoctorRemindersWidgetInner patientId={patientId} className={className} />
+    </RemindersErrorBoundary>
   );
 };
 

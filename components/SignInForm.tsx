@@ -14,20 +14,49 @@ export const SignInForm = ({ callbackUrl = "/feed" }: SignInFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleEmailSignIn = async (e: React.FormEvent) => {
+  const handleEmailSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    // Get email from form data directly (more reliable than React state)
+    const formData = new FormData(e.currentTarget);
+    const emailValue = (formData.get("email") as string)?.trim() || email.trim();
+    
+    if (!emailValue) {
+      setError("Please enter your email address");
+      return;
+    }
+    
     setIsLoading(true);
     setError("");
 
     try {
-      await signIn("email", {
-        email,
-        redirect: true,
+      // Use redirect: false to handle the response ourselves
+      const result = await signIn("email", {
+        email: emailValue,
+        name: emailValue.split("@")[0], // Default name from email
+        redirect: false,
         callbackUrl,
       });
+
+      if (result?.error) {
+        setError("Failed to sign in. Please try again.");
+        setIsLoading(false);
+        return;
+      }
+
+      // Sync user to Convex database
+      try {
+        await fetch("/api/auth/sync-user", { method: "POST" });
+      } catch (syncError) {
+        // Non-critical - the useUserSync hook will also try to sync
+        console.warn("Initial sync failed, will retry:", syncError);
+      }
+
+      // Redirect to callback URL
+      window.location.href = callbackUrl;
     } catch (err) {
       setError("Failed to sign in. Please try again.");
-      console.error(err);
+      console.error("Sign in error:", err);
       setIsLoading(false);
     }
   };
@@ -82,6 +111,7 @@ export const SignInForm = ({ callbackUrl = "/feed" }: SignInFormProps) => {
           </label>
           <input
             id="email"
+            name="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -95,7 +125,7 @@ export const SignInForm = ({ callbackUrl = "/feed" }: SignInFormProps) => {
 
         <button
           type="submit"
-          disabled={isLoading || !email}
+          disabled={isLoading}
           className="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-sky-600 text-white rounded-xl font-semibold hover:bg-sky-700 focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all"
         >
           {isLoading ? (

@@ -5,6 +5,40 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.41.0] - 2026-01-03
+
+### 🔐 Authentication & Error Handling Fixes
+
+**Patient Login Flow Fixed (`components/AuthPrompt.tsx`, `components/SignInForm.tsx`):**
+- Fixed email sign-in to work with any email address
+- Changed from `redirect: true` to `redirect: false` for proper response handling
+- Added form data extraction for reliable email capture
+- Improved validation with inline error messages
+- Auto-sync user to Convex database after successful sign-in
+
+**Error Boundaries for Dashboard Widgets:**
+- `DoctorMessagesWidget` now wrapped in error boundary
+  - Gracefully handles Convex query failures
+  - Shows friendly "Unable to load messages" fallback
+  - Prevents entire dashboard from crashing
+- `DoctorRemindersWidget` now wrapped in error boundary
+  - Same graceful error handling pattern
+  - Isolated failures don't affect other components
+
+**Convex Production Deployment:**
+- Deployed schema to production (`npx convex deploy`)
+- Added missing indexes to production:
+  - `doctorMessages.by_patient` - Fixed patient dashboard queries
+  - `patientReminders.by_patient` - Fixed reminders widget
+  - `patientReminders.by_completed` - Fixed active reminders filter
+  - And 20+ other indexes for doctor portal features
+- Production deployment: `insightful-retriever-956`
+
+### Bug Fixes
+- Fixed "Server Error" on My Health page after login
+- Fixed dashboard crash when Convex queries fail
+- Fixed email input not properly capturing user input in some browsers
+
 ## [1.40.0] - 2026-01-02
 
 ### 📬 Messages & Reminders System

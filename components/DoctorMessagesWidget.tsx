@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
@@ -13,6 +13,7 @@ import {
   CheckCheck,
   Clock,
   X,
+  AlertCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -59,7 +60,29 @@ const formatTimestamp = (timestamp: number): string => {
   return date.toLocaleDateString();
 };
 
-export const DoctorMessagesWidget = ({
+// Error fallback component for the widget
+const MessagesErrorFallback = ({ className }: { className?: string }) => (
+  <div className={cn("bg-white rounded-2xl p-4 shadow-sm", className)}>
+    <div className="flex items-center justify-between mb-4">
+      <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">
+        <MessageCircle className="w-5 h-5 text-sky-600" />
+        Messages from Doctors
+      </h3>
+    </div>
+    <div className="text-center py-6">
+      <div className="w-12 h-12 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-3">
+        <AlertCircle className="w-6 h-6 text-amber-400" />
+      </div>
+      <p className="text-gray-500 text-sm">Unable to load messages</p>
+      <p className="text-gray-400 text-xs mt-1">
+        Please try again later
+      </p>
+    </div>
+  </div>
+);
+
+// Inner widget component that handles the query
+const DoctorMessagesWidgetInner = ({
   patientId,
   className,
 }: DoctorMessagesWidgetProps) => {
@@ -289,6 +312,44 @@ export const DoctorMessagesWidget = ({
         </div>
       )}
     </div>
+  );
+};
+
+// Error Boundary class component for catching render errors
+class MessagesErrorBoundary extends React.Component<
+  { children: React.ReactNode; fallback: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode; fallback: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error("DoctorMessagesWidget error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
+}
+
+// Exported wrapper component with error boundary
+export const DoctorMessagesWidget = ({
+  patientId,
+  className,
+}: DoctorMessagesWidgetProps) => {
+  return (
+    <MessagesErrorBoundary fallback={<MessagesErrorFallback className={className} />}>
+      <DoctorMessagesWidgetInner patientId={patientId} className={className} />
+    </MessagesErrorBoundary>
   );
 };
 

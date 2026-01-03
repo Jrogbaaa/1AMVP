@@ -9,8 +9,7 @@ import { ScheduleAppointment } from "@/components/ScheduleAppointment";
 import { ChatOnboarding } from "@/components/ChatOnboarding";
 import { UserMenu } from "@/components/UserMenu";
 import { PreventiveCareChecklist } from "@/components/PreventiveCareChecklist";
-import { DoctorMessagesWidget } from "@/components/DoctorMessagesWidget";
-import { DoctorRemindersWidget } from "@/components/DoctorRemindersWidget";
+import { DoctorCommunicationsWidget } from "@/components/DoctorCommunicationsWidget";
 import {
   User,
   Mail,
@@ -231,7 +230,7 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
             {MOCK_DOCTORS.map((doctor) => (
               <Link
                 key={doctor.id}
-                href={`/feed?doctor=${doctor.id}`}
+                href={`/profile/${doctor.id}`}
                 className="flex items-center gap-3 px-4 py-2 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
               >
                 <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-gray-100">
@@ -321,14 +320,22 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
               )}
             </div>
 
-            {/* Messages from Your Doctor */}
-            {userId && (
-              <DoctorMessagesWidget patientId={userId} />
+            {/* Preventive Care Checklist - Show FIRST if completed onboarding */}
+            {profileForChecklist && (
+              <div id="checklist" className="bg-white rounded-2xl p-3 md:p-4 shadow-sm">
+                <PreventiveCareChecklist
+                  profile={profileForChecklist}
+                  onSchedule={(screeningId, locationId) => {
+                    console.log("Schedule:", screeningId, "at location:", locationId);
+                    setIsScheduleOpen(true);
+                  }}
+                />
+              </div>
             )}
 
-            {/* Reminders from Your Doctor */}
+            {/* Combined Messages & Reminders from Your Doctor */}
             {userId && (
-              <DoctorRemindersWidget patientId={userId} />
+              <DoctorCommunicationsWidget patientId={userId} />
             )}
 
             {/* System Reminders - Modular Card */}
@@ -591,81 +598,150 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
               </div>
             </div>
 
-            {/* Preventive Care Checklist - Show if completed onboarding */}
-            {profileForChecklist && (
-              <div id="checklist" className="bg-white rounded-2xl p-3 md:p-4 shadow-sm">
-                <PreventiveCareChecklist
-                  profile={profileForChecklist}
-                  onSchedule={(screeningId, locationId) => {
-                    console.log("Schedule:", screeningId, "at location:", locationId);
-                    setIsScheduleOpen(true);
-                  }}
-                />
-              </div>
-            )}
-
           </div>
 
           {/* Right column - Doctor (SECONDARY) */}
           <div className="space-y-3">
-            {/* Doctor card - Modular */}
+            {/* Combined Doctors Card - Mobile shows all doctors, Desktop shows primary only */}
             <div className="bg-white rounded-2xl p-3 shadow-sm">
-              <h2 className="text-sm font-bold text-gray-900 mb-2">
-                Your Primary Care Specialist
-              </h2>
-              <div className="flex items-start gap-3 mb-4">
-                <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0">
-                  {MOCK_DOCTOR.avatarUrl ? (
-                    <Image
-                      src={MOCK_DOCTOR.avatarUrl}
-                      alt={MOCK_DOCTOR.name}
-                      width={56}
-                      height={56}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-primary-600 flex items-center justify-center">
-                      <span className="text-white font-bold text-xl">
-                        {MOCK_DOCTOR.name.charAt(0)}
-                      </span>
+              {/* Desktop: Primary Care Specialist only */}
+              <div className="hidden lg:block">
+                <h2 className="text-sm font-bold text-gray-900 mb-2">
+                  Your Primary Care Specialist
+                </h2>
+                <Link
+                  href={`/profile/${MOCK_DOCTOR.id}`}
+                  className="flex items-start gap-3 mb-4 hover:opacity-80 transition-opacity"
+                >
+                  <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0">
+                    {MOCK_DOCTOR.avatarUrl ? (
+                      <Image
+                        src={MOCK_DOCTOR.avatarUrl}
+                        alt={MOCK_DOCTOR.name}
+                        width={56}
+                        height={56}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-primary-600 flex items-center justify-center">
+                        <span className="text-white font-bold text-xl">
+                          {MOCK_DOCTOR.name.charAt(0)}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      Dr. {MOCK_DOCTOR.name}
+                    </h3>
+                    <p className="text-gray-600 text-sm">{MOCK_DOCTOR.specialty}</p>
+                  </div>
+                </Link>
+
+                {MOCK_DOCTOR.clinicName && (
+                  <div className="space-y-2 text-sm mb-4">
+                    <div className="flex items-start gap-2 text-gray-700">
+                      <MapPin className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-medium">{MOCK_DOCTOR.clinicName}</p>
+                        {MOCK_DOCTOR.clinicAddress && (
+                          <p className="text-gray-500">{MOCK_DOCTOR.clinicAddress}</p>
+                        )}
+                      </div>
                     </div>
-                  )}
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    Dr. {MOCK_DOCTOR.name}
-                  </h3>
-                  <p className="text-gray-600 text-sm">{MOCK_DOCTOR.specialty}</p>
-                </div>
+                    {MOCK_DOCTOR.phone && (
+                      <div className="flex items-center gap-2 text-gray-700">
+                        <Phone className="w-4 h-4 text-gray-400" />
+                        <span>{MOCK_DOCTOR.phone}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <button
+                  onClick={handleScheduleAppointment}
+                  className="w-full btn-primary"
+                >
+                  <Calendar className="w-5 h-5 mr-2 inline" />
+                  Schedule Follow-Up
+                </button>
               </div>
 
-              {MOCK_DOCTOR.clinicName && (
-                <div className="space-y-2 text-sm mb-4">
-                  <div className="flex items-start gap-2 text-gray-700">
-                    <MapPin className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="font-medium">{MOCK_DOCTOR.clinicName}</p>
-                      {MOCK_DOCTOR.clinicAddress && (
-                        <p className="text-gray-500">{MOCK_DOCTOR.clinicAddress}</p>
+              {/* Mobile: Combined Your Doctors list */}
+              <div className="lg:hidden">
+                <h2 className="text-sm font-bold text-gray-900 mb-3">
+                  Your Doctors
+                </h2>
+                <div className="space-y-2">
+                  {/* Primary Care Specialist - highlighted */}
+                  <Link
+                    href={`/profile/${MOCK_DOCTOR.id}`}
+                    className="flex items-center gap-3 p-3 bg-gradient-to-r from-sky-50 to-teal-50 rounded-xl border border-sky-100"
+                  >
+                    <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-sky-200">
+                      {MOCK_DOCTOR.avatarUrl ? (
+                        <Image
+                          src={MOCK_DOCTOR.avatarUrl}
+                          alt={MOCK_DOCTOR.name}
+                          width={48}
+                          height={48}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-primary-600 flex items-center justify-center">
+                          <span className="text-white font-bold text-lg">
+                            {MOCK_DOCTOR.name.charAt(0)}
+                          </span>
+                        </div>
                       )}
                     </div>
-                  </div>
-                  {MOCK_DOCTOR.phone && (
-                    <div className="flex items-center gap-2 text-gray-700">
-                      <Phone className="w-4 h-4 text-gray-400" />
-                      <span>{MOCK_DOCTOR.phone}</span>
+                    <div className="flex-1">
+                      <p className="font-semibold text-gray-900 text-sm">Dr. {MOCK_DOCTOR.name}</p>
+                      <p className="text-xs text-gray-500">{MOCK_DOCTOR.specialty}</p>
+                      <p className="text-xs text-sky-600 font-medium">Primary Care</p>
                     </div>
-                  )}
-                </div>
-              )}
+                    <ChevronRight className="w-4 h-4 text-gray-400" />
+                  </Link>
 
-              <button
-                onClick={handleScheduleAppointment}
-                className="w-full btn-primary"
-              >
-                <Calendar className="w-5 h-5 mr-2 inline" />
-                Schedule Follow-Up
-              </button>
+                  {/* Other doctors */}
+                  {MOCK_DOCTORS.filter(d => d.id !== MOCK_DOCTOR.id).slice(0, 2).map((doctor) => (
+                    <Link
+                      key={doctor.id}
+                      href={`/profile/${doctor.id}`}
+                      className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
+                    >
+                      <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                        {doctor.avatarUrl ? (
+                          <Image
+                            src={doctor.avatarUrl}
+                            alt={doctor.name}
+                            width={40}
+                            height={40}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-br from-[#00BFA6] to-[#00A6CE] flex items-center justify-center">
+                            <span className="text-white text-xs font-bold">{doctor.name.charAt(0)}</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium text-gray-900 text-sm">Dr. {doctor.name}</p>
+                        <p className="text-xs text-gray-500">{doctor.specialty}</p>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-gray-400" />
+                    </Link>
+                  ))}
+                </div>
+
+                <button
+                  onClick={handleScheduleAppointment}
+                  className="w-full btn-primary mt-3"
+                >
+                  <Calendar className="w-5 h-5 mr-2 inline" />
+                  Schedule Appointment
+                </button>
+              </div>
             </div>
 
             {/* Trust badge - no card wrapper on mobile */}
@@ -680,13 +756,16 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
 
         {/* Healthcare Providers Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          {/* Connected Doctors */}
-          <div className="card">
+          {/* Connected Doctors - Desktop only (mobile version is combined above) */}
+          <div className="hidden lg:block card">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Your Doctors
             </h3>
             <div className="space-y-3">
-              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+              <Link
+                href={`/profile/${MOCK_DOCTORS[0]?.id}`}
+                className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+              >
                 <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
                   <Image
                     src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop&q=80"
@@ -700,8 +779,11 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
                   <p className="font-medium text-gray-900 text-sm">Dr. Sarah Johnson</p>
                   <p className="text-xs text-gray-500">Cardiology</p>
                 </div>
-              </div>
-              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+              </Link>
+              <Link
+                href={`/profile/${MOCK_DOCTORS[1]?.id}`}
+                className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+              >
                 <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
                   <Image
                     src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&h=400&fit=crop&q=80"
@@ -715,7 +797,7 @@ export default function AuthenticatedDashboard({ session }: AuthenticatedDashboa
                   <p className="font-medium text-gray-900 text-sm">Dr. Michael Chen</p>
                   <p className="text-xs text-gray-500">Primary Care</p>
                 </div>
-              </div>
+              </Link>
             </div>
           </div>
 

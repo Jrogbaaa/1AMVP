@@ -361,7 +361,7 @@ export default function MyMessagesPage() {
     <div className="max-w-6xl mx-auto">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">My Messages & Reminders</h1>
+        <h1 className="text-2xl font-bold text-gray-900">My Check-ins and Reminders</h1>
         <p className="text-gray-600 mt-1">
           Create and manage reusable templates for patient communication
         </p>

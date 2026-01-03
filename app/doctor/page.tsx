@@ -255,9 +255,22 @@ const BROWSE_1A_VIDEOS = [
   },
 ];
 
+// Health topic categories for Browse by Topic
+const HEALTH_TOPICS = [
+  { id: "all", label: "All Topics" },
+  { id: "Cardiology", label: "Cardiology" },
+  { id: "Foundation", label: "Foundation" },
+  { id: "Lifestyle", label: "Lifestyle" },
+  { id: "Nutrition", label: "Nutrition" },
+  { id: "Recovery", label: "Recovery" },
+  { id: "Education", label: "Education" },
+  { id: "Conditions", label: "Conditions" },
+];
+
 export default function DoctorDashboard() {
   const [timeFilter, setTimeFilter] = useState<"week" | "month" | "year">("week");
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedTopic, setSelectedTopic] = useState<string>("all");
   const [addedVideos, setAddedVideos] = useState<Set<string>>(new Set(["1a-2", "1a-4"]));
   const { user } = useUserSync();
   
@@ -302,11 +315,22 @@ export default function DoctorDashboard() {
     });
   };
 
-  // Filter 1A videos
-  const filtered1AVideos = BROWSE_1A_VIDEOS.filter(video =>
-    video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    video.description.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Get doctor's specialty to show personalized content first
+  const doctorSpecialty = user?.doctorProfile?.specialty || "Cardiology";
+
+  // Filter 1A videos by search query and topic
+  const filtered1AVideos = BROWSE_1A_VIDEOS.filter(video => {
+    const matchesSearch = 
+      video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      video.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesTopic = selectedTopic === "all" || video.category === selectedTopic;
+    return matchesSearch && matchesTopic;
+  }).sort((a, b) => {
+    // Show videos matching doctor's specialty first
+    const aMatchesSpecialty = a.category.toLowerCase().includes(doctorSpecialty.toLowerCase()) ? -1 : 0;
+    const bMatchesSpecialty = b.category.toLowerCase().includes(doctorSpecialty.toLowerCase()) ? -1 : 0;
+    return aMatchesSpecialty - bMatchesSpecialty;
+  });
 
   // Notification counts
   const newActivityCount = RECENT_PATIENTS.filter(p => p.hasNewActivity).length;
@@ -708,19 +732,19 @@ export default function DoctorDashboard() {
       {/* ========== SECTION: Browse 1A Videos ========== */}
       <section id="browse" className="scroll-mt-20">
         <div className="bg-gradient-to-r from-emerald-50 via-teal-50 to-sky-50 rounded-2xl border border-emerald-200">
-          <div className="flex items-center justify-between p-6">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between p-6 gap-4">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full">
                 <BookOpen className="w-6 h-6 text-white" />
               </div>
               <div>
                 <h2 className="text-lg font-semibold text-gray-900">
-                  Browse 1A Video Library
+                  Browse Videos
                 </h2>
                 <p className="text-sm text-gray-600">Add videos to your collection</p>
               </div>
             </div>
-            <div className="relative w-64">
+            <div className="relative w-full lg:w-64">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
@@ -732,7 +756,33 @@ export default function DoctorDashboard() {
             </div>
           </div>
 
-          <div className="p-6">
+          {/* Browse by Topic Filters */}
+          <div className="px-6 pb-4">
+            <p className="text-sm font-medium text-gray-700 mb-3">Browse by Topic</p>
+            <div className="flex flex-wrap gap-2">
+              {HEALTH_TOPICS.map((topic) => (
+                <button
+                  key={topic.id}
+                  onClick={() => setSelectedTopic(topic.id)}
+                  className={cn(
+                    "px-4 py-2 rounded-xl text-sm font-medium transition-all",
+                    selectedTopic === topic.id
+                      ? "bg-emerald-600 text-white shadow-md"
+                      : "bg-white/80 text-gray-600 hover:bg-white hover:text-emerald-700 border border-emerald-200"
+                  )}
+                >
+                  {topic.label}
+                  {topic.id === doctorSpecialty && selectedTopic !== topic.id && (
+                    <span className="ml-1.5 px-1.5 py-0.5 text-[10px] bg-emerald-100 text-emerald-700 rounded-full">
+                      Your specialty
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="p-6 pt-2">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filtered1AVideos.map((video) => {
                 const isAdded = addedVideos.has(video.id);

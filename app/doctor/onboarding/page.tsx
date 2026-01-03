@@ -44,6 +44,7 @@ const HEALTH_SYSTEM_GROUPS = [
 ];
 
 // Steps for the onboarding flow - updated with new steps
+// Order: Practice Setup → Browse Videos → Train AI Avatar → Message Templates → Invite Patients
 const STEPS = [
   {
     id: 1,
@@ -53,21 +54,21 @@ const STEPS = [
   },
   {
     id: 2,
+    title: "Browse Videos",
+    description: "Add to your library",
+    icon: BookOpen,
+  },
+  {
+    id: 3,
     title: "Train AI Avatar",
     description: "Create your AI likeness",
     icon: UserCircle,
   },
   {
-    id: 3,
+    id: 4,
     title: "Message Templates",
     description: "Set up quick messages",
     icon: MessageSquare,
-  },
-  {
-    id: 4,
-    title: "Browse Videos",
-    description: "Add to your library",
-    icon: BookOpen,
   },
   {
     id: 5,
@@ -485,8 +486,81 @@ export default function DoctorOnboarding() {
             </div>
           )}
 
-          {/* Step 2: Train AI Avatar */}
+          {/* Step 2: Browse Videos */}
           {currentStep === 2 && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  Browse 1A Video Library
+                </h2>
+                <p className="text-gray-600">
+                  Add relevant videos to your collection. You can clone them with your AI avatar later.
+                </p>
+              </div>
+
+              <div className="flex items-center justify-between bg-sky-50 rounded-xl p-4 border border-sky-100">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-sky-100 rounded-lg">
+                    <Film className="w-5 h-5 text-sky-600" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">{selectedVideos.size} videos selected</p>
+                    <p className="text-sm text-gray-600">These will be added to your library</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {VIDEO_LIBRARY.map((video) => {
+                  const isSelected = selectedVideos.has(video.id);
+                  return (
+                    <button
+                      key={video.id}
+                      onClick={() => handleToggleVideo(video.id)}
+                      className={cn(
+                        "rounded-xl overflow-hidden border-2 transition-all text-left",
+                        isSelected
+                          ? "border-sky-500 ring-2 ring-sky-200"
+                          : "border-gray-200 hover:border-gray-300"
+                      )}
+                    >
+                      <div className="relative aspect-video bg-gray-200">
+                        <Image
+                          src={video.thumbnailUrl}
+                          alt={video.title}
+                          fill
+                          className="object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                        <div className="absolute bottom-2 right-2 px-2 py-1 bg-black/70 text-white text-xs rounded">
+                          {video.duration}
+                        </div>
+                        <div className="absolute top-2 left-2 px-2 py-1 bg-white/90 text-gray-700 text-xs rounded-full font-medium">
+                          {video.category}
+                        </div>
+                        {isSelected && (
+                          <div className="absolute top-2 right-2 w-6 h-6 bg-sky-500 rounded-full flex items-center justify-center">
+                            <Check className="w-4 h-4 text-white" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-3">
+                        <h3 className="font-medium text-gray-900 line-clamp-1">{video.title}</h3>
+                        <p className="text-sm text-gray-500 line-clamp-1 mt-0.5">{video.description}</p>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <p className="text-xs text-gray-500 text-center">
+                You can browse and add more videos from your dashboard anytime.
+              </p>
+            </div>
+          )}
+
+          {/* Step 3: Train AI Avatar */}
+          {currentStep === 3 && (
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">
@@ -620,8 +694,8 @@ export default function DoctorOnboarding() {
             </div>
           )}
 
-          {/* Step 3: Message Templates */}
-          {currentStep === 3 && (
+          {/* Step 4: Message Templates */}
+          {currentStep === 4 && (
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">
@@ -721,79 +795,6 @@ export default function DoctorOnboarding() {
 
               <p className="text-xs text-gray-500 text-center">
                 You can add more templates later from Settings.
-              </p>
-            </div>
-          )}
-
-          {/* Step 4: Browse Videos */}
-          {currentStep === 4 && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  Browse 1A Video Library
-                </h2>
-                <p className="text-gray-600">
-                  Add relevant videos to your collection. You can clone them with your AI avatar later.
-                </p>
-              </div>
-
-              <div className="flex items-center justify-between bg-sky-50 rounded-xl p-4 border border-sky-100">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-sky-100 rounded-lg">
-                    <Film className="w-5 h-5 text-sky-600" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-900">{selectedVideos.size} videos selected</p>
-                    <p className="text-sm text-gray-600">These will be added to your library</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {VIDEO_LIBRARY.map((video) => {
-                  const isSelected = selectedVideos.has(video.id);
-                  return (
-                    <button
-                      key={video.id}
-                      onClick={() => handleToggleVideo(video.id)}
-                      className={cn(
-                        "rounded-xl overflow-hidden border-2 transition-all text-left",
-                        isSelected
-                          ? "border-sky-500 ring-2 ring-sky-200"
-                          : "border-gray-200 hover:border-gray-300"
-                      )}
-                    >
-                      <div className="relative aspect-video bg-gray-200">
-                        <Image
-                          src={video.thumbnailUrl}
-                          alt={video.title}
-                          fill
-                          className="object-cover"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                        <div className="absolute bottom-2 right-2 px-2 py-1 bg-black/70 text-white text-xs rounded">
-                          {video.duration}
-                        </div>
-                        <div className="absolute top-2 left-2 px-2 py-1 bg-white/90 text-gray-700 text-xs rounded-full font-medium">
-                          {video.category}
-                        </div>
-                        {isSelected && (
-                          <div className="absolute top-2 right-2 w-6 h-6 bg-sky-500 rounded-full flex items-center justify-center">
-                            <Check className="w-4 h-4 text-white" />
-                          </div>
-                        )}
-                      </div>
-                      <div className="p-3">
-                        <h3 className="font-medium text-gray-900 line-clamp-1">{video.title}</h3>
-                        <p className="text-sm text-gray-500 line-clamp-1 mt-0.5">{video.description}</p>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-
-              <p className="text-xs text-gray-500 text-center">
-                You can browse and add more videos from your dashboard anytime.
               </p>
             </div>
           )}

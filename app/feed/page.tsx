@@ -11,22 +11,14 @@ import { AuthPrompt } from "@/components/AuthPrompt";
 import { ScheduleAppointment } from "@/components/ScheduleAppointment";
 import { FeedSkeleton } from "@/components/FeedSkeleton";
 import { useEngagement } from "@/hooks/useEngagement";
-import { Calendar, Search, Share2, User, MessageCircle } from "lucide-react";
+import { Calendar, Search, Share2, User, MessageCircle, CheckCircle2 } from "lucide-react";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import type { Video, Doctor } from "@/lib/types";
 import Image from "next/image";
 import { Logo } from "@/components/Logo";
 
-// Mock doctors data
+// Mock doctors data - removed Dr. Ryan Mitchell, keeping Dr. Jack and others
 const MOCK_DOCTORS: Record<string, Doctor> = {
-  "550e8400-e29b-41d4-a716-446655440000": {
-    id: "550e8400-e29b-41d4-a716-446655440000",
-    name: "Ryan Mitchell",
-    specialty: "Cardiology",
-    avatarUrl: "/images/doctors/doctor-ryan.jpg",
-    clinicName: "Heart Health Partners",
-    createdAt: new Date().toISOString(),
-  },
   "550e8400-e29b-41d4-a716-446655440001": {
     id: "550e8400-e29b-41d4-a716-446655440001",
     name: "Sarah Johnson",
@@ -61,25 +53,10 @@ const MOCK_DOCTORS: Record<string, Doctor> = {
   },
 };
 
-const MOCK_DOCTOR = MOCK_DOCTORS["550e8400-e29b-41d4-a716-446655440001"];
+const MOCK_DOCTOR = MOCK_DOCTORS["550e8400-e29b-41d4-a716-446655440004"]; // Dr. Jack Ellis as default
 
 const MOCK_VIDEOS: Video[] = [
-  // First video: Dr. Ryan Mitchell (personalized greeting)
-  {
-    id: "750e8400-e29b-41d4-a716-446655440000",
-    title: "Hey Dave",
-    description: "Your personalized health update",
-    videoUrl: "/videos/hey-dave.mp4",
-    thumbnailUrl: "/images/doctors/doctor-ryan.jpg",
-    posterUrl: "/images/doctors/doctor-ryan.jpg",
-    duration: 60,
-    category: "Follow-Up",
-    tags: ["personalized", "follow-up", "greeting"],
-    doctorId: "550e8400-e29b-41d4-a716-446655440000",
-    isPersonalized: true,
-    createdAt: new Date().toISOString(),
-  },
-  // Second video: Dr. Jack Ellis (different doctor)
+  // First video: Dr. Jack Ellis
   {
     id: "750e8400-e29b-41d4-a716-446655440006",
     title: "Understanding Your Heart Rhythm",
@@ -197,22 +174,29 @@ const FeedContent = () => {
     ? MOCK_VIDEOS.filter((video) => video.doctorId === doctorFilter)
     : MOCK_VIDEOS;
 
-  // Combined feed with Q&A and reminder cards interspersed between videos
+  // Combined feed with Q&A, reminder, and message cards interspersed between videos
   // Cards are now inline (not overlays), showing as smaller units
   type FeedItem = 
     | { type: 'video'; data: Video }
     | { type: 'qa'; data: typeof QA_QUESTIONS[number] }
-    | { type: 'reminder' };
+    | { type: 'reminder' }
+    | { type: 'message' };
 
   const combinedFeed: FeedItem[] = [];
   let qaIndex = 0;
   let reminderInserted = false;
+  let messageInserted = false;
   
   filteredVideos.forEach((video, index) => {
     combinedFeed.push({ type: 'video', data: video });
     
+    // Insert message card after the 2nd video
+    if (index === 1 && !messageInserted) {
+      combinedFeed.push({ type: 'message' });
+      messageInserted = true;
+    }
     // Insert reminder card after the 4th video
-    if (index === 3 && !reminderInserted) {
+    else if (index === 3 && !reminderInserted) {
       combinedFeed.push({ type: 'reminder' });
       reminderInserted = true;
     }
@@ -405,12 +389,8 @@ const FeedContent = () => {
               {Object.values(MOCK_DOCTORS).map((doctor) => (
                 <Link
                   key={doctor.id}
-                  href={`/feed?doctor=${doctor.id}`}
-                  className={`flex items-center gap-3 px-4 py-2 rounded-xl transition-colors ${
-                    doctorFilter === doctor.id 
-                      ? 'bg-[#00BFA6]/10 text-[#00BFA6]' 
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  }`}
+                  href={`/profile/${doctor.id}`}
+                  className="flex items-center gap-3 px-4 py-2 rounded-xl transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                 >
                   <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-gray-100">
                     {doctor.avatarUrl ? (
@@ -484,34 +464,39 @@ const FeedContent = () => {
                   <div key={`qa-${feedItem.data.id}`} className="snap-item-card">
                     {/* Desktop: Flex container matching video layout */}
                     <div className="h-full w-full flex items-center justify-center md:gap-4">
-                      {/* Card container - matches video aspect ratio */}
-                      <div className="h-full w-full max-w-[calc(70vh*9/16)] md:max-w-none md:h-full md:w-auto md:aspect-[9/16] md:rounded-2xl md:overflow-hidden md:shadow-2xl relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+                      {/* Card container - matches video aspect ratio - DARK background */}
+                      <div className="h-full w-full max-w-[calc(70vh*9/16)] md:max-w-none md:h-full md:w-auto md:aspect-[9/16] md:rounded-2xl md:overflow-hidden md:shadow-2xl relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
                         {/* Inner content with padding */}
                         <div className="absolute inset-0 flex flex-col items-center justify-center p-6">
-                          {/* Doctor asks header */}
-                          <div className="flex items-center gap-3 mb-6">
-                            <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-[#00BFA6]/40 shadow-lg flex-shrink-0">
-                              <Image
-                                src={selectedDoctor.avatarUrl || "/images/doctors/doctor-ryan.jpg"}
-                                alt={selectedDoctor.name}
-                                width={48}
-                                height={48}
-                                className="w-full h-full object-cover"
-                              />
+                          {/* Doctor photo with message icon */}
+                          <div className="flex items-center gap-4 mb-6">
+                            <div className="relative flex-shrink-0">
+                              <div className="w-16 h-16 rounded-full overflow-hidden ring-4 ring-white/20 shadow-xl">
+                                <Image
+                                  src={selectedDoctor.avatarUrl || "/images/doctors/doctor-jack.jpg"}
+                                  alt={selectedDoctor.name}
+                                  width={64}
+                                  height={64}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                              <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-sky-500 rounded-full flex items-center justify-center shadow-lg border-2 border-slate-900">
+                                <MessageCircle className="w-3.5 h-3.5 text-white" />
+                              </div>
                             </div>
                             <div>
-                              <p className="text-white font-semibold text-sm">Dr. {selectedDoctor.name} asks:</p>
-                              <p className="text-[#00BFA6] text-xs font-medium">Quick Check-in</p>
+                              <p className="text-white font-bold text-base">Dr. {selectedDoctor.name}</p>
+                              <p className="text-sky-400 text-sm font-medium">Quick Check-in</p>
                             </div>
                           </div>
 
                           {/* Question card - full width within container */}
-                          <div className="w-full max-w-xs bg-gradient-to-br from-[#00BFA6] via-[#00A6CE] to-[#0088B4] rounded-2xl p-5 shadow-2xl">
-                            <h2 className="text-white text-lg font-bold mb-1">
+                          <div className="w-full max-w-xs bg-white/10 backdrop-blur-md rounded-2xl p-5 shadow-2xl border border-white/20">
+                            <h2 className="text-white text-lg font-bold mb-2">
                               {feedItem.data.question}
                             </h2>
                             {feedItem.data.subtitle && (
-                              <p className="text-white/80 text-xs mb-4">
+                              <p className="text-white/70 text-sm mb-4">
                                 {feedItem.data.subtitle}
                               </p>
                             )}
@@ -522,7 +507,7 @@ const FeedContent = () => {
                                 <button
                                   key={option.id}
                                   onClick={() => handleQAAnswer(feedItem.data.id, option.id)}
-                                  className="w-full flex items-center gap-3 px-3 py-3 bg-white/20 backdrop-blur-sm rounded-xl text-white hover:bg-white/30 hover:scale-[1.01] active:scale-[0.99] transition-all"
+                                  className="w-full flex items-center gap-3 px-4 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl text-white transition-all active:scale-[0.98]"
                                   aria-label={`Select ${option.label}`}
                                   tabIndex={0}
                                 >
@@ -544,51 +529,133 @@ const FeedContent = () => {
                 );
               }
               
+              // Render Message Card - Doctor check-in with response options
+              if (feedItem.type === 'message') {
+                return (
+                  <div key="message-card" className="snap-item-card">
+                    {/* Desktop: Flex container matching video layout */}
+                    <div className="h-full w-full flex items-center justify-center md:gap-4">
+                      {/* Card container - matches video aspect ratio - DARK background */}
+                      <div className="h-full w-full max-w-[calc(70vh*9/16)] md:max-w-none md:h-full md:w-auto md:aspect-[9/16] md:rounded-2xl md:overflow-hidden md:shadow-2xl relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+                        {/* Inner content with padding */}
+                        <div className="absolute inset-0 flex flex-col items-center justify-center p-6">
+                          {/* Doctor photo with message icon */}
+                          <div className="flex items-center gap-4 mb-6">
+                            <div className="relative flex-shrink-0">
+                              <div className="w-16 h-16 rounded-full overflow-hidden ring-4 ring-white/20 shadow-xl">
+                                <Image
+                                  src={selectedDoctor.avatarUrl || "/images/doctors/doctor-jack.jpg"}
+                                  alt={selectedDoctor.name}
+                                  width={64}
+                                  height={64}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                              <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-sky-500 rounded-full flex items-center justify-center shadow-lg border-2 border-slate-900">
+                                <MessageCircle className="w-3.5 h-3.5 text-white" />
+                              </div>
+                            </div>
+                            <div>
+                              <p className="text-white font-bold text-base">Dr. {selectedDoctor.name}</p>
+                              <p className="text-sky-400 text-sm font-medium">Message</p>
+                            </div>
+                          </div>
+
+                          {/* Message content */}
+                          <div className="w-full max-w-xs bg-white/10 backdrop-blur-md rounded-2xl p-5 shadow-2xl border border-white/20">
+                            <h2 className="text-white text-lg font-bold mb-4">
+                              Have you started taking your medicine?
+                            </h2>
+
+                            {/* Response options */}
+                            <div className="space-y-2">
+                              <button
+                                onClick={() => trackInteraction()}
+                                className="w-full flex items-center gap-3 px-4 py-3 bg-emerald-500/20 hover:bg-emerald-500/30 backdrop-blur-sm rounded-xl text-white transition-all active:scale-[0.98] border border-emerald-500/30"
+                                aria-label="Just started"
+                                tabIndex={0}
+                              >
+                                <span className="text-xl">🌱</span>
+                                <span className="font-medium text-sm">Just started</span>
+                              </button>
+                              <button
+                                onClick={() => trackInteraction()}
+                                className="w-full flex items-center gap-3 px-4 py-3 bg-amber-500/20 hover:bg-amber-500/30 backdrop-blur-sm rounded-xl text-white transition-all active:scale-[0.98] border border-amber-500/30"
+                                aria-label="In progress"
+                                tabIndex={0}
+                              >
+                                <span className="text-xl">⏳</span>
+                                <span className="font-medium text-sm">In progress</span>
+                              </button>
+                              <button
+                                onClick={() => trackInteraction()}
+                                className="w-full flex items-center gap-3 px-4 py-3 bg-sky-500/20 hover:bg-sky-500/30 backdrop-blur-sm rounded-xl text-white transition-all active:scale-[0.98] border border-sky-500/30"
+                                aria-label="Completed cycle"
+                                tabIndex={0}
+                              >
+                                <span className="text-xl">✅</span>
+                                <span className="font-medium text-sm">Completed cycle</span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Desktop sidebar placeholder - matches video layout spacing */}
+                      <div className="hidden md:flex flex-col gap-6 items-center py-8 w-14">
+                        {/* Empty space to match video sidebar width */}
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+              
               // Render Reminder Inline Card - matches video form factor but shorter to show peek of adjacent videos
               if (feedItem.type === 'reminder') {
                 return (
                   <div key="reminder-card" className="snap-item-card">
                     {/* Desktop: Flex container matching video layout */}
                     <div className="h-full w-full flex items-center justify-center md:gap-4">
-                      {/* Card container - matches video aspect ratio */}
-                      <div className="h-full w-full max-w-[calc(70vh*9/16)] md:max-w-none md:h-full md:w-auto md:aspect-[9/16] md:rounded-2xl md:overflow-hidden md:shadow-2xl relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+                      {/* Card container - matches video aspect ratio - DARK background */}
+                      <div className="h-full w-full max-w-[calc(70vh*9/16)] md:max-w-none md:h-full md:w-auto md:aspect-[9/16] md:rounded-2xl md:overflow-hidden md:shadow-2xl relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
                         {/* Inner content with padding */}
                         <div className="absolute inset-0 flex flex-col items-center justify-center p-6">
-                          {/* Doctor recommends header */}
-                          <div className="flex items-center gap-3 mb-6">
+                          {/* Doctor photo with check mark icon */}
+                          <div className="flex items-center gap-4 mb-6">
                             <div className="relative flex-shrink-0">
-                              <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-[#00BFA6]/40 shadow-lg">
+                              <div className="w-16 h-16 rounded-full overflow-hidden ring-4 ring-white/20 shadow-xl">
                                 <Image
-                                  src={selectedDoctor.avatarUrl || "/images/doctors/doctor-ryan.jpg"}
+                                  src={selectedDoctor.avatarUrl || "/images/doctors/doctor-jack.jpg"}
                                   alt={selectedDoctor.name}
-                                  width={48}
-                                  height={48}
+                                  width={64}
+                                  height={64}
                                   className="w-full h-full object-cover"
                                 />
                               </div>
-                              <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-gradient-to-br from-[#00BFA6] to-[#00A6CE] rounded-full flex items-center justify-center shadow-md border-2 border-white">
-                                <span className="text-[8px]">🩺</span>
+                              <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg border-2 border-slate-900">
+                                <CheckCircle2 className="w-3.5 h-3.5 text-white" />
                               </div>
                             </div>
                             <div>
-                              <p className="text-[#00BFA6] text-xs font-medium">Care Plan Update</p>
+                              <p className="text-white font-bold text-base">Dr. {selectedDoctor.name}</p>
+                              <p className="text-emerald-400 text-sm font-medium">Reminder</p>
                             </div>
                           </div>
 
-                          {/* Reminder card - full width within container */}
-                          <div className="w-full max-w-xs bg-white/95 backdrop-blur-md rounded-2xl p-5 shadow-2xl border border-white/30">
-                            <h2 className="text-lg font-bold text-gray-900 mb-1">
-                              Your Next Step: Colonoscopy
+                          {/* Reminder content */}
+                          <div className="w-full max-w-xs bg-white/10 backdrop-blur-md rounded-2xl p-5 shadow-2xl border border-white/20">
+                            <h2 className="text-white text-lg font-bold mb-2">
+                              Schedule Colonoscopy
                             </h2>
                             
-                            <p className="text-gray-500 text-sm mb-3 italic">
-                              &ldquo;Based on your family history, let&apos;s get this scheduled.&rdquo;
+                            <p className="text-white/70 text-sm mb-4">
+                              Based on your family history, let&apos;s get this scheduled.
                             </p>
 
                             {/* Due date badge */}
                             <div className="flex justify-start mb-4">
-                              <div className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-medium">
-                                <Calendar className="w-3.5 h-3.5" />
+                              <div className="inline-flex items-center gap-1 px-3 py-1.5 bg-amber-500/20 text-amber-300 rounded-full text-sm font-medium border border-amber-500/30">
+                                <Calendar className="w-4 h-4" />
                                 <span>Due in 60 days</span>
                               </div>
                             </div>
@@ -596,7 +663,7 @@ const FeedContent = () => {
                             {/* Schedule button */}
                             <button
                               onClick={() => setIsScheduleOpen(true)}
-                              className="w-full py-3 bg-gradient-to-r from-[#00BFA6] to-[#00A6CE] text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-lg flex items-center justify-center gap-2 text-sm"
+                              className="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-lg flex items-center justify-center gap-2 text-sm"
                               aria-label="Schedule colonoscopy appointment"
                               tabIndex={0}
                             >
@@ -645,7 +712,7 @@ const FeedContent = () => {
                       {/* Doctor avatar - link to profile */}
                       {videoDoctor && (
                         <Link
-                          href={`/doctor/${videoDoctor.id}`}
+                          href={`/profile/${videoDoctor.id}`}
                           className="flex flex-col items-center gap-2 group"
                           aria-label={`View Dr. ${videoDoctor.name}'s profile`}
                         >

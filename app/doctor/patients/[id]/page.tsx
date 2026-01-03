@@ -211,6 +211,14 @@ const CHECK_IN_QUESTIONS = [
   { id: "diet-changes", question: "Have you made changes to your diet?", icon: <Apple className="w-4 h-4" />, color: "text-green-600 bg-green-100" },
 ];
 
+// Template messages for quick send
+const MESSAGE_TEMPLATES = [
+  { id: "follow-up", title: "Post-Visit Follow-Up", content: "Thank you for your visit today. I wanted to follow up and remind you to continue following the care plan we discussed." },
+  { id: "lab-results", title: "Lab Results Ready", content: "Your recent lab results are ready. Please log in to view them or reach out if you have any questions." },
+  { id: "med-reminder", title: "Medication Reminder", content: "This is a friendly reminder to take your prescribed medications as directed. Consistency is key!" },
+  { id: "wellness-check", title: "Wellness Check", content: "I hope you're doing well! I wanted to check in and see how you're feeling. Let me know if you need anything." },
+];
+
 export default function PatientProfilePage() {
   const params = useParams();
   const router = useRouter();
@@ -218,7 +226,7 @@ export default function PatientProfilePage() {
   
   const [activeTab, setActiveTab] = useState<"overview" | "videos" | "communication">("overview");
   const [showMessageModal, setShowMessageModal] = useState(false);
-  const [showCheckInModal, setShowCheckInModal] = useState(false);
+  const [messageModalTab, setMessageModalTab] = useState<"templates" | "checkin" | "custom">("templates");
   const [messageContent, setMessageContent] = useState("");
   
   // Get patient data
@@ -246,12 +254,21 @@ export default function PatientProfilePage() {
     console.log("Sending message to patient:", patientId, messageContent);
     setMessageContent("");
     setShowMessageModal(false);
+    setMessageModalTab("templates");
+  };
+
+  const handleSendTemplate = (template: { id: string; title: string; content: string }) => {
+    // In production, this would send to Convex
+    console.log("Sending template message to patient:", patientId, template);
+    setShowMessageModal(false);
+    setMessageModalTab("templates");
   };
 
   const handleSendCheckIn = (questionId: string) => {
     // In production, this would send to Convex
     console.log("Sending check-in question:", questionId, "to patient:", patientId);
-    setShowCheckInModal(false);
+    setShowMessageModal(false);
+    setMessageModalTab("templates");
   };
 
   // Calculate progress percentage for the ring
@@ -368,13 +385,6 @@ export default function PatientProfilePage() {
               >
                 <MessageSquare className="w-4 h-4" />
                 Send Message
-              </button>
-              <button
-                onClick={() => setShowCheckInModal(true)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-white border-2 border-emerald-500 text-emerald-600 font-medium rounded-xl hover:bg-emerald-50 transition-colors"
-              >
-                <Heart className="w-4 h-4" />
-                Send Check-in
               </button>
               <Link
                 href={`/doctor/send?patient=${patient.id}`}
@@ -551,22 +561,13 @@ export default function PatientProfilePage() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-100">
           <div className="p-6 border-b border-gray-100 flex items-center justify-between">
             <h3 className="font-semibold text-gray-900">Communication History</h3>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setShowCheckInModal(true)}
-                className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
-              >
-                <Heart className="w-4 h-4" />
-                Send Check-in
-              </button>
-              <button
-                onClick={() => setShowMessageModal(true)}
-                className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-sky-600 hover:bg-sky-50 rounded-lg transition-colors"
-              >
-                <MessageSquare className="w-4 h-4" />
-                Send Message
-              </button>
-            </div>
+            <button
+              onClick={() => setShowMessageModal(true)}
+              className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-sky-600 hover:bg-sky-50 rounded-lg transition-colors"
+            >
+              <MessageSquare className="w-4 h-4" />
+              Send Message
+            </button>
           </div>
           
           <div className="divide-y divide-gray-100">
@@ -620,73 +621,131 @@ export default function PatientProfilePage() {
         </div>
       )}
 
-      {/* Send Message Modal */}
+      {/* Unified Send Message Modal */}
       {showMessageModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div className="bg-white rounded-2xl shadow-xl max-w-lg w-full">
+          <div className="bg-white rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] flex flex-col">
             <div className="p-6 border-b border-gray-100">
               <h3 className="text-lg font-semibold text-gray-900">Send Message to {patient.name.split(" ")[0]}</h3>
-              <p className="text-sm text-gray-500 mt-1">This is a one-way message. Patients cannot reply with text.</p>
+              <p className="text-sm text-gray-500 mt-1">Choose a template, check-in question, or write your own message.</p>
             </div>
-            <div className="p-6">
-              <textarea
-                value={messageContent}
-                onChange={(e) => setMessageContent(e.target.value)}
-                placeholder="Type your message here..."
-                rows={5}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all resize-none"
-              />
-            </div>
-            <div className="p-6 border-t border-gray-100 flex justify-end gap-3">
+            
+            {/* Tabs */}
+            <div className="flex border-b border-gray-100">
               <button
-                onClick={() => setShowMessageModal(false)}
+                onClick={() => setMessageModalTab("templates")}
+                className={cn(
+                  "flex-1 px-4 py-3 text-sm font-medium transition-colors",
+                  messageModalTab === "templates"
+                    ? "text-sky-600 border-b-2 border-sky-600"
+                    : "text-gray-500 hover:text-gray-700"
+                )}
+              >
+                Templates
+              </button>
+              <button
+                onClick={() => setMessageModalTab("checkin")}
+                className={cn(
+                  "flex-1 px-4 py-3 text-sm font-medium transition-colors",
+                  messageModalTab === "checkin"
+                    ? "text-sky-600 border-b-2 border-sky-600"
+                    : "text-gray-500 hover:text-gray-700"
+                )}
+              >
+                Check-ins
+              </button>
+              <button
+                onClick={() => setMessageModalTab("custom")}
+                className={cn(
+                  "flex-1 px-4 py-3 text-sm font-medium transition-colors",
+                  messageModalTab === "custom"
+                    ? "text-sky-600 border-b-2 border-sky-600"
+                    : "text-gray-500 hover:text-gray-700"
+                )}
+              >
+                Custom
+              </button>
+            </div>
+
+            {/* Tab Content */}
+            <div className="flex-1 overflow-y-auto">
+              {/* Templates Tab */}
+              {messageModalTab === "templates" && (
+                <div className="p-4 space-y-2">
+                  {MESSAGE_TEMPLATES.map((template) => (
+                    <button
+                      key={template.id}
+                      onClick={() => handleSendTemplate(template)}
+                      className="w-full p-4 bg-gray-50 hover:bg-sky-50 rounded-xl transition-colors text-left group"
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-medium text-gray-900 group-hover:text-sky-700">{template.title}</span>
+                        <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-sky-600" />
+                      </div>
+                      <p className="text-sm text-gray-500 line-clamp-2">{template.content}</p>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Check-in Tab */}
+              {messageModalTab === "checkin" && (
+                <div className="p-4 space-y-2">
+                  <p className="text-sm text-gray-500 mb-3">Send a quick check-in question to {patient.name.split(" ")[0]}</p>
+                  {CHECK_IN_QUESTIONS.map((q) => (
+                    <button
+                      key={q.id}
+                      onClick={() => handleSendCheckIn(q.id)}
+                      className="w-full p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors text-left flex items-center gap-3"
+                    >
+                      <div className={cn("p-2 rounded-lg", q.color)}>
+                        {q.icon}
+                      </div>
+                      <span className="font-medium text-gray-900">{q.question}</span>
+                      <ChevronRight className="w-4 h-4 text-gray-400 ml-auto" />
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Custom Tab */}
+              {messageModalTab === "custom" && (
+                <div className="p-6">
+                  <textarea
+                    value={messageContent}
+                    onChange={(e) => setMessageContent(e.target.value)}
+                    placeholder="Type your message here..."
+                    rows={5}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all resize-none"
+                    aria-label="Custom message"
+                  />
+                  <p className="text-xs text-gray-400 mt-2">This is a one-way message. Patients cannot reply with text.</p>
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="p-4 border-t border-gray-100 flex justify-end gap-3">
+              <button
+                onClick={() => {
+                  setShowMessageModal(false);
+                  setMessageModalTab("templates");
+                  setMessageContent("");
+                }}
                 className="px-4 py-2 text-gray-600 font-medium hover:bg-gray-100 rounded-lg transition-colors"
               >
                 Cancel
               </button>
-              <button
-                onClick={handleSendMessage}
-                disabled={!messageContent.trim()}
-                className="px-4 py-2 bg-sky-600 text-white font-medium rounded-lg hover:bg-sky-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-              >
-                <Send className="w-4 h-4" />
-                Send Message
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Send Check-in Modal */}
-      {showCheckInModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full">
-            <div className="p-6 border-b border-gray-100">
-              <h3 className="text-lg font-semibold text-gray-900">Send Check-in Question</h3>
-              <p className="text-sm text-gray-500 mt-1">Select a question to send to {patient.name.split(" ")[0]}</p>
-            </div>
-            <div className="p-4 space-y-2 max-h-[60vh] overflow-y-auto">
-              {CHECK_IN_QUESTIONS.map((q) => (
+              {messageModalTab === "custom" && (
                 <button
-                  key={q.id}
-                  onClick={() => handleSendCheckIn(q.id)}
-                  className="w-full p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors text-left flex items-center gap-3"
+                  onClick={handleSendMessage}
+                  disabled={!messageContent.trim()}
+                  className="px-4 py-2 bg-sky-600 text-white font-medium rounded-lg hover:bg-sky-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
-                  <div className={cn("p-2 rounded-lg", q.color)}>
-                    {q.icon}
-                  </div>
-                  <span className="font-medium text-gray-900">{q.question}</span>
-                  <ChevronRight className="w-4 h-4 text-gray-400 ml-auto" />
+                  <Send className="w-4 h-4" />
+                  Send Message
                 </button>
-              ))}
-            </div>
-            <div className="p-4 border-t border-gray-100">
-              <button
-                onClick={() => setShowCheckInModal(false)}
-                className="w-full py-2 text-gray-600 font-medium hover:text-gray-900 transition-colors"
-              >
-                Cancel
-              </button>
+              )}
             </div>
           </div>
         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Calendar, Clock } from "lucide-react";
+import { Calendar, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -14,84 +14,69 @@ interface ReminderCardProps {
 export const ReminderCard = ({ 
   isActive, 
   onScheduleClick,
-  doctorName = "Ryan Mitchell",
-  doctorAvatarUrl = "/images/doctors/doctor-ryan.jpg"
+  doctorName = "Jack Ellis",
+  doctorAvatarUrl = "/images/doctors/doctor-jack.jpg"
 }: ReminderCardProps) => {
   return (
-    <div className="h-full w-full bg-gradient-to-br from-sky-50 via-white to-emerald-50 flex flex-col items-center justify-center">
-      {/* Module title */}
-      <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center px-4">
-        What Your Doctor Wants You to Do
-      </h1>
-      
-      {/* Centered single reminder card */}
-      <div className="w-full max-w-sm mx-4">
-        <div className="bg-white rounded-2xl shadow-xl p-6 border border-sky-100">
-          {/* Doctor Avatar */}
-          <div className="flex justify-center mb-4">
-            <div className="relative">
-              <div className="w-20 h-20 rounded-full overflow-hidden ring-4 ring-sky-100 shadow-lg">
-                <Image
-                  src={doctorAvatarUrl}
-                  alt={`Dr. ${doctorName}`}
-                  width={80}
-                  height={80}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-gradient-to-br from-sky-500 to-emerald-500 rounded-full flex items-center justify-center shadow-md border-2 border-white">
-                <span className="text-sm">🩺</span>
-              </div>
-            </div>
+    <div className="h-full w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col items-center justify-center">
+      {/* Doctor photo with check mark icon */}
+      <div className="flex items-center gap-4 mb-6">
+        <div className="relative flex-shrink-0">
+          <div className="w-16 h-16 rounded-full overflow-hidden ring-4 ring-white/20 shadow-xl">
+            <Image
+              src={doctorAvatarUrl}
+              alt={`Dr. ${doctorName}`}
+              width={64}
+              height={64}
+              className="w-full h-full object-cover"
+            />
           </div>
-          
-          {/* Doctor Name */}
-          <p className="text-center text-sm text-gray-500 mb-3">
-            From <span className="font-semibold text-gray-700">Dr. {doctorName}</span>
-          </p>
-
-          {/* Title */}
-          <h2 className="text-xl font-bold text-gray-900 text-center mb-2">
-            Schedule Colonoscopy
-          </h2>
-
-          {/* Due date badge */}
-          <div className="flex justify-center mb-4">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-100 text-amber-800 rounded-full text-sm font-medium">
-              <Clock className="w-4 h-4" />
-              <span>60 days away</span>
-            </div>
+          <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg border-2 border-slate-900">
+            <CheckCircle2 className="w-3.5 h-3.5 text-white" />
           </div>
-
-          {/* Description */}
-          <p className="text-gray-600 text-center text-sm mb-6">
-            Your preventive screening is coming up. Schedule now to secure your preferred time.
-          </p>
-
-          {/* Score boost */}
-          <div className="flex justify-center mb-6">
-            <span className="px-3 py-1 bg-emerald-100 text-emerald-700 text-sm font-bold rounded-lg">
-              +15% Health Score
-            </span>
-          </div>
-
-          {/* Schedule button */}
-          <button
-            onClick={onScheduleClick}
-            className="w-full py-4 bg-gradient-to-r from-sky-600 to-emerald-600 text-white font-semibold rounded-xl hover:from-sky-700 hover:to-emerald-700 transition-all shadow-lg flex items-center justify-center gap-2"
-          >
-            <Calendar className="w-5 h-5" />
-            Schedule Now
-          </button>
-
-          {/* Link to full health dashboard */}
-          <Link
-            href="/my-health"
-            className="block text-center text-sm text-sky-600 font-medium mt-4 hover:underline"
-          >
-            View all reminders →
-          </Link>
         </div>
+        <div>
+          <p className="text-white font-bold text-base">Dr. {doctorName}</p>
+          <p className="text-emerald-400 text-sm font-medium">Reminder</p>
+        </div>
+      </div>
+
+      {/* Reminder content */}
+      <div className="w-full max-w-xs bg-white/10 backdrop-blur-md rounded-2xl p-5 shadow-2xl border border-white/20 mx-4">
+        <h2 className="text-white text-lg font-bold mb-2">
+          Schedule Colonoscopy
+        </h2>
+        
+        <p className="text-white/70 text-sm mb-4">
+          Based on your family history, let&apos;s get this scheduled.
+        </p>
+
+        {/* Due date badge */}
+        <div className="flex justify-start mb-4">
+          <div className="inline-flex items-center gap-1 px-3 py-1.5 bg-amber-500/20 text-amber-300 rounded-full text-sm font-medium border border-amber-500/30">
+            <Calendar className="w-4 h-4" />
+            <span>Due in 60 days</span>
+          </div>
+        </div>
+
+        {/* Schedule button */}
+        <button
+          onClick={onScheduleClick}
+          className="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-lg flex items-center justify-center gap-2 text-sm"
+          aria-label="Schedule colonoscopy appointment"
+          tabIndex={0}
+        >
+          <Calendar className="w-4 h-4" />
+          Schedule Now
+        </button>
+
+        {/* Link to full health dashboard */}
+        <Link
+          href="/my-health"
+          className="block text-center text-sm text-sky-400 font-medium mt-4 hover:text-sky-300 transition-colors"
+        >
+          View all reminders →
+        </Link>
       </div>
     </div>
   );

@@ -26,6 +26,7 @@ import {
   BookOpen,
   User,
   Wand2,
+  Send,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -68,14 +69,20 @@ const NAV_ITEMS: NavItem[] = [
   },
   {
     id: "my-videos",
-    label: "My Videos",
+    label: "My Video Library",
     href: "/doctor#my-videos",
     icon: <Film className="w-5 h-5" />,
     isScrollTarget: true,
   },
   {
+    id: "my-messages",
+    label: "My Check-ins and Reminders",
+    href: "/doctor/my-messages",
+    icon: <MessageSquare className="w-5 h-5" />,
+  },
+  {
     id: "browse",
-    label: "Browse 1A Videos",
+    label: "Browse Videos",
     href: "/doctor#browse",
     icon: <BookOpen className="w-5 h-5" />,
     isScrollTarget: true,
@@ -98,12 +105,6 @@ const NAV_ITEMS: NavItem[] = [
 
 // Secondary navigation items (separate pages)
 const SECONDARY_NAV_ITEMS: NavItem[] = [
-  {
-    id: "my-messages",
-    label: "My Messages & Reminders",
-    href: "/doctor/my-messages",
-    icon: <MessageSquare className="w-5 h-5" />,
-  },
   {
     id: "onboarding",
     label: "Onboarding",
@@ -430,6 +431,15 @@ export function DoctorLayoutClient({
         {/* Desktop Header */}
         <header className="hidden lg:flex items-center justify-end h-16 px-8 bg-white sticky top-0 z-40">
           <div className="flex items-center gap-4">
+            {/* Send Video Button */}
+            <Link
+              href="/doctor/send"
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-sky-600 to-emerald-600 text-white text-sm font-semibold rounded-xl hover:from-sky-700 hover:to-emerald-700 transition-all shadow-sm"
+            >
+              <Send className="w-4 h-4" />
+              Send Video
+            </Link>
+
             {/* Notifications - scrolls to Patient Activity */}
             <button
               onClick={() => {

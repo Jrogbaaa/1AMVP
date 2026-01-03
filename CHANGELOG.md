@@ -5,6 +5,56 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.42.0] - 2026-01-03
+
+### 🎨 My Health & Feed UI Redesign
+
+**Combined Communications Widget (`components/DoctorCommunicationsWidget.tsx`):**
+- NEW: Unified widget combining Messages and Reminders from doctors
+- Messages and reminders displayed in chronological order (most recent first)
+- Unified header with gradient background (sky to emerald)
+- Expandable items with full content view
+- Checkbox completion for reminders with visual feedback
+- "Add to Calendar" functionality for reminders
+- Category icons (Pill, Activity, Heart, Clock) for reminders
+- Doctor attribution with avatars for each item
+- Error boundary wrapper for graceful failure handling
+
+**My Health Page Reorder (`app/my-health/AuthenticatedDashboard.tsx`):**
+- Moved PreventiveCareChecklist to top position (above communications)
+- Replaced separate Messages/Reminders widgets with unified DoctorCommunicationsWidget
+- Doctor name clicks now navigate to `/profile/[id]` instead of filtering feed
+- Mobile: Combined "Your Doctors" and "Primary Care Specialist" into single widget
+- Cleaner layout with better visual hierarchy
+
+**Feed Page Redesign (`app/feed/page.tsx`):**
+- Removed "Hey Dave" video and Dr. Ryan Mitchell from mock data
+- Updated default doctor to Dr. Jack Ellis
+- NEW: Message card type in feed with question prompts
+- Message cards include response options ("Just started", "In progress", "Completed cycle")
+- Redesigned reminder cards with dark background for mobile
+- Cards match video width with proper height showing adjacent content
+- Doctor links in sidebar now navigate to profile pages
+- Checkmark icon for reminders, message icon for messages
+- Survey icons use dark background on mobile
+
+**ReminderCard Redesign (`components/ReminderCard.tsx`):**
+- Simplified, less wordy content
+- Doctor's name prominently displayed
+- Smaller avatar with checkmark badge overlay
+- Concise reminder titles and descriptions
+- Dark background styling for feed integration
+- Streamlined action buttons
+
+### UI/UX Improvements
+- Consistent navigation pattern: doctor clicks → profile page
+- Mobile-optimized combined doctor widgets
+- Better visual hierarchy in My Health dashboard
+- Chronological ordering for all communications
+- Unified design language across feed cards
+
+---
+
 ## [1.41.0] - 2026-01-03
 
 ### 🔐 Authentication & Error Handling Fixes

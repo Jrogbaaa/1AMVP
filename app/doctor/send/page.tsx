@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -142,11 +142,14 @@ const MOCK_CHAPTERS: Chapter[] = [
 
 const SendContentPage = () => {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const preselectedPatientId = searchParams.get("patient");
   const preselectedChapterId = searchParams.get("chapter");
   const preselectedVideoId = searchParams.get("video");
 
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  // If coming from a patient profile, skip step 1 (patient selection)
+  const isFromPatientProfile = !!preselectedPatientId;
+  const [step, setStep] = useState<1 | 2 | 3>(isFromPatientProfile ? 2 : 1);
   const [selectedPatients, setSelectedPatients] = useState<Set<string>>(
     preselectedPatientId ? new Set([preselectedPatientId]) : new Set()
   );
@@ -543,7 +546,13 @@ const SendContentPage = () => {
 
           <div className="p-6 border-t border-gray-100 flex items-center justify-between">
             <button
-              onClick={() => setStep(1)}
+              onClick={() => {
+                if (isFromPatientProfile) {
+                  router.back();
+                } else {
+                  setStep(1);
+                }
+              }}
               className="px-6 py-2.5 border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors"
             >
               Back
@@ -573,12 +582,14 @@ const SendContentPage = () => {
                     {selectedPatientsList.length} Patient{selectedPatientsList.length !== 1 ? "s" : ""}
                   </h3>
                 </div>
-                <button
-                  onClick={() => setStep(1)}
-                  className="text-sm text-sky-600 hover:text-sky-700"
-                >
-                  Edit
-                </button>
+                {!isFromPatientProfile && (
+                  <button
+                    onClick={() => setStep(1)}
+                    className="text-sm text-sky-600 hover:text-sky-700"
+                  >
+                    Edit
+                  </button>
+                )}
               </div>
               <div className="p-4 flex flex-wrap gap-2">
                 {selectedPatientsList.map((patient) => (

@@ -5,6 +5,17 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.49.0] - 2026-01-03
+
+### 🔧 CI Test Configuration Fix
+
+**Playwright CI Configuration (`playwright.config.ts`):**
+- Fixed GitHub Actions CI test failures caused by missing Firefox/WebKit browsers
+- CI now only runs Chromium-based tests (chromium, mobile-chrome, mobile-chrome-landscape)
+- Local development still runs full cross-browser suite (Firefox, WebKit, Safari)
+- Reduced CI test count from 840 to ~315 tests, all passing
+- Firefox, WebKit, and Mobile Safari tests remain available for local testing
+
 ## [1.48.0] - 2026-01-03
 
 ### 🎨 Landing Page Redesign

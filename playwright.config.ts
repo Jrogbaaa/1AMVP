@@ -1,15 +1,68 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const isCI = !!process.env.CI;
+
 /**
  * Playwright configuration for 1Another MVP
+ * 
+ * In CI: Only run Chromium-based tests (faster, no extra browser installs needed)
+ * Locally: Run all browsers for comprehensive coverage
+ * 
  * @see https://playwright.dev/docs/test-configuration
  */
+
+// Chromium-based projects (work in CI without extra setup)
+const chromiumProjects = [
+  // Desktop Chrome
+  {
+    name: "chromium",
+    use: { ...devices["Desktop Chrome"] },
+  },
+  // Mobile Chrome emulation (Android)
+  {
+    name: "mobile-chrome",
+    use: { ...devices["Pixel 5"] },
+  },
+  {
+    name: "mobile-chrome-landscape",
+    use: { ...devices["Pixel 5 landscape"] },
+  },
+];
+
+// Additional browsers (require extra install, only run locally)
+const additionalBrowserProjects = [
+  // Firefox
+  {
+    name: "firefox",
+    use: { ...devices["Desktop Firefox"] },
+  },
+  // WebKit (Safari)
+  {
+    name: "webkit",
+    use: { ...devices["Desktop Safari"] },
+  },
+  // Mobile Safari emulation (iOS)
+  {
+    name: "mobile-safari",
+    use: { ...devices["iPhone 12"] },
+  },
+  {
+    name: "mobile-safari-landscape",
+    use: { ...devices["iPhone 12 landscape"] },
+  },
+  // Tablet testing
+  {
+    name: "tablet-safari",
+    use: { ...devices["iPad Pro 11"] },
+  },
+];
+
 export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: true,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  forbidOnly: isCI,
+  retries: isCI ? 2 : 0,
+  workers: isCI ? 1 : undefined,
   reporter: [["html", { open: "never" }], ["list"]],
 
   use: {
@@ -19,47 +72,8 @@ export default defineConfig({
     video: "retain-on-failure",
   },
 
-  projects: [
-    // Desktop browsers
-    {
-      name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
-    },
-    {
-      name: "firefox",
-      use: { ...devices["Desktop Firefox"] },
-    },
-    {
-      name: "webkit",
-      use: { ...devices["Desktop Safari"] },
-    },
-
-    // Mobile Chrome emulation (Android)
-    {
-      name: "mobile-chrome",
-      use: { ...devices["Pixel 5"] },
-    },
-    {
-      name: "mobile-chrome-landscape",
-      use: { ...devices["Pixel 5 landscape"] },
-    },
-
-    // Mobile Safari emulation (iOS) - IMPORTANT for Safari-specific bugs
-    {
-      name: "mobile-safari",
-      use: { ...devices["iPhone 12"] },
-    },
-    {
-      name: "mobile-safari-landscape",
-      use: { ...devices["iPhone 12 landscape"] },
-    },
-
-    // Tablet testing
-    {
-      name: "tablet-safari",
-      use: { ...devices["iPad Pro 11"] },
-    },
-  ],
+  // In CI: only Chromium-based tests; Locally: all browsers
+  projects: isCI ? chromiumProjects : [...chromiumProjects, ...additionalBrowserProjects],
 
   // Auto-start Next.js dev server
   webServer: {

@@ -229,8 +229,6 @@ export const VideoCard = ({
           muted={controlledMuted}
           playsInline
           preload="auto"
-          // Cross-browser compatibility attributes
-          // @ts-expect-error - webkit-playsinline is a Safari-specific attribute
           webkit-playsinline="true"
           onCanPlay={handleCanPlay}
           onLoadedMetadata={handleLoadedMetadata}

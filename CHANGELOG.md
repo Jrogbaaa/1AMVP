@@ -5,6 +5,51 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.43.0] - 2026-01-03
+
+### 🩺 Doctor Portal UI Tweaks
+
+**Sidebar Reorganization (`app/doctor/DoctorLayoutClient.tsx`):**
+- Moved "My Check-ins and Reminders" from secondary nav to main nav (below My Video Library)
+- Renamed "My Videos" to "My Video Library"
+- Renamed "My Messages & Reminders" to "My Check-ins and Reminders"
+- Changed "Browse 1A Videos" to "Browse Videos"
+- Added "Send Video" CTA button in desktop header (sky-to-emerald gradient)
+
+**Onboarding Sequence Reorder (`app/doctor/onboarding/page.tsx`):**
+- NEW order: Practice Setup → Browse Videos → Train AI Avatar → Message Templates → Invite Patients
+- Browse Videos now comes immediately after Practice Setup for better flow
+
+**Browse by Topic Feature (`app/doctor/page.tsx`):**
+- Added health topic filter buttons (All Topics, Cardiology, Foundation, Lifestyle, etc.)
+- Videos matching doctor's specialty are prioritized and shown first
+- Filter state tracks selected topic for browsing
+
+**Simplified Send Video Flow (`app/doctor/send/page.tsx`):**
+- When coming from patient profile (`?patient=` param), skips step 1 (patient selection)
+- Starts directly at step 2 (video selection) with patient pre-selected
+- Back button returns to patient profile instead of patient selection step
+- "Edit" button hidden on patients summary when from patient profile
+
+**Unified Send Message Modal (`app/doctor/patients/[id]/page.tsx`):**
+- Removed separate "Send Check-in" button
+- Combined into single "Send Message" button with tabbed modal
+- Modal has 3 tabs: Templates, Check-ins, Custom
+- Templates tab shows pre-made message templates (Post-Visit Follow-Up, Lab Results, etc.)
+- Check-ins tab shows health check-in questions
+- Custom tab allows typing a custom message
+
+**Page Title Update (`app/doctor/my-messages/page.tsx`):**
+- Changed page title from "My Messages & Reminders" to "My Check-ins and Reminders"
+
+### UX Improvements
+- Streamlined doctor onboarding with better step progression
+- Topic-based video browsing for easier content discovery
+- Simplified patient communication with unified messaging modal
+- Reduced clicks in send video flow when accessing from patient profile
+
+---
+
 ## [1.42.0] - 2026-01-03
 
 ### 🎨 My Health & Feed UI Redesign

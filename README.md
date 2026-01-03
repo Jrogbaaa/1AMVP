@@ -119,7 +119,32 @@ The platform features a complete authentication system with role-based access:
     └── images/            # Static assets
 ```
 
-## ✨ Latest Updates (v1.45.0 - Jan 3, 2026)
+## ✨ Latest Updates (v1.47.0 - Jan 3, 2026)
+
+### 🌐 Cross-Browser Compatibility & Mobile Video Fixes
+
+**Playwright Cross-Browser Testing:**
+- Expanded from 2 to 9 browser/device configurations
+- Now tests on Chromium, Firefox, and WebKit (Safari) engines
+- Mobile Safari (iPhone 12) and Chrome (Pixel 5) emulation
+- Tablet (iPad Pro 11) testing added
+- Landscape orientation testing for mobile devices
+
+**Video Autoplay Fixes:**
+- Added `preload="auto"` and `webkit-playsinline` attributes
+- Improved autoplay error handling for Chrome's strict policies
+- Added `canplaythrough` event listener for reliable playback
+- Videos now properly wait for browser readiness
+
+**New Video Loading Test Suite:**
+- Tests video loading across all browser configurations
+- Mobile-specific tests for tap-to-play and mute functionality
+- Autoplay policy compliance testing
+- Error handling and graceful degradation tests
+
+---
+
+### Previous Updates (v1.45.0 - Jan 3, 2026)
 
 ### 🎨 Landing Page Redesign - Tech-Forward Dark Theme
 
@@ -959,7 +984,35 @@ npx tsc --noEmit
 
 # Build check
 npm run build
+
+# Run all Playwright tests (9 browser configurations)
+npx playwright test
+
+# Run specific browser tests
+npx playwright test --project=chromium
+npx playwright test --project=firefox
+npx playwright test --project=webkit
+npx playwright test --project=mobile-chrome
+npx playwright test --project=mobile-safari
+
+# Run with visible browser (debugging)
+npx playwright test --headed
 ```
+
+### Cross-Browser Test Coverage
+
+Playwright tests run across 9 configurations:
+
+| Project | Browser Engine | Device |
+|---------|---------------|--------|
+| `chromium` | Chromium | Desktop Chrome |
+| `firefox` | Firefox | Desktop Firefox |
+| `webkit` | WebKit | Desktop Safari |
+| `mobile-chrome` | Chromium | Pixel 5 |
+| `mobile-chrome-landscape` | Chromium | Pixel 5 landscape |
+| `mobile-safari` | WebKit | iPhone 12 |
+| `mobile-safari-landscape` | WebKit | iPhone 12 landscape |
+| `tablet-safari` | WebKit | iPad Pro 11 |
 
 ### GitHub Actions Quality Gate
 

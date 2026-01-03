@@ -5,6 +5,51 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.47.0] - 2026-01-03
+
+### 🌐 Cross-Browser Compatibility & Mobile Video Fixes
+
+**Playwright Cross-Browser Testing (`playwright.config.ts`):**
+- Expanded browser coverage from 2 to 9 configurations
+- Added Firefox desktop testing
+- Added WebKit (Safari) desktop testing
+- Added mobile Safari emulation (iPhone 12)
+- Added mobile Chrome landscape (Pixel 5 landscape)
+- Added mobile Safari landscape (iPhone 12 landscape)
+- Added tablet testing (iPad Pro 11)
+- All tests now run across Chromium, Firefox, and WebKit engines
+
+**Video Autoplay Fixes (`components/VideoCard.tsx`):**
+- Added `preload="auto"` attribute for faster video loading
+- Added `webkit-playsinline="true"` for older iOS Safari compatibility
+- Improved autoplay handling with proper error catching for `NotAllowedError`
+- Added `canplaythrough` event listener for reliable playback
+- Handle `AbortError` (play interrupted) gracefully without showing errors
+- Added `isVideoReady` state for better load tracking
+- Videos now properly wait for browser readiness before attempting play
+
+**New Video Loading Test Suite (`tests/e2e/patient/video-loading.spec.ts`):**
+- Desktop video loading tests (source validation, ready state, autoplay attributes)
+- Mobile Chrome video tests (viewport, ready state, tap-to-play, mute button)
+- Mobile Safari tests (playsInline, webkit-playsinline attributes)
+- Video error handling tests (poster fallback, graceful degradation)
+- Autoplay policy compliance tests (muted by default, unmute on interaction)
+
+**Test Reliability Improvements:**
+- Fixed doctor portal navigation tests to use `waitForURL` instead of element detection
+- Fixed auth form tests with longer timeouts and better selectors
+- Fixed mobile comprehensive tests with more resilient video detection
+- Made all video-related tests gracefully handle slow video loading
+- Reduced test flakiness across different browser engines
+
+**Browser Compatibility Notes:**
+- Chrome Mobile: Strictest autoplay policy - requires muted + user gesture for unmute
+- Safari iOS: Requires `playsinline` + `webkit-playsinline` attributes
+- Firefox: Most lenient autoplay policy
+- Arc Browser: Chromium-based but requires manual testing for unique quirks
+
+---
+
 ## [1.46.0] - 2026-01-03
 
 ### 🏥 Doctor Portal UX Overhaul

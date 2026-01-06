@@ -5,6 +5,40 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.50.0] - 2026-01-06
+
+### 🏥 Doctor Portal UI Improvements
+
+**Send Video Flow Optimization (`app/doctor/send/page.tsx`):**
+- Streamlined send video flow when accessing from patient profile
+- When navigating from patient profile (`?patient=X`), now shows 2-step flow instead of 3
+- Skips patient selection step since patient is already pre-selected
+- Progress indicators update dynamically based on flow type
+- "Edit" button for patients hidden when from patient profile flow
+- Back button navigates correctly based on flow context
+
+**Dashboard Check-in Modal (`app/doctor/page.tsx`):**
+- Fixed non-functional "Send Check-in Question" button in My Check-ins section
+- Added side-by-side modal with:
+  - Left side: Template messages with icons
+  - Right side: Custom message textarea with send button
+- Added `showCheckInModal` and `customCheckInMessage` state management
+
+**Patient Profile Check-in Modal Redesign (`app/doctor/patients/[id]/page.tsx`):**
+- Redesigned from 3-tab layout to side-by-side 2-box design
+- Left box: Combined template messages + quick check-in questions
+- Right box: Custom message textarea with send button
+- After sending, automatically redirects to `/doctor/messages?patient={patientId}`
+- Removed unused `messageModalTab` state
+
+**Dave Thompson Profile Image Update:**
+- Created `/public/images/patients/` directory for patient avatars
+- Updated Dave Thompson's avatar URL to `/images/patients/dave-thompson.jpg` in:
+  - `app/doctor/patients/[id]/page.tsx`
+  - `app/doctor/send/page.tsx`
+  - `app/doctor/page.tsx` (2 locations)
+  - `app/doctor/messages/page.tsx`
+
 ## [1.49.2] - 2026-01-06
 
 ### 🔧 Doctor Profile Picture Consistency Fixes

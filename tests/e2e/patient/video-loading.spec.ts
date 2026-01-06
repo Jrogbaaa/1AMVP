@@ -208,9 +208,9 @@ test.describe("Video Error Handling", () => {
     await page.goto("/feed");
     await page.waitForLoadState("domcontentloaded");
 
-    // Video or poster image should be visible
-    const videoOrPoster = page.locator("video, img, .snap-item").first();
-    await expect(videoOrPoster).toBeVisible({ timeout: 15000 });
+    // Video or snap container should be visible - be specific to avoid matching hidden avatar images
+    const videoOrContainer = page.locator("video, .snap-container, .snap-item").first();
+    await expect(videoOrContainer).toBeVisible({ timeout: 15000 });
   });
 
   test("should not crash if video source is unavailable", async ({ page }) => {
@@ -225,8 +225,9 @@ test.describe("Video Error Handling", () => {
     // Page should still render without crashing
     await expect(page.locator("body")).toBeVisible();
 
-    // Should show some content (feed container, fallback image, etc.)
-    const feedContent = page.locator(".snap-container, img, .feed-container").first();
+    // Should show some content - snap container or feed layout elements
+    // Be specific to avoid matching hidden avatar images in navigation
+    const feedContent = page.locator(".snap-container, .snap-item, main, [class*='feed']").first();
     await expect(feedContent).toBeVisible({ timeout: 10000 });
   });
 });

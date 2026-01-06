@@ -18,22 +18,22 @@ test.describe("Authentication Flows", () => {
     await expect(page.getByText(/HIPAA/i).first()).toBeVisible({ timeout: 10000 });
   });
 
-  test("should have doctor portal link on auth page", async ({ page }) => {
+  test("should have doctor portal option on auth page", async ({ page }) => {
     await page.goto("/auth");
     await page.waitForLoadState("networkidle");
 
-    // Doctor portal link - look for any link containing "doctor" or the specific href
-    const doctorLink = page.locator('a[href*="doctor"], a:has-text("Doctor")').first();
-    await expect(doctorLink).toBeVisible({ timeout: 10000 });
+    // Auth page now has split-screen role selection - look for provider/doctor panel
+    const doctorPanel = page.locator('[aria-label*="healthcare provider"], [aria-label*="doctor"], button:has-text("Continue as Provider")').first();
+    await expect(doctorPanel).toBeVisible({ timeout: 10000 });
   });
 
-  test("should have input fields in onboarding form", async ({ page }) => {
+  test("should have role selection buttons on auth page", async ({ page }) => {
     await page.goto("/auth");
     await page.waitForLoadState("networkidle");
 
-    // Check for any input field (email, name, etc.) or button
-    const formElement = page.locator("input, button[type='submit']").first();
-    await expect(formElement).toBeVisible({ timeout: 10000 });
+    // Auth page shows role selection first - check for patient and provider buttons
+    const patientButton = page.locator('button:has-text("Continue as Patient"), [aria-label*="patient"]').first();
+    await expect(patientButton).toBeVisible({ timeout: 10000 });
   });
 
   test("should show auth prompt when accessing protected features", async ({

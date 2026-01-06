@@ -131,11 +131,15 @@ export default function LandingPage() {
             </h1>
             
             <p className="animate-reveal reveal-delay-2 mt-6 text-lg sm:text-xl text-white/70 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-              Improving patient comprehension, adherence, and experience using trusted videos delivered by your doctor.
+              To deliver trusted, easy-to-consume health information to the world directly from doctors.
+            </p>
+
+            <p className="animate-reveal reveal-delay-3 mt-4 text-base sm:text-lg text-white/90 font-medium max-w-xl mx-auto lg:mx-0">
+              Trusted and delivered by doctors themselves.
             </p>
 
             {/* Feature bullets */}
-            <ul className="animate-reveal reveal-delay-3 mt-8 space-y-4 text-left max-w-xl mx-auto lg:mx-0">
+            <ul className="animate-reveal reveal-delay-4 mt-8 space-y-4 text-left max-w-xl mx-auto lg:mx-0">
               <li className="flex items-start gap-3">
                 <Video className="w-5 h-5 text-[#00BFA6] mt-0.5 flex-shrink-0" />
                 <span className="text-white/80">Trusted video information from your doctors and other specialists</span>
@@ -151,7 +155,7 @@ export default function LandingPage() {
             </ul>
 
             {/* CTAs */}
-            <div className="animate-reveal reveal-delay-4 mt-10 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+            <div className="animate-reveal reveal-delay-5 mt-10 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Link
                 href="/auth?role=patient"
                 className="group relative px-8 py-4 bg-brand-gradient text-white font-bold text-lg rounded-2xl hover:scale-105 transition-all duration-300 glow-brand flex items-center justify-center gap-3"
@@ -171,7 +175,7 @@ export default function LandingPage() {
             </div>
 
             {/* Trust indicators */}
-            <div className="animate-reveal reveal-delay-5 mt-10 flex items-center justify-center lg:justify-start gap-6 text-white/50 text-sm">
+            <div className="animate-reveal reveal-delay-6 mt-10 flex items-center justify-center lg:justify-start gap-6 text-white/50 text-sm">
               <div className="flex items-center gap-2">
                 <Shield className="w-4 h-4 text-emerald-400" />
                 <span>HIPAA Compliant</span>

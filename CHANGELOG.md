@@ -5,6 +5,26 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.49.1] - 2026-01-06
+
+### 🧪 E2E Test Fixes
+
+**Auth Tests (`tests/e2e/patient/auth.spec.ts`):**
+- Fixed tests for split-screen role selection UI on auth page
+- Renamed `should have doctor portal link on auth page` → `should have doctor portal option on auth page`
+- Updated test to look for "Continue as Provider" button instead of direct link
+- Renamed `should have input fields in onboarding form` → `should have role selection buttons on auth page`
+- Updated test to look for role selection buttons (inputs only appear after selecting a role)
+
+**Video Loading Tests (`tests/e2e/patient/video-loading.spec.ts`):**
+- Fixed `should show poster image if video fails to load` - made locator more specific to avoid hidden avatar images
+- Fixed `should not crash if video source is unavailable` - improved locator specificity
+
+**Feed Tests (`tests/e2e/patient/feed.spec.ts`):**
+- Fixed `should have functional navigation links` for mobile-chrome-landscape viewport
+- Added viewport-aware navigation checks (desktop sidebar at ≥1024px, mobile nav at <768px)
+- Handles intermediate viewport gap (768-1023px) where neither navigation is visible
+
 ## [1.49.0] - 2026-01-03
 
 ### 🔧 CI Test Configuration Fix

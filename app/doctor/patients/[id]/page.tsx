@@ -53,7 +53,7 @@ const MOCK_PATIENTS: Record<string, {
     name: "Dave Thompson",
     email: "dave.t@email.com",
     phone: "(555) 123-4567",
-    avatarUrl: "https://images.unsplash.com/photo-1599566150163-29194dcabd36?w=100&h=100&fit=crop",
+    avatarUrl: "/images/patients/dave-thompson.jpg",
     status: "active",
     videosWatched: 8,
     totalVideos: 10,
@@ -227,7 +227,6 @@ export default function PatientProfilePage() {
   
   const [activeTab, setActiveTab] = useState<"overview" | "videos" | "communication">("overview");
   const [showMessageModal, setShowMessageModal] = useState(false);
-  const [messageModalTab, setMessageModalTab] = useState<"templates" | "checkin" | "custom">("templates");
   const [messageContent, setMessageContent] = useState("");
   
   // Get patient data
@@ -255,21 +254,24 @@ export default function PatientProfilePage() {
     console.log("Sending message to patient:", patientId, messageContent);
     setMessageContent("");
     setShowMessageModal(false);
-    setMessageModalTab("templates");
+    // Redirect to messages page with this patient
+    router.push(`/doctor/messages?patient=${patientId}`);
   };
 
   const handleSendTemplate = (template: { id: string; title: string; content: string }) => {
     // In production, this would send to Convex
     console.log("Sending template message to patient:", patientId, template);
     setShowMessageModal(false);
-    setMessageModalTab("templates");
+    // Redirect to messages page with this patient
+    router.push(`/doctor/messages?patient=${patientId}`);
   };
 
   const handleSendCheckIn = (questionId: string) => {
     // In production, this would send to Convex
     console.log("Sending check-in question:", questionId, "to patient:", patientId);
     setShowMessageModal(false);
-    setMessageModalTab("templates");
+    // Redirect to messages page with this patient
+    router.push(`/doctor/messages?patient=${patientId}`);
   };
 
   // Calculate progress percentage for the ring
@@ -679,131 +681,110 @@ export default function PatientProfilePage() {
         </div>
       )}
 
-      {/* Unified Send Message Modal */}
+      {/* Send Check-in Modal - Side by Side Layout */}
       {showMessageModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div className="bg-white rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] flex flex-col">
+          <div className="bg-white rounded-2xl shadow-xl max-w-4xl w-full max-h-[85vh] overflow-hidden">
+            {/* Modal Header */}
             <div className="p-6 border-b border-gray-100">
-              <h3 className="text-lg font-semibold text-gray-900">Send Check In to {patient.name.split(" ")[0]}</h3>
-              <p className="text-sm text-gray-500 mt-1">Choose a template, check-in question, or write your own message.</p>
-            </div>
-            
-            {/* Tabs */}
-            <div className="flex border-b border-gray-100">
-              <button
-                onClick={() => setMessageModalTab("templates")}
-                className={cn(
-                  "flex-1 px-4 py-3 text-sm font-medium transition-colors",
-                  messageModalTab === "templates"
-                    ? "text-sky-600 border-b-2 border-sky-600"
-                    : "text-gray-500 hover:text-gray-700"
-                )}
-              >
-                Templates
-              </button>
-              <button
-                onClick={() => setMessageModalTab("checkin")}
-                className={cn(
-                  "flex-1 px-4 py-3 text-sm font-medium transition-colors",
-                  messageModalTab === "checkin"
-                    ? "text-sky-600 border-b-2 border-sky-600"
-                    : "text-gray-500 hover:text-gray-700"
-                )}
-              >
-                Check-ins
-              </button>
-              <button
-                onClick={() => setMessageModalTab("custom")}
-                className={cn(
-                  "flex-1 px-4 py-3 text-sm font-medium transition-colors",
-                  messageModalTab === "custom"
-                    ? "text-sky-600 border-b-2 border-sky-600"
-                    : "text-gray-500 hover:text-gray-700"
-                )}
-              >
-                Custom
-              </button>
+              <h3 className="text-lg font-semibold text-gray-900">
+                Send Check-in to {patient.name.split(" ")[0]}
+              </h3>
+              <p className="text-sm text-gray-500 mt-1">
+                Choose a template message or write a custom one
+              </p>
             </div>
 
-            {/* Tab Content */}
-            <div className="flex-1 overflow-y-auto">
-              {/* Templates Tab */}
-              {messageModalTab === "templates" && (
-                <div className="p-4 space-y-2">
+            {/* Modal Body - Side by Side */}
+            <div className="grid md:grid-cols-2 divide-x divide-gray-100">
+              {/* Left Side - Template Messages */}
+              <div className="p-6 max-h-[50vh] overflow-y-auto">
+                <h4 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <MessageSquare className="w-5 h-5 text-emerald-600" />
+                  Template Messages
+                </h4>
+                <div className="space-y-2">
+                  {/* Message Templates */}
                   {MESSAGE_TEMPLATES.map((template) => (
                     <button
                       key={template.id}
                       onClick={() => handleSendTemplate(template)}
-                      className="w-full p-4 bg-gray-50 hover:bg-sky-50 rounded-xl transition-colors text-left group"
+                      className="w-full p-4 bg-gray-50 hover:bg-sky-50 rounded-xl transition-colors text-left group border border-transparent hover:border-sky-200"
                     >
                       <div className="flex items-center justify-between mb-1">
-                        <span className="font-medium text-gray-900 group-hover:text-sky-700">{template.title}</span>
-                        <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-sky-600" />
+                        <span className="font-medium text-gray-900 group-hover:text-sky-700">
+                          {template.title}
+                        </span>
+                        <Send className="w-4 h-4 text-gray-400 group-hover:text-sky-600" />
                       </div>
                       <p className="text-sm text-gray-500 line-clamp-2">{template.content}</p>
                     </button>
                   ))}
-                </div>
-              )}
-
-              {/* Check-in Tab */}
-              {messageModalTab === "checkin" && (
-                <div className="p-4 space-y-2">
-                  <p className="text-sm text-gray-500 mb-3">Send a quick check-in question to {patient.name.split(" ")[0]}</p>
+                  
+                  {/* Divider */}
+                  <div className="py-2">
+                    <div className="border-t border-gray-200"></div>
+                    <p className="text-xs text-gray-400 mt-2 mb-1">Quick Check-in Questions</p>
+                  </div>
+                  
+                  {/* Check-in Questions */}
                   {CHECK_IN_QUESTIONS.map((q) => (
                     <button
                       key={q.id}
                       onClick={() => handleSendCheckIn(q.id)}
-                      className="w-full p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors text-left flex items-center gap-3"
+                      className="w-full p-3 bg-gray-50 hover:bg-emerald-50 rounded-xl transition-colors text-left flex items-center gap-3 group border border-transparent hover:border-emerald-200"
                     >
                       <div className={cn("p-2 rounded-lg", q.color)}>
                         {q.icon}
                       </div>
-                      <span className="font-medium text-gray-900">{q.question}</span>
-                      <ChevronRight className="w-4 h-4 text-gray-400 ml-auto" />
+                      <span className="font-medium text-gray-900 flex-1 group-hover:text-emerald-700">
+                        {q.question}
+                      </span>
+                      <Send className="w-4 h-4 text-gray-400 group-hover:text-emerald-600" />
                     </button>
                   ))}
                 </div>
-              )}
+              </div>
 
-              {/* Custom Tab */}
-              {messageModalTab === "custom" && (
-                <div className="p-6">
-                  <textarea
-                    value={messageContent}
-                    onChange={(e) => setMessageContent(e.target.value)}
-                    placeholder="Type your message here..."
-                    rows={5}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all resize-none"
-                    aria-label="Custom message"
-                  />
-                  <p className="text-xs text-gray-400 mt-2">This is a one-way message. Patients cannot reply with text.</p>
-                </div>
-              )}
+              {/* Right Side - Custom Message */}
+              <div className="p-6 flex flex-col">
+                <h4 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-sky-600" />
+                  Custom Message
+                </h4>
+                <textarea
+                  value={messageContent}
+                  onChange={(e) => setMessageContent(e.target.value)}
+                  placeholder="Type your custom check-in message here..."
+                  rows={8}
+                  className="w-full flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all resize-none"
+                  aria-label="Custom message"
+                />
+                <p className="text-xs text-gray-400 mt-2">
+                  This is a one-way message. Patients will see this in their check-in feed.
+                </p>
+                <button
+                  onClick={handleSendMessage}
+                  disabled={!messageContent.trim()}
+                  className="w-full mt-4 py-3 bg-sky-600 text-white font-semibold rounded-xl hover:bg-sky-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                >
+                  <Send className="w-4 h-4" />
+                  Send Custom Message
+                </button>
+              </div>
             </div>
 
-            {/* Footer */}
-            <div className="p-4 border-t border-gray-100 flex justify-end gap-3">
+            {/* Modal Footer */}
+            <div className="p-4 border-t border-gray-100 flex justify-end">
               <button
                 onClick={() => {
                   setShowMessageModal(false);
-                  setMessageModalTab("templates");
                   setMessageContent("");
                 }}
                 className="px-4 py-2 text-gray-600 font-medium hover:bg-gray-100 rounded-lg transition-colors"
               >
                 Cancel
               </button>
-              {messageModalTab === "custom" && (
-                <button
-                  onClick={handleSendMessage}
-                  disabled={!messageContent.trim()}
-                  className="px-4 py-2 bg-sky-600 text-white font-medium rounded-lg hover:bg-sky-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                >
-                  <Send className="w-4 h-4" />
-                  Send Message
-                </button>
-              )}
             </div>
           </div>
         </div>

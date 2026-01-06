@@ -66,10 +66,10 @@ const MOCK_DOCTORS: Doctor[] = [
   },
   {
     id: "550e8400-e29b-41d4-a716-446655440004",
-    name: "James Martinez",
+    name: "Jack Ellis",
     specialty: "Cardiology",
-    avatarUrl: "https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=400&h=400&fit=crop&q=80",
-    clinicName: "Cardiovascular Associates",
+    avatarUrl: "/images/doctors/doctor-jack.jpg",
+    clinicName: "1Another Cardiology",
     createdAt: new Date().toISOString(),
   },
   {

@@ -87,7 +87,7 @@ const RECENT_PATIENTS = [
     totalVideos: 10,
     status: "active",
     hasNewActivity: true,
-    avatarUrl: "https://images.unsplash.com/photo-1599566150163-29194dcabd36?w=100&h=100&fit=crop",
+    avatarUrl: "/images/patients/dave-thompson.jpg",
     healthProvider: "Kaiser Permanente",
     lastMessage: {
       type: "from_patient" as const,
@@ -374,7 +374,7 @@ const PATIENT_CHECK_INS = [
   {
     id: "1",
     name: "Dave Thompson",
-    avatarUrl: "https://images.unsplash.com/photo-1599566150163-29194dcabd36?w=100&h=100&fit=crop",
+    avatarUrl: "/images/patients/dave-thompson.jpg",
     pendingResponses: 2,
     lastCheckIn: "2 min ago",
     checkIns: [
@@ -508,6 +508,8 @@ export default function DoctorDashboard() {
   const [addedVideos, setAddedVideos] = useState<Set<string>>(new Set(["1a-2", "1a-4"]));
   const [selectedCheckInPatient, setSelectedCheckInPatient] = useState<string | null>("4");
   const [checkInSearch, setCheckInSearch] = useState("");
+  const [showCheckInModal, setShowCheckInModal] = useState(false);
+  const [customCheckInMessage, setCustomCheckInMessage] = useState("");
   const { user } = useUserSync();
   
   // Get doctor's videos from Convex
@@ -933,7 +935,10 @@ export default function DoctorDashboard() {
 
                   {/* Send Check-in Button */}
                   <div className="p-4 border-t border-gray-100">
-                    <button className="w-full py-3 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-cyan-600 transition-all shadow-md flex items-center justify-center gap-2">
+                    <button
+                      onClick={() => setShowCheckInModal(true)}
+                      className="w-full py-3 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-cyan-600 transition-all shadow-md flex items-center justify-center gap-2"
+                    >
                       <Sparkles className="w-5 h-5" />
                       Send Check-in Question
                     </button>
@@ -1458,6 +1463,122 @@ export default function DoctorDashboard() {
           </div>
         </div>
       </section>
+
+      {/* Check-in Modal - Side by Side Layout */}
+      {showCheckInModal && selectedCheckInPatient && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+          <div className="bg-white rounded-2xl shadow-xl max-w-3xl w-full max-h-[80vh] overflow-hidden">
+            {/* Modal Header */}
+            <div className="p-6 border-b border-gray-100">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Send Check-in to {PATIENT_CHECK_INS.find(p => p.id === selectedCheckInPatient)?.name}
+                  </h3>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Choose a template message or write a custom one
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setShowCheckInModal(false);
+                    setCustomCheckInMessage("");
+                  }}
+                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                  aria-label="Close modal"
+                >
+                  <AlertCircle className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Body - Side by Side */}
+            <div className="grid md:grid-cols-2 divide-x divide-gray-100">
+              {/* Left Side - Template Messages */}
+              <div className="p-6">
+                <h4 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <MessageSquare className="w-5 h-5 text-emerald-600" />
+                  Template Messages
+                </h4>
+                <div className="space-y-2 max-h-[300px] overflow-y-auto">
+                  {CHECK_IN_TEMPLATES.map((template) => {
+                    const IconComponent = template.icon;
+                    return (
+                      <button
+                        key={template.id}
+                        onClick={() => {
+                          console.log("Sending template check-in:", template.question, "to patient:", selectedCheckInPatient);
+                          setShowCheckInModal(false);
+                        }}
+                        className="w-full p-4 bg-gray-50 hover:bg-emerald-50 rounded-xl transition-colors text-left group border border-transparent hover:border-emerald-200"
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className={cn("p-2 rounded-lg bg-gradient-to-r", template.color, "text-white")}>
+                            <IconComponent className="w-4 h-4" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-medium text-gray-900 group-hover:text-emerald-700">
+                              {template.question}
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1 capitalize">{template.type}</p>
+                          </div>
+                          <Send className="w-4 h-4 text-gray-400 group-hover:text-emerald-600 mt-1" />
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Right Side - Custom Message */}
+              <div className="p-6">
+                <h4 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <Mail className="w-5 h-5 text-sky-600" />
+                  Custom Message
+                </h4>
+                <textarea
+                  value={customCheckInMessage}
+                  onChange={(e) => setCustomCheckInMessage(e.target.value)}
+                  placeholder="Type your custom check-in message here..."
+                  rows={6}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all resize-none"
+                  aria-label="Custom check-in message"
+                />
+                <p className="text-xs text-gray-400 mt-2">
+                  This is a one-way message. Patients will see this in their check-in feed.
+                </p>
+                <button
+                  onClick={() => {
+                    if (customCheckInMessage.trim()) {
+                      console.log("Sending custom check-in:", customCheckInMessage, "to patient:", selectedCheckInPatient);
+                      setShowCheckInModal(false);
+                      setCustomCheckInMessage("");
+                    }
+                  }}
+                  disabled={!customCheckInMessage.trim()}
+                  className="w-full mt-4 py-3 bg-sky-600 text-white font-semibold rounded-xl hover:bg-sky-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                >
+                  <Send className="w-4 h-4" />
+                  Send Custom Message
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 border-t border-gray-100 flex justify-end">
+              <button
+                onClick={() => {
+                  setShowCheckInModal(false);
+                  setCustomCheckInMessage("");
+                }}
+                className="px-4 py-2 text-gray-600 font-medium hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

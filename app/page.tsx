@@ -199,27 +199,45 @@ export default function LandingPage() {
                   {/* Notch */}
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-black rounded-b-2xl z-10" />
                   
-                  {/* Screen content - Video feed preview */}
-                  <div className="w-full h-full bg-gradient-to-b from-gray-900 to-black relative">
-                    {/* Video placeholder */}
+                  {/* Screen content - Doctor video preview */}
+                  <div className="w-full h-full relative">
+                    {/* Doctor image as video background */}
+                    <Image
+                      src="/images/doctors/doctor-lisa.jpg"
+                      alt="Dr. Lisa Chen delivering health information"
+                      fill
+                      className="object-cover object-top"
+                      priority
+                    />
+                    
+                    {/* Gradient overlay for text readability */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
+                    
+                    {/* Play button overlay */}
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-sm">
-                        <Play className="w-8 h-8 text-white ml-1" fill="white" />
+                      <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm border border-white/30 hover:bg-white/30 transition-colors cursor-pointer">
+                        <Play className="w-7 h-7 text-white ml-1" fill="white" />
                       </div>
                     </div>
                     
                     {/* Doctor info overlay */}
                     <div className="absolute bottom-16 left-4 right-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#00BFA6] to-[#3ac1e1] flex items-center justify-center">
-                          <span className="text-white font-bold">DJ</span>
+                        <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-white/30">
+                          <Image
+                            src="/images/doctors/doctor-lisa.jpg"
+                            alt="Dr. Lisa Chen"
+                            width={40}
+                            height={40}
+                            className="object-cover"
+                          />
                         </div>
                         <div>
-                          <p className="text-white font-semibold text-sm">Dr. Jack Ellis</p>
-                          <p className="text-white/60 text-xs">Cardiology</p>
+                          <p className="text-white font-semibold text-sm drop-shadow-lg">Dr. Lisa Chen</p>
+                          <p className="text-white/80 text-xs drop-shadow-lg">Primary Care</p>
                         </div>
                       </div>
-                      <p className="mt-3 text-white text-sm">Your heart health update for this week...</p>
+                      <p className="mt-3 text-white text-sm drop-shadow-lg">Understanding your lab results...</p>
                     </div>
                     
                     {/* Bottom nav indicator */}

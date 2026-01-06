@@ -136,7 +136,7 @@ const MOCK_PATIENT_CHECKINS: PatientCheckIn[] = [
     id: "1",
     patientId: "1",
     patientName: "Dave Thompson",
-    patientAvatar: "https://images.unsplash.com/photo-1599566150163-29194dcabd36?w=100&h=100&fit=crop",
+    patientAvatar: "/images/patients/dave-thompson.jpg",
     lastCheckIn: "2 hours ago",
     pendingQuestions: ["feeling-today", "took-meds"],
     responses: [

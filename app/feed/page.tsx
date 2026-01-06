@@ -71,22 +71,22 @@ const MOCK_VIDEOS: Video[] = [
     isPersonalized: false,
     createdAt: new Date().toISOString(),
   },
-  // Third video: Dr. Sarah Johnson (different doctor)
+  // Second video: Dr. Jack Ellis
   {
     id: "750e8400-e29b-41d4-a716-446655440009",
     title: "Blood Pressure Basics",
     description: "Understanding your blood pressure readings",
     videoUrl: "/videos/doctor-jack-video-2.mp4",
-    thumbnailUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop&q=80",
-    posterUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop&q=80",
+    thumbnailUrl: "/images/doctors/doctor-jack.jpg",
+    posterUrl: "/images/doctors/doctor-jack.jpg",
     duration: 150,
     category: "Education",
     tags: ["blood pressure", "cardiology", "basics"],
-    doctorId: "550e8400-e29b-41d4-a716-446655440001",
+    doctorId: "550e8400-e29b-41d4-a716-446655440004",
     isPersonalized: false,
     createdAt: new Date().toISOString(),
   },
-  // Fourth video: Dr. Jack Ellis
+  // Third video: Dr. Jack Ellis
   {
     id: "750e8400-e29b-41d4-a716-446655440007",
     title: "Managing Cholesterol Levels",
@@ -101,22 +101,22 @@ const MOCK_VIDEOS: Video[] = [
     isPersonalized: false,
     createdAt: new Date().toISOString(),
   },
-  // Fifth video: Dr. Michael Chen (different doctor)
+  // Fourth video: Dr. Jack Ellis
   {
     id: "750e8400-e29b-41d4-a716-446655440010",
     title: "Heart-Healthy Diet Tips",
     description: "Nutrition advice for a healthy heart",
     videoUrl: "/videos/doctor-jack-video-3.mp4",
-    thumbnailUrl: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&h=400&fit=crop&q=80",
-    posterUrl: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&h=400&fit=crop&q=80",
+    thumbnailUrl: "/images/doctors/doctor-jack.jpg",
+    posterUrl: "/images/doctors/doctor-jack.jpg",
     duration: 200,
     category: "Education",
     tags: ["nutrition", "diet", "heart health"],
-    doctorId: "550e8400-e29b-41d4-a716-446655440002",
+    doctorId: "550e8400-e29b-41d4-a716-446655440004",
     isPersonalized: false,
     createdAt: new Date().toISOString(),
   },
-  // Sixth video: Dr. Jack Ellis
+  // Fifth video: Dr. Jack Ellis
   {
     id: "750e8400-e29b-41d4-a716-446655440008",
     title: "Signs of Heart Disease to Watch",

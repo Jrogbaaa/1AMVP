@@ -5,6 +5,26 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.49.2] - 2026-01-06
+
+### 🔧 Doctor Profile Picture Consistency Fixes
+
+**Dr. Kim Profile Picture (`app/profile/[id]/page.tsx`, `app/discover/page.tsx`):**
+- Fixed inconsistent profile picture for Dr. David Kim between discover page preview and profile page
+- Changed avatar URL from `photo-1537368910025-700350fe46c7` to `photo-1622253692010-333f2da6031d` to match discover page
+- Corrected Dr. Kim's specialty from "Mental Health" to "Cardiology" for consistency
+
+**Dr. Jack Ellis Profile Consistency (Multiple files):**
+- Replaced "James Martinez" with "Dr. Jack Ellis" for doctor ID `550e8400-e29b-41d4-a716-446655440004` across all pages
+- Updated `app/profile/[id]/page.tsx` - Dr. Jack now shows correctly when clicking from feed
+- Updated `app/discover/page.tsx` - Dr. Jack Ellis appears in doctor carousel
+- Updated `app/my-health/AuthenticatedDashboard.tsx` - Consistent doctor listing
+
+**Feed Video Doctor Attribution (`app/feed/page.tsx`):**
+- Changed all feed videos to be attributed to Dr. Jack Ellis
+- Updated all video thumbnails and posters to use `/images/doctors/doctor-jack.jpg`
+- Fixed issue where Dr. Jack's videos were showing different profile photos (previously some videos were incorrectly attributed to Dr. Sarah Johnson and Dr. Michael Chen)
+
 ## [1.49.1] - 2026-01-06
 
 ### 🧪 E2E Test Fixes

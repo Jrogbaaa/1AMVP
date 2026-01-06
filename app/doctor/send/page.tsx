@@ -48,7 +48,7 @@ const MOCK_PATIENTS: Patient[] = [
     id: "1",
     name: "Dave Thompson",
     email: "dave.t@email.com",
-    avatarUrl: "https://images.unsplash.com/photo-1599566150163-29194dcabd36?w=100&h=100&fit=crop",
+    avatarUrl: "/images/patients/dave-thompson.jpg",
   },
   {
     id: "2",
@@ -147,11 +147,13 @@ const SendContentPage = () => {
   const preselectedChapterId = searchParams.get("chapter");
   const preselectedVideoId = searchParams.get("video");
 
-  // New flow: Step 1 = Videos, Step 2 = Patients, Step 3 = Review & Send
+  // When coming from patient profile, skip patient selection (2-step flow)
+  // Otherwise use full 3-step flow
   const isFromPatientProfile = !!preselectedPatientId;
   const hasPreselectedVideo = !!preselectedVideoId || !!preselectedChapterId;
   
-  // Start at step 1 (Videos) always - show preselected videos if any
+  // For patient profile flow: step 1 = Videos, step 2 = Review & Send (skip patient selection)
+  // For general flow: step 1 = Videos, step 2 = Patients, step 3 = Review & Send
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [selectedPatients, setSelectedPatients] = useState<Set<string>>(
     preselectedPatientId ? new Set([preselectedPatientId]) : new Set()
@@ -317,45 +319,95 @@ const SendContentPage = () => {
         </p>
       </div>
 
-      {/* Progress Steps */}
+      {/* Progress Steps - 2 steps when from patient profile, 3 steps otherwise */}
       <div className="flex items-center gap-4 mb-8">
-        {[1, 2, 3].map((s) => (
-          <div
-            key={s}
-            className="flex items-center gap-3 flex-1"
-          >
-            <div
-              className={cn(
-                "w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm transition-colors",
-                s === step
-                  ? "bg-sky-600 text-white"
-                  : s < step
-                  ? "bg-emerald-100 text-emerald-700"
-                  : "bg-gray-100 text-gray-400"
-              )}
-            >
-              {s < step ? <Check className="w-4 h-4" /> : s}
-            </div>
-            <span
-              className={cn(
-                "font-medium text-sm hidden sm:block",
-                s === step ? "text-gray-900" : "text-gray-400"
-              )}
-            >
-              {s === 1 ? "Choose Videos" : s === 2 ? "Select Patients" : "Review & Send"}
-            </span>
-            {s < 3 && (
-              <div className="flex-1 h-0.5 bg-gray-200 hidden sm:block">
+        {isFromPatientProfile ? (
+          // Simplified 2-step flow when coming from patient profile
+          <>
+            {[1, 2].map((s) => {
+              const isCurrentStep = s === 1 ? step === 1 : step === 2 || step === 3;
+              const isCompleted = s === 1 ? step > 1 : false;
+              return (
+                <div
+                  key={s}
+                  className="flex items-center gap-3 flex-1"
+                >
+                  <div
+                    className={cn(
+                      "w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm transition-colors",
+                      isCurrentStep && !isCompleted
+                        ? "bg-sky-600 text-white"
+                        : isCompleted
+                        ? "bg-emerald-100 text-emerald-700"
+                        : "bg-gray-100 text-gray-400"
+                    )}
+                  >
+                    {isCompleted ? <Check className="w-4 h-4" /> : s}
+                  </div>
+                  <span
+                    className={cn(
+                      "font-medium text-sm hidden sm:block",
+                      isCurrentStep ? "text-gray-900" : "text-gray-400"
+                    )}
+                  >
+                    {s === 1 ? "Choose Videos" : "Review & Send"}
+                  </span>
+                  {s < 2 && (
+                    <div className="flex-1 h-0.5 bg-gray-200 hidden sm:block">
+                      <div
+                        className={cn(
+                          "h-full bg-emerald-500 transition-all",
+                          isCompleted ? "w-full" : "w-0"
+                        )}
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </>
+        ) : (
+          // Full 3-step flow
+          <>
+            {[1, 2, 3].map((s) => (
+              <div
+                key={s}
+                className="flex items-center gap-3 flex-1"
+              >
                 <div
                   className={cn(
-                    "h-full bg-emerald-500 transition-all",
-                    s < step ? "w-full" : "w-0"
+                    "w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm transition-colors",
+                    s === step
+                      ? "bg-sky-600 text-white"
+                      : s < step
+                      ? "bg-emerald-100 text-emerald-700"
+                      : "bg-gray-100 text-gray-400"
                   )}
-                />
+                >
+                  {s < step ? <Check className="w-4 h-4" /> : s}
+                </div>
+                <span
+                  className={cn(
+                    "font-medium text-sm hidden sm:block",
+                    s === step ? "text-gray-900" : "text-gray-400"
+                  )}
+                >
+                  {s === 1 ? "Choose Videos" : s === 2 ? "Select Patients" : "Review & Send"}
+                </span>
+                {s < 3 && (
+                  <div className="flex-1 h-0.5 bg-gray-200 hidden sm:block">
+                    <div
+                      className={cn(
+                        "h-full bg-emerald-500 transition-all",
+                        s < step ? "w-full" : "w-0"
+                      )}
+                    />
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        ))}
+            ))}
+          </>
+        )}
       </div>
 
       {/* Step 1: Choose Videos */}
@@ -494,18 +546,18 @@ const SendContentPage = () => {
               Cancel
             </button>
             <button
-              onClick={() => setStep(2)}
+              onClick={() => setStep(isFromPatientProfile ? 3 : 2)}
               disabled={selectedVideos.size === 0}
               className="px-6 py-2.5 bg-sky-600 text-white font-medium rounded-xl hover:bg-sky-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
             >
-              Continue
+              {isFromPatientProfile ? "Review & Send" : "Continue"}
             </button>
           </div>
         </div>
       )}
 
-      {/* Step 2: Select Patients */}
-      {step === 2 && (
+      {/* Step 2: Select Patients - Only shown when NOT from patient profile */}
+      {step === 2 && !isFromPatientProfile && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="p-6 border-b border-gray-100">
             <div className="flex items-center justify-between mb-4">
@@ -647,12 +699,14 @@ const SendContentPage = () => {
                     {selectedPatientsList.length} Patient{selectedPatientsList.length !== 1 ? "s" : ""}
                   </h3>
                 </div>
-                <button
-                  onClick={() => setStep(2)}
-                  className="text-sm text-sky-600 hover:text-sky-700"
-                >
-                  Edit
-                </button>
+                {!isFromPatientProfile && (
+                  <button
+                    onClick={() => setStep(2)}
+                    className="text-sm text-sky-600 hover:text-sky-700"
+                  >
+                    Edit
+                  </button>
+                )}
               </div>
               <div className="p-4 flex flex-wrap gap-2">
                 {selectedPatientsList.map((patient) => (
@@ -713,7 +767,7 @@ const SendContentPage = () => {
 
               <div className="flex items-center gap-3">
                 <button
-                  onClick={() => setStep(2)}
+                  onClick={() => setStep(isFromPatientProfile ? 1 : 2)}
                   className="flex-1 px-6 py-3 border-2 border-gray-200 bg-white text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors"
                 >
                   Back

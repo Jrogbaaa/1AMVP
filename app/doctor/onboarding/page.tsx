@@ -354,11 +354,47 @@ export default function DoctorOnboarding() {
                 </p>
               </div>
 
+              {/* Featured Partner - Kaiser Permanente */}
+              <div className="bg-gradient-to-r from-blue-50 to-sky-50 rounded-2xl p-6 border border-blue-100">
+                <div className="flex items-center gap-4">
+                  <div className="bg-white rounded-xl p-3 shadow-sm">
+                    <Image
+                      src="/images/kaiser-logo.png"
+                      alt="Kaiser Permanente"
+                      width={120}
+                      height={48}
+                      className="h-12 w-auto object-contain"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
+                        Featured Partner
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-600">
+                      1Another is proud to partner with Kaiser Permanente to deliver personalized patient education.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setPracticeInfo({ ...practiceInfo, healthSystemGroup: "kaiser" })}
+                    className={cn(
+                      "px-4 py-2 rounded-xl font-medium transition-all",
+                      practiceInfo.healthSystemGroup === "kaiser"
+                        ? "bg-blue-600 text-white"
+                        : "bg-white text-blue-600 border border-blue-200 hover:bg-blue-50"
+                    )}
+                  >
+                    {practiceInfo.healthSystemGroup === "kaiser" ? "Selected" : "Select"}
+                  </button>
+                </div>
+              </div>
+
               <div className="space-y-4">
                 {/* Health System Group */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Which group are you associated with?
+                    Or choose from other health systems:
                   </label>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {HEALTH_SYSTEM_GROUPS.map((group) => (

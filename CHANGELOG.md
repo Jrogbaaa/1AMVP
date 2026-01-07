@@ -5,6 +5,54 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.52.0] - 2026-01-07
+
+### 🏥 Doctor Portal Messaging Enhancements
+
+**Unified "Messages" Branding:**
+- Renamed sidebar nav "My Check-ins and Reminders" to "Messages" (`DoctorLayoutClient.tsx`)
+- Renamed dashboard section "My Check-ins and Reminders" to "Messages" (`app/doctor/page.tsx`)
+- Updated section id from `check-ins` to `messages` throughout
+- Renamed patient profile "Communications" tab to "Messages" (`app/doctor/patients/[id]/page.tsx`)
+- Patient profile now defaults to "Messages" tab instead of "Overview"
+
+**Floating Messages Button:**
+- Added floating message button (bottom right) to doctor portal layout
+- Sky blue button with notification badge
+- Scrolls to or navigates to messages section when clicked
+
+**Add Patients Feature (`app/doctor/patients/page.tsx`):**
+- Added "Add Patients" button next to "Send Content" in My Patients header
+- Full modal with email/phone toggle for patient contact
+- Pre-load content selection: videos, check-ins, and reminders
+- Invite flow stores pending invitations in database
+
+**Video Messages in Chat:**
+- Messages section now displays video thumbnails in the chat timeline
+- Videos appear alongside check-ins as sent content
+- Clean thumbnail design with play button overlay and duration badge
+- "Watched" / "Not watched" status indicators
+- Real Unsplash thumbnail URLs matching existing video library
+
+**Read Receipts:**
+- Added read receipt display to doctor messages (Check/CheckCheck icons)
+- Shows "Sent" vs "Read" status on all message types
+- Timestamps for when patients viewed content
+
+**Database Schema Updates (`convex/schema.ts`):**
+- Added `patientInvites` table for pending patient invitations with pre-loaded content
+- Added `readAt` field to `patientReminders` table for read receipt tracking
+
+**Patient-Side Inbox (`DoctorCommunicationsWidget.tsx`):**
+- Updated to include videos in unified communications timeline
+- Videos display with thumbnail, play button, and watch status
+- Queries `videosSentToPatients` alongside messages and reminders
+
+**UI Refinements:**
+- Removed red notification badge from My Patients section icon on dashboard
+- Kept notification badge in sidebar navigation
+- Messages section height optimized to match Patients section
+
 ## [1.51.0] - 2026-01-07
 
 ### 🩺 Patient Side UI Improvements

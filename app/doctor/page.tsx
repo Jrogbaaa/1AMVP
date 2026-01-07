@@ -377,7 +377,17 @@ const PATIENT_CHECK_INS = [
     avatarUrl: "/images/patients/dave-thompson.jpg",
     pendingResponses: 2,
     lastCheckIn: "2 min ago",
-    checkIns: [
+    messages: [
+      {
+        id: "msg-1",
+        type: "video" as const,
+        title: "Understanding Your Blood Pressure",
+        thumbnailUrl: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=400&h=225&fit=crop",
+        duration: "3:45",
+        status: "sent" as const,
+        sentAt: "5 min ago",
+        watched: false,
+      },
       {
         id: "ci-1",
         type: "wellness" as const,
@@ -400,7 +410,17 @@ const PATIENT_CHECK_INS = [
     avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
     pendingResponses: 0,
     lastCheckIn: "Yesterday",
-    checkIns: [
+    messages: [
+      {
+        id: "msg-2",
+        type: "video" as const,
+        title: "Heart Health Basics",
+        thumbnailUrl: "https://images.unsplash.com/photo-1559757175-5700dde675bc?w=400&h=225&fit=crop",
+        duration: "4:20",
+        status: "sent" as const,
+        sentAt: "2 days ago",
+        watched: true,
+      },
       {
         id: "ci-3",
         type: "wellness" as const,
@@ -419,7 +439,17 @@ const PATIENT_CHECK_INS = [
     avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
     pendingResponses: 3,
     lastCheckIn: "3 hours ago",
-    checkIns: [
+    messages: [
+      {
+        id: "msg-3",
+        type: "video" as const,
+        title: "Managing Your Medications",
+        thumbnailUrl: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&h=225&fit=crop",
+        duration: "5:10",
+        status: "sent" as const,
+        sentAt: "1 day ago",
+        watched: false,
+      },
       {
         id: "ci-4",
         type: "wellness" as const,
@@ -433,6 +463,16 @@ const PATIENT_CHECK_INS = [
         question: "Did you take your medications today?",
         status: "pending" as const,
         sentAt: "3 hours ago",
+      },
+      {
+        id: "msg-4",
+        type: "video" as const,
+        title: "Exercise After Heart Events",
+        thumbnailUrl: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&h=225&fit=crop",
+        duration: "6:30",
+        status: "sent" as const,
+        sentAt: "3 hours ago",
+        watched: true,
       },
       {
         id: "ci-6",
@@ -449,13 +489,33 @@ const PATIENT_CHECK_INS = [
     avatarUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
     pendingResponses: 4,
     lastCheckIn: "3 days ago",
-    checkIns: [
+    messages: [
+      {
+        id: "msg-5",
+        type: "video" as const,
+        title: "Diet & Nutrition Tips",
+        thumbnailUrl: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&h=225&fit=crop",
+        duration: "4:15",
+        status: "sent" as const,
+        sentAt: "1 week ago",
+        watched: true,
+      },
       {
         id: "ci-7",
         type: "wellness" as const,
         question: "How are you feeling today?",
         status: "pending" as const,
         sentAt: "3 days ago",
+      },
+      {
+        id: "msg-6",
+        type: "video" as const,
+        title: "Managing Stress for Heart Health",
+        thumbnailUrl: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&h=225&fit=crop",
+        duration: "3:50",
+        status: "sent" as const,
+        sentAt: "3 days ago",
+        watched: false,
       },
       {
         id: "ci-8",
@@ -649,13 +709,8 @@ export default function DoctorDashboard() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="flex items-center justify-between p-6">
             <div className="flex items-center gap-3">
-              <div className="relative p-2 bg-sky-100 rounded-full">
+              <div className="p-2 bg-sky-100 rounded-full">
                 <Users className="w-6 h-6 text-sky-600" />
-                {newActivityCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center">
-                    {newActivityCount}
-                  </span>
-                )}
               </div>
               <div>
                 <h2 className="text-lg font-semibold text-gray-900">
@@ -868,7 +923,7 @@ export default function DoctorDashboard() {
             </div>
 
             {/* Right Panel - Check-in Details */}
-            <div className="flex flex-col min-h-[500px]">
+            <div className="flex flex-col min-h-[400px]">
               {selectedCheckInPatient ? (
                 <>
                   {/* Selected Patient Header */}
@@ -894,39 +949,82 @@ export default function DoctorDashboard() {
                     );
                   })()}
 
-                  {/* Check-in Messages */}
+                  {/* Messages (Check-ins + Videos) */}
                   <div className="flex-1 p-6 overflow-y-auto space-y-4">
                     {(() => {
                       const patient = PATIENT_CHECK_INS.find(p => p.id === selectedCheckInPatient);
                       if (!patient) return null;
-                      return patient.checkIns.map((checkIn) => (
-                        <div key={checkIn.id} className="flex flex-col items-end gap-2">
-                          {/* Check-in Question Bubble */}
-                          <div className="bg-gradient-to-r from-emerald-400 to-cyan-500 rounded-2xl rounded-tr-sm px-4 py-3 max-w-[320px] text-white shadow-md">
-                            <div className="flex items-center gap-2 mb-1 text-white/90">
-                              {checkIn.type === "wellness" ? (
-                                <Heart className="w-4 h-4" />
-                              ) : (
-                                <Pill className="w-4 h-4" />
-                              )}
-                              <span className="text-sm font-medium">{checkIn.type}</span>
-                            </div>
-                            <p className="font-medium">{checkIn.question}</p>
-                          </div>
-                          
-                          {/* Status */}
-                          {checkIn.status === "pending" ? (
-                            <div className="flex items-center gap-1.5 text-gray-400 text-sm">
-                              <Clock className="w-3.5 h-3.5" />
-                              <span>Awaiting response...</span>
-                            </div>
-                          ) : (
-                            <div className="bg-gray-100 rounded-2xl rounded-tl-sm px-4 py-3 max-w-[280px]">
-                              <div className="flex items-center gap-2">
-                                <span className="text-xl">{checkIn.emoji}</span>
-                                <span className="font-medium text-gray-900">{checkIn.answer}</span>
+                      return patient.messages.map((msg) => (
+                        <div key={msg.id} className="flex flex-col items-end gap-2">
+                          {msg.type === "video" ? (
+                            <>
+                              {/* Video Message - Clean Thumbnail */}
+                              <div className="relative w-[180px] rounded-xl overflow-hidden shadow-md">
+                                <div className="relative aspect-video w-full bg-gray-900">
+                                  <Image
+                                    src={msg.thumbnailUrl || "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400&h=225&fit=crop"}
+                                    alt={msg.title || "Video"}
+                                    fill
+                                    className="object-cover"
+                                  />
+                                  <div className="absolute inset-0 bg-black/10 flex items-center justify-center">
+                                    <div className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-lg">
+                                      <Play className="w-5 h-5 text-gray-800 ml-0.5" fill="currentColor" />
+                                    </div>
+                                  </div>
+                                  <span className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 bg-black/70 text-white text-[10px] font-medium rounded">
+                                    {msg.duration}
+                                  </span>
+                                </div>
+                                <div className="bg-white px-2.5 py-2">
+                                  <p className="text-xs font-medium text-gray-900 line-clamp-1">{msg.title}</p>
+                                </div>
                               </div>
-                            </div>
+                              {/* Video Status */}
+                              <div className="flex items-center gap-1.5 text-xs">
+                                {msg.watched ? (
+                                  <span className="flex items-center gap-1 text-emerald-600">
+                                    <Eye className="w-3 h-3" />
+                                    Watched
+                                  </span>
+                                ) : (
+                                  <span className="flex items-center gap-1 text-gray-400">
+                                    <Clock className="w-3 h-3" />
+                                    Not watched
+                                  </span>
+                                )}
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              {/* Check-in Question Bubble */}
+                              <div className="bg-gradient-to-r from-emerald-400 to-cyan-500 rounded-2xl rounded-tr-sm px-4 py-3 max-w-[320px] text-white shadow-md">
+                                <div className="flex items-center gap-2 mb-1 text-white/90">
+                                  {msg.type === "wellness" ? (
+                                    <Heart className="w-4 h-4" />
+                                  ) : (
+                                    <Pill className="w-4 h-4" />
+                                  )}
+                                  <span className="text-sm font-medium">{msg.type}</span>
+                                </div>
+                                <p className="font-medium">{msg.question}</p>
+                              </div>
+                              
+                              {/* Check-in Status */}
+                              {msg.status === "pending" ? (
+                                <div className="flex items-center gap-1.5 text-gray-400 text-sm">
+                                  <Clock className="w-3.5 h-3.5" />
+                                  <span>Awaiting response...</span>
+                                </div>
+                              ) : (
+                                <div className="bg-gray-100 rounded-2xl rounded-tl-sm px-4 py-3 max-w-[280px]">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-xl">{msg.emoji}</span>
+                                    <span className="font-medium text-gray-900">{msg.answer}</span>
+                                  </div>
+                                </div>
+                              )}
+                            </>
                           )}
                         </div>
                       ));

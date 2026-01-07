@@ -264,8 +264,8 @@ const MessagesContent = () => {
         >
           {/* Search Header */}
           <div className="p-4 border-b border-gray-100">
-            <h2 className="text-lg font-semibold text-gray-900 mb-1">Patient Check-ins</h2>
-            <p className="text-sm text-gray-500 mb-3">Automated health monitoring</p>
+            <h2 className="text-lg font-semibold text-gray-900 mb-1">Patient Messages</h2>
+            <p className="text-sm text-gray-500 mb-3">Communications & health monitoring</p>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
@@ -366,14 +366,21 @@ const MessagesContent = () => {
                     <div key={`response-${index}`} className="space-y-3">
                       {/* Doctor's question - aligned right */}
                       <div className="flex justify-end">
-                        <div className="max-w-[80%] bg-gradient-to-r from-emerald-500 to-sky-500 text-white rounded-2xl rounded-tr-sm px-4 py-3 shadow-sm">
-                          <div className="flex items-center gap-2 mb-1">
-                            <div className="p-1.5 rounded-lg bg-white/20">
-                              {question.icon}
+                        <div className="max-w-[80%]">
+                          <div className="bg-gradient-to-r from-emerald-500 to-sky-500 text-white rounded-2xl rounded-tr-sm px-4 py-3 shadow-sm">
+                            <div className="flex items-center gap-2 mb-1">
+                              <div className="p-1.5 rounded-lg bg-white/20">
+                                {question.icon}
+                              </div>
+                              <span className="text-xs opacity-80">{question.category}</span>
                             </div>
-                            <span className="text-xs opacity-80">{question.category}</span>
+                            <p className="font-medium">{question.question}</p>
                           </div>
-                          <p className="font-medium">{question.question}</p>
+                          {/* Read receipt - shown for responded messages */}
+                          <div className="flex items-center justify-end gap-1 mt-1 mr-2">
+                            <CheckCheck className="w-3.5 h-3.5 text-sky-500" />
+                            <span className="text-xs text-sky-600">Read</span>
+                          </div>
                         </div>
                       </div>
                       {/* Patient's response - aligned left */}
@@ -419,10 +426,10 @@ const MessagesContent = () => {
                           <p className="font-medium">{question.question}</p>
                         </div>
                       </div>
-                      {/* Pending indicator */}
-                      <div className="flex items-center gap-2 ml-10">
-                        <Clock className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
-                        <span className="text-xs text-amber-600">Awaiting response...</span>
+                      {/* Read receipt indicator for pending */}
+                      <div className="flex items-center justify-end gap-2 mr-2">
+                        <Check className="w-3.5 h-3.5 text-gray-400" />
+                        <span className="text-xs text-gray-400">Sent</span>
                       </div>
                     </div>
                   );
@@ -462,10 +469,10 @@ const MessagesContent = () => {
                 <MessageCircle className="w-8 h-8 text-gray-400" />
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Automated Patient Check-ins
+                Patient Messages
               </h3>
               <p className="text-gray-500 max-w-sm">
-                Select a patient to view their check-in responses and send automated health monitoring questions.
+                Select a patient to view message history and send check-ins, reminders, or videos.
               </p>
             </div>
           </div>

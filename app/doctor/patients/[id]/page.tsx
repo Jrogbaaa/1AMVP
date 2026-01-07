@@ -28,6 +28,8 @@ import {
   Plus,
   User,
   FileText,
+  Check,
+  CheckCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -168,6 +170,7 @@ const MOCK_COMMUNICATION = [
     type: "doctor_message" as const,
     content: "Hi Dave, I wanted to follow up on your recent appointment. Please watch the new medication video I've sent you when you have a chance.",
     timestamp: "Dec 20, 2024 at 2:30 PM",
+    readAt: null, // Not read yet
   },
   {
     id: "c-2",
@@ -177,6 +180,7 @@ const MOCK_COMMUNICATION = [
     answer: "Good",
     emoji: "🙂",
     timestamp: "Dec 20, 2024 at 10:15 AM",
+    readAt: "Dec 20, 2024 at 10:15 AM",
   },
   {
     id: "c-3",
@@ -186,12 +190,14 @@ const MOCK_COMMUNICATION = [
     answer: "Yes, all of them",
     emoji: "✅",
     timestamp: "Dec 20, 2024 at 9:00 AM",
+    readAt: "Dec 20, 2024 at 9:00 AM",
   },
   {
     id: "c-4",
     type: "doctor_message" as const,
     content: "Great progress on the videos! I see you've completed the Blood Pressure module. Let me know if you have any questions.",
     timestamp: "Dec 19, 2024 at 4:45 PM",
+    readAt: "Dec 19, 2024 at 5:10 PM", // Read 25 minutes later
   },
   {
     id: "c-5",
@@ -201,6 +207,7 @@ const MOCK_COMMUNICATION = [
     answer: "Moderately active",
     emoji: "🚶",
     timestamp: "Dec 18, 2024 at 11:30 AM",
+    readAt: "Dec 18, 2024 at 11:30 AM",
   },
 ];
 
@@ -642,7 +649,23 @@ export default function PatientProfilePage() {
                         <span className="font-medium text-gray-900">You</span>
                         <span className="text-xs text-gray-400">{item.timestamp}</span>
                       </div>
-                      <p className="text-gray-700 bg-sky-50 rounded-lg p-3">{item.content}</p>
+                      <div className="bg-sky-50 rounded-lg p-3">
+                        <p className="text-gray-700">{item.content}</p>
+                        {/* Read receipt indicator */}
+                        <div className="flex items-center justify-end gap-1 mt-2">
+                          {item.readAt ? (
+                            <span className="flex items-center gap-1 text-xs text-sky-600" title={`Read: ${item.readAt}`}>
+                              <CheckCheck className="w-3.5 h-3.5" />
+                              Read
+                            </span>
+                          ) : (
+                            <span className="flex items-center gap-1 text-xs text-gray-400" title="Delivered">
+                              <Check className="w-3.5 h-3.5" />
+                              Sent
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ) : (

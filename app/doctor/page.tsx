@@ -953,7 +953,7 @@ export default function DoctorDashboard() {
                   <div className="flex-1 p-6 overflow-y-auto space-y-4">
                     {(() => {
                       const patient = PATIENT_CHECK_INS.find(p => p.id === selectedCheckInPatient);
-                      if (!patient) return null;
+                      if (!patient || !patient.messages) return null;
                       return patient.messages.map((msg) => (
                         <div key={msg.id} className="flex flex-col items-end gap-2">
                           {msg.type === "video" ? (

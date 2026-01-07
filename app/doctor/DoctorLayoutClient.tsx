@@ -59,9 +59,9 @@ const NAV_ITEMS: NavItem[] = [
     isScrollTarget: true,
   },
   {
-    id: "check-ins",
-    label: "My Check-ins and Reminders",
-    href: "/doctor#check-ins",
+    id: "messages",
+    label: "Messages",
+    href: "/doctor#messages",
     icon: <MessageSquare className="w-5 h-5" />,
     isScrollTarget: true,
   },
@@ -531,6 +531,29 @@ export function DoctorLayoutClient({
 
         {/* Page Content */}
         <div className="p-4 lg:p-8">{children}</div>
+
+        {/* Floating Messages Button */}
+        <button
+          onClick={() => {
+            if (isOnDashboard) {
+              const element = document.getElementById("messages");
+              if (element) {
+                const offsetTop = element.offsetTop - 100;
+                window.scrollTo({ top: offsetTop, behavior: "smooth" });
+              }
+            } else {
+              router.push("/doctor#messages");
+            }
+          }}
+          className="fixed bottom-6 right-6 flex items-center justify-center w-14 h-14 bg-sky-600 rounded-full shadow-lg hover:bg-sky-700 hover:scale-110 transition-all duration-200 z-40"
+          aria-label="Open messages"
+        >
+          <MessageSquare className="w-6 h-6 text-white" />
+          {/* Notification badge */}
+          <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white">
+            2
+          </span>
+        </button>
       </main>
     </div>
   );

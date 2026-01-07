@@ -341,11 +341,39 @@ export default defineSchema({
     dueDate: v.optional(v.number()), // For one-time reminders
     isCompleted: v.boolean(),
     completedAt: v.optional(v.number()),
+    readAt: v.optional(v.number()), // When patient viewed the reminder
     createdAt: v.number(),
   })
     .index("by_doctor", ["doctorId"])
     .index("by_patient", ["patientId"])
     .index("by_doctor_patient", ["doctorId", "patientId"])
     .index("by_completed", ["patientId", "isCompleted"]),
+
+  // Patient invitations (pending invites before patient creates account)
+  patientInvites: defineTable({
+    doctorId: v.string(),
+    // Contact info
+    contactType: v.union(v.literal("email"), v.literal("phone")),
+    contactValue: v.string(), // Email or phone number
+    // Pre-loaded content to be assigned when patient joins
+    preloadedVideoIds: v.optional(v.array(v.string())),
+    preloadedCheckinIds: v.optional(v.array(v.string())),
+    preloadedReminderIds: v.optional(v.array(v.string())),
+    // Status tracking
+    status: v.union(
+      v.literal("pending"), // Invite sent, waiting for patient
+      v.literal("accepted"), // Patient created account
+      v.literal("expired") // Invite expired
+    ),
+    // When accepted, link to patient
+    patientId: v.optional(v.string()),
+    // Timestamps
+    sentAt: v.number(),
+    acceptedAt: v.optional(v.number()),
+    expiresAt: v.number(), // Auto-expire after X days
+  })
+    .index("by_doctor", ["doctorId"])
+    .index("by_contact", ["contactType", "contactValue"])
+    .index("by_status", ["status"]),
 });
 

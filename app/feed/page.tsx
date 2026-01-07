@@ -480,13 +480,11 @@ const FeedContent = () => {
                                 className="w-full h-full object-cover"
                               />
                               </div>
-                              <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-sky-500 rounded-full flex items-center justify-center shadow-lg border-2 border-slate-900">
-                                <MessageCircle className="w-3.5 h-3.5 text-white" />
-                              </div>
+                              <MessageCircle className="absolute -bottom-1 -right-1 w-7 h-7 text-sky-400 drop-shadow-lg" fill="currentColor" />
                             </div>
                             <div>
                               <p className="text-white font-bold text-base">Dr. {selectedDoctor.name}</p>
-                              <p className="text-sky-400 text-sm font-medium">Quick Check-in</p>
+                              <p className="text-sky-400 text-sm font-medium">Check-In</p>
                             </div>
                           </div>
 
@@ -551,13 +549,11 @@ const FeedContent = () => {
                                   className="w-full h-full object-cover"
                                 />
                               </div>
-                              <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-sky-500 rounded-full flex items-center justify-center shadow-lg border-2 border-slate-900">
-                                <MessageCircle className="w-3.5 h-3.5 text-white" />
-                              </div>
+                              <MessageCircle className="absolute -bottom-1 -right-1 w-7 h-7 text-sky-400 drop-shadow-lg" fill="currentColor" />
                             </div>
                             <div>
                               <p className="text-white font-bold text-base">Dr. {selectedDoctor.name}</p>
-                              <p className="text-sky-400 text-sm font-medium">Message</p>
+                              <p className="text-sky-400 text-sm font-medium">Check-In</p>
                             </div>
                           </div>
 

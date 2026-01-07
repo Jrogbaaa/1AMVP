@@ -319,7 +319,7 @@ export default function DiscoverPage() {
     setAddedDoctors((prev) => new Set(prev).add(doctor.id));
   };
 
-  const handleAddDoctor = (e: React.MouseEvent, doctorId: string, isPremium: boolean) => {
+  const handleToggleDoctor = (e: React.MouseEvent, doctorId: string, isPremium: boolean) => {
     e.preventDefault();
     e.stopPropagation();
     
@@ -338,7 +338,15 @@ export default function DiscoverPage() {
       return;
     }
     
-    setAddedDoctors((prev) => new Set(prev).add(doctorId));
+    setAddedDoctors((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(doctorId)) {
+        newSet.delete(doctorId);
+      } else {
+        newSet.add(doctorId);
+      }
+      return newSet;
+    });
   };
 
   const handleCloseAuthPrompt = () => {
@@ -507,9 +515,9 @@ export default function DiscoverPage() {
           <div className="relative">
             <Search className="absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 md:w-4 md:h-4 text-gray-400" />
             <input
-              type="text"
-              placeholder="Search topics..."
-              value={searchQuery}
+            type="text"
+            placeholder="Search doctors or topics..."
+            value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-8 md:pl-10 pr-3 md:pr-4 py-1.5 md:py-2.5 bg-gray-50 border border-gray-200 rounded-lg md:rounded-xl text-xs md:text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00BFA6]/30 focus:border-[#00BFA6] transition-all"
             />
@@ -531,6 +539,16 @@ export default function DiscoverPage() {
         <div className="bg-white rounded-2xl p-3 mb-3 shadow-sm">
           <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
             {MOCK_DOCTORS.filter((doctor) => {
+              // Filter doctors by search query
+              if (searchQuery) {
+                const search = searchQuery.toLowerCase();
+                const matchesSearch = 
+                  doctor.name.toLowerCase().includes(search) ||
+                  doctor.specialty.toLowerCase().includes(search) ||
+                  doctor.clinicName?.toLowerCase().includes(search) ||
+                  doctor.insurer?.toLowerCase().includes(search);
+                if (!matchesSearch) return false;
+              }
               // Filter doctors by specialty
               if (selectedSpecialty === "all") return true;
               return doctor.specialty.toLowerCase() === selectedSpecialty.replace("-", " ");
@@ -662,16 +680,20 @@ export default function DiscoverPage() {
                             </div>
                           </div>
                         </div>
-                        {/* Checkmark badge */}
+                        {/* Checkmark badge - clickable to remove */}
                         {isAdded && (
-                          <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center shadow border-2 border-white">
+                          <button
+                            onClick={(e) => handleToggleDoctor(e, doctor.id, false)}
+                            className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center shadow border-2 border-white hover:bg-green-600 transition-colors"
+                            aria-label={`Remove Dr. ${doctor.name}`}
+                          >
                             <Check className="w-3 h-3 text-white" strokeWidth={3} />
-                          </div>
+                          </button>
                         )}
                         {/* Add button */}
                         {!isAdded && (
                           <button
-                            onClick={(e) => handleAddDoctor(e, doctor.id, false)}
+                            onClick={(e) => handleToggleDoctor(e, doctor.id, false)}
                             className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-xs hover:bg-primary-600 transition-colors shadow border-2 border-white"
                             aria-label={`Add Dr. ${doctor.name}`}
                           >

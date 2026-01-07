@@ -513,34 +513,38 @@ const ScreeningCard = ({
   );
 };
 
-// Section header component
+// Section header component - now clickable for collapse/expand
 const SectionHeader = ({
   title,
   count,
   variant,
+  isExpanded,
+  onToggle,
 }: {
   title: string;
   count: number;
   variant: "due_now" | "due_soon" | "up_to_date" | "not_applicable";
+  isExpanded: boolean;
+  onToggle: () => void;
 }) => {
   const configs = {
     due_now: {
-      bgClass: "bg-red-100",
+      bgClass: "bg-red-100 hover:bg-red-150",
       textClass: "text-red-800",
       countClass: "bg-red-200 text-red-900",
     },
     due_soon: {
-      bgClass: "bg-amber-100",
+      bgClass: "bg-amber-100 hover:bg-amber-150",
       textClass: "text-amber-800",
       countClass: "bg-amber-200 text-amber-900",
     },
     up_to_date: {
-      bgClass: "bg-emerald-100",
+      bgClass: "bg-emerald-100 hover:bg-emerald-150",
       textClass: "text-emerald-800",
       countClass: "bg-emerald-200 text-emerald-900",
     },
     not_applicable: {
-      bgClass: "bg-gray-100",
+      bgClass: "bg-gray-100 hover:bg-gray-150",
       textClass: "text-gray-700",
       countClass: "bg-gray-200 text-gray-800",
     },
@@ -549,12 +553,27 @@ const SectionHeader = ({
   const config = configs[variant];
 
   return (
-    <div className={cn("flex items-center gap-2.5 px-4 py-3 rounded-lg mb-4", config.bgClass)}>
+    <button
+      onClick={onToggle}
+      className={cn(
+        "w-full flex items-center gap-2.5 px-4 py-3 rounded-lg mb-4 transition-colors cursor-pointer",
+        config.bgClass
+      )}
+      aria-expanded={isExpanded}
+      aria-label={`${isExpanded ? "Collapse" : "Expand"} ${title} section`}
+    >
       <h3 className={cn("font-semibold text-base", config.textClass)}>{title}</h3>
       <span className={cn("text-sm font-bold px-2.5 py-0.5 rounded-full", config.countClass)}>
         {count}
       </span>
-    </div>
+      <ChevronDown 
+        className={cn(
+          "w-4 h-4 ml-auto transition-transform duration-200",
+          config.textClass,
+          !isExpanded && "-rotate-90"
+        )} 
+      />
+    </button>
   );
 };
 
@@ -562,6 +581,23 @@ export const PreventiveCareChecklist = ({
   profile,
   onSchedule,
 }: PreventiveCareChecklistProps) => {
+  // State for expanded sections - all sections expanded by default
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(
+    new Set(["due_now", "due_soon", "up_to_date"])
+  );
+
+  const toggleSection = (section: string) => {
+    setExpandedSections((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(section)) {
+        newSet.delete(section);
+      } else {
+        newSet.add(section);
+      }
+      return newSet;
+    });
+  };
+
   // Generate recommendations from profile
   const screenings = useMemo(
     () => generateScreeningRecommendations(profile),
@@ -607,52 +643,76 @@ export const PreventiveCareChecklist = ({
       {/* Due Now Section */}
       {grouped.dueNow.length > 0 && (
         <div>
-          <SectionHeader title="Due Now" count={grouped.dueNow.length} variant="due_now" />
-          <div className="space-y-4">
-            {grouped.dueNow.map((screening) => (
-              <ScreeningCard
-                key={screening.id}
-                screening={screening}
-                zipCode={profile.zipCode}
-                insurancePlan={profile.insurancePlan}
-                onSchedule={onSchedule}
-              />
-            ))}
-          </div>
+          <SectionHeader 
+            title="Due Now" 
+            count={grouped.dueNow.length} 
+            variant="due_now"
+            isExpanded={expandedSections.has("due_now")}
+            onToggle={() => toggleSection("due_now")}
+          />
+          {expandedSections.has("due_now") && (
+            <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
+              {grouped.dueNow.map((screening) => (
+                <ScreeningCard
+                  key={screening.id}
+                  screening={screening}
+                  zipCode={profile.zipCode}
+                  insurancePlan={profile.insurancePlan}
+                  onSchedule={onSchedule}
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
 
       {/* Due Soon Section */}
       {grouped.dueSoon.length > 0 && (
         <div>
-          <SectionHeader title="Due Soon" count={grouped.dueSoon.length} variant="due_soon" />
-          <div className="space-y-4">
-            {grouped.dueSoon.map((screening) => (
-              <ScreeningCard
-                key={screening.id}
-                screening={screening}
-                zipCode={profile.zipCode}
-                insurancePlan={profile.insurancePlan}
-                onSchedule={onSchedule}
-              />
-            ))}
-          </div>
+          <SectionHeader 
+            title="Due Soon" 
+            count={grouped.dueSoon.length} 
+            variant="due_soon"
+            isExpanded={expandedSections.has("due_soon")}
+            onToggle={() => toggleSection("due_soon")}
+          />
+          {expandedSections.has("due_soon") && (
+            <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
+              {grouped.dueSoon.map((screening) => (
+                <ScreeningCard
+                  key={screening.id}
+                  screening={screening}
+                  zipCode={profile.zipCode}
+                  insurancePlan={profile.insurancePlan}
+                  onSchedule={onSchedule}
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
 
       {/* Up to Date Section */}
       {grouped.upToDate.length > 0 && (
         <div>
-          <SectionHeader title="Up to Date" count={grouped.upToDate.length} variant="up_to_date" />
-          <div className="space-y-4">
-            {grouped.upToDate.map((screening) => (
-              <ScreeningCard 
-                key={screening.id} 
-                screening={screening}
-                zipCode={profile.zipCode}
-              />
-            ))}
-          </div>
+          <SectionHeader 
+            title="Up to Date" 
+            count={grouped.upToDate.length} 
+            variant="up_to_date"
+            isExpanded={expandedSections.has("up_to_date")}
+            onToggle={() => toggleSection("up_to_date")}
+          />
+          {expandedSections.has("up_to_date") && (
+            <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
+              {grouped.upToDate.map((screening) => (
+                <ScreeningCard 
+                  key={screening.id} 
+                  screening={screening}
+                  zipCode={profile.zipCode}
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
 

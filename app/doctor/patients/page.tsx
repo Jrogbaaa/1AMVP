@@ -15,6 +15,7 @@ import {
   ChevronDown,
   X,
   Play,
+  UserPlus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -157,11 +158,76 @@ const MOCK_PATIENTS: Patient[] = [
   },
 ];
 
+// Mock videos and check-ins for pre-loading
+const AVAILABLE_VIDEOS = [
+  { id: "v1", title: "Welcome to Heart Health", duration: "3:45" },
+  { id: "v2", title: "Understanding Blood Pressure", duration: "5:20" },
+  { id: "v3", title: "Diet & Nutrition Basics", duration: "4:15" },
+  { id: "v4", title: "Exercise After Heart Events", duration: "6:30" },
+];
+
+const AVAILABLE_CHECKINS = [
+  { id: "c1", title: "How are you feeling today?", type: "wellness" },
+  { id: "c2", title: "Did you take your medications?", type: "medication" },
+  { id: "c3", title: "Schedule your follow-up appointment", type: "reminder" },
+];
+
 export default function PatientsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "in_progress" | "completed">("all");
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [showAddPatientModal, setShowAddPatientModal] = useState(false);
+  
+  // Add Patient Modal State
+  const [inviteContact, setInviteContact] = useState("");
+  const [inviteContactType, setInviteContactType] = useState<"email" | "phone">("email");
+  const [selectedPreloadVideos, setSelectedPreloadVideos] = useState<Set<string>>(new Set());
+  const [selectedPreloadCheckins, setSelectedPreloadCheckins] = useState<Set<string>>(new Set());
+  const [isSendingInvite, setIsSendingInvite] = useState(false);
+
+  const handleTogglePreloadVideo = (videoId: string) => {
+    setSelectedPreloadVideos(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(videoId)) {
+        newSet.delete(videoId);
+      } else {
+        newSet.add(videoId);
+      }
+      return newSet;
+    });
+  };
+
+  const handleTogglePreloadCheckin = (checkinId: string) => {
+    setSelectedPreloadCheckins(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(checkinId)) {
+        newSet.delete(checkinId);
+      } else {
+        newSet.add(checkinId);
+      }
+      return newSet;
+    });
+  };
+
+  const handleSendInvite = async () => {
+    if (!inviteContact.trim()) return;
+    setIsSendingInvite(true);
+    // Simulate API call - in production this would call Convex mutation
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    console.log("Sending invite:", {
+      contact: inviteContact,
+      contactType: inviteContactType,
+      preloadVideos: Array.from(selectedPreloadVideos),
+      preloadCheckins: Array.from(selectedPreloadCheckins),
+    });
+    setIsSendingInvite(false);
+    setShowAddPatientModal(false);
+    // Reset form
+    setInviteContact("");
+    setSelectedPreloadVideos(new Set());
+    setSelectedPreloadCheckins(new Set());
+  };
 
   const filteredPatients = MOCK_PATIENTS.filter((patient) => {
     const matchesSearch =
@@ -187,13 +253,22 @@ export default function PatientsPage() {
             {filteredPatients.length} patients total
           </p>
         </div>
-        <Link
-          href="/doctor/send"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-sky-600 text-white font-medium rounded-lg hover:bg-sky-700 transition-colors"
-        >
-          <Send className="w-4 h-4" />
-          Send Content
-        </Link>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setShowAddPatientModal(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 border-2 border-sky-600 text-sky-600 font-medium rounded-lg hover:bg-sky-50 transition-colors"
+          >
+            <UserPlus className="w-4 h-4" />
+            Add Patients
+          </button>
+          <Link
+            href="/doctor/send"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-sky-600 text-white font-medium rounded-lg hover:bg-sky-700 transition-colors"
+          >
+            <Send className="w-4 h-4" />
+            Send Content
+          </Link>
+        </div>
       </div>
 
       {/* Search and Filters */}
@@ -516,6 +591,195 @@ export default function PatientsPage() {
                   <Mail className="w-5 h-5" />
                   Send Message
                 </Link>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Add Patients Modal */}
+      {showAddPatientModal && (
+        <>
+          <div
+            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+            onClick={() => setShowAddPatientModal(false)}
+          />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+              {/* Modal Header */}
+              <div className="p-6 border-b border-gray-100">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-900">Add New Patient</h2>
+                    <p className="text-sm text-gray-500 mt-1">
+                      Invite a patient to join 1A and optionally pre-load content for them
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setShowAddPatientModal(false)}
+                    className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                    aria-label="Close modal"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Modal Content */}
+              <div className="p-6 overflow-y-auto max-h-[60vh]">
+                {/* Contact Input */}
+                <div className="mb-6">
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    Patient Contact
+                  </label>
+                  <div className="flex gap-2 mb-2">
+                    <button
+                      onClick={() => setInviteContactType("email")}
+                      className={cn(
+                        "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+                        inviteContactType === "email"
+                          ? "bg-sky-100 text-sky-700"
+                          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      )}
+                    >
+                      Email
+                    </button>
+                    <button
+                      onClick={() => setInviteContactType("phone")}
+                      className={cn(
+                        "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+                        inviteContactType === "phone"
+                          ? "bg-sky-100 text-sky-700"
+                          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      )}
+                    >
+                      Phone
+                    </button>
+                  </div>
+                  <input
+                    type={inviteContactType === "email" ? "email" : "tel"}
+                    value={inviteContact}
+                    onChange={(e) => setInviteContact(e.target.value)}
+                    placeholder={inviteContactType === "email" ? "patient@email.com" : "(555) 123-4567"}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all"
+                  />
+                </div>
+
+                {/* Pre-load Videos */}
+                <div className="mb-6">
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    Pre-load Videos (Optional)
+                  </label>
+                  <p className="text-xs text-gray-500 mb-3">
+                    These videos will be ready for the patient when they create their account
+                  </p>
+                  <div className="space-y-2">
+                    {AVAILABLE_VIDEOS.map((video) => (
+                      <button
+                        key={video.id}
+                        onClick={() => handleTogglePreloadVideo(video.id)}
+                        className={cn(
+                          "w-full flex items-center gap-3 p-3 rounded-xl border transition-colors text-left",
+                          selectedPreloadVideos.has(video.id)
+                            ? "border-sky-500 bg-sky-50"
+                            : "border-gray-200 hover:bg-gray-50"
+                        )}
+                      >
+                        <div
+                          className={cn(
+                            "w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0",
+                            selectedPreloadVideos.has(video.id)
+                              ? "bg-sky-600 border-sky-600"
+                              : "border-gray-300"
+                          )}
+                        >
+                          {selectedPreloadVideos.has(video.id) && (
+                            <CheckCircle className="w-3 h-3 text-white" />
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-medium text-gray-900 text-sm">{video.title}</p>
+                          <p className="text-xs text-gray-500">{video.duration}</p>
+                        </div>
+                        <Play className="w-4 h-4 text-gray-400" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Pre-load Check-ins/Reminders */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    Pre-load Messages (Optional)
+                  </label>
+                  <p className="text-xs text-gray-500 mb-3">
+                    These check-ins and reminders will be sent when the patient joins
+                  </p>
+                  <div className="space-y-2">
+                    {AVAILABLE_CHECKINS.map((checkin) => (
+                      <button
+                        key={checkin.id}
+                        onClick={() => handleTogglePreloadCheckin(checkin.id)}
+                        className={cn(
+                          "w-full flex items-center gap-3 p-3 rounded-xl border transition-colors text-left",
+                          selectedPreloadCheckins.has(checkin.id)
+                            ? "border-emerald-500 bg-emerald-50"
+                            : "border-gray-200 hover:bg-gray-50"
+                        )}
+                      >
+                        <div
+                          className={cn(
+                            "w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0",
+                            selectedPreloadCheckins.has(checkin.id)
+                              ? "bg-emerald-600 border-emerald-600"
+                              : "border-gray-300"
+                          )}
+                        >
+                          {selectedPreloadCheckins.has(checkin.id) && (
+                            <CheckCircle className="w-3 h-3 text-white" />
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-medium text-gray-900 text-sm">{checkin.title}</p>
+                          <p className="text-xs text-gray-500 capitalize">{checkin.type}</p>
+                        </div>
+                        <Mail className="w-4 h-4 text-gray-400" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="p-6 border-t border-gray-100 bg-gray-50">
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setShowAddPatientModal(false)}
+                    className="flex-1 px-6 py-3 border-2 border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-white transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSendInvite}
+                    disabled={!inviteContact.trim() || isSendingInvite}
+                    className="flex-1 px-6 py-3 bg-sky-600 text-white font-semibold rounded-xl hover:bg-sky-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                  >
+                    {isSendingInvite ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-5 h-5" />
+                        Send Invite
+                      </>
+                    )}
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 text-center mt-3">
+                  Patient will receive a link to create their 1A account
+                </p>
               </div>
             </div>
           </div>

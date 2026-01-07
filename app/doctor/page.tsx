@@ -793,17 +793,17 @@ export default function DoctorDashboard() {
         </div>
       </section>
 
-      {/* ========== SECTION: Patient Check-ins ========== */}
-      <section id="check-ins" className="scroll-mt-20">
+      {/* ========== SECTION: Messages ========== */}
+      <section id="messages" className="scroll-mt-20">
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr]">
             {/* Left Panel - Patient List */}
             <div className="border-r border-gray-100">
               <div className="p-6 border-b border-gray-100">
                 <div className="flex items-center gap-3 mb-1">
-                  <h2 className="text-lg font-semibold text-gray-900">My Check-ins and Reminders</h2>
+                  <h2 className="text-lg font-semibold text-gray-900">Messages</h2>
                 </div>
-                <p className="text-sm text-gray-500">Automated health monitoring</p>
+                <p className="text-sm text-gray-500">Patient communications</p>
               </div>
               
               {/* Search */}

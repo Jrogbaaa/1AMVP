@@ -161,7 +161,7 @@ const MOCK_VIDEOS_SENT = [
   },
 ];
 
-// Mock communication history (doctor messages + patient survey responses)
+// Mock messages history (doctor messages + patient survey responses)
 const MOCK_COMMUNICATION = [
   {
     id: "c-1",
@@ -225,7 +225,7 @@ export default function PatientProfilePage() {
   const router = useRouter();
   const patientId = params.id as string;
   
-  const [activeTab, setActiveTab] = useState<"overview" | "videos" | "communication">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "videos" | "messages">("messages");
   const [showMessageModal, setShowMessageModal] = useState(false);
   const [messageContent, setMessageContent] = useState("");
   
@@ -407,7 +407,7 @@ export default function PatientProfilePage() {
           {[
             { id: "overview", label: "Overview", icon: <User className="w-4 h-4" /> },
             { id: "videos", label: "Videos Sent", icon: <Video className="w-4 h-4" /> },
-            { id: "communication", label: "Communication", icon: <MessageSquare className="w-4 h-4" /> },
+            { id: "messages", label: "Messages", icon: <MessageSquare className="w-4 h-4" /> },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -560,7 +560,7 @@ export default function PatientProfilePage() {
         </div>
       )}
 
-      {activeTab === "communication" && (
+      {activeTab === "messages" && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100">
           <div className="p-6 border-b border-gray-100 flex items-center justify-between">
             <h3 className="font-semibold text-gray-900">Messages & Videos</h3>
@@ -629,7 +629,7 @@ export default function PatientProfilePage() {
               </div>
             )}
 
-            {/* Communication timeline */}
+            {/* Messages timeline */}
             {MOCK_COMMUNICATION.map((item) => (
               <div key={item.id} className="p-4">
                 {item.type === "doctor_message" ? (

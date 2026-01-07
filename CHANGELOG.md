@@ -5,6 +5,34 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.51.0] - 2026-01-07
+
+### 🩺 Patient Side UI Improvements
+
+**Feed Page Check-In Cards (`app/feed/page.tsx`):**
+- Standardized wording: changed "Quick Check-in" and "Message" to "Check-In"
+- Replaced small icon-in-circle pattern with single larger MessageCircle icon
+- Icon now uses `fill="currentColor"` with drop shadow for better visibility
+- Reminder cards remain unchanged with "Reminder" label and check icon
+
+**Discover Page Doctor Toggle (`app/discover/page.tsx`):**
+- Implemented add/remove toggle for doctor plus button
+- Clicking plus icon adds doctor, clicking checkmark removes doctor
+- Renamed `handleAddDoctor` to `handleToggleDoctor` with proper toggle logic
+- Checkmark badge now clickable with hover state for removal
+
+**Unified Search Bar (`app/discover/page.tsx`):**
+- Updated placeholder to "Search doctors or topics..."
+- Added doctor filtering logic that searches by name, specialty, clinic name, and insurer
+- Search now filters both doctor profiles and video content simultaneously
+
+**Collapsible Preventive Care Checklist (`components/PreventiveCareChecklist.tsx`):**
+- Made "Due Now", "Due Soon", and "Up to Date" sections collapsible
+- Added `expandedSections` state with all sections expanded by default
+- SectionHeader now a clickable button with rotating chevron icon
+- Sections animate in/out with smooth fade and slide transitions
+- Allows users to collapse completed sections to reduce scrolling
+
 ## [1.50.0] - 2026-01-06
 
 ### 🏥 Doctor Portal UI Improvements

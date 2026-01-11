@@ -1031,15 +1031,15 @@ export default function DoctorDashboard() {
                     })()}
                   </div>
 
-                  {/* Send Check-in Button */}
+                  {/* Send Button - Uses universal send flow */}
                   <div className="p-4 border-t border-gray-100">
-                    <button
-                      onClick={() => setShowCheckInModal(true)}
+                    <Link
+                      href="/doctor/send"
                       className="w-full py-3 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-cyan-600 transition-all shadow-md flex items-center justify-center gap-2"
                     >
-                      <Sparkles className="w-5 h-5" />
-                      Send Check-in Question
-                    </button>
+                      <Send className="w-5 h-5" />
+                      Send
+                    </Link>
                   </div>
                 </>
               ) : (

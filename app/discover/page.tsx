@@ -562,44 +562,59 @@ export default function DiscoverPage() {
               return (
                 <React.Fragment key={doctor.id}>
                   {/* Suggested Doctor - appears before first premium doctor */}
-                  {isFirstPremium && (
-                    <Link
-                      href="/profile/550e8400-e29b-41d4-a716-446655440006"
-                      className="flex flex-col items-center gap-1 flex-shrink-0 group cursor-pointer"
-                      onClick={() => {
-                        setAddedDoctors((prev) => new Set(prev).add("550e8400-e29b-41d4-a716-446655440006"));
-                        trackInteraction();
-                      }}
-                    >
-                      <div className="relative">
-                        <div className="w-16 h-16 md:w-16 md:h-16 rounded-full bg-gradient-to-tr from-sky-500 via-blue-500 to-sky-600 p-[2px] group-hover:scale-105 transition-transform duration-200">
-                          <div className="w-full h-full rounded-full bg-white p-[2px]">
-                            <div className="relative w-full h-full rounded-full overflow-hidden">
-                              <Image
-                                src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&h=400&fit=crop&q=80"
-                                alt="Dr. David Kim"
-                                fill
-                                className="object-cover"
-                              />
+                  {isFirstPremium && (() => {
+                    const drKimId = "550e8400-e29b-41d4-a716-446655440006";
+                    const isDrKimAdded = addedDoctors.has(drKimId);
+                    return (
+                      <div className="flex flex-col items-center gap-1 flex-shrink-0 group cursor-pointer">
+                        <div className="relative">
+                          {/* Avatar - clickable to profile */}
+                          <Link
+                            href={`/profile/${drKimId}`}
+                            className="block w-16 h-16 md:w-16 md:h-16 rounded-full bg-gradient-to-tr from-sky-500 via-blue-500 to-sky-600 p-[2px] group-hover:scale-105 transition-transform duration-200"
+                          >
+                            <div className="w-full h-full rounded-full bg-white p-[2px]">
+                              <div className="relative w-full h-full rounded-full overflow-hidden">
+                                <Image
+                                  src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&h=400&fit=crop&q=80"
+                                  alt="Dr. David Kim"
+                                  fill
+                                  className="object-cover"
+                                />
+                              </div>
                             </div>
-                          </div>
+                          </Link>
+                          {/* Plus/Check badge - toggles add state without navigation */}
+                          {isDrKimAdded ? (
+                            <button
+                              onClick={(e) => handleToggleDoctor(e, drKimId, false)}
+                              className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center shadow border-2 border-white hover:bg-green-600 transition-colors"
+                              aria-label="Remove Dr. Kim"
+                            >
+                              <Check className="w-3 h-3 text-white" strokeWidth={3} />
+                            </button>
+                          ) : (
+                            <button
+                              onClick={(e) => handleToggleDoctor(e, drKimId, false)}
+                              className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-sky-500 rounded-full flex items-center justify-center shadow border-2 border-white hover:bg-sky-600 transition-colors"
+                              aria-label="Add Dr. Kim"
+                            >
+                              <Plus className="w-3 h-3 text-white" strokeWidth={3} />
+                            </button>
+                          )}
                         </div>
-                        {/* Blue plus badge */}
-                        <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-sky-500 rounded-full flex items-center justify-center shadow border-2 border-white">
-                          <Plus className="w-3 h-3 text-white" strokeWidth={3} />
-                        </div>
+                        <p className="text-[10px] md:text-xs font-medium text-gray-700 max-w-[70px] truncate text-center">
+                          Dr. Kim
+                        </p>
+                        <p className="text-[8px] text-gray-500 max-w-[70px] truncate text-center">
+                          Metro Heart
+                        </p>
+                        <p className={`text-[8px] font-medium max-w-[70px] truncate text-center ${isDrKimAdded ? 'text-green-600' : 'text-sky-600'}`}>
+                          {isDrKimAdded ? '✓ Added' : '+ Add'}
+                        </p>
                       </div>
-                      <p className="text-[10px] md:text-xs font-medium text-gray-700 max-w-[70px] truncate text-center">
-                        Dr. Kim
-                      </p>
-                      <p className="text-[8px] text-gray-500 max-w-[70px] truncate text-center">
-                        Metro Heart
-                      </p>
-                      <p className="text-[8px] text-sky-600 font-medium max-w-[70px] truncate text-center">
-                        + Add
-                      </p>
-                    </Link>
-                  )}
+                    );
+                  })()}
                   <div
                     className={`flex flex-col items-center gap-1 flex-shrink-0 group cursor-pointer ${isPremium ? 'opacity-60' : ''}`}
                     onClick={(e) => {

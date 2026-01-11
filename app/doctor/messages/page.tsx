@@ -457,7 +457,7 @@ const MessagesContent = () => {
                 className="w-full py-3 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-sky-600 transition-all shadow-lg flex items-center justify-center gap-2"
               >
                 <Sparkles className="w-5 h-5" />
-                Send Check-in Question
+                Send
               </button>
             </div>
           </div>

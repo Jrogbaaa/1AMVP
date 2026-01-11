@@ -32,12 +32,12 @@ import type { Doctor, User as UserType } from "@/lib/types";
 import type { PreventiveCareProfile } from "@/lib/preventive-care-logic";
 import type { Session } from "next-auth";
 
-// Mock data
+// Mock data - using initials instead of placeholder images
 const MOCK_DOCTOR: Doctor = {
   id: "550e8400-e29b-41d4-a716-446655440001",
   name: "Sarah Johnson",
   specialty: "Cardiology",
-  avatarUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop&q=80",
+  avatarUrl: "",
   clinicName: "Heart Health Clinic",
   clinicAddress: "123 Medical Center Dr, Boston, MA 02115",
   phone: "(617) 555-0100",
@@ -45,14 +45,14 @@ const MOCK_DOCTOR: Doctor = {
   createdAt: new Date().toISOString(),
 };
 
-// Mock doctors for sidebar
+// Mock doctors for sidebar - using initials instead of placeholder images
 const MOCK_DOCTORS: Doctor[] = [
   MOCK_DOCTOR,
   {
     id: "550e8400-e29b-41d4-a716-446655440002",
     name: "Michael Chen",
     specialty: "Cardiology",
-    avatarUrl: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&h=400&fit=crop&q=80",
+    avatarUrl: "",
     clinicName: "Boston Cardiology Center",
     createdAt: new Date().toISOString(),
   },
@@ -60,7 +60,7 @@ const MOCK_DOCTORS: Doctor[] = [
     id: "550e8400-e29b-41d4-a716-446655440003",
     name: "Emily Rodriguez",
     specialty: "Cardiology",
-    avatarUrl: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=400&h=400&fit=crop&q=80",
+    avatarUrl: "",
     clinicName: "Advanced Heart Care",
     createdAt: new Date().toISOString(),
   },
@@ -68,7 +68,7 @@ const MOCK_DOCTORS: Doctor[] = [
     id: "550e8400-e29b-41d4-a716-446655440004",
     name: "Jack Ellis",
     specialty: "Cardiology",
-    avatarUrl: "/images/doctors/doctor-jack.jpg",
+    avatarUrl: "",
     clinicName: "1Another Cardiology",
     createdAt: new Date().toISOString(),
   },
@@ -76,7 +76,7 @@ const MOCK_DOCTORS: Doctor[] = [
     id: "550e8400-e29b-41d4-a716-446655440005",
     name: "Lisa Thompson",
     specialty: "Cardiology",
-    avatarUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop&q=80&sat=-100",
+    avatarUrl: "",
     clinicName: "Heart & Vascular Institute",
     createdAt: new Date().toISOString(),
   },

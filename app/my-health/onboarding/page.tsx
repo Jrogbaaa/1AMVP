@@ -28,31 +28,31 @@ interface OnboardingData {
   dateOfBirth: string;
   sexAtBirth: "male" | "female" | "";
   anatomyPresent: string[];
-  // Screen 2: Pregnancy
+  // Screen 2: Height & Weight (moved up early)
+  heightFeet: number | null;
+  heightInches: number | null;
+  weightLbs: number | null;
+  // Screen 3: Pregnancy (conditional)
   isPregnant: boolean | null;
   weeksPregnant: number | null;
-  // Screen 3: Smoking
+  // Screen 4: Smoking
   smokingStatus: "never" | "former" | "current" | "";
   smokingYears: number | null;
   packsPerDay: number | null;
   quitYear: number | null;
-  // Screen 4: Alcohol
+  // Screen 5: Alcohol
   alcoholFrequency: string;
   drinksPerOccasion: number | null;
-  // Screen 5: Sexual health
+  // Screen 6: Sexual health
   sexuallyActive: boolean | null;
   partnersLast12Months: number | null;
   stiHistory: boolean | null;
   hivRisk: boolean | null;
-  // Screen 6: Medical conditions
+  // Screen 7: Medical conditions
   conditions: string[];
   cancerTypes: string[];
-  // Screen 7: Family history
+  // Screen 8: Family history
   familyHistory: string[];
-  // Screen 8: Height & Weight
-  heightFeet: number | null;
-  heightInches: number | null;
-  weightLbs: number | null;
   // Screen 9: Preventive history
   lastBloodPressure: string;
   lastCholesterol: string;
@@ -176,9 +176,10 @@ export default function PreventiveCareOnboarding() {
     !formData.anatomyPresent.includes("hysterectomy");
 
   // Get actual step number accounting for conditional screens
+  // Pregnancy is now at step 3 (after Height & Weight at step 2)
   const getActualStep = (visualStep: number): number => {
-    if (visualStep <= 1) return visualStep;
-    if (!showPregnancyScreen && visualStep >= 2) {
+    if (visualStep <= 2) return visualStep;
+    if (!showPregnancyScreen && visualStep >= 3) {
       return visualStep + 1;
     }
     return visualStep;
@@ -186,8 +187,8 @@ export default function PreventiveCareOnboarding() {
 
   // Get visual step from actual step
   const getVisualStep = (actualStep: number): number => {
-    if (actualStep <= 1) return actualStep;
-    if (!showPregnancyScreen && actualStep >= 3) {
+    if (actualStep <= 2) return actualStep;
+    if (!showPregnancyScreen && actualStep >= 4) {
       return actualStep - 1;
     }
     return actualStep;
@@ -196,9 +197,9 @@ export default function PreventiveCareOnboarding() {
   const handleNext = () => {
     let nextStep = currentStep + 1;
     
-    // Skip pregnancy screen if not applicable
-    if (currentStep === 1 && !showPregnancyScreen) {
-      nextStep = 3; // Skip to smoking screen
+    // Skip pregnancy screen if not applicable (pregnancy is now at step 3)
+    if (currentStep === 2 && !showPregnancyScreen) {
+      nextStep = 4; // Skip to smoking screen
     }
     
     setCurrentStep(nextStep);
@@ -207,9 +208,9 @@ export default function PreventiveCareOnboarding() {
   const handleBack = () => {
     let prevStep = currentStep - 1;
     
-    // Skip pregnancy screen going back if not applicable
-    if (currentStep === 3 && !showPregnancyScreen) {
-      prevStep = 1;
+    // Skip pregnancy screen going back if not applicable (pregnancy is now at step 3)
+    if (currentStep === 4 && !showPregnancyScreen) {
+      prevStep = 2;
     }
     
     if (prevStep >= 0) {
@@ -310,7 +311,7 @@ export default function PreventiveCareOnboarding() {
   
   const getCurrentStepDisplay = () => {
     if (currentStep === 0) return 0; // Intro screen
-    if (!showPregnancyScreen && currentStep >= 3) {
+    if (!showPregnancyScreen && currentStep >= 4) {
       // If pregnancy screen is skipped, adjust step number
       return currentStep - 1;
     }
@@ -559,8 +560,100 @@ export default function PreventiveCareOnboarding() {
           </div>
         )}
 
-        {/* Screen 2: Pregnancy (Conditional) */}
-        {currentStep === 2 && showPregnancyScreen && (
+        {/* Screen 2: Height & Weight (moved up for better flow) */}
+        {currentStep === 2 && (
+          <div className="animate-fade-in">
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Height & Weight</h2>
+            <p className="text-gray-600 mb-6">This helps determine obesity-related screening recommendations.</p>
+
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Height
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <input
+                      type="number"
+                      min="3"
+                      max="8"
+                      value={formData.heightFeet || ""}
+                      onChange={(e) => updateField("heightFeet", parseInt(e.target.value) || null)}
+                      placeholder="Feet"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none"
+                    />
+                    <span className="text-xs text-gray-500 mt-1 block">ft</span>
+                  </div>
+                  <div>
+                    <input
+                      type="number"
+                      min="0"
+                      max="11"
+                      value={formData.heightInches || ""}
+                      onChange={(e) => updateField("heightInches", parseInt(e.target.value) || null)}
+                      placeholder="Inches"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none"
+                    />
+                    <span className="text-xs text-gray-500 mt-1 block">in</span>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Weight (lbs)
+                </label>
+                <input
+                  type="number"
+                  min="50"
+                  max="700"
+                  value={formData.weightLbs || ""}
+                  onChange={(e) => updateField("weightLbs", parseInt(e.target.value) || null)}
+                  placeholder="e.g., 165"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none"
+                />
+              </div>
+
+              {formData.heightFeet && formData.weightLbs && (
+                <div className="bg-sky-50 rounded-xl p-4 border border-sky-100">
+                  {(() => {
+                    const totalInches = (formData.heightFeet || 0) * 12 + (formData.heightInches || 0);
+                    const bmi = ((formData.weightLbs || 0) / (totalInches * totalInches)) * 703;
+                    const bmiCategory = 
+                      bmi < 18.5 ? "Underweight" :
+                      bmi < 25 ? "Normal" :
+                      bmi < 30 ? "Overweight" : "Obese";
+                    return (
+                      <p className="text-sm text-sky-800">
+                        <strong>BMI:</strong> {bmi.toFixed(1)} ({bmiCategory})
+                      </p>
+                    );
+                  })()}
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-3 mt-8">
+              <button
+                onClick={handleBack}
+                className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors"
+              >
+                Back
+              </button>
+              <button
+                onClick={handleNext}
+                disabled={!formData.heightFeet || !formData.weightLbs}
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-sky-600 text-white rounded-xl font-medium hover:bg-sky-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+              >
+                Continue
+                <ArrowRight className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Screen 3: Pregnancy (Conditional) */}
+        {currentStep === 3 && showPregnancyScreen && (
           <div className="animate-fade-in">
             <h2 className="text-xl font-bold text-gray-900 mb-2">Pregnancy Status</h2>
             <p className="text-gray-600 mb-6">This helps us tailor recommendations.</p>
@@ -629,8 +722,8 @@ export default function PreventiveCareOnboarding() {
           </div>
         )}
 
-        {/* Screen 3: Smoking & Tobacco */}
-        {currentStep === 3 && (
+        {/* Screen 4: Smoking & Tobacco */}
+        {currentStep === 4 && (
           <div className="animate-fade-in">
             <h2 className="text-xl font-bold text-gray-900 mb-2">Smoking & Tobacco</h2>
             <p className="text-gray-600 mb-6">This affects many screening recommendations.</p>
@@ -744,8 +837,8 @@ export default function PreventiveCareOnboarding() {
           </div>
         )}
 
-        {/* Screen 4: Alcohol Use */}
-        {currentStep === 4 && (
+        {/* Screen 5: Alcohol Use */}
+        {currentStep === 5 && (
           <div className="animate-fade-in">
             <h2 className="text-xl font-bold text-gray-900 mb-2">Alcohol Use</h2>
             <p className="text-gray-600 mb-6">This helps determine counseling recommendations.</p>
@@ -819,8 +912,8 @@ export default function PreventiveCareOnboarding() {
           </div>
         )}
 
-        {/* Screen 5: Sexual Activity & STI Risk */}
-        {currentStep === 5 && (
+        {/* Screen 6: Sexual Activity & STI Risk */}
+        {currentStep === 6 && (
           <div className="animate-fade-in">
             <h2 className="text-xl font-bold text-gray-900 mb-2">Sexual Health</h2>
             <p className="text-gray-600 mb-6">This helps determine HIV/STI screening recommendations.</p>
@@ -945,8 +1038,8 @@ export default function PreventiveCareOnboarding() {
           </div>
         )}
 
-        {/* Screen 6: Medical Conditions */}
-        {currentStep === 6 && (
+        {/* Screen 7: Medical Conditions */}
+        {currentStep === 7 && (
           <div className="animate-fade-in">
             <h2 className="text-xl font-bold text-gray-900 mb-2">Medical Conditions</h2>
             <p className="text-gray-600 mb-6">Have you ever been told you have any of the following?</p>
@@ -1023,8 +1116,8 @@ export default function PreventiveCareOnboarding() {
           </div>
         )}
 
-        {/* Screen 7: Family History */}
-        {currentStep === 7 && (
+        {/* Screen 8: Family History */}
+        {currentStep === 8 && (
           <div className="animate-fade-in">
             <h2 className="text-xl font-bold text-gray-900 mb-2">Family History</h2>
             <p className="text-gray-600 mb-6">
@@ -1077,98 +1170,6 @@ export default function PreventiveCareOnboarding() {
               <button
                 onClick={handleNext}
                 className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-sky-600 text-white rounded-xl font-medium hover:bg-sky-700 transition-colors"
-              >
-                Continue
-                <ArrowRight className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Screen 8: Height & Weight */}
-        {currentStep === 8 && (
-          <div className="animate-fade-in">
-            <h2 className="text-xl font-bold text-gray-900 mb-2">Height & Weight</h2>
-            <p className="text-gray-600 mb-6">This helps determine obesity-related screening recommendations.</p>
-
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Height
-                </label>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <input
-                      type="number"
-                      min="3"
-                      max="8"
-                      value={formData.heightFeet || ""}
-                      onChange={(e) => updateField("heightFeet", parseInt(e.target.value) || null)}
-                      placeholder="Feet"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none"
-                    />
-                    <span className="text-xs text-gray-500 mt-1 block">ft</span>
-                  </div>
-                  <div>
-                    <input
-                      type="number"
-                      min="0"
-                      max="11"
-                      value={formData.heightInches || ""}
-                      onChange={(e) => updateField("heightInches", parseInt(e.target.value) || null)}
-                      placeholder="Inches"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none"
-                    />
-                    <span className="text-xs text-gray-500 mt-1 block">in</span>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Weight (lbs)
-                </label>
-                <input
-                  type="number"
-                  min="50"
-                  max="700"
-                  value={formData.weightLbs || ""}
-                  onChange={(e) => updateField("weightLbs", parseInt(e.target.value) || null)}
-                  placeholder="e.g., 165"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none"
-                />
-              </div>
-
-              {formData.heightFeet && formData.weightLbs && (
-                <div className="bg-sky-50 rounded-xl p-4 border border-sky-100">
-                  {(() => {
-                    const totalInches = (formData.heightFeet || 0) * 12 + (formData.heightInches || 0);
-                    const bmi = ((formData.weightLbs || 0) / (totalInches * totalInches)) * 703;
-                    const bmiCategory = 
-                      bmi < 18.5 ? "Underweight" :
-                      bmi < 25 ? "Normal" :
-                      bmi < 30 ? "Overweight" : "Obese";
-                    return (
-                      <p className="text-sm text-sky-800">
-                        <strong>BMI:</strong> {bmi.toFixed(1)} ({bmiCategory})
-                      </p>
-                    );
-                  })()}
-                </div>
-              )}
-            </div>
-
-            <div className="flex gap-3 mt-8">
-              <button
-                onClick={handleBack}
-                className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors"
-              >
-                Back
-              </button>
-              <button
-                onClick={handleNext}
-                disabled={!formData.heightFeet || !formData.weightLbs}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-sky-600 text-white rounded-xl font-medium hover:bg-sky-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
               >
                 Continue
                 <ArrowRight className="w-5 h-5" />

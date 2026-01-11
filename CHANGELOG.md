@@ -5,6 +5,99 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.54.0] - 2026-01-11
+
+### 🚀 Universal Send Experience
+
+**Unified Send Flow:**
+- Messages section "Send" button now navigates to universal send page (`/doctor/send`)
+- Send experience is now consistent across the entire doctor portal
+- Patient-specific send modals remain unchanged when on individual patient pages
+
+**Video Selection Now Optional:**
+- Added "Skip Videos" button to send flow when no videos selected
+- Users can now send message-only communications without selecting videos
+- Review page adapts to show "Message Only" section when no videos selected
+- Send button changes to "Send Message" for message-only sends
+- Requires message content when sending without videos
+
+**Send Page Updates (`app/doctor/send/page.tsx`):**
+- Changed page title to "Send to Patients" (from "Send Content to Patients")
+- Updated description to include "messages and health content"
+- Success screen shows "Message Sent Successfully!" for message-only sends
+- Info text adapts based on whether videos are included
+
+### 🎨 Landing Page Redesign
+
+**Hero Section Updates (`app/page.tsx`):**
+- Changed title to "1Another Intelligent Health"
+- Added "Healthcare Reimagined" tagline directly underneath
+- Expanded to 4 feature bullets (was 3):
+  1. Trusted and delivered by doctors themselves (NEW - first position)
+  2. Trusted video information from your doctors and other specialists
+  3. Real-time check-ins to keep you on track
+  4. Simple and effective reminders for your care
+
+**Secure Messaging Feature Card:**
+- Renamed to "Secure and Controlled Messaging"
+- Updated description: "A controlled and simple way to stay in touch with your patients by delivering accurate health information and simple check-ins and important reminders."
+- Added 3 bullet points:
+  - Save time
+  - Drive better outcomes
+  - Counter misinformation
+
+### 🏥 Doctor Portal Improvements
+
+**Send Flow Reordered:**
+- Changed universal send flow from "Videos → Patients" to "Patients → Videos"
+- Step 1: Select Patients, Step 2: Choose Videos, Step 3: Review & Send
+- Updated all navigation, back buttons, and edit buttons accordingly
+
+**Button Text Standardization:**
+- Changed "Send Check-in Question" to "Send" in messages section (`app/doctor/messages/page.tsx`)
+- Changed "Send Check-in Question" to "Send" in My Check-ins section (`app/doctor/page.tsx`)
+
+### 👤 Patient Portal Improvements
+
+**Inbox Updates (`DoctorCommunicationsWidget.tsx`):**
+- Changed title from "From Your Doctor" to "Inbox: Messages from Your Doctors"
+- Removed all placeholder doctor images - now shows initials only
+- Added Q&A response system with 3-box options:
+  - 🌱 Just started (emerald)
+  - ⏳ In progress (amber)
+  - ✅ Completed cycle (sky blue)
+- Doctor avatars in messages/reminders now clickable to navigate to profile
+
+**Patient Dashboard (`app/my-health/AuthenticatedDashboard.tsx`):**
+- Removed placeholder doctor images from MOCK_DOCTORS
+- All doctor avatars now show initials with gradient background
+
+### 🔍 Discover Page Fix
+
+**Dr. Kim Plus Button (`app/discover/page.tsx`):**
+- Separated avatar (Link to profile) from plus/check button
+- Clicking blue plus now toggles to green checkmark without navigation
+- Clicking avatar/image behind badge navigates to doctor's profile page
+- Added proper toggle state management for Dr. Kim suggested doctor
+
+### 📋 Onboarding Flow Optimization
+
+**Step Reordering (`app/my-health/onboarding/page.tsx`):**
+- Moved "Height & Weight" from step 8 to step 2 (right after Core Basics)
+- Updated step numbers: Pregnancy→3, Smoking→4, Alcohol→5, Sexual Health→6, Medical Conditions→7, Family History→8
+- Updated navigation logic for conditional pregnancy screen skip
+- Updated step display calculations
+
+### 📁 Files Changed
+- `app/page.tsx` - Landing page hero and feature cards
+- `app/doctor/page.tsx` - Messages section send button
+- `app/doctor/messages/page.tsx` - Send button text
+- `app/doctor/send/page.tsx` - Universal send flow with optional videos
+- `app/discover/page.tsx` - Dr. Kim plus button behavior
+- `app/my-health/onboarding/page.tsx` - Step reordering
+- `app/my-health/AuthenticatedDashboard.tsx` - Removed placeholder images
+- `components/DoctorCommunicationsWidget.tsx` - Inbox title, Q&A responses, clickable avatars
+
 ## [1.53.0] - 2026-01-11
 
 ### 🎨 Design System Implementation

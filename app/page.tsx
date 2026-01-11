@@ -126,20 +126,20 @@ export default function LandingPage() {
           {/* Left: Text content */}
           <div className="text-center lg:text-left">
             <h1 className="animate-reveal reveal-delay-1 text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight tracking-tight">
-              <span className="text-gradient">Intelligent</span>{" "}
-              Health
+              <span className="text-gradient">1Another</span>{" "}
+              Intelligent Health
             </h1>
             
-            <p className="animate-reveal reveal-delay-2 mt-6 text-lg sm:text-xl text-white/70 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-              To deliver trusted, easy-to-consume health information to the world directly from doctors.
-            </p>
-
-            <p className="animate-reveal reveal-delay-3 mt-4 text-base sm:text-lg text-white/90 font-medium max-w-xl mx-auto lg:mx-0">
-              Trusted and delivered by doctors themselves.
+            <p className="animate-reveal reveal-delay-2 mt-4 text-2xl sm:text-3xl font-semibold text-white/90 max-w-xl mx-auto lg:mx-0">
+              Healthcare Reimagined
             </p>
 
             {/* Feature bullets */}
-            <ul className="animate-reveal reveal-delay-4 mt-8 space-y-4 text-left max-w-xl mx-auto lg:mx-0">
+            <ul className="animate-reveal reveal-delay-3 mt-8 space-y-4 text-left max-w-xl mx-auto lg:mx-0">
+              <li className="flex items-start gap-3">
+                <Stethoscope className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0" />
+                <span className="text-white/80">Trusted and delivered by doctors themselves</span>
+              </li>
               <li className="flex items-start gap-3">
                 <Video className="w-5 h-5 text-[#00BFA6] mt-0.5 flex-shrink-0" />
                 <span className="text-white/80">Trusted video information from your doctors and other specialists</span>
@@ -155,7 +155,7 @@ export default function LandingPage() {
             </ul>
 
             {/* CTAs */}
-            <div className="animate-reveal reveal-delay-5 mt-10 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+            <div className="animate-reveal reveal-delay-4 mt-10 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Link
                 href="/auth?role=patient"
                 className="group relative px-8 py-4 bg-brand-gradient text-white font-bold text-lg rounded-2xl hover:scale-105 transition-all duration-300 glow-brand flex items-center justify-center gap-3"
@@ -175,7 +175,7 @@ export default function LandingPage() {
             </div>
 
             {/* Trust indicators */}
-            <div className="animate-reveal reveal-delay-6 mt-10 flex items-center justify-center lg:justify-start gap-6 text-white/50 text-sm">
+            <div className="animate-reveal reveal-delay-5 mt-10 flex items-center justify-center lg:justify-start gap-6 text-white/50 text-sm">
               <div className="flex items-center gap-2">
                 <Shield className="w-4 h-4 text-emerald-400" />
                 <span>HIPAA Compliant</span>
@@ -188,7 +188,7 @@ export default function LandingPage() {
           </div>
 
           {/* Right: Phone mockup */}
-          <div className="animate-reveal reveal-delay-5 relative flex justify-center lg:justify-end">
+          <div className="animate-reveal reveal-delay-4 relative flex justify-center lg:justify-end">
             <div className="relative">
               {/* Glow behind phone */}
               <div className="absolute -inset-8 bg-gradient-to-r from-[#00BFA6]/20 to-[#3ac1e1]/20 rounded-[3rem] blur-3xl" />
@@ -290,16 +290,30 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Secure Messaging */}
+            {/* Secure and Controlled Messaging */}
             <div className="animate-reveal reveal-delay-4">
               <div className="h-full p-8 rounded-2xl glass gradient-border-hover hover-lift group">
                 <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#0ba999] to-[#3ac1e1] flex items-center justify-center mb-5 group-hover:glow-cyan transition-all">
                   <MessageSquare className="w-7 h-7 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-3">Secure Messaging</h3>
-                <p className="text-white/60 leading-relaxed">
-                  HIPAA-compliant communication between doctors and patients with end-to-end encryption.
+                <h3 className="text-xl font-bold text-white mb-3">Secure and Controlled Messaging</h3>
+                <p className="text-white/60 leading-relaxed mb-4">
+                  A controlled and simple way to stay in touch with your patients by delivering accurate health information and simple check-ins and important reminders.
                 </p>
+                <ul className="space-y-2 text-white/60 text-sm">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                    <span>Save time</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                    <span>Drive better outcomes</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                    <span>Counter misinformation</span>
+                  </li>
+                </ul>
               </div>
             </div>
 

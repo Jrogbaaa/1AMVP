@@ -5,6 +5,34 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.55.0] - 2026-01-11
+
+### 🎨 Landing Page Hero Redesign
+
+**Navigation Simplified (`app/page.tsx`):**
+- Removed logo from top-left navigation
+- Navigation now only shows "Discover" and "Sign In" links on the right
+
+**Hero Section Redesign:**
+- Now uses actual `Logo` component with `withTagline` variant
+- Displays full SVG logo with gradient "1A" icon and "1Another" wordmark
+- "Intelligent Health" tagline appears below the logo (built into SVG)
+- Logo is prominently sized (h-24 to h-32 responsive)
+- "Healthcare Reimagined" appears as separate heading below with spacing
+
+**Features Section Reduced to 3 Boxes:**
+- Removed "AI-Powered Avatars" feature box
+- Changed from 2x2 grid to 3-column grid layout
+- Remaining features:
+  1. Personalized Videos
+  2. Secure and Controlled Messaging
+  3. Health Tracking
+- Updated animation delays (reveal-delay-2, 3, 4)
+
+**Code Cleanup:**
+- Removed unused `Sparkles` icon import
+- Removed unused `FEATURES` constant array
+
 ## [1.54.0] - 2026-01-11
 
 ### 🚀 Universal Send Experience

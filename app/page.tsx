@@ -5,7 +5,6 @@ import Image from "next/image";
 import { Logo } from "@/components/Logo";
 import { 
   Video, 
-  Sparkles, 
   MessageSquare, 
   Shield, 
   Lock, 
@@ -65,28 +64,6 @@ const AnimatedCounter = ({
   );
 };
 
-// Feature card data
-const FEATURES = [
-  {
-    icon: <Video className="w-8 h-8" />,
-    title: "Personalized Videos",
-    description: "Doctors create custom follow-up videos tailored to each patient's care plan and conditions.",
-    size: "large",
-  },
-  {
-    icon: <Sparkles className="w-7 h-7" />,
-    title: "AI-Powered Avatars",
-    description: "Generate videos with your likeness using cutting-edge AI technology.",
-    size: "medium",
-  },
-  {
-    icon: <MessageSquare className="w-6 h-6" />,
-    title: "Secure Messaging",
-    description: "HIPAA-compliant communication between doctors and patients.",
-    size: "small",
-  },
-];
-
 // Stats data
 const STATS = [
   { value: 50000, suffix: "+", label: "Videos Delivered" },
@@ -102,8 +79,7 @@ export default function LandingPage() {
       <div className="grain-overlay" />
       
       {/* Navigation */}
-      <nav className="relative z-10 flex items-center justify-between px-6 py-5 max-w-7xl mx-auto">
-        <Logo variant="full" className="h-10 w-auto" />
+      <nav className="relative z-10 flex items-center justify-end px-6 py-5 max-w-7xl mx-auto">
         <div className="flex items-center gap-4">
           <Link
             href="/discover"
@@ -125,14 +101,14 @@ export default function LandingPage() {
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           {/* Left: Text content */}
           <div className="text-center lg:text-left">
-            <h1 className="animate-reveal reveal-delay-1 text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight tracking-tight">
-              <span className="text-gradient">1Another</span>{" "}
-              Intelligent Health
-            </h1>
+            {/* Big branded logo with tagline */}
+            <div className="animate-reveal reveal-delay-1">
+              <Logo variant="withTagline" className="h-24 sm:h-28 lg:h-32 w-auto mx-auto lg:mx-0" />
+            </div>
             
-            <p className="animate-reveal reveal-delay-2 mt-4 text-2xl sm:text-3xl font-semibold text-white/90 max-w-xl mx-auto lg:mx-0">
+            <h1 className="animate-reveal reveal-delay-2 mt-8 text-2xl sm:text-3xl lg:text-4xl font-bold text-white max-w-xl mx-auto lg:mx-0">
               Healthcare Reimagined
-            </p>
+            </h1>
 
             {/* Feature bullets */}
             <ul className="animate-reveal reveal-delay-3 mt-8 space-y-4 text-left max-w-xl mx-auto lg:mx-0">
@@ -262,8 +238,8 @@ export default function LandingPage() {
             </p>
           </div>
 
-          {/* Even 2x2 feature grid */}
-          <div className="grid md:grid-cols-2 gap-6">
+          {/* 3-column feature grid */}
+          <div className="grid md:grid-cols-3 gap-6">
             {/* Personalized Videos */}
             <div className="animate-reveal reveal-delay-2">
               <div className="h-full p-8 rounded-2xl glass gradient-border-hover hover-lift group">
@@ -277,21 +253,8 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* AI-Powered Avatars */}
-            <div className="animate-reveal reveal-delay-3">
-              <div className="h-full p-8 rounded-2xl glass gradient-border-hover hover-lift group">
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#66b36c] to-[#0ba999] flex items-center justify-center mb-5 group-hover:glow-teal transition-all">
-                  <Sparkles className="w-7 h-7 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">AI-Powered Avatars</h3>
-                <p className="text-white/60 leading-relaxed">
-                  Generate videos with your likeness using cutting-edge AI. Your face, your voice, scaled infinitely.
-                </p>
-              </div>
-            </div>
-
             {/* Secure and Controlled Messaging */}
-            <div className="animate-reveal reveal-delay-4">
+            <div className="animate-reveal reveal-delay-3">
               <div className="h-full p-8 rounded-2xl glass gradient-border-hover hover-lift group">
                 <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#0ba999] to-[#3ac1e1] flex items-center justify-center mb-5 group-hover:glow-cyan transition-all">
                   <MessageSquare className="w-7 h-7 text-white" />
@@ -318,7 +281,7 @@ export default function LandingPage() {
             </div>
 
             {/* Health Tracking */}
-            <div className="animate-reveal reveal-delay-5">
+            <div className="animate-reveal reveal-delay-4">
               <div className="h-full p-8 rounded-2xl glass gradient-border-hover hover-lift group">
                 <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mb-5 group-hover:glow-teal transition-all">
                   <CheckCircle className="w-7 h-7 text-white" />

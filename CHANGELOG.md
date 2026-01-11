@@ -5,6 +5,54 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.53.0] - 2026-01-11
+
+### 🎨 Design System Implementation
+
+**Typography Updates:**
+- Added **AirbnbCereal** font for all headings (local font files in `public/fonts/`)
+- Replaced Plus Jakarta Sans with **Manrope** (Google Fonts) for body text
+- All h1-h6 elements now use AirbnbCereal with bold weight
+- Heading sizes remain component-controlled via Tailwind classes
+- Added optional `.ds-h1` through `.ds-h6` classes for design system sizes when needed
+
+**Brand Color Palette (`app/globals.css`):**
+- Sand: #F1EFE4 (backgrounds)
+- Green: #66B36C (brand accent)
+- Emerald: #00a388 (primary actions)
+- Light Blue: #3ac1e1 (highlights/selected states)
+- Black 1: #1D1D1D (primary text)
+- Black 2: #282828 (secondary text)
+- Grays: #828282, #BDBDBD, #E0E0E0, #F5F5F5 (UI states)
+- Error: #EB5757, Warning: #F2C94C, Success: #27AE60
+
+**UI Component Updates:**
+- **Button** (`components/ui/button.tsx`): Emerald-to-Green gradient primary, new `accent` variant
+- **Input** (`components/ui/input.tsx`): Light Blue focus state, success/warning/error states
+- **Card** (`components/ui/card.tsx`): Updated shadows and Gray 4 borders
+
+**CSS Variables:**
+- Updated shadcn/ui CSS variables to use new brand colors
+- Primary: Emerald (#00a388)
+- Accent: Light Blue (#3ac1e1)
+- Destructive: Error red (#EB5757)
+- All muted/border colors now use design system grays
+
+**Files Changed:**
+- `app/layout.tsx` - Font configuration (AirbnbCereal local + Manrope Google)
+- `app/globals.css` - Colors, typography, CSS variables
+- `components/ui/button.tsx` - Button variants
+- `components/ui/input.tsx` - Input states
+- `components/ui/card.tsx` - Card styling
+- `public/fonts/` - AirbnbCereal font files (.otf)
+
+### 🐛 Bug Fixes
+
+**Demo Message Validation Error:**
+- Fixed console error when expanding demo messages in `DoctorCommunicationsWidget`
+- Demo messages with fake IDs (e.g., "demo-msg-1") no longer trigger Convex API calls
+- Added check to skip `markMessageAsRead` for demo message IDs
+
 ## [1.52.0] - 2026-01-07
 
 ### 🏥 Doctor Portal Messaging Enhancements

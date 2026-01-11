@@ -302,8 +302,8 @@ const DoctorCommunicationsWidgetInner = ({
     } else {
       setExpandedId(itemId);
       
-      // Mark message as read if unread
-      if (item.type === "message" && !item.data.readAt) {
+      // Mark message as read if unread (skip demo messages)
+      if (item.type === "message" && !item.data.readAt && !String(item.data._id).startsWith("demo-")) {
         try {
           await markMessageAsRead({ messageId: item.data._id });
         } catch (error) {

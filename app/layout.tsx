@@ -1,22 +1,57 @@
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans, Lora, IBM_Plex_Mono } from "next/font/google";
+import { Manrope, IBM_Plex_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
 import { Providers } from "@/components/Providers";
 
-const plusJakartaSans = Plus_Jakarta_Sans({ 
+// AirbnbCereal for headings (local font)
+const airbnbCereal = localFont({
+  src: [
+    {
+      path: "../public/fonts/AirbnbCereal_W_Lt.otf",
+      weight: "300",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/AirbnbCereal_W_Bk.otf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/AirbnbCereal_W_Md.otf",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/AirbnbCereal_W_Bd.otf",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/AirbnbCereal_W_XBd.otf",
+      weight: "800",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/AirbnbCereal_W_Blk.otf",
+      weight: "900",
+      style: "normal",
+    },
+  ],
+  variable: "--font-heading",
+  display: "swap",
+});
+
+// Manrope for body text (Google Fonts)
+const manrope = Manrope({ 
   subsets: ["latin"], 
   variable: "--font-sans",
   display: "swap",
 });
 
-const lora = Lora({ 
-  subsets: ["latin"], 
-  variable: "--font-serif",
-  display: "swap",
-});
-
+// IBM Plex Mono for code
 const ibmPlexMono = IBM_Plex_Mono({ 
   subsets: ["latin"], 
   weight: ["400", "500", "600", "700"],
@@ -49,11 +84,11 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 5, // Allow zooming up to 5x for accessibility (WCAG 2.1 AA)
-  userScalable: true, // Enable zooming for users with visual impairments
+  maximumScale: 5,
+  userScalable: true,
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+    { media: "(prefers-color-scheme: dark)", color: "#1D1D1D" },
   ],
 };
 
@@ -63,12 +98,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={cn(plusJakartaSans.variable, lora.variable, ibmPlexMono.variable)} suppressHydrationWarning>
+    <html 
+      lang="en" 
+      className={cn(
+        airbnbCereal.variable, 
+        manrope.variable, 
+        ibmPlexMono.variable
+      )} 
+      suppressHydrationWarning
+    >
       <body className={cn(
         "min-h-screen bg-background font-sans antialiased",
-        plusJakartaSans.variable,
-        lora.variable,
-        ibmPlexMono.variable
+        manrope.className
       )}>
         <Providers>
           <ConvexClientProvider>
@@ -79,4 +120,3 @@ export default function RootLayout({
     </html>
   );
 }
-

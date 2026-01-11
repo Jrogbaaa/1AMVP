@@ -9,16 +9,17 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-gradient-to-r from-[#00BFA6] to-[#00A6CE] text-white shadow-md shadow-[#00BFA6]/20 hover:shadow-lg hover:shadow-[#00BFA6]/30 hover:-translate-y-0.5 focus-visible:ring-[#00BFA6]",
+        default: "bg-gradient-to-r from-[#00a388] to-[#66B36C] text-white shadow-md shadow-[#00a388]/20 hover:shadow-lg hover:shadow-[#00a388]/30 hover:-translate-y-0.5 focus-visible:ring-[#00a388]",
         destructive:
-          "bg-red-500 text-white hover:bg-red-600 focus-visible:ring-red-500/50",
+          "bg-[#EB5757] text-white hover:bg-[#d94444] focus-visible:ring-[#EB5757]/50",
         outline:
-          "border-2 border-[#00BFA6] bg-white text-[#00A6CE] hover:bg-[#00BFA6]/5 focus-visible:ring-[#00BFA6]",
+          "border-2 border-[#00a388] bg-white text-[#00a388] hover:bg-[#00a388]/5 focus-visible:ring-[#00a388]",
         secondary:
-          "bg-gray-100 text-gray-700 hover:bg-gray-200 focus-visible:ring-gray-400",
+          "bg-[#F5F5F5] text-[#1D1D1D] hover:bg-[#E0E0E0] focus-visible:ring-[#BDBDBD]",
         ghost:
-          "text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:ring-gray-400",
-        link: "text-[#00A6CE] underline-offset-4 hover:underline focus-visible:ring-[#00A6CE]",
+          "text-[#282828] hover:bg-[#F5F5F5] hover:text-[#1D1D1D] focus-visible:ring-[#BDBDBD]",
+        link: "text-[#00a388] underline-offset-4 hover:underline focus-visible:ring-[#00a388]",
+        accent: "bg-[#3ac1e1] text-white hover:bg-[#2eb0d0] focus-visible:ring-[#3ac1e1]",
       },
       size: {
         default: "h-10 px-5 py-2",

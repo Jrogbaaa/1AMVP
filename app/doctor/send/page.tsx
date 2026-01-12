@@ -18,6 +18,13 @@ import {
   Mail,
   AlertCircle,
   ArrowLeft,
+  MessageCircle,
+  Heart,
+  Pill,
+  Apple,
+  Activity,
+  Calendar,
+  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -42,6 +49,119 @@ interface Chapter {
   title: string;
   videos: VideoItem[];
 }
+
+// Check-in questions (reused from messages page)
+interface CheckInQuestion {
+  id: string;
+  category: "wellness" | "medication" | "diet" | "activity" | "follow-up";
+  question: string;
+  icon: React.ReactNode;
+  options: { id: string; label: string; emoji: string }[];
+}
+
+const CHECK_IN_QUESTIONS: CheckInQuestion[] = [
+  {
+    id: "feeling-today",
+    category: "wellness",
+    question: "How are you feeling today?",
+    icon: <Heart className="w-5 h-5" />,
+    options: [
+      { id: "great", label: "Great", emoji: "😊" },
+      { id: "good", label: "Good", emoji: "🙂" },
+      { id: "okay", label: "Okay", emoji: "😐" },
+      { id: "not-great", label: "Not Great", emoji: "😔" },
+    ],
+  },
+  {
+    id: "took-meds",
+    category: "medication",
+    question: "Did you take your medications today?",
+    icon: <Pill className="w-5 h-5" />,
+    options: [
+      { id: "yes-all", label: "Yes, all of them", emoji: "✅" },
+      { id: "yes-some", label: "Yes, some of them", emoji: "🔶" },
+      { id: "no-forgot", label: "No, I forgot", emoji: "😅" },
+      { id: "no-side-effects", label: "No, side effects", emoji: "⚠️" },
+    ],
+  },
+  {
+    id: "meds-working",
+    category: "medication",
+    question: "How are your medications working?",
+    icon: <Pill className="w-5 h-5" />,
+    options: [
+      { id: "working-well", label: "Working well", emoji: "👍" },
+      { id: "some-improvement", label: "Some improvement", emoji: "📈" },
+      { id: "no-change", label: "No change yet", emoji: "🤔" },
+      { id: "side-effects", label: "Having side effects", emoji: "💬" },
+    ],
+  },
+  {
+    id: "diet-changes",
+    category: "diet",
+    question: "Have you made changes to your diet?",
+    icon: <Apple className="w-5 h-5" />,
+    options: [
+      { id: "yes-following", label: "Yes, following plan", emoji: "🥗" },
+      { id: "partially", label: "Partially", emoji: "🍽️" },
+      { id: "struggling", label: "Struggling to change", emoji: "😅" },
+      { id: "need-guidance", label: "Need more guidance", emoji: "📚" },
+    ],
+  },
+  {
+    id: "activity-level",
+    category: "activity",
+    question: "How active have you been this week?",
+    icon: <Activity className="w-5 h-5" />,
+    options: [
+      { id: "very-active", label: "Very active", emoji: "🏃" },
+      { id: "moderately", label: "Moderately active", emoji: "🚶" },
+      { id: "light", label: "Light activity", emoji: "🧘" },
+      { id: "sedentary", label: "Not much movement", emoji: "🛋️" },
+    ],
+  },
+  {
+    id: "symptoms",
+    category: "wellness",
+    question: "Any new symptoms to report?",
+    icon: <Heart className="w-5 h-5" />,
+    options: [
+      { id: "no-symptoms", label: "No new symptoms", emoji: "✨" },
+      { id: "mild", label: "Mild symptoms", emoji: "🤏" },
+      { id: "moderate", label: "Moderate symptoms", emoji: "⚠️" },
+      { id: "severe", label: "Severe symptoms", emoji: "🚨" },
+    ],
+  },
+  {
+    id: "schedule-followup",
+    category: "follow-up",
+    question: "Ready to schedule your follow-up?",
+    icon: <Calendar className="w-5 h-5" />,
+    options: [
+      { id: "yes-schedule", label: "Yes, schedule now", emoji: "📅" },
+      { id: "need-time", label: "Need to check calendar", emoji: "🗓️" },
+      { id: "later", label: "Remind me later", emoji: "⏰" },
+      { id: "questions", label: "Have questions first", emoji: "❓" },
+    ],
+  },
+];
+
+const getCategoryColor = (category: CheckInQuestion["category"]) => {
+  switch (category) {
+    case "wellness":
+      return "bg-rose-100 text-rose-600";
+    case "medication":
+      return "bg-blue-100 text-blue-600";
+    case "diet":
+      return "bg-green-100 text-green-600";
+    case "activity":
+      return "bg-orange-100 text-orange-600";
+    case "follow-up":
+      return "bg-purple-100 text-purple-600";
+    default:
+      return "bg-gray-100 text-gray-600";
+  }
+};
 
 const MOCK_PATIENTS: Patient[] = [
   {
@@ -147,14 +267,13 @@ const SendContentPage = () => {
   const preselectedChapterId = searchParams.get("chapter");
   const preselectedVideoId = searchParams.get("video");
 
-  // When coming from patient profile, skip patient selection (2-step flow)
-  // Otherwise use full 3-step flow
+  // When coming from patient profile, skip patient selection
   const isFromPatientProfile = !!preselectedPatientId;
   const hasPreselectedVideo = !!preselectedVideoId || !!preselectedChapterId;
   
-  // For patient profile flow: step 1 = Videos, step 2 = Review & Send (skip patient selection)
-  // For general flow: step 1 = Patients, step 2 = Videos, step 3 = Review & Send
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  // New 4-step flow: 1 = Patients, 2 = Videos, 3 = Check-in/Message, 4 = Review & Send
+  // For patient profile flow: step 1 = Videos, step 2 = Check-in/Message, step 3 = Review & Send (skip patient selection)
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [selectedPatients, setSelectedPatients] = useState<Set<string>>(
     preselectedPatientId ? new Set([preselectedPatientId]) : new Set()
   );
@@ -182,6 +301,7 @@ const SendContentPage = () => {
   const [patientSearch, setPatientSearch] = useState("");
   const [contentSearch, setContentSearch] = useState("");
   const [personalMessage, setPersonalMessage] = useState("");
+  const [selectedCheckIns, setSelectedCheckIns] = useState<Set<string>>(new Set());
   const [isSending, setIsSending] = useState(false);
   const [sendSuccess, setSendSuccess] = useState(false);
 
@@ -254,6 +374,18 @@ const SendContentPage = () => {
     });
   };
 
+  const handleToggleCheckIn = (questionId: string) => {
+    setSelectedCheckIns((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(questionId)) {
+        newSet.delete(questionId);
+      } else {
+        newSet.add(questionId);
+      }
+      return newSet;
+    });
+  };
+
   const handleSend = async () => {
     setIsSending(true);
     // Simulate API call
@@ -266,21 +398,61 @@ const SendContentPage = () => {
   const selectedVideosList = MOCK_CHAPTERS.flatMap((c) =>
     c.videos.filter((v) => selectedVideos.has(v.id))
   );
+  const selectedCheckInsList = CHECK_IN_QUESTIONS.filter((q) => selectedCheckIns.has(q.id));
+
+  // Calculate actual step number accounting for patient profile flow
+  const getDisplayStep = () => {
+    if (isFromPatientProfile) {
+      // Map internal steps to display: 1->1, 2->2, 3->3, 4->3
+      if (step === 1) return 1; // Videos
+      if (step === 2) return 2; // Check-in/Message
+      return 3; // Review & Send
+    }
+    return step;
+  };
+
+  // Get the actual step for display purposes
+  const getTotalSteps = () => isFromPatientProfile ? 3 : 4;
+  
+  // Navigate between steps based on flow type
+  const handleNextStep = () => {
+    if (isFromPatientProfile) {
+      if (step === 1) setStep(2);
+      else if (step === 2) setStep(4);
+    } else {
+      if (step < 4) setStep((step + 1) as 1 | 2 | 3 | 4);
+    }
+  };
+
+  const handlePrevStep = () => {
+    if (isFromPatientProfile) {
+      if (step === 2) setStep(1);
+      else if (step === 4) setStep(2);
+    } else {
+      if (step > 1) setStep((step - 1) as 1 | 2 | 3 | 4);
+    }
+  };
 
   if (sendSuccess) {
-    const isMessageOnly = selectedVideosList.length === 0;
+    const hasVideos = selectedVideosList.length > 0;
+    const hasCheckIns = selectedCheckInsList.length > 0;
+    const hasMessage = personalMessage.trim().length > 0;
+    
     return (
       <div className="max-w-2xl mx-auto text-center py-16">
         <div className="w-20 h-20 mx-auto mb-6 bg-emerald-100 rounded-full flex items-center justify-center">
           <CheckCircle className="w-10 h-10 text-emerald-600" />
         </div>
         <h1 className="text-2xl font-bold text-gray-900 mb-3">
-          {isMessageOnly ? "Message Sent Successfully!" : "Content Sent Successfully!"}
+          Content Sent Successfully!
         </h1>
         <p className="text-gray-500 mb-8">
-          {isMessageOnly 
-            ? `Your message was sent to ${selectedPatientsList.length} patient${selectedPatientsList.length !== 1 ? "s" : ""}. They will receive a notification shortly.`
-            : `${selectedVideosList.length} video${selectedVideosList.length !== 1 ? "s" : ""} sent to ${selectedPatientsList.length} patient${selectedPatientsList.length !== 1 ? "s" : ""}. They will receive a notification shortly.`}
+          {hasVideos && `${selectedVideosList.length} video${selectedVideosList.length !== 1 ? "s" : ""}`}
+          {hasVideos && (hasCheckIns || hasMessage) && ", "}
+          {hasCheckIns && `${selectedCheckInsList.length} check-in${selectedCheckInsList.length !== 1 ? "s" : ""}`}
+          {hasCheckIns && hasMessage && ", "}
+          {hasMessage && "a message"}
+          {` sent to ${selectedPatientsList.length} patient${selectedPatientsList.length !== 1 ? "s" : ""}. They will receive a notification shortly.`}
         </p>
         <div className="flex items-center justify-center gap-4">
           <Link
@@ -295,6 +467,7 @@ const SendContentPage = () => {
               setStep(1);
               setSelectedPatients(new Set());
               setSelectedVideos(new Set());
+              setSelectedCheckIns(new Set());
               setPersonalMessage("");
             }}
             className="px-6 py-3 bg-sky-600 text-white font-medium rounded-xl hover:bg-sky-700 transition-colors"
@@ -305,6 +478,17 @@ const SendContentPage = () => {
       </div>
     );
   }
+
+  // Render step labels based on flow type
+  const getStepLabels = () => {
+    if (isFromPatientProfile) {
+      return ["Add Video", "Add Check-in/Message", "Send"];
+    }
+    return ["Pick Patient", "Add Video", "Add Check-in/Message", "Send"];
+  };
+
+  const stepLabels = getStepLabels();
+  const totalSteps = getTotalSteps();
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -319,99 +503,65 @@ const SendContentPage = () => {
         </Link>
         <h1 className="text-2xl font-bold text-gray-900">Send to Patients</h1>
         <p className="text-gray-500 mt-1">
-          Select patients to send personalized messages and health content
+          Select patients to send personalized messages, check-ins, and health content
         </p>
       </div>
 
-      {/* Progress Steps - 2 steps when from patient profile, 3 steps otherwise */}
+      {/* Progress Steps */}
       <div className="flex items-center gap-4 mb-8">
-        {isFromPatientProfile ? (
-          // Simplified 2-step flow when coming from patient profile
-          <>
-            {[1, 2].map((s) => {
-              const isCurrentStep = s === 1 ? step === 1 : step === 2 || step === 3;
-              const isCompleted = s === 1 ? step > 1 : false;
-              return (
-                <div
-                  key={s}
-                  className="flex items-center gap-3 flex-1"
-                >
+        {stepLabels.map((label, index) => {
+          const stepNum = index + 1;
+          let isCurrentStep = false;
+          let isCompleted = false;
+          
+          if (isFromPatientProfile) {
+            // Map display step to internal step
+            const internalStep = step === 4 ? 3 : step;
+            isCurrentStep = stepNum === internalStep;
+            isCompleted = stepNum < internalStep;
+          } else {
+            isCurrentStep = stepNum === step;
+            isCompleted = stepNum < step;
+          }
+          
+          return (
+            <div
+              key={stepNum}
+              className="flex items-center gap-3 flex-1"
+            >
+              <div
+                className={cn(
+                  "w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm transition-colors",
+                  isCurrentStep
+                    ? "bg-sky-600 text-white"
+                    : isCompleted
+                    ? "bg-emerald-100 text-emerald-700"
+                    : "bg-gray-100 text-gray-400"
+                )}
+              >
+                {isCompleted ? <Check className="w-4 h-4" /> : stepNum}
+              </div>
+              <span
+                className={cn(
+                  "font-medium text-sm hidden sm:block",
+                  isCurrentStep ? "text-gray-900" : "text-gray-400"
+                )}
+              >
+                {label}
+              </span>
+              {stepNum < totalSteps && (
+                <div className="flex-1 h-0.5 bg-gray-200 hidden sm:block">
                   <div
                     className={cn(
-                      "w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm transition-colors",
-                      isCurrentStep && !isCompleted
-                        ? "bg-sky-600 text-white"
-                        : isCompleted
-                        ? "bg-emerald-100 text-emerald-700"
-                        : "bg-gray-100 text-gray-400"
+                      "h-full bg-emerald-500 transition-all",
+                      isCompleted ? "w-full" : "w-0"
                     )}
-                  >
-                    {isCompleted ? <Check className="w-4 h-4" /> : s}
-                  </div>
-                  <span
-                    className={cn(
-                      "font-medium text-sm hidden sm:block",
-                      isCurrentStep ? "text-gray-900" : "text-gray-400"
-                    )}
-                  >
-                    {s === 1 ? "Choose Videos" : "Review & Send"}
-                  </span>
-                  {s < 2 && (
-                    <div className="flex-1 h-0.5 bg-gray-200 hidden sm:block">
-                      <div
-                        className={cn(
-                          "h-full bg-emerald-500 transition-all",
-                          isCompleted ? "w-full" : "w-0"
-                        )}
-                      />
-                    </div>
-                  )}
+                  />
                 </div>
-              );
-            })}
-          </>
-        ) : (
-          // Full 3-step flow
-          <>
-            {[1, 2, 3].map((s) => (
-              <div
-                key={s}
-                className="flex items-center gap-3 flex-1"
-              >
-                <div
-                  className={cn(
-                    "w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm transition-colors",
-                    s === step
-                      ? "bg-sky-600 text-white"
-                      : s < step
-                      ? "bg-emerald-100 text-emerald-700"
-                      : "bg-gray-100 text-gray-400"
-                  )}
-                >
-                  {s < step ? <Check className="w-4 h-4" /> : s}
-                </div>
-                <span
-                  className={cn(
-                    "font-medium text-sm hidden sm:block",
-                    s === step ? "text-gray-900" : "text-gray-400"
-                  )}
-                >
-                  {s === 1 ? "Select Patients" : s === 2 ? "Choose Videos" : "Review & Send"}
-                </span>
-                {s < 3 && (
-                  <div className="flex-1 h-0.5 bg-gray-200 hidden sm:block">
-                    <div
-                      className={cn(
-                        "h-full bg-emerald-500 transition-all",
-                        s < step ? "w-full" : "w-0"
-                      )}
-                    />
-                  </div>
-                )}
-              </div>
-            ))}
-          </>
-        )}
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* Step 1: Select Patients - Only shown when NOT from patient profile */}
@@ -419,7 +569,7 @@ const SendContentPage = () => {
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="p-6 border-b border-gray-100">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">Select Patients</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Pick Patient</h2>
               <button
                 onClick={handleSelectAllPatients}
                 className="text-sm font-medium text-sky-600 hover:text-sky-700"
@@ -501,7 +651,7 @@ const SendContentPage = () => {
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="p-6 border-b border-gray-100">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">Choose Videos</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Add Video</h2>
               <p className="text-sm text-gray-500">
                 {selectedVideos.size} video{selectedVideos.size !== 1 ? "s" : ""} selected
               </p>
@@ -634,34 +784,123 @@ const SendContentPage = () => {
             <div className="flex items-center gap-3">
               {selectedVideos.size === 0 && (
                 <button
-                  onClick={() => setStep(3)}
+                  onClick={() => isFromPatientProfile ? setStep(2) : setStep(3)}
                   className="px-6 py-2.5 border border-gray-200 text-gray-600 font-medium rounded-xl hover:bg-gray-50 transition-colors"
                 >
                   Skip Videos
                 </button>
               )}
               <button
-                onClick={() => setStep(3)}
+                onClick={() => isFromPatientProfile ? setStep(2) : setStep(3)}
                 disabled={selectedVideos.size === 0}
                 className="px-6 py-2.5 bg-sky-600 text-white font-medium rounded-xl hover:bg-sky-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
               >
-                {selectedVideos.size === 0 
-                  ? "Select Videos" 
-                  : isFromPatientProfile 
-                    ? "Review & Send" 
-                    : "Continue"}
+                Continue
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Step 3: Review & Send */}
-      {step === 3 && (
+      {/* Step 3: Add Check-in or Message (or Step 2 when from patient profile) */}
+      {((step === 3 && !isFromPatientProfile) || (step === 2 && isFromPatientProfile)) && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="p-6 border-b border-gray-100">
+            <h2 className="text-lg font-semibold text-gray-900 mb-1">Add Check-in or Message</h2>
+            <p className="text-sm text-gray-500">Send check-in questions and/or a personal message to your patients</p>
+          </div>
+
+          <div className="p-6 space-y-6">
+            {/* Check-in Questions */}
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <Sparkles className="w-5 h-5 text-sky-600" />
+                <h3 className="font-semibold text-gray-900">Check-in Questions</h3>
+                <span className="text-sm text-gray-500">
+                  ({selectedCheckIns.size} selected)
+                </span>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-3 max-h-[300px] overflow-y-auto">
+                {CHECK_IN_QUESTIONS.map((question) => (
+                  <button
+                    key={question.id}
+                    onClick={() => handleToggleCheckIn(question.id)}
+                    className={cn(
+                      "p-4 rounded-xl transition-colors text-left flex items-start gap-3",
+                      selectedCheckIns.has(question.id)
+                        ? "bg-sky-50 border-2 border-sky-500"
+                        : "bg-gray-50 hover:bg-gray-100 border-2 border-transparent"
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        "w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors flex-shrink-0 mt-0.5",
+                        selectedCheckIns.has(question.id)
+                          ? "bg-sky-600 border-sky-600"
+                          : "border-gray-300"
+                      )}
+                    >
+                      {selectedCheckIns.has(question.id) && (
+                        <Check className="w-3 h-3 text-white" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className={cn("p-1.5 rounded-lg", getCategoryColor(question.category))}>
+                          {question.icon}
+                        </div>
+                        <span className="text-xs text-gray-500 capitalize">{question.category}</span>
+                      </div>
+                      <p className="font-medium text-gray-900 text-sm">{question.question}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Personal Message */}
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <Mail className="w-5 h-5 text-emerald-600" />
+                <h3 className="font-semibold text-gray-900">Personal Message</h3>
+                <span className="text-xs text-gray-500">(Optional)</span>
+              </div>
+              <textarea
+                value={personalMessage}
+                onChange={(e) => setPersonalMessage(e.target.value)}
+                placeholder="Add a personal note to accompany your content..."
+                rows={4}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all resize-none"
+              />
+              <p className="text-xs text-gray-400 mt-2">
+                This message will be included in the notification sent to patients.
+              </p>
+            </div>
+          </div>
+
+          <div className="p-6 border-t border-gray-100 flex items-center justify-between">
+            <button
+              onClick={() => isFromPatientProfile ? setStep(1) : setStep(2)}
+              className="px-6 py-2.5 border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors"
+            >
+              Back
+            </button>
+            <button
+              onClick={() => setStep(4)}
+              className="px-6 py-2.5 bg-sky-600 text-white font-medium rounded-xl hover:bg-sky-700 transition-colors"
+            >
+              Review & Send
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Step 4: Review & Send */}
+      {step === 4 && (
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Selected Items Summary */}
           <div className="space-y-6">
-            {/* Videos Summary - Only shown if videos selected */}
+            {/* Videos Summary */}
             {selectedVideosList.length > 0 ? (
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="p-4 border-b border-gray-100 flex items-center justify-between">
@@ -672,7 +911,7 @@ const SendContentPage = () => {
                     </h3>
                   </div>
                   <button
-                    onClick={() => setStep(isFromPatientProfile ? 1 : 2)}
+                    onClick={() => isFromPatientProfile ? setStep(1) : setStep(2)}
                     className="text-sm text-sky-600 hover:text-sky-700"
                   >
                     Edit
@@ -704,18 +943,66 @@ const SendContentPage = () => {
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="p-4 border-b border-gray-100 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Mail className="w-5 h-5 text-emerald-600" />
-                    <h3 className="font-semibold text-gray-900">Message Only</h3>
+                    <Play className="w-5 h-5 text-gray-400" />
+                    <h3 className="font-semibold text-gray-500">No Videos</h3>
                   </div>
                   <button
-                    onClick={() => setStep(isFromPatientProfile ? 1 : 2)}
+                    onClick={() => isFromPatientProfile ? setStep(1) : setStep(2)}
                     className="text-sm text-sky-600 hover:text-sky-700"
                   >
                     Add Videos
                   </button>
                 </div>
-                <div className="p-4 text-center text-gray-500 text-sm">
-                  <p>No videos selected. You can send a personal message only.</p>
+              </div>
+            )}
+
+            {/* Check-ins Summary */}
+            {selectedCheckInsList.length > 0 && (
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="p-4 border-b border-gray-100 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-emerald-600" />
+                    <h3 className="font-semibold text-gray-900">
+                      {selectedCheckInsList.length} Check-in{selectedCheckInsList.length !== 1 ? "s" : ""}
+                    </h3>
+                  </div>
+                  <button
+                    onClick={() => isFromPatientProfile ? setStep(2) : setStep(3)}
+                    className="text-sm text-sky-600 hover:text-sky-700"
+                  >
+                    Edit
+                  </button>
+                </div>
+                <div className="p-4 space-y-2">
+                  {selectedCheckInsList.map((question) => (
+                    <div key={question.id} className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
+                      <div className={cn("p-1.5 rounded-lg", getCategoryColor(question.category))}>
+                        {question.icon}
+                      </div>
+                      <p className="font-medium text-gray-900 text-sm">{question.question}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Message Summary */}
+            {personalMessage.trim() && (
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="p-4 border-b border-gray-100 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Mail className="w-5 h-5 text-sky-600" />
+                    <h3 className="font-semibold text-gray-900">Personal Message</h3>
+                  </div>
+                  <button
+                    onClick={() => isFromPatientProfile ? setStep(2) : setStep(3)}
+                    className="text-sm text-sky-600 hover:text-sky-700"
+                  >
+                    Edit
+                  </button>
+                </div>
+                <div className="p-4">
+                  <p className="text-gray-700 text-sm whitespace-pre-wrap">{personalMessage}</p>
                 </div>
               </div>
             )}
@@ -762,27 +1049,8 @@ const SendContentPage = () => {
             </div>
           </div>
 
-          {/* Personal Message & Send */}
+          {/* Send Panel */}
           <div className="space-y-6">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <Mail className="w-5 h-5 text-sky-600" />
-                {selectedVideosList.length > 0 ? "Add Personal Message (Optional)" : "Your Message"}
-              </h3>
-              <textarea
-                value={personalMessage}
-                onChange={(e) => setPersonalMessage(e.target.value)}
-                placeholder={selectedVideosList.length > 0 
-                  ? "Add a personal note to accompany these videos..." 
-                  : "Write your message to the selected patients..."}
-                rows={4}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all resize-none"
-              />
-              <p className="text-xs text-gray-400 mt-2">
-                This message will be included in the email notification sent to patients.
-              </p>
-            </div>
-
             <div className="bg-gradient-to-br from-sky-50 to-blue-50 rounded-xl p-6 border border-sky-100">
               <div className="flex items-start gap-4 mb-6">
                 <div className="p-3 bg-white rounded-xl shadow-sm">
@@ -791,23 +1059,26 @@ const SendContentPage = () => {
                 <div>
                   <h3 className="font-semibold text-gray-900">Ready to Send</h3>
                   <p className="text-sm text-gray-600 mt-1">
-                    {selectedVideosList.length > 0 
-                      ? `${selectedVideosList.length} video${selectedVideosList.length !== 1 ? "s" : ""} will be sent to ${selectedPatientsList.length} patient${selectedPatientsList.length !== 1 ? "s" : ""}.`
-                      : `A message will be sent to ${selectedPatientsList.length} patient${selectedPatientsList.length !== 1 ? "s" : ""}.`}
+                    {selectedVideosList.length > 0 && `${selectedVideosList.length} video${selectedVideosList.length !== 1 ? "s" : ""}`}
+                    {selectedVideosList.length > 0 && selectedCheckInsList.length > 0 && ", "}
+                    {selectedCheckInsList.length > 0 && `${selectedCheckInsList.length} check-in${selectedCheckInsList.length !== 1 ? "s" : ""}`}
+                    {(selectedVideosList.length > 0 || selectedCheckInsList.length > 0) && personalMessage.trim() && ", "}
+                    {personalMessage.trim() && "a message"}
+                    {` will be sent to ${selectedPatientsList.length} patient${selectedPatientsList.length !== 1 ? "s" : ""}.`}
                   </p>
                 </div>
               </div>
 
               <div className="flex items-center gap-3">
                 <button
-                  onClick={() => setStep(isFromPatientProfile ? 1 : 2)}
+                  onClick={() => isFromPatientProfile ? setStep(2) : setStep(3)}
                   className="flex-1 px-6 py-3 border-2 border-gray-200 bg-white text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors"
                 >
                   Back
                 </button>
                 <button
                   onClick={handleSend}
-                  disabled={isSending || (selectedVideosList.length === 0 && !personalMessage.trim())}
+                  disabled={isSending || (selectedVideosList.length === 0 && selectedCheckInsList.length === 0 && !personalMessage.trim())}
                   className="flex-1 px-6 py-3 bg-sky-600 text-white font-semibold rounded-xl hover:bg-sky-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
                 >
                   {isSending ? (
@@ -818,7 +1089,7 @@ const SendContentPage = () => {
                   ) : (
                     <>
                       <Send className="w-5 h-5" />
-                      {selectedVideosList.length > 0 ? "Send Content" : "Send Message"}
+                      Send
                     </>
                   )}
                 </button>
@@ -828,9 +1099,7 @@ const SendContentPage = () => {
             <div className="flex items-start gap-3 text-sm text-gray-500">
               <AlertCircle className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
               <p>
-                {selectedVideosList.length > 0 
-                  ? "Patients will receive an email notification with a link to view the assigned videos in their personalized feed."
-                  : "Patients will receive an email notification with your message."}
+                Patients will receive an email notification with a link to view their personalized content and respond to check-ins.
               </p>
             </div>
           </div>

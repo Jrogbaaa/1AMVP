@@ -12,7 +12,8 @@ import {
   ArrowRight,
   CheckCircle,
   Heart,
-  Stethoscope
+  Stethoscope,
+  Activity
 } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 
@@ -101,13 +102,13 @@ export default function LandingPage() {
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           {/* Left: Text content */}
           <div className="text-center lg:text-left">
-            {/* Big branded logo with tagline */}
+            {/* Big branded logo */}
             <div className="animate-reveal reveal-delay-1">
-              <Logo variant="withTagline" className="h-24 sm:h-28 lg:h-32 w-auto mx-auto lg:mx-0" />
+              <Logo variant="full" className="h-16 sm:h-20 lg:h-24 w-auto mx-auto lg:mx-0" />
             </div>
             
             <h1 className="animate-reveal reveal-delay-2 mt-8 text-2xl sm:text-3xl lg:text-4xl font-bold text-white max-w-xl mx-auto lg:mx-0">
-              Healthcare Reimagined
+              Healthcare Communication, <span className="text-gradient">Reimagined</span>
             </h1>
 
             {/* Feature bullets */}
@@ -226,70 +227,81 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Features Section - Grid Breaking Layout */}
+      {/* For Patient / For Provider Section */}
       <section className="relative z-10 px-6 py-20 md:py-28">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="animate-reveal text-3xl sm:text-4xl font-bold text-white">
-              Healthcare, <span className="text-gradient">Reimagined</span>
-            </h2>
-            <p className="animate-reveal reveal-delay-1 mt-4 text-white/60 text-lg max-w-2xl mx-auto">
-              Modern tools for modern healthcare delivery
-            </p>
-          </div>
-
-          {/* 3-column feature grid */}
-          <div className="grid md:grid-cols-3 gap-6">
-            {/* Personalized Videos */}
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* For the Patient */}
             <div className="animate-reveal reveal-delay-2">
-              <div className="h-full p-8 rounded-2xl glass gradient-border-hover hover-lift group">
-                <div className="w-14 h-14 rounded-xl bg-brand-gradient flex items-center justify-center mb-5 group-hover:glow-brand transition-all">
-                  <Video className="w-7 h-7 text-white" />
+              <div className="h-full p-8 rounded-2xl glass gradient-border-hover hover-lift">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 rounded-xl bg-brand-gradient flex items-center justify-center">
+                    <Heart className="w-6 h-6 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white">For the Patient</h3>
                 </div>
-                <h3 className="text-xl font-bold text-white mb-3">Personalized Videos</h3>
-                <p className="text-white/60 leading-relaxed">
-                  Doctors create custom follow-up videos tailored to each patient's care plan, conditions, and progress.
-                </p>
-              </div>
-            </div>
-
-            {/* Secure and Controlled Messaging */}
-            <div className="animate-reveal reveal-delay-3">
-              <div className="h-full p-8 rounded-2xl glass gradient-border-hover hover-lift group">
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#0ba999] to-[#3ac1e1] flex items-center justify-center mb-5 group-hover:glow-cyan transition-all">
-                  <MessageSquare className="w-7 h-7 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">Secure and Controlled Messaging</h3>
-                <p className="text-white/60 leading-relaxed mb-4">
-                  A controlled and simple way to stay in touch with your patients by delivering accurate health information and simple check-ins and important reminders.
-                </p>
-                <ul className="space-y-2 text-white/60 text-sm">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                    <span>Save time</span>
+                <ul className="space-y-4">
+                  <li className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-[#00BFA6]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Video className="w-4 h-4 text-[#00BFA6]" />
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold">Personalized Videos</p>
+                      <p className="text-white/60 text-sm mt-1">Receive custom health content tailored to your care plan</p>
+                    </div>
                   </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                    <span>Drive better outcomes</span>
+                  <li className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-[#3ac1e1]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <MessageSquare className="w-4 h-4 text-[#3ac1e1]" />
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold">Controlled and Secure Messaging</p>
+                      <p className="text-white/60 text-sm mt-1">Stay connected with your care team safely</p>
+                    </div>
                   </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                    <span>Counter misinformation</span>
+                  <li className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Activity className="w-4 h-4 text-emerald-400" />
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold">Health Tracking</p>
+                      <p className="text-white/60 text-sm mt-1">Monitor your progress and stay on top of your wellness</p>
+                    </div>
                   </li>
                 </ul>
               </div>
             </div>
 
-            {/* Health Tracking */}
-            <div className="animate-reveal reveal-delay-4">
-              <div className="h-full p-8 rounded-2xl glass gradient-border-hover hover-lift group">
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mb-5 group-hover:glow-teal transition-all">
-                  <CheckCircle className="w-7 h-7 text-white" />
+            {/* For the Provider */}
+            <div className="animate-reveal reveal-delay-3">
+              <div className="h-full p-8 rounded-2xl glass gradient-border-hover hover-lift">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0ba999] to-[#3ac1e1] flex items-center justify-center">
+                    <Stethoscope className="w-6 h-6 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white">For the Provider</h3>
                 </div>
-                <h3 className="text-xl font-bold text-white mb-3">Health Tracking</h3>
-                <p className="text-white/60 leading-relaxed">
-                  Track progress, set reminders, and stay on top of your health journey with personalized dashboards.
+                <p className="text-white/80 leading-relaxed mb-6">
+                  A controlled and simple way to stay in touch with your patients by delivering accurate health information and simple check-ins and important reminders.
                 </p>
+                <ul className="space-y-3">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                    <span className="text-white/70">Save time with templated content</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                    <span className="text-white/70">Drive better patient outcomes</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                    <span className="text-white/70">Counter health misinformation</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                    <span className="text-white/70">Automated check-ins and reminders</span>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>

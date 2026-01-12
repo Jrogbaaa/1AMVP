@@ -5,6 +5,55 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.56.0] - 2026-01-12
+
+### 🏥 Doctor Portal Send Flow Redesign
+
+**New 4-Step Send Sequence (`app/doctor/send/page.tsx`):**
+- Completely redesigned send flow with 4 steps:
+  1. **Pick Patient** - Select patients to send content to
+  2. **Add Video** - Choose videos from content library (with skip option)
+  3. **Add Check-in/Message** - NEW step for check-ins and messages
+  4. **Send** - Review all selections and send
+- When accessing from patient profile, uses streamlined 3-step flow (skips patient selection)
+
+**New Check-in/Message Step:**
+- Added check-in questions selector with same UI as messages tab
+- Categories: wellness, medication, diet, activity, follow-up
+- Multiple check-ins can be selected simultaneously
+- Personal message textarea for additional notes
+- Combined with video selection for comprehensive patient communication
+
+**Review Step Updates:**
+- Shows summary cards for: Videos, Check-ins, Personal Message, and Patients
+- Each section has edit button to jump back to relevant step
+- Displays count of selected items in each category
+- Success screen shows breakdown of what was sent
+
+### 🎨 Landing Page Redesign
+
+**Hero Section Updates (`app/page.tsx`):**
+- Changed main tagline to "Healthcare Communication, Reimagined"
+- "Reimagined" uses green-blue gradient matching logo colors (`text-gradient` class)
+- Removed duplicate "Healthcare, Reimagined" from features section
+- Logo now uses `full` variant instead of `withTagline`
+
+**New "For the Patient" / "For the Provider" Sections:**
+- Replaced 3-column feature grid with 2-column side-by-side layout
+- **For the Patient** card includes:
+  - Personalized Videos
+  - Controlled and Secure Messaging  
+  - Health Tracking
+- **For the Provider** card includes:
+  - Full description about controlled patient communication
+  - Bullet points: Save time, Drive better outcomes, Counter misinformation, Automated check-ins
+- Both cards use glass styling with gradient borders on hover
+
+**Visual Improvements:**
+- Each feature item has colored icon badges
+- Heart icon for patient section, Stethoscope for provider section
+- Consistent animation delays for reveal effects
+
 ## [1.55.0] - 2026-01-11
 
 ### 🎨 Landing Page Hero Redesign

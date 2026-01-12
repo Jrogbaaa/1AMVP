@@ -75,21 +75,21 @@ interface DoctorCommunicationsWidgetProps {
   className?: string;
 }
 
-// Mock doctor data - using initials instead of placeholder images
+// Mock doctor data with real profile photos
 const MOCK_DOCTORS: Record<string, { name: string; avatarUrl: string; specialty: string }> = {
   "doctor-1": {
     name: "Sarah Johnson",
-    avatarUrl: "",
+    avatarUrl: "/images/doctors/doctor-lisa.jpg",
     specialty: "Cardiology",
   },
   "doctor-2": {
     name: "Michael Chen",
-    avatarUrl: "",
+    avatarUrl: "/images/doctors/doctor-ryan.jpg",
     specialty: "Primary Care",
   },
   "550e8400-e29b-41d4-a716-446655440001": {
     name: "Sarah Johnson",
-    avatarUrl: "",
+    avatarUrl: "/images/doctors/doctor-lisa.jpg",
     specialty: "Cardiology",
   },
 };
@@ -143,7 +143,7 @@ const DEMO_VIDEOS: VideoSentToPatient[] = [
     sentAt: Date.now() - 4 * 60 * 60 * 1000, // 4 hours ago
     viewedAt: undefined,
     title: "Understanding Your Blood Pressure",
-    thumbnailUrl: "/images/thumbnails/blood-pressure.jpg",
+    thumbnailUrl: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=200&h=113&fit=crop",
     duration: "5:20",
   },
   {
@@ -155,7 +155,7 @@ const DEMO_VIDEOS: VideoSentToPatient[] = [
     sentAt: Date.now() - 2 * 24 * 60 * 60 * 1000, // 2 days ago
     viewedAt: Date.now() - 1 * 24 * 60 * 60 * 1000, // 1 day ago
     title: "Heart Health Basics",
-    thumbnailUrl: "/images/thumbnails/heart-health.jpg",
+    thumbnailUrl: "https://images.unsplash.com/photo-1559757175-5700dde675bc?w=200&h=113&fit=crop",
     duration: "4:15",
   },
 ];

@@ -5,6 +5,40 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.58.0] - 2026-01-13
+
+### 📱 Mobile Debugging & Testing Improvements
+
+**Fixed: "My Health" Button on Mobile (`components/MobileBottomNav.tsx`):**
+- Added auth state checking with `useSession()` hook
+- When unauthenticated users tap "My Health", now shows auth prompt immediately
+- Previously navigated to page with buried sign-in option - users reported nothing happening
+- Added keyboard accessibility with proper event handlers
+- Auth prompt uses "personalized_content" trigger for relevant messaging
+
+**Fixed: Video Loading Issues (`components/VideoCard.tsx`):**
+- Added loading spinner overlay while video buffers
+- Added "Tap to play" overlay when mobile autoplay is blocked
+- Added error state UI with retry button when video fails to load
+- Improved mobile touch handling with `onTouchStart` events
+- Added `data-testid` attributes for E2E testing
+- Mute toggle button increased to 48x48px for better tap target
+- Better handling of `NotAllowedError` for autoplay policies
+
+**New: Comprehensive Mobile Debug Tests (`tests/e2e/mobile/mobile-debug.spec.ts`):**
+- 18 new focused tests for mobile debugging:
+  - Video loading and playback tests
+  - Navigation auth flow tests
+  - Bottom navigation tests
+  - Touch scroll behavior tests
+  - Performance tests
+- All tests use mobile Chrome viewport (Pixel 5)
+
+**Fixed: Mobile Test Reliability (`tests/e2e/mobile/mobile-comprehensive.spec.ts`):**
+- Changed `networkidle` waits to `domcontentloaded` to prevent timeouts
+- Updated navigation test to handle new auth prompt behavior
+- All 41 mobile tests now pass (100% pass rate)
+
 ## [1.57.0] - 2026-01-13
 
 ### 🎨 Brand Gradient Button Unification

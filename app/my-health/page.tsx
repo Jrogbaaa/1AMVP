@@ -51,7 +51,7 @@ class ConvexErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySta
             </p>
             <button
               onClick={() => window.location.reload()}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-sky-600 text-white rounded-xl font-semibold hover:bg-sky-700 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-sky-500 text-white rounded-xl font-semibold hover:from-emerald-600 hover:to-sky-600 transition-all"
             >
               <RefreshCw className="w-4 h-4" />
               Try Again
@@ -151,7 +151,7 @@ const UnauthenticatedView = () => {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setShowAuthPrompt(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-sky-600 text-white rounded-lg text-sm font-medium hover:bg-sky-700 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-emerald-500 to-sky-500 text-white rounded-lg text-sm font-medium hover:from-emerald-600 hover:to-sky-600 transition-all"
               >
                 <User className="w-3.5 h-3.5" />
                 Sign In
@@ -203,7 +203,7 @@ const UnauthenticatedView = () => {
           {/* Sign in button */}
           <button
             onClick={() => setShowAuthPrompt(true)}
-            className="w-full max-w-sm mx-auto flex items-center justify-center gap-2 px-6 py-4 bg-sky-600 text-white rounded-xl font-semibold text-lg hover:bg-sky-700 transition-colors shadow-lg"
+            className="w-full max-w-sm mx-auto flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-emerald-500 to-sky-500 text-white rounded-xl font-semibold text-lg hover:from-emerald-600 hover:to-sky-600 transition-all shadow-lg"
           >
             Sign In to Continue
           </button>

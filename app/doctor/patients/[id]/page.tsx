@@ -19,15 +19,9 @@ import {
   MessageSquare,
   Video,
   MoreVertical,
-  Heart,
-  Pill,
-  Activity,
-  Apple,
   AlertCircle,
-  ChevronRight,
   Plus,
   User,
-  FileText,
   Check,
   CheckCheck,
 } from "lucide-react";
@@ -211,30 +205,12 @@ const MOCK_COMMUNICATION = [
   },
 ];
 
-// Check-in questions for sending
-const CHECK_IN_QUESTIONS = [
-  { id: "feeling-today", question: "How are you feeling today?", icon: <Heart className="w-4 h-4" />, color: "text-rose-600 bg-rose-100" },
-  { id: "took-meds", question: "Did you take your medications today?", icon: <Pill className="w-4 h-4" />, color: "text-blue-600 bg-blue-100" },
-  { id: "activity-level", question: "How active have you been this week?", icon: <Activity className="w-4 h-4" />, color: "text-orange-600 bg-orange-100" },
-  { id: "diet-changes", question: "Have you made changes to your diet?", icon: <Apple className="w-4 h-4" />, color: "text-green-600 bg-green-100" },
-];
-
-// Template messages for quick send
-const MESSAGE_TEMPLATES = [
-  { id: "follow-up", title: "Post-Visit Follow-Up", content: "Thank you for your visit today. I wanted to follow up and remind you to continue following the care plan we discussed." },
-  { id: "lab-results", title: "Lab Results Ready", content: "Your recent lab results are ready. Please log in to view them or reach out if you have any questions." },
-  { id: "med-reminder", title: "Medication Reminder", content: "This is a friendly reminder to take your prescribed medications as directed. Consistency is key!" },
-  { id: "wellness-check", title: "Wellness Check", content: "I hope you're doing well! I wanted to check in and see how you're feeling. Let me know if you need anything." },
-];
-
 export default function PatientProfilePage() {
   const params = useParams();
   const router = useRouter();
   const patientId = params.id as string;
   
   const [activeTab, setActiveTab] = useState<"overview" | "videos" | "messages">("messages");
-  const [showMessageModal, setShowMessageModal] = useState(false);
-  const [messageContent, setMessageContent] = useState("");
   
   // Get patient data
   const patient = MOCK_PATIENTS[patientId];
@@ -247,39 +223,13 @@ export default function PatientProfilePage() {
         <p className="text-gray-500 mb-4">The patient you're looking for doesn't exist.</p>
         <Link
           href="/doctor/patients"
-          className="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors"
+          className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-sky-500 text-white rounded-lg hover:from-emerald-600 hover:to-sky-600 transition-all"
         >
           Back to Patients
         </Link>
       </div>
     );
   }
-
-  const handleSendMessage = () => {
-    if (!messageContent.trim()) return;
-    // In production, this would send to Convex
-    console.log("Sending message to patient:", patientId, messageContent);
-    setMessageContent("");
-    setShowMessageModal(false);
-    // Redirect to messages page with this patient
-    router.push(`/doctor/messages?patient=${patientId}`);
-  };
-
-  const handleSendTemplate = (template: { id: string; title: string; content: string }) => {
-    // In production, this would send to Convex
-    console.log("Sending template message to patient:", patientId, template);
-    setShowMessageModal(false);
-    // Redirect to messages page with this patient
-    router.push(`/doctor/messages?patient=${patientId}`);
-  };
-
-  const handleSendCheckIn = (questionId: string) => {
-    // In production, this would send to Convex
-    console.log("Sending check-in question:", questionId, "to patient:", patientId);
-    setShowMessageModal(false);
-    // Redirect to messages page with this patient
-    router.push(`/doctor/messages?patient=${patientId}`);
-  };
 
   // Calculate progress percentage for the ring
   const progressPercent = Math.round((patient.videosWatched / patient.totalVideos) * 100);
@@ -389,19 +339,12 @@ export default function PatientProfilePage() {
 
             {/* Quick Actions */}
             <div className="flex flex-wrap gap-3">
-              <button
-                onClick={() => setShowMessageModal(true)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-medium rounded-xl hover:from-emerald-600 hover:to-sky-600 transition-all shadow-md"
-              >
-                <CheckCircle2 className="w-4 h-4" />
-                Send Check In
-              </button>
               <Link
                 href={`/doctor/send?patient=${patient.id}`}
-                className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-medium rounded-xl hover:from-emerald-600 hover:to-sky-600 transition-all shadow-md"
               >
-                <Video className="w-4 h-4" />
-                Send Video
+                <Send className="w-4 h-4" />
+                Send
               </Link>
             </div>
           </div>
@@ -571,22 +514,13 @@ export default function PatientProfilePage() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-100">
           <div className="p-6 border-b border-gray-100 flex items-center justify-between">
             <h3 className="font-semibold text-gray-900">Messages & Videos</h3>
-            <div className="flex items-center gap-2">
-              <Link
-                href={`/doctor/send?patient=${patient.id}`}
-                className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <Video className="w-4 h-4" />
-                Send Video
-              </Link>
-              <button
-                onClick={() => setShowMessageModal(true)}
-                className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors"
-              >
-                <CheckCircle2 className="w-4 h-4" />
-                Send Check In
-              </button>
-            </div>
+            <Link
+              href={`/doctor/send?patient=${patient.id}`}
+              className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-r from-emerald-500 to-sky-500 hover:from-emerald-600 hover:to-sky-600 rounded-lg transition-all"
+            >
+              <Send className="w-4 h-4" />
+              Send
+            </Link>
           </div>
           
           {/* Full messaging timeline */}
@@ -704,114 +638,6 @@ export default function PatientProfilePage() {
         </div>
       )}
 
-      {/* Send Check-in Modal - Side by Side Layout */}
-      {showMessageModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div className="bg-white rounded-2xl shadow-xl max-w-4xl w-full max-h-[85vh] overflow-hidden">
-            {/* Modal Header */}
-            <div className="p-6 border-b border-gray-100">
-              <h3 className="text-lg font-semibold text-gray-900">
-                Send Check-in to {patient.name.split(" ")[0]}
-              </h3>
-              <p className="text-sm text-gray-500 mt-1">
-                Choose a template message or write a custom one
-              </p>
-            </div>
-
-            {/* Modal Body - Side by Side */}
-            <div className="grid md:grid-cols-2 divide-x divide-gray-100">
-              {/* Left Side - Template Messages */}
-              <div className="p-6 max-h-[50vh] overflow-y-auto">
-                <h4 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                  <MessageSquare className="w-5 h-5 text-emerald-600" />
-                  Template Messages
-                </h4>
-                <div className="space-y-2">
-                  {/* Message Templates */}
-                  {MESSAGE_TEMPLATES.map((template) => (
-                    <button
-                      key={template.id}
-                      onClick={() => handleSendTemplate(template)}
-                      className="w-full p-4 bg-gray-50 hover:bg-sky-50 rounded-xl transition-colors text-left group border border-transparent hover:border-sky-200"
-                    >
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-medium text-gray-900 group-hover:text-sky-700">
-                          {template.title}
-                        </span>
-                        <Send className="w-4 h-4 text-gray-400 group-hover:text-sky-600" />
-                      </div>
-                      <p className="text-sm text-gray-500 line-clamp-2">{template.content}</p>
-                    </button>
-                  ))}
-                  
-                  {/* Divider */}
-                  <div className="py-2">
-                    <div className="border-t border-gray-200"></div>
-                    <p className="text-xs text-gray-400 mt-2 mb-1">Quick Check-in Questions</p>
-                  </div>
-                  
-                  {/* Check-in Questions */}
-                  {CHECK_IN_QUESTIONS.map((q) => (
-                    <button
-                      key={q.id}
-                      onClick={() => handleSendCheckIn(q.id)}
-                      className="w-full p-3 bg-gray-50 hover:bg-emerald-50 rounded-xl transition-colors text-left flex items-center gap-3 group border border-transparent hover:border-emerald-200"
-                    >
-                      <div className={cn("p-2 rounded-lg", q.color)}>
-                        {q.icon}
-                      </div>
-                      <span className="font-medium text-gray-900 flex-1 group-hover:text-emerald-700">
-                        {q.question}
-                      </span>
-                      <Send className="w-4 h-4 text-gray-400 group-hover:text-emerald-600" />
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Right Side - Custom Message */}
-              <div className="p-6 flex flex-col">
-                <h4 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-sky-600" />
-                  Custom Message
-                </h4>
-                <textarea
-                  value={messageContent}
-                  onChange={(e) => setMessageContent(e.target.value)}
-                  placeholder="Type your custom check-in message here..."
-                  rows={8}
-                  className="w-full flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all resize-none"
-                  aria-label="Custom message"
-                />
-                <p className="text-xs text-gray-400 mt-2">
-                  This is a one-way message. Patients will see this in their check-in feed.
-                </p>
-                <button
-                  onClick={handleSendMessage}
-                  disabled={!messageContent.trim()}
-                  className="w-full mt-4 py-3 bg-sky-600 text-white font-semibold rounded-xl hover:bg-sky-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
-                >
-                  <Send className="w-4 h-4" />
-                  Send Custom Message
-                </button>
-              </div>
-            </div>
-
-            {/* Modal Footer */}
-            <div className="p-4 border-t border-gray-100 flex justify-end">
-              <button
-                onClick={() => {
-                  setShowMessageModal(false);
-                  setMessageContent("");
-                }}
-                className="px-4 py-2 text-gray-600 font-medium hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

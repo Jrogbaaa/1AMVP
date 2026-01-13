@@ -485,7 +485,7 @@ export default function DiscoverPage() {
                     setAuthPromptTrigger("save_progress");
                     setShowAuthPrompt(true);
                   }}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-sky-600 text-white rounded-lg text-sm font-medium hover:bg-sky-700 transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-emerald-500 to-sky-500 text-white rounded-lg text-sm font-medium hover:from-emerald-600 hover:to-sky-600 transition-all"
                 >
                   <User className="w-3.5 h-3.5" />
                   Sign In
@@ -596,7 +596,7 @@ export default function DiscoverPage() {
                           ) : (
                             <button
                               onClick={(e) => handleToggleDoctor(e, drKimId, false)}
-                              className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-sky-500 rounded-full flex items-center justify-center shadow border-2 border-white hover:bg-sky-600 transition-colors"
+                              className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-gradient-to-r from-emerald-500 to-sky-500 rounded-full flex items-center justify-center shadow border-2 border-white hover:from-emerald-600 hover:to-sky-600 transition-all"
                               aria-label="Add Dr. Kim"
                             >
                               <Plus className="w-3 h-3 text-white" strokeWidth={3} />

@@ -462,7 +462,7 @@ export default function ChaptersPage() {
           </button>
           <Link
             href="/doctor/send"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-sky-600 text-white font-medium rounded-lg hover:bg-sky-700 transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-medium rounded-lg hover:from-emerald-600 hover:to-sky-600 transition-all"
           >
             <Send className="w-4 h-4" />
             Send to Patients

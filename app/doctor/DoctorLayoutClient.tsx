@@ -252,7 +252,7 @@ export function DoctorLayoutClient({
             <div className="space-y-3">
               <button
                 onClick={handleDoctorLogin}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-sky-600 text-white rounded-xl font-semibold hover:bg-sky-700 transition-colors"
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-emerald-500 to-sky-500 text-white rounded-xl font-semibold hover:from-emerald-600 hover:to-sky-600 transition-all"
               >
                 <Stethoscope className="w-5 h-5" />
                 Sign in to Doctor Portal
@@ -545,7 +545,7 @@ export function DoctorLayoutClient({
               router.push("/doctor#messages");
             }
           }}
-          className="fixed bottom-6 right-6 flex items-center justify-center w-14 h-14 bg-sky-600 rounded-full shadow-lg hover:bg-sky-700 hover:scale-110 transition-all duration-200 z-40"
+          className="fixed bottom-6 right-6 flex items-center justify-center w-14 h-14 bg-gradient-to-r from-emerald-500 to-sky-500 rounded-full shadow-lg hover:from-emerald-600 hover:to-sky-600 hover:scale-110 transition-all duration-200 z-40"
           aria-label="Open messages"
         >
           <MessageSquare className="w-6 h-6 text-white" />

@@ -277,7 +277,7 @@ export default function SettingsPage() {
                   )}
                 </div>
                 <button
-                  className="absolute bottom-0 right-0 p-2 bg-sky-600 text-white rounded-full shadow-lg hover:bg-sky-700 transition-colors"
+                  className="absolute bottom-0 right-0 p-2 bg-gradient-to-r from-emerald-500 to-sky-500 text-white rounded-full shadow-lg hover:from-emerald-600 hover:to-sky-600 transition-all"
                   aria-label="Change photo"
                 >
                   <Camera className="w-4 h-4" />
@@ -857,7 +857,7 @@ export default function SettingsPage() {
                   className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all"
                 />
               </div>
-              <button className="px-6 py-2.5 bg-sky-600 text-white font-medium rounded-xl hover:bg-sky-700 transition-colors">
+              <button className="px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-medium rounded-xl hover:from-emerald-600 hover:to-sky-600 transition-all">
                 Update Password
               </button>
             </div>
@@ -904,7 +904,7 @@ export default function SettingsPage() {
         <button
           onClick={handleSave}
           disabled={isSaving}
-          className="flex items-center gap-2 px-6 py-3 bg-sky-600 text-white font-medium rounded-xl hover:bg-sky-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-medium rounded-xl hover:from-emerald-600 hover:to-sky-600 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed transition-all"
         >
           {isSaving ? (
             <>

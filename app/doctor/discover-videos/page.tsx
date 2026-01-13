@@ -482,7 +482,7 @@ export default function DiscoverVideosPage() {
                     "flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition-all",
                     savedVideos.has(video.id)
                       ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
-                      : "bg-sky-600 text-white hover:bg-sky-700"
+                      : "bg-gradient-to-r from-emerald-500 to-sky-500 text-white hover:from-emerald-600 hover:to-sky-600"
                   )}
                 >
                   {savedVideos.has(video.id) ? (
@@ -651,7 +651,7 @@ export default function DiscoverVideosPage() {
                   "px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-1.5",
                   savedVideos.has(selectedVideoForScript.id)
                     ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
-                    : "bg-sky-600 text-white hover:bg-sky-700"
+                    : "bg-gradient-to-r from-emerald-500 to-sky-500 text-white hover:from-emerald-600 hover:to-sky-600"
                 )}
               >
                 {savedVideos.has(selectedVideoForScript.id) ? (

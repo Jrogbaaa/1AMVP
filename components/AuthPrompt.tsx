@@ -212,7 +212,7 @@ export const AuthPrompt = ({
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-sky-600 text-white rounded-xl font-medium hover:bg-sky-700 focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-gradient-to-r from-emerald-500 to-sky-500 text-white rounded-xl font-medium hover:from-emerald-600 hover:to-sky-600 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed transition-all"
               aria-label="Continue with Email"
             >
               {isLoading ? (

@@ -483,7 +483,7 @@ const ScreeningCard = ({
                     </div>
                     <button
                       onClick={() => onSchedule?.(screening.id, location.id)}
-                      className="flex items-center gap-1.5 px-3 py-2 bg-sky-600 text-white text-xs font-medium rounded-lg hover:bg-sky-700 transition-colors whitespace-nowrap flex-shrink-0"
+                      className="flex items-center gap-1.5 px-3 py-2 bg-gradient-to-r from-emerald-500 to-sky-500 text-white text-xs font-medium rounded-lg hover:from-emerald-600 hover:to-sky-600 transition-all whitespace-nowrap flex-shrink-0"
                     >
                       <Calendar className="w-3 h-3" />
                       Schedule

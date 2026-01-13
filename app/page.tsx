@@ -13,7 +13,10 @@ import {
   CheckCircle,
   Heart,
   Stethoscope,
-  Activity
+  Activity,
+  FileText,
+  TrendingUp,
+  Bell
 } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 
@@ -108,18 +111,14 @@ export default function LandingPage() {
             </div>
             
             <h1 className="animate-reveal reveal-delay-2 mt-8 text-2xl sm:text-3xl lg:text-4xl font-bold text-white max-w-xl mx-auto lg:mx-0">
-              Healthcare Communication, <span className="text-gradient">Reimagined</span>
+              Healthcare Communication <span className="text-gradient">Reimagined</span>
             </h1>
 
             {/* Feature bullets */}
             <ul className="animate-reveal reveal-delay-3 mt-8 space-y-4 text-left max-w-xl mx-auto lg:mx-0">
               <li className="flex items-start gap-3">
-                <Stethoscope className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0" />
-                <span className="text-white/80">Trusted and delivered by doctors themselves</span>
-              </li>
-              <li className="flex items-start gap-3">
                 <Video className="w-5 h-5 text-[#00BFA6] mt-0.5 flex-shrink-0" />
-                <span className="text-white/80">Trusted video information from your doctors and other specialists</span>
+                <span className="text-white/80">Trusted video information from your doctors and specialists</span>
               </li>
               <li className="flex items-start gap-3">
                 <MessageSquare className="w-5 h-5 text-[#3ac1e1] mt-0.5 flex-shrink-0" />
@@ -128,6 +127,10 @@ export default function LandingPage() {
               <li className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0" />
                 <span className="text-white/80">Simple and effective reminders for your care</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <Stethoscope className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0" />
+                <span className="text-white/80">Trusted and delivered by doctors themselves</span>
               </li>
             </ul>
 
@@ -240,6 +243,9 @@ export default function LandingPage() {
                   </div>
                   <h3 className="text-2xl font-bold text-white">For the Patient</h3>
                 </div>
+                <p className="text-white/80 leading-relaxed mb-6">
+                  Take control of your health journey with trusted information from your care team, delivered in a way that's easy to understand and act on.
+                </p>
                 <ul className="space-y-4">
                   <li className="flex items-start gap-3">
                     <div className="w-8 h-8 rounded-lg bg-[#00BFA6]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -247,7 +253,7 @@ export default function LandingPage() {
                     </div>
                     <div>
                       <p className="text-white font-semibold">Personalized Videos</p>
-                      <p className="text-white/60 text-sm mt-1">Receive custom health content tailored to your care plan</p>
+                      <p className="text-white/60 text-sm mt-1">Content tailored to your care plan</p>
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
@@ -255,8 +261,8 @@ export default function LandingPage() {
                       <MessageSquare className="w-4 h-4 text-[#3ac1e1]" />
                     </div>
                     <div>
-                      <p className="text-white font-semibold">Controlled and Secure Messaging</p>
-                      <p className="text-white/60 text-sm mt-1">Stay connected with your care team safely</p>
+                      <p className="text-white font-semibold">Secure Messaging</p>
+                      <p className="text-white/60 text-sm mt-1">Stay connected with your care team</p>
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
@@ -265,7 +271,16 @@ export default function LandingPage() {
                     </div>
                     <div>
                       <p className="text-white font-semibold">Health Tracking</p>
-                      <p className="text-white/60 text-sm mt-1">Monitor your progress and stay on top of your wellness</p>
+                      <p className="text-white/60 text-sm mt-1">Monitor your progress and wellness</p>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-violet-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <CheckCircle className="w-4 h-4 text-violet-400" />
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold">Care Reminders</p>
+                      <p className="text-white/60 text-sm mt-1">Never miss important health tasks</p>
                     </div>
                   </li>
                 </ul>
@@ -284,22 +299,42 @@ export default function LandingPage() {
                 <p className="text-white/80 leading-relaxed mb-6">
                   A controlled and simple way to stay in touch with your patients by delivering accurate health information and simple check-ins and important reminders.
                 </p>
-                <ul className="space-y-3">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0" />
-                    <span className="text-white/70">Save time with templated content</span>
+                <ul className="space-y-4">
+                  <li className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-violet-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <FileText className="w-4 h-4 text-violet-400" />
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold">Save Time</p>
+                      <p className="text-white/60 text-sm mt-1">Templated content ready to send</p>
+                    </div>
                   </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0" />
-                    <span className="text-white/70">Drive better patient outcomes</span>
+                  <li className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-rose-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <TrendingUp className="w-4 h-4 text-rose-400" />
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold">Better Outcomes</p>
+                      <p className="text-white/60 text-sm mt-1">Drive improved patient results</p>
+                    </div>
                   </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0" />
-                    <span className="text-white/70">Counter health misinformation</span>
+                  <li className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-sky-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Shield className="w-4 h-4 text-sky-400" />
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold">Counter Misinformation</p>
+                      <p className="text-white/60 text-sm mt-1">Deliver accurate health information</p>
+                    </div>
                   </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0" />
-                    <span className="text-white/70">Automated check-ins and reminders</span>
+                  <li className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Bell className="w-4 h-4 text-amber-400" />
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold">Automated Check-ins</p>
+                      <p className="text-white/60 text-sm mt-1">Keep patients on track with reminders</p>
+                    </div>
                   </li>
                 </ul>
               </div>

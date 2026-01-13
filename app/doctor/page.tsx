@@ -721,7 +721,7 @@ export default function DoctorDashboard() {
             </div>
             <Link
               href="/doctor/send"
-              className="flex items-center gap-2 px-4 py-2 bg-sky-600 text-white font-medium rounded-lg hover:bg-sky-700 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-medium rounded-lg hover:from-emerald-600 hover:to-sky-600 transition-all"
             >
               <Send className="w-4 h-4" />
               Send Content
@@ -1654,7 +1654,7 @@ export default function DoctorDashboard() {
                     }
                   }}
                   disabled={!customCheckInMessage.trim()}
-                  className="w-full mt-4 py-3 bg-sky-600 text-white font-semibold rounded-xl hover:bg-sky-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                  className="w-full mt-4 py-3 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-sky-600 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
                 >
                   <Send className="w-4 h-4" />
                   Send Custom Message

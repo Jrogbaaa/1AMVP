@@ -403,7 +403,7 @@ export default function ContentPage() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleUseTemplate(template)}
-                    className="flex-1 px-3 py-2 bg-sky-600 text-white text-sm font-medium rounded-lg hover:bg-sky-700 transition-colors"
+                    className="flex-1 px-3 py-2 bg-gradient-to-r from-emerald-500 to-sky-500 text-white text-sm font-medium rounded-lg hover:from-emerald-600 hover:to-sky-600 transition-all"
                   >
                     Use Template
                   </button>

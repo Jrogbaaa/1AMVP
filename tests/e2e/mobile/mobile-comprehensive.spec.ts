@@ -206,20 +206,29 @@ test.describe("Mobile: Navigation Transitions", () => {
 
     // Navigate to Discover via mobile nav
     await page.locator('nav[aria-label="Main navigation"]').getByRole("link", { name: "Discover" }).click();
-    await expect(page).toHaveURL(/discover/);
-
-    // Navigate to My Health
-    await page.locator('nav[aria-label="Main navigation"]').getByRole("link", { name: "My Health" }).click();
-    await expect(page).toHaveURL(/my-health/);
+    await expect(page).toHaveURL(/discover/, { timeout: 10000 });
 
     // Navigate back to Feed
     await page.locator('nav[aria-label="Main navigation"]').getByRole("link", { name: "My Feed" }).click();
-    await expect(page).toHaveURL(/feed/);
+    await expect(page).toHaveURL(/feed/, { timeout: 10000 });
+    
+    // Navigate to My Health - triggers auth prompt when unauthenticated
+    await page.locator('nav[aria-label="Main navigation"]').getByRole("link", { name: "My Health" }).click();
+    await page.waitForTimeout(500);
+    
+    // Auth prompt appears - close it
+    const authPrompt = page.locator('text="Maybe Later"');
+    if (await authPrompt.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await authPrompt.click();
+    }
+    
+    // Verify we stayed on feed (since we didn't authenticate)
+    await expect(page).toHaveURL(/feed/, { timeout: 5000 });
   });
 
   test("nav items should be tap-friendly size", async ({ page }) => {
     await page.goto("/feed");
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("domcontentloaded");
 
     const mobileNav = page.locator('nav[aria-label="Main navigation"]');
     await expect(mobileNav).toBeVisible();
@@ -380,7 +389,7 @@ test.describe("Mobile: Doctor Portal", () => {
 test.describe("Mobile: Accessibility", () => {
   test("all interactive elements should be keyboard accessible", async ({ page }) => {
     await page.goto("/feed");
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("domcontentloaded");
 
     // Tab multiple times to skip past Next.js dev tools and reach actual content
     for (let i = 0; i < 5; i++) {

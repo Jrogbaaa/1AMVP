@@ -551,7 +551,7 @@ export default function PreventiveCareOnboarding() {
               <button
                 onClick={handleNext}
                 disabled={!formData.dateOfBirth || !formData.sexAtBirth}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-sky-600 text-white rounded-xl font-medium hover:bg-sky-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-sky-500 text-white rounded-xl font-medium hover:from-emerald-600 hover:to-sky-600 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed transition-all"
               >
                 Continue
                 <ArrowRight className="w-5 h-5" />
@@ -643,7 +643,7 @@ export default function PreventiveCareOnboarding() {
               <button
                 onClick={handleNext}
                 disabled={!formData.heightFeet || !formData.weightLbs}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-sky-600 text-white rounded-xl font-medium hover:bg-sky-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-sky-500 text-white rounded-xl font-medium hover:from-emerald-600 hover:to-sky-600 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed transition-all"
               >
                 Continue
                 <ArrowRight className="w-5 h-5" />
@@ -713,7 +713,7 @@ export default function PreventiveCareOnboarding() {
               <button
                 onClick={handleNext}
                 disabled={formData.isPregnant === null}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-sky-600 text-white rounded-xl font-medium hover:bg-sky-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-sky-500 text-white rounded-xl font-medium hover:from-emerald-600 hover:to-sky-600 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed transition-all"
               >
                 Continue
                 <ArrowRight className="w-5 h-5" />
@@ -828,7 +828,7 @@ export default function PreventiveCareOnboarding() {
               <button
                 onClick={handleNext}
                 disabled={!formData.smokingStatus}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-sky-600 text-white rounded-xl font-medium hover:bg-sky-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-sky-500 text-white rounded-xl font-medium hover:from-emerald-600 hover:to-sky-600 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed transition-all"
               >
                 Continue
                 <ArrowRight className="w-5 h-5" />
@@ -903,7 +903,7 @@ export default function PreventiveCareOnboarding() {
               <button
                 onClick={handleNext}
                 disabled={!formData.alcoholFrequency}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-sky-600 text-white rounded-xl font-medium hover:bg-sky-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-sky-500 text-white rounded-xl font-medium hover:from-emerald-600 hover:to-sky-600 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed transition-all"
               >
                 Continue
                 <ArrowRight className="w-5 h-5" />
@@ -1029,7 +1029,7 @@ export default function PreventiveCareOnboarding() {
               </button>
               <button
                 onClick={handleNext}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-sky-600 text-white rounded-xl font-medium hover:bg-sky-700 transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-sky-500 text-white rounded-xl font-medium hover:from-emerald-600 hover:to-sky-600 transition-all"
               >
                 Continue
                 <ArrowRight className="w-5 h-5" />
@@ -1107,7 +1107,7 @@ export default function PreventiveCareOnboarding() {
               </button>
               <button
                 onClick={handleNext}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-sky-600 text-white rounded-xl font-medium hover:bg-sky-700 transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-sky-500 text-white rounded-xl font-medium hover:from-emerald-600 hover:to-sky-600 transition-all"
               >
                 Continue
                 <ArrowRight className="w-5 h-5" />
@@ -1169,7 +1169,7 @@ export default function PreventiveCareOnboarding() {
               </button>
               <button
                 onClick={handleNext}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-sky-600 text-white rounded-xl font-medium hover:bg-sky-700 transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-sky-500 text-white rounded-xl font-medium hover:from-emerald-600 hover:to-sky-600 transition-all"
               >
                 Continue
                 <ArrowRight className="w-5 h-5" />
@@ -1242,7 +1242,7 @@ export default function PreventiveCareOnboarding() {
               </button>
               <button
                 onClick={handleNext}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-sky-600 text-white rounded-xl font-medium hover:bg-sky-700 transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-sky-500 text-white rounded-xl font-medium hover:from-emerald-600 hover:to-sky-600 transition-all"
               >
                 Continue
                 <ArrowRight className="w-5 h-5" />
@@ -1298,7 +1298,7 @@ export default function PreventiveCareOnboarding() {
               </button>
               <button
                 onClick={handleNext}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-sky-600 text-white rounded-xl font-medium hover:bg-sky-700 transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-sky-500 text-white rounded-xl font-medium hover:from-emerald-600 hover:to-sky-600 transition-all"
               >
                 Continue
                 <ArrowRight className="w-5 h-5" />

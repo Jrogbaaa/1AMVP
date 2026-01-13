@@ -701,7 +701,7 @@ export default function DoctorOnboarding() {
                   <button
                     onClick={handleAddTemplate}
                     disabled={!newTemplateTitle.trim() || !newTemplateContent.trim()}
-                    className="flex items-center gap-2 px-4 py-2 bg-sky-600 text-white font-medium rounded-lg hover:bg-sky-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-medium rounded-lg hover:from-emerald-600 hover:to-sky-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Plus className="w-4 h-4" />
                     Add Template
@@ -954,7 +954,7 @@ export default function DoctorOnboarding() {
             ) : (
               <button
                 onClick={handleNextStep}
-                className="flex items-center gap-2 px-6 py-3 bg-sky-600 text-white font-semibold rounded-xl hover:bg-sky-700 transition-colors"
+                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-sky-600 transition-all"
               >
                 Continue
                 <ChevronRight className="w-5 h-5" />

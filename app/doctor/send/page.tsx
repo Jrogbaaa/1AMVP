@@ -25,6 +25,7 @@ import {
   Activity,
   Calendar,
   Sparkles,
+  Bell,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -143,6 +144,53 @@ const CHECK_IN_QUESTIONS: CheckInQuestion[] = [
       { id: "later", label: "Remind me later", emoji: "⏰" },
       { id: "questions", label: "Have questions first", emoji: "❓" },
     ],
+  },
+];
+
+// Reminder templates
+interface ReminderTemplate {
+  id: string;
+  title: string;
+  description: string;
+  timing: string;
+}
+
+const REMINDER_TEMPLATES: ReminderTemplate[] = [
+  {
+    id: "medication",
+    title: "Take Medications",
+    description: "Daily reminder to take prescribed medications",
+    timing: "Daily at 9:00 AM",
+  },
+  {
+    id: "blood-pressure",
+    title: "Check Blood Pressure",
+    description: "Reminder to check and log blood pressure readings",
+    timing: "Daily at 8:00 AM",
+  },
+  {
+    id: "appointment",
+    title: "Upcoming Appointment",
+    description: "Reminder about scheduled follow-up appointment",
+    timing: "1 day before",
+  },
+  {
+    id: "exercise",
+    title: "Physical Activity",
+    description: "Reminder to complete daily exercise routine",
+    timing: "Daily at 6:00 PM",
+  },
+  {
+    id: "hydration",
+    title: "Stay Hydrated",
+    description: "Reminder to drink water throughout the day",
+    timing: "Every 2 hours",
+  },
+  {
+    id: "lab-work",
+    title: "Lab Work Due",
+    description: "Reminder for upcoming lab tests",
+    timing: "3 days before",
   },
 ];
 
@@ -302,6 +350,7 @@ const SendContentPage = () => {
   const [contentSearch, setContentSearch] = useState("");
   const [personalMessage, setPersonalMessage] = useState("");
   const [selectedCheckIns, setSelectedCheckIns] = useState<Set<string>>(new Set());
+  const [selectedReminders, setSelectedReminders] = useState<Set<string>>(new Set());
   const [isSending, setIsSending] = useState(false);
   const [sendSuccess, setSendSuccess] = useState(false);
 
@@ -386,6 +435,18 @@ const SendContentPage = () => {
     });
   };
 
+  const handleToggleReminder = (reminderId: string) => {
+    setSelectedReminders((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(reminderId)) {
+        newSet.delete(reminderId);
+      } else {
+        newSet.add(reminderId);
+      }
+      return newSet;
+    });
+  };
+
   const handleSend = async () => {
     setIsSending(true);
     // Simulate API call
@@ -399,6 +460,7 @@ const SendContentPage = () => {
     c.videos.filter((v) => selectedVideos.has(v.id))
   );
   const selectedCheckInsList = CHECK_IN_QUESTIONS.filter((q) => selectedCheckIns.has(q.id));
+  const selectedRemindersList = REMINDER_TEMPLATES.filter((r) => selectedReminders.has(r.id));
 
   // Calculate actual step number accounting for patient profile flow
   const getDisplayStep = () => {
@@ -436,6 +498,7 @@ const SendContentPage = () => {
   if (sendSuccess) {
     const hasVideos = selectedVideosList.length > 0;
     const hasCheckIns = selectedCheckInsList.length > 0;
+    const hasReminders = selectedRemindersList.length > 0;
     const hasMessage = personalMessage.trim().length > 0;
     
     return (
@@ -448,9 +511,11 @@ const SendContentPage = () => {
         </h1>
         <p className="text-gray-500 mb-8">
           {hasVideos && `${selectedVideosList.length} video${selectedVideosList.length !== 1 ? "s" : ""}`}
-          {hasVideos && (hasCheckIns || hasMessage) && ", "}
+          {hasVideos && (hasCheckIns || hasReminders || hasMessage) && ", "}
           {hasCheckIns && `${selectedCheckInsList.length} check-in${selectedCheckInsList.length !== 1 ? "s" : ""}`}
-          {hasCheckIns && hasMessage && ", "}
+          {hasCheckIns && (hasReminders || hasMessage) && ", "}
+          {hasReminders && `${selectedRemindersList.length} reminder${selectedRemindersList.length !== 1 ? "s" : ""}`}
+          {hasReminders && hasMessage && ", "}
           {hasMessage && "a message"}
           {` sent to ${selectedPatientsList.length} patient${selectedPatientsList.length !== 1 ? "s" : ""}. They will receive a notification shortly.`}
         </p>
@@ -468,9 +533,10 @@ const SendContentPage = () => {
               setSelectedPatients(new Set());
               setSelectedVideos(new Set());
               setSelectedCheckIns(new Set());
+              setSelectedReminders(new Set());
               setPersonalMessage("");
             }}
-            className="px-6 py-3 bg-sky-600 text-white font-medium rounded-xl hover:bg-sky-700 transition-colors"
+            className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-medium rounded-xl hover:from-emerald-600 hover:to-sky-600 transition-all"
           >
             Send More
           </button>
@@ -638,7 +704,7 @@ const SendContentPage = () => {
             <button
               onClick={() => setStep(2)}
               disabled={selectedPatients.size === 0}
-              className="px-6 py-2.5 bg-sky-600 text-white font-medium rounded-xl hover:bg-sky-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+              className="px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-medium rounded-xl hover:from-emerald-600 hover:to-sky-600 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed transition-all"
             >
               Continue
             </button>
@@ -793,7 +859,7 @@ const SendContentPage = () => {
               <button
                 onClick={() => isFromPatientProfile ? setStep(2) : setStep(3)}
                 disabled={selectedVideos.size === 0}
-                className="px-6 py-2.5 bg-sky-600 text-white font-medium rounded-xl hover:bg-sky-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                className="px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-medium rounded-xl hover:from-emerald-600 hover:to-sky-600 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed transition-all"
               >
                 Continue
               </button>
@@ -858,6 +924,52 @@ const SendContentPage = () => {
               </div>
             </div>
 
+            {/* Reminders */}
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <Bell className="w-5 h-5 text-amber-600" />
+                <h3 className="font-semibold text-gray-900">Reminders</h3>
+                <span className="text-sm text-gray-500">
+                  ({selectedReminders.size} selected)
+                </span>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-3 max-h-[250px] overflow-y-auto">
+                {REMINDER_TEMPLATES.map((reminder) => (
+                  <button
+                    key={reminder.id}
+                    onClick={() => handleToggleReminder(reminder.id)}
+                    className={cn(
+                      "p-4 rounded-xl transition-colors text-left flex items-start gap-3",
+                      selectedReminders.has(reminder.id)
+                        ? "bg-amber-50 border-2 border-amber-500"
+                        : "bg-gray-50 hover:bg-gray-100 border-2 border-transparent"
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        "w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors flex-shrink-0 mt-0.5",
+                        selectedReminders.has(reminder.id)
+                          ? "bg-amber-600 border-amber-600"
+                          : "border-gray-300"
+                      )}
+                    >
+                      {selectedReminders.has(reminder.id) && (
+                        <Check className="w-3 h-3 text-white" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900 text-sm">{reminder.title}</p>
+                      <p className="text-xs text-gray-500 mt-1">{reminder.description}</p>
+                      <div className="flex items-center gap-1 mt-2">
+                        <Clock className="w-3 h-3 text-gray-400" />
+                        <span className="text-xs text-gray-400">{reminder.timing}</span>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Personal Message */}
             <div>
               <div className="flex items-center gap-2 mb-4">
@@ -887,7 +999,7 @@ const SendContentPage = () => {
             </button>
             <button
               onClick={() => setStep(4)}
-              className="px-6 py-2.5 bg-sky-600 text-white font-medium rounded-xl hover:bg-sky-700 transition-colors"
+              className="px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-medium rounded-xl hover:from-emerald-600 hover:to-sky-600 transition-all"
             >
               Review & Send
             </button>
@@ -986,6 +1098,39 @@ const SendContentPage = () => {
               </div>
             )}
 
+            {/* Reminders Summary */}
+            {selectedRemindersList.length > 0 && (
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="p-4 border-b border-gray-100 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Bell className="w-5 h-5 text-amber-600" />
+                    <h3 className="font-semibold text-gray-900">
+                      {selectedRemindersList.length} Reminder{selectedRemindersList.length !== 1 ? "s" : ""}
+                    </h3>
+                  </div>
+                  <button
+                    onClick={() => isFromPatientProfile ? setStep(2) : setStep(3)}
+                    className="text-sm text-sky-600 hover:text-sky-700"
+                  >
+                    Edit
+                  </button>
+                </div>
+                <div className="p-4 space-y-2">
+                  {selectedRemindersList.map((reminder) => (
+                    <div key={reminder.id} className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
+                      <div className="p-1.5 rounded-lg bg-amber-100 text-amber-600">
+                        <Bell className="w-4 h-4" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-gray-900 text-sm">{reminder.title}</p>
+                        <p className="text-xs text-gray-500">{reminder.timing}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Message Summary */}
             {personalMessage.trim() && (
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -1060,9 +1205,11 @@ const SendContentPage = () => {
                   <h3 className="font-semibold text-gray-900">Ready to Send</h3>
                   <p className="text-sm text-gray-600 mt-1">
                     {selectedVideosList.length > 0 && `${selectedVideosList.length} video${selectedVideosList.length !== 1 ? "s" : ""}`}
-                    {selectedVideosList.length > 0 && selectedCheckInsList.length > 0 && ", "}
+                    {selectedVideosList.length > 0 && (selectedCheckInsList.length > 0 || selectedRemindersList.length > 0 || personalMessage.trim()) && ", "}
                     {selectedCheckInsList.length > 0 && `${selectedCheckInsList.length} check-in${selectedCheckInsList.length !== 1 ? "s" : ""}`}
-                    {(selectedVideosList.length > 0 || selectedCheckInsList.length > 0) && personalMessage.trim() && ", "}
+                    {selectedCheckInsList.length > 0 && (selectedRemindersList.length > 0 || personalMessage.trim()) && ", "}
+                    {selectedRemindersList.length > 0 && `${selectedRemindersList.length} reminder${selectedRemindersList.length !== 1 ? "s" : ""}`}
+                    {selectedRemindersList.length > 0 && personalMessage.trim() && ", "}
                     {personalMessage.trim() && "a message"}
                     {` will be sent to ${selectedPatientsList.length} patient${selectedPatientsList.length !== 1 ? "s" : ""}.`}
                   </p>
@@ -1078,8 +1225,8 @@ const SendContentPage = () => {
                 </button>
                 <button
                   onClick={handleSend}
-                  disabled={isSending || (selectedVideosList.length === 0 && selectedCheckInsList.length === 0 && !personalMessage.trim())}
-                  className="flex-1 px-6 py-3 bg-sky-600 text-white font-semibold rounded-xl hover:bg-sky-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                  disabled={isSending || (selectedVideosList.length === 0 && selectedCheckInsList.length === 0 && selectedRemindersList.length === 0 && !personalMessage.trim())}
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-sky-600 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
                 >
                   {isSending ? (
                     <>

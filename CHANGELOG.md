@@ -5,6 +5,64 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.57.0] - 2026-01-13
+
+### 🎨 Brand Gradient Button Unification
+
+**Consistent Button Styling Across App:**
+- Updated all primary action buttons to use brand gradient (`from-emerald-500 to-sky-500`)
+- Hover state: `hover:from-emerald-600 hover:to-sky-600`
+- Disabled state: `disabled:from-gray-300 disabled:to-gray-300`
+- Affected files:
+  - `app/doctor/send/page.tsx` - All send flow buttons
+  - `app/doctor/patients/[id]/page.tsx` - Patient profile send buttons
+  - `app/doctor/patients/page.tsx` - Patient list send buttons
+  - `app/doctor/page.tsx` - Dashboard send buttons
+  - `app/doctor/DoctorLayoutClient.tsx` - Login & floating action buttons
+  - `app/doctor/onboarding/page.tsx` - Setup wizard buttons
+  - `app/doctor/my-messages/page.tsx` - Message action buttons
+  - `app/doctor/chapters/page.tsx` - Send to patients button
+  - `app/doctor/discover-videos/page.tsx` - Save/unsave buttons
+  - `app/doctor/settings/page.tsx` - Settings action buttons
+  - `app/doctor/content/page.tsx` - Template buttons
+  - `app/my-health/page.tsx` - Auth prompt buttons
+  - `app/my-health/onboarding/page.tsx` - All onboarding step buttons
+  - `app/discover/page.tsx` - Sign up buttons
+  - `components/SignInForm.tsx` - Sign in button
+  - `components/AuthPrompt.tsx` - Auth button
+  - `components/OnboardingForm.tsx` - All form buttons
+  - `components/PreventiveCareChecklist.tsx` - Schedule button
+
+### 🏥 Doctor Portal Improvements
+
+**Unified Send Button (`app/doctor/patients/[id]/page.tsx`):**
+- Consolidated 2 separate buttons ("Send Check In" + "Send Video") into single "Send" button
+- Single button navigates to unified send flow at `/doctor/send?patient={id}`
+- Removed redundant modal and associated state/handlers
+- Applied brand gradient styling to the unified button
+
+**Reminders in Send Flow (`app/doctor/send/page.tsx`):**
+- Added "Reminders" section to Step 3 (Add Check-in/Message)
+- 6 reminder templates: Medication, Blood Pressure, Appointment, Exercise, Hydration, Lab Work
+- Each reminder shows title, description, and timing
+- Reminders appear in Review & Send summary
+- Success message includes reminder count
+
+### 🎯 Landing Page Updates (`app/page.tsx`)
+
+**Text Changes:**
+- Removed comma from "Healthcare Communication, Reimagined" → "Healthcare Communication Reimagined"
+- Changed "from your doctors and other specialists" → "from your doctors and specialists"
+- Moved "Trusted and delivered by doctors themselves" to be last feature bullet
+- Updated "Personalized Videos" → "Personalized Videos You Can Trust"
+
+**For Patient/Provider Section Symmetry:**
+- Added intro paragraph to "For the Patient" section for visual balance
+- Added 4th list item "Care Reminders" to Patient section (matching Provider's 4 items)
+- Updated Provider section icons to use styled icon boxes (matching Patient section)
+- Each Provider item now has unique colored icon: violet (FileText), rose (TrendingUp), sky (Shield), amber (Bell)
+- Both sections now have matching structure: header, paragraph, 4 icon list items
+
 ## [1.56.0] - 2026-01-12
 
 ### 🏥 Doctor Portal Send Flow Redesign

@@ -469,7 +469,7 @@ export default function MyMessagesPage() {
                           )}
                         </button>
                         <button
-                          className="flex items-center gap-1.5 px-3 py-1.5 bg-sky-600 text-white text-sm font-medium rounded-lg hover:bg-sky-700 transition-colors"
+                          className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-emerald-500 to-sky-500 text-white text-sm font-medium rounded-lg hover:from-emerald-600 hover:to-sky-600 transition-all"
                           aria-label="Send to patient"
                         >
                           <Send className="w-3.5 h-3.5" />
@@ -586,7 +586,7 @@ export default function MyMessagesPage() {
                         <button
                           onClick={() => handleUseSuggestedMessage(suggested)}
                           disabled={isSaving}
-                          className="flex items-center gap-1.5 px-3 py-1.5 bg-sky-600 text-white text-sm font-medium rounded-lg hover:bg-sky-700 transition-colors disabled:opacity-50 flex-shrink-0"
+                          className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-emerald-500 to-sky-500 text-white text-sm font-medium rounded-lg hover:from-emerald-600 hover:to-sky-600 transition-all disabled:opacity-50 flex-shrink-0"
                         >
                           <Plus className="w-3.5 h-3.5" />
                           Use This

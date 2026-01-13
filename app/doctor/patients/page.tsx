@@ -263,7 +263,7 @@ export default function PatientsPage() {
           </button>
           <Link
             href="/doctor/send"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-sky-600 text-white font-medium rounded-lg hover:bg-sky-700 transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-medium rounded-lg hover:from-emerald-600 hover:to-sky-600 transition-all"
           >
             <Send className="w-4 h-4" />
             Send Content
@@ -579,7 +579,7 @@ export default function PatientsPage() {
               <div className="space-y-3 pt-4 border-t border-gray-100">
                 <Link
                   href={`/doctor/send?patient=${selectedPatient.id}`}
-                  className="flex items-center justify-center gap-2 w-full py-3 bg-sky-600 text-white font-medium rounded-xl hover:bg-sky-700 transition-colors"
+                  className="flex items-center justify-center gap-2 w-full py-3 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-medium rounded-xl hover:from-emerald-600 hover:to-sky-600 transition-all"
                 >
                   <Send className="w-5 h-5" />
                   Send Content
@@ -762,7 +762,7 @@ export default function PatientsPage() {
                   <button
                     onClick={handleSendInvite}
                     disabled={!inviteContact.trim() || isSendingInvite}
-                    className="flex-1 px-6 py-3 bg-sky-600 text-white font-semibold rounded-xl hover:bg-sky-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                    className="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-sky-600 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
                   >
                     {isSendingInvite ? (
                       <>

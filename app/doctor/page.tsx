@@ -724,7 +724,7 @@ export default function DoctorDashboard() {
               className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-medium rounded-lg hover:from-emerald-600 hover:to-sky-600 transition-all"
             >
               <Send className="w-4 h-4" />
-              Send Content
+              Send
             </Link>
           </div>
 
@@ -827,16 +827,6 @@ export default function DoctorDashboard() {
                           aria-label="Send content"
                         >
                           <Send className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            window.location.href = `/doctor/messages?patient=${patient.id}`;
-                          }}
-                          className="p-2 text-gray-500 hover:text-sky-600 hover:bg-sky-50 rounded-xl transition-colors"
-                          aria-label="Send message"
-                        >
-                          <Mail className="w-4 h-4" />
                         </button>
                       </div>
                     </td>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import {
   Search,
@@ -17,6 +17,7 @@ import {
   Clock,
   ChevronRight,
   Sparkles,
+  Send,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -217,6 +218,7 @@ const getCategoryColor = (category: CheckInQuestion["category"]) => {
 
 const MessagesContent = () => {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const preselectedPatient = searchParams.get("patient");
 
   const [patients] = useState<PatientCheckIn[]>(MOCK_PATIENT_CHECKINS);
@@ -450,13 +452,13 @@ const MessagesContent = () => {
               </div>
             </div>
 
-            {/* Send Check-in Button */}
-            <div className="p-4 border-t border-gray-100 bg-white">
+            {/* Send Button */}
+            <div className="p-4 border-t border-gray-100 bg-white flex justify-end">
               <button
-                onClick={() => setShowQuestionSelector(true)}
-                className="w-full py-3 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-sky-600 transition-all shadow-lg flex items-center justify-center gap-2"
+                onClick={() => router.push(`/doctor/send?patient=${selectedPatient.patientId}`)}
+                className="px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-medium rounded-xl hover:from-emerald-600 hover:to-sky-600 transition-all shadow-sm flex items-center gap-2"
               >
-                <Sparkles className="w-5 h-5" />
+                <Send className="w-4 h-4" />
                 Send
               </button>
             </div>

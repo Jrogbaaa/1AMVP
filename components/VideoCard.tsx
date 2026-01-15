@@ -244,6 +244,29 @@ export const VideoCard = ({
     onComplete?.();
   }, [onComplete]);
 
+  // Sync React state with native video play/pause events
+  // This handles cases where video is paused/played externally (e.g., by browser or programmatically)
+  useEffect(() => {
+    const videoElement = videoRef.current;
+    if (!videoElement) return;
+
+    const handleNativePlay = () => {
+      setIsPlaying(true);
+    };
+
+    const handleNativePause = () => {
+      setIsPlaying(false);
+    };
+
+    videoElement.addEventListener("play", handleNativePlay);
+    videoElement.addEventListener("pause", handleNativePause);
+
+    return () => {
+      videoElement.removeEventListener("play", handleNativePlay);
+      videoElement.removeEventListener("pause", handleNativePause);
+    };
+  }, []);
+
   const handleShare = useCallback(async () => {
     const shareData = {
       title: video.title,

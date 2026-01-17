@@ -453,12 +453,12 @@ const MessagesContent = () => {
             </div>
 
             {/* Send Button */}
-            <div className="p-4 border-t border-gray-100 bg-white flex justify-end">
+            <div className="p-3 border-t border-gray-100 bg-white flex justify-end">
               <button
                 onClick={() => router.push(`/doctor/send?patient=${selectedPatient.patientId}`)}
-                className="px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-medium rounded-xl hover:from-emerald-600 hover:to-sky-600 transition-all shadow-sm flex items-center gap-2"
+                className="px-3 py-1.5 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-medium text-xs rounded-md hover:from-emerald-600 hover:to-sky-600 transition-all shadow-sm flex items-center gap-1.5"
               >
-                <Send className="w-4 h-4" />
+                <Send className="w-3.5 h-3.5" />
                 Send
               </button>
             </div>

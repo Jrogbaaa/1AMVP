@@ -5,6 +5,47 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.59.0] - 2026-01-17
+
+### 🏠 Homepage Improvements
+
+**Added Mission Statement (`app/page.tsx`):**
+- Added mission paragraph below CTA buttons: "Our mission is to improve health comprehension, adherence, and experience — by delivering accurate information through the most trusted face in the system: your doctor."
+- Styled with reveal animation to match surrounding content
+
+### 🏥 Doctor Portal Improvements
+
+**Fixed: Send Button Sizing (`app/doctor/messages/page.tsx`, `app/doctor/page.tsx`):**
+- Made the large full-width Send button at the bottom of messages section smaller
+- Changed from full-width to compact button positioned on the right
+- Reduced padding, font size, and border radius for cleaner look
+- Both dashboard and messages page buttons now consistent
+
+### 👤 Patient Portal Improvements
+
+**Fixed: Sidebar Doctor Links (`app/discover/page.tsx`):**
+- Changed "Your Doctors" sidebar links from `/feed?doctor={id}` (blank page) to `/profile/{id}`
+- Doctors in sidebar now navigate to their profile page correctly
+
+**Fixed: Doctor Add/Remove Button Styling (`app/discover/page.tsx`):**
+- Changed the add button from transparent `bg-primary-500` to solid gradient
+- Now uses `bg-gradient-to-r from-emerald-500 to-sky-500` for consistency
+- Uses Plus icon component to match suggested doctor section
+
+**Fixed: Trending Videos Black Screen (`components/VerticalVideoPreview.tsx`):**
+- Videos no longer show black screen on hover
+- Thumbnail stays visible until video actually starts playing via `onPlaying` event
+- Added `isVideoReady` state to track when video is truly ready to display
+
+**Fixed: Doctor Profile Messages (`app/profile/[id]/page.tsx`):**
+- Message button now opens a chat-style drawer instead of blank page
+- Removed text input - patients cannot send free-form messages
+- Shows check-ins from doctor with multi-choice response buttons
+- Compact chat bubble design with doctor avatar
+- Smaller, more elegant response option buttons
+- Includes video shares from doctor if available
+- Footer note: "Tap to respond to check-ins from your doctor"
+
 ## [1.58.0] - 2026-01-13
 
 ### 📱 Mobile Debugging & Testing Improvements

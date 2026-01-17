@@ -20,7 +20,7 @@ export const VerticalVideoPreview = ({
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isHovering, setIsHovering] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
-  const [hasStartedPlaying, setHasStartedPlaying] = useState(false);
+  const [isVideoReady, setIsVideoReady] = useState(false);
 
   const handleMouseEnter = useCallback(() => {
     setIsHovering(true);
@@ -29,12 +29,12 @@ export const VerticalVideoPreview = ({
       videoRef.current.play().catch(() => {
         // Autoplay failed, user interaction required
       });
-      setHasStartedPlaying(true);
     }
   }, []);
 
   const handleMouseLeave = useCallback(() => {
     setIsHovering(false);
+    setIsVideoReady(false);
     if (videoRef.current) {
       videoRef.current.pause();
       videoRef.current.currentTime = 0;
@@ -66,8 +66,8 @@ export const VerticalVideoPreview = ({
     >
       {/* TikTok-style vertical preview container */}
       <div className="relative aspect-[9/16] bg-gray-900 rounded-xl overflow-hidden shadow-lg transition-transform duration-200 group-hover:scale-[1.02] group-hover:shadow-xl">
-        {/* Thumbnail / Poster */}
-        {!hasStartedPlaying && (
+        {/* Thumbnail / Poster - stays visible until video is actually playing */}
+        {!isVideoReady && (
           <Image
             src={video.thumbnailUrl || video.posterUrl || ""}
             alt={video.title}
@@ -82,12 +82,13 @@ export const VerticalVideoPreview = ({
           ref={videoRef}
           src={video.videoUrl}
           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
-            isHovering ? "opacity-100" : "opacity-0"
+            isHovering && isVideoReady ? "opacity-100" : "opacity-0"
           }`}
           muted={isMuted}
           loop
           playsInline
           preload="metadata"
+          onPlaying={() => setIsVideoReady(true)}
         />
 
         {/* Gradient overlay */}

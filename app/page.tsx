@@ -154,6 +154,11 @@ export default function LandingPage() {
               </Link>
             </div>
 
+            {/* Mission Statement */}
+            <p className="animate-reveal reveal-delay-4 mt-8 text-white/70 text-center lg:text-left max-w-xl mx-auto lg:mx-0 text-sm leading-relaxed">
+              Our mission is to improve health comprehension, adherence, and experience — by delivering accurate information through the most trusted face in the system: your doctor.
+            </p>
+
             {/* Trust indicators */}
             <div className="animate-reveal reveal-delay-5 mt-10 flex items-center justify-center lg:justify-start gap-6 text-white/50 text-sm">
               <div className="flex items-center gap-2">

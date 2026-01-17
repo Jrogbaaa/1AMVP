@@ -403,7 +403,7 @@ export default function DiscoverPage() {
             {MOCK_DOCTORS.slice(0, 5).map((doctor) => (
               <Link
                 key={doctor.id}
-                href={`/feed?doctor=${doctor.id}`}
+                href={`/profile/${doctor.id}`}
                 className="flex items-center gap-3 px-4 py-2 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
               >
                 <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-gray-100">
@@ -709,10 +709,10 @@ export default function DiscoverPage() {
                         {!isAdded && (
                           <button
                             onClick={(e) => handleToggleDoctor(e, doctor.id, false)}
-                            className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-xs hover:bg-primary-600 transition-colors shadow border-2 border-white"
+                            className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-gradient-to-r from-emerald-500 to-sky-500 rounded-full flex items-center justify-center shadow border-2 border-white hover:from-emerald-600 hover:to-sky-600 transition-all"
                             aria-label={`Add Dr. ${doctor.name}`}
                           >
-                            +
+                            <Plus className="w-3 h-3 text-white" strokeWidth={3} />
                           </button>
                         )}
                       </div>

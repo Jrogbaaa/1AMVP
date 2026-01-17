@@ -1,10 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, MessageCircle, Play, Calendar, Video, UserPlus, Check } from "lucide-react";
+import { ArrowLeft, MessageCircle, Play, Calendar, Video, UserPlus, Check, X, Heart, Pill } from "lucide-react";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import type { Video as VideoType, Doctor } from "@/lib/types";
 
@@ -158,7 +158,8 @@ export default function DoctorProfilePage() {
   const params = useParams();
   const doctorId = params.id as string;
 
-  const [isFollowing, setIsFollowing] = React.useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [isMessagesOpen, setIsMessagesOpen] = useState(false);
 
   // Find the doctor from mock data
   const doctor = MOCK_DOCTORS.find((d) => d.id === doctorId);
@@ -302,13 +303,14 @@ export default function DoctorProfilePage() {
                   </>
                 )}
               </button>
-              <Link
-                href={`/feed?doctor=${doctor.id}`}
+              <button
+                onClick={() => setIsMessagesOpen(true)}
                 className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-semibold border-2 border-[#00BFA6] text-[#00A6CE] hover:bg-[#00BFA6]/5 transition-colors"
+                aria-label={`Message Dr. ${doctor.name}`}
               >
                 <MessageCircle className="w-4 h-4" />
                 Message
-              </Link>
+              </button>
             </div>
           </div>
         </div>
@@ -368,6 +370,199 @@ export default function DoctorProfilePage() {
       </main>
 
       <MobileBottomNav />
+
+      {/* Messages Drawer */}
+      {isMessagesOpen && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setIsMessagesOpen(false)}
+          />
+          
+          {/* Modal */}
+          <div className="relative bg-white w-full sm:max-w-lg sm:rounded-2xl rounded-t-2xl max-h-[85vh] overflow-hidden shadow-2xl">
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full overflow-hidden">
+                  {doctor.avatarUrl ? (
+                    <Image
+                      src={doctor.avatarUrl}
+                      alt={doctor.name}
+                      width={40}
+                      height={40}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-[#00BFA6] to-[#00A6CE] flex items-center justify-center">
+                      <span className="text-white font-bold text-sm">{doctor.name.charAt(0)}</span>
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900">Dr. {doctor.name}</h3>
+                  <p className="text-xs text-gray-500">{doctor.specialty}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsMessagesOpen(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                aria-label="Close messages"
+              >
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+
+            {/* Messages Content - Chat Style */}
+            <div className="flex-1 overflow-y-auto bg-gray-50" style={{ maxHeight: "60vh" }}>
+              <div className="p-3 space-y-3">
+                {/* Video message from doctor */}
+                {doctorVideos.length > 0 && (
+                  <div className="flex items-end gap-2">
+                    <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
+                      {doctor.avatarUrl ? (
+                        <Image
+                          src={doctor.avatarUrl}
+                          alt={doctor.name}
+                          width={24}
+                          height={24}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-[#00BFA6] to-[#00A6CE] flex items-center justify-center">
+                          <span className="text-white font-bold text-[8px]">{doctor.name.charAt(0)}</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="max-w-[80%]">
+                      <div className="bg-white rounded-2xl rounded-bl-md px-3 py-2 shadow-sm">
+                        <p className="text-gray-900 text-xs mb-1.5">Shared a video:</p>
+                        <Link
+                          href={`/feed?doctor=${doctor.id}&video=${doctorVideos[0].id}`}
+                          className="block bg-gray-100 rounded-lg overflow-hidden hover:bg-gray-200 transition-colors"
+                        >
+                          <div className="flex items-center gap-2 p-1.5">
+                            <div className="relative w-12 aspect-video rounded overflow-hidden bg-gray-200 flex-shrink-0">
+                              <Image
+                                src={doctor.avatarUrl || doctorVideos[0].thumbnailUrl || ""}
+                                alt={doctorVideos[0].title}
+                                fill
+                                className="object-cover"
+                              />
+                              <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                                <Play className="w-3 h-3 text-white" fill="white" />
+                              </div>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs font-medium text-gray-900 truncate">{doctorVideos[0].title}</p>
+                              <p className="text-[10px] text-gray-500">{formatDuration(doctorVideos[0].duration || 0)}</p>
+                            </div>
+                          </div>
+                        </Link>
+                      </div>
+                      <p className="text-[10px] text-gray-400 mt-0.5 ml-1">Yesterday</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Check-in question from doctor */}
+                <div className="flex items-end gap-2">
+                  <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
+                    {doctor.avatarUrl ? (
+                      <Image
+                        src={doctor.avatarUrl}
+                        alt={doctor.name}
+                        width={24}
+                        height={24}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-[#00BFA6] to-[#00A6CE] flex items-center justify-center">
+                        <span className="text-white font-bold text-[8px]">{doctor.name.charAt(0)}</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="max-w-[85%]">
+                    <div className="bg-gradient-to-r from-emerald-500 to-sky-500 text-white rounded-2xl rounded-bl-md px-3 py-2 shadow-sm">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <Heart className="w-3 h-3" />
+                        <span className="text-[10px] opacity-80">Check-in</span>
+                      </div>
+                      <p className="font-medium text-xs">How are you feeling today?</p>
+                    </div>
+                    <div className="mt-1.5 flex flex-wrap gap-1">
+                      <button className="px-2 py-1 bg-white rounded-lg text-[11px] font-medium text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors shadow-sm border border-gray-100">
+                        😊 Great
+                      </button>
+                      <button className="px-2 py-1 bg-white rounded-lg text-[11px] font-medium text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors shadow-sm border border-gray-100">
+                        🙂 Good
+                      </button>
+                      <button className="px-2 py-1 bg-white rounded-lg text-[11px] font-medium text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors shadow-sm border border-gray-100">
+                        😐 Okay
+                      </button>
+                      <button className="px-2 py-1 bg-white rounded-lg text-[11px] font-medium text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors shadow-sm border border-gray-100">
+                        😔 Not Great
+                      </button>
+                    </div>
+                    <p className="text-[10px] text-gray-400 mt-1 ml-1">Today</p>
+                  </div>
+                </div>
+
+                {/* Medication check-in from doctor */}
+                <div className="flex items-end gap-2">
+                  <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
+                    {doctor.avatarUrl ? (
+                      <Image
+                        src={doctor.avatarUrl}
+                        alt={doctor.name}
+                        width={24}
+                        height={24}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-[#00BFA6] to-[#00A6CE] flex items-center justify-center">
+                        <span className="text-white font-bold text-[8px]">{doctor.name.charAt(0)}</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="max-w-[85%]">
+                    <div className="bg-gradient-to-r from-emerald-500 to-sky-500 text-white rounded-2xl rounded-bl-md px-3 py-2 shadow-sm">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <Pill className="w-3 h-3" />
+                        <span className="text-[10px] opacity-80">Medication</span>
+                      </div>
+                      <p className="font-medium text-xs">Did you take your medications today?</p>
+                    </div>
+                    <div className="mt-1.5 flex flex-wrap gap-1">
+                      <button className="px-2 py-1 bg-white rounded-lg text-[11px] font-medium text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors shadow-sm border border-gray-100">
+                        ✅ Yes, all
+                      </button>
+                      <button className="px-2 py-1 bg-white rounded-lg text-[11px] font-medium text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors shadow-sm border border-gray-100">
+                        🔶 Some
+                      </button>
+                      <button className="px-2 py-1 bg-white rounded-lg text-[11px] font-medium text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors shadow-sm border border-gray-100">
+                        😅 Forgot
+                      </button>
+                      <button className="px-2 py-1 bg-white rounded-lg text-[11px] font-medium text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors shadow-sm border border-gray-100">
+                        ⚠️ Side effects
+                      </button>
+                    </div>
+                    <p className="text-[10px] text-gray-400 mt-1 ml-1">Today</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer Note - No text input */}
+            <div className="p-2.5 border-t border-gray-100 bg-white">
+              <p className="text-[10px] text-gray-400 text-center">
+                Tap to respond to check-ins from your doctor
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

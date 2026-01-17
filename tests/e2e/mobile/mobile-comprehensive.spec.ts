@@ -136,9 +136,12 @@ test.describe("Mobile: Discover Page", () => {
     // Wait for page content to load
     await page.waitForLoadState("networkidle");
     
-    // Should display doctor cards/profiles - look for various link patterns
-    const doctorCards = page.locator('a[href*="/doctor/"], a[href*="/profile/"], [class*="doctor"], [class*="card"]').first();
-    await expect(doctorCards).toBeVisible({ timeout: 10000 });
+    // Wait for the doctor profile links to appear - they link to /profile/{id}
+    await page.waitForSelector('a[href*="/profile/"]', { timeout: 15000 });
+    
+    // Should display doctor cards/profiles - look for profile links or doctor avatars
+    const doctorCards = page.locator('a[href*="/profile/"]').first();
+    await expect(doctorCards).toBeVisible({ timeout: 5000 });
   });
 
   test("should show category filter buttons", async ({ page }) => {

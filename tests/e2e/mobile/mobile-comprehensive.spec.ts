@@ -135,13 +135,11 @@ test.describe("Mobile: Discover Page", () => {
   test("should show doctor cards", async ({ page }) => {
     // Wait for page content to load
     await page.waitForLoadState("networkidle");
-    
-    // Wait for the doctor profile links to appear - they link to /profile/{id}
-    await page.waitForSelector('a[href*="/profile/"]', { timeout: 15000 });
-    
-    // Should display doctor cards/profiles - look for profile links or doctor avatars
-    const doctorCards = page.locator('a[href*="/profile/"]').first();
-    await expect(doctorCards).toBeVisible({ timeout: 5000 });
+
+    // On mobile, doctor avatars are in the horizontal scroll area (not the sidebar which is hidden)
+    // Look for visible profile links in the main content area
+    const visibleDoctorLink = page.locator('main a[href*="/profile/"]').first();
+    await expect(visibleDoctorLink).toBeVisible({ timeout: 15000 });
   });
 
   test("should show category filter buttons", async ({ page }) => {

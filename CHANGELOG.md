@@ -5,6 +5,15 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.61.0] - 2026-01-19
+
+### 🧪 Test Fixes
+
+**Fixed: Mobile Discover Page Test (`tests/e2e/mobile/mobile-comprehensive.spec.ts`):**
+- Fixed "should show doctor cards" test that was failing due to selector finding hidden sidebar elements
+- Updated test to look for profile links within `main` element to target only visible content on mobile
+- Test now correctly validates doctor cards in the horizontal scroll area
+
 ## [1.60.0] - 2026-01-19
 
 ### 🔧 Database Error Handling Improvements

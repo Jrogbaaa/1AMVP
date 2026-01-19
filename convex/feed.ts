@@ -100,10 +100,15 @@ export const generateFeed = mutation({
       },
     ];
 
-    // Insert feed items
-    await ctx.db.insert("feedItems", card1);
-    for (const card of educationalCards) {
-      await ctx.db.insert("feedItems", card);
+    // Insert feed items with error handling
+    try {
+      await ctx.db.insert("feedItems", card1);
+      for (const card of educationalCards) {
+        await ctx.db.insert("feedItems", card);
+      }
+    } catch (error) {
+      console.error("Failed to generate feed:", error);
+      throw error;
     }
 
     return { success: true, message: "Feed generated" };

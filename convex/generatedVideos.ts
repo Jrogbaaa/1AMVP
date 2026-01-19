@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
+import { assertExists } from "./lib/errors";
 
 /**
  * Get generated video by ID
@@ -125,6 +126,9 @@ export const updateHeygenId = mutation({
     heygenVideoId: v.string(),
   },
   handler: async (ctx, { id, heygenVideoId }) => {
+    const video = await ctx.db.get(id);
+    assertExists(video, "GeneratedVideo", id);
+
     await ctx.db.patch(id, {
       heygenVideoId,
       updatedAt: Date.now(),
@@ -148,6 +152,9 @@ export const updateAfterGeneration = mutation({
     errorMessage: v.optional(v.string()),
   },
   handler: async (ctx, { id, ...updates }) => {
+    const video = await ctx.db.get(id);
+    assertExists(video, "GeneratedVideo", id);
+
     await ctx.db.patch(id, {
       ...updates,
       updatedAt: Date.now(),
@@ -164,6 +171,9 @@ export const togglePublic = mutation({
     isPublic: v.boolean(),
   },
   handler: async (ctx, { id, isPublic }) => {
+    const video = await ctx.db.get(id);
+    assertExists(video, "GeneratedVideo", id);
+
     await ctx.db.patch(id, {
       isPublic,
       updatedAt: Date.now(),
@@ -178,8 +188,8 @@ export const incrementViewCount = mutation({
   args: { id: v.id("generatedVideos") },
   handler: async (ctx, { id }) => {
     const video = await ctx.db.get(id);
-    if (!video) return;
-    
+    assertExists(video, "GeneratedVideo", id);
+
     await ctx.db.patch(id, {
       viewCount: video.viewCount + 1,
     });
@@ -193,8 +203,8 @@ export const incrementSentCount = mutation({
   args: { id: v.id("generatedVideos") },
   handler: async (ctx, { id }) => {
     const video = await ctx.db.get(id);
-    if (!video) return;
-    
+    assertExists(video, "GeneratedVideo", id);
+
     await ctx.db.patch(id, {
       sentCount: video.sentCount + 1,
     });

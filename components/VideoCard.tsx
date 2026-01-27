@@ -443,92 +443,84 @@ export const VideoCard = ({
         </button>
       )}
 
-      {/* Bottom content - TikTok style, positioned at very bottom */}
-      <div className="absolute bottom-0 left-0 right-0 px-4 pb-20 md:pb-6 pointer-events-none">
-        <div className="flex justify-between items-end">
-          {/* Left side - Video info */}
-          <div className="flex-1 pr-4">
-            {isPersonalized ? (
-              <div className="space-y-1">
-                <p className="text-white font-semibold text-sm [text-shadow:_0_1px_8px_rgb(0_0_0_/_90%)]">
-                  @dr.{doctor?.name?.toLowerCase().replace(' ', '') || "doctor"}
-                </p>
-                <p className="text-white text-sm [text-shadow:_0_1px_8px_rgb(0_0_0_/_90%)]">
-                  Hey {patientName || "Dave"} — here&apos;s what to do next for
-                  your heart health
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-1">
-                {doctor && (
-                  <p className="text-white font-semibold text-sm [text-shadow:_0_1px_8px_rgb(0_0_0_/_90%)]">
-                    @dr.{doctor.name.toLowerCase().replace(' ', '')}
-                  </p>
+      {/* Right side actions - positioned independently */}
+      <div className="absolute right-3 bottom-32 md:hidden flex flex-col gap-5 items-center pointer-events-auto z-20">
+        {/* Doctor avatar */}
+        {doctor && (
+          <Link
+            href={`/profile/${doctor.id}`}
+            className="flex flex-col items-center"
+            aria-label={`View Dr. ${doctor.name}'s profile`}
+          >
+            <div className="relative">
+              <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-lg">
+                {doctor.avatarUrl ? (
+                  <Image
+                    src={doctor.avatarUrl}
+                    alt={doctor.name}
+                    width={48}
+                    height={48}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-primary-600 flex items-center justify-center">
+                    <span className="text-white font-bold text-base">
+                      {doctor.name.charAt(0)}
+                    </span>
+                  </div>
                 )}
-                <p className="text-white text-sm [text-shadow:_0_1px_8px_rgb(0_0_0_/_90%)] line-clamp-2">
-                  {video.title}{video.description ? ` - ${video.description}` : ''}
-                </p>
               </div>
-            )}
-          </div>
+              <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white">
+                +
+              </div>
+            </div>
+          </Link>
+        )}
 
-          {/* Right side - Actions (mobile only, hidden on desktop) */}
-          <div className="flex flex-col gap-4 items-center md:hidden pointer-events-auto">
-            {/* Doctor avatar */}
+        {/* Discover button */}
+        <Link
+          href="/discover"
+          className="flex items-center justify-center w-12 h-12"
+          aria-label="Discover Doctors"
+        >
+          <Search className="w-7 h-7 text-white [filter:_drop-shadow(0_2px_4px_rgb(0_0_0_/_90%))]" />
+        </Link>
+
+        {/* Share button */}
+        {!isPersonalized && (
+          <button
+            onClick={handleShare}
+            className="flex items-center justify-center w-12 h-12"
+            aria-label="Share video"
+          >
+            <Share2 className="w-7 h-7 text-white [filter:_drop-shadow(0_2px_4px_rgb(0_0_0_/_90%))]" />
+          </button>
+        )}
+      </div>
+
+      {/* Bottom text - at absolute bottom edge */}
+      <div className="absolute bottom-1 left-0 right-16 px-3 pointer-events-none z-20">
+        {isPersonalized ? (
+          <div>
+            <p className="text-white font-bold text-[13px] [text-shadow:_0_1px_3px_rgb(0_0_0_/_100%),_0_0_8px_rgb(0_0_0_/_80%)]">
+              @dr.{doctor?.name?.toLowerCase().replace(' ', '') || "doctor"}
+            </p>
+            <p className="text-white text-[13px] [text-shadow:_0_1px_3px_rgb(0_0_0_/_100%),_0_0_8px_rgb(0_0_0_/_80%)]">
+              Hey {patientName || "Dave"} — here&apos;s what to do next
+            </p>
+          </div>
+        ) : (
+          <div>
             {doctor && (
-              <Link
-                href={`/profile/${doctor.id}`}
-                className="flex flex-col items-center gap-1"
-                aria-label={`View Dr. ${doctor.name}'s profile`}
-              >
-                <div className="relative">
-                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-lg hover:scale-110 active:scale-95 transition-transform">
-                    {doctor.avatarUrl ? (
-                      <Image
-                        src={doctor.avatarUrl}
-                        alt={doctor.name}
-                        width={48}
-                        height={48}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-primary-600 flex items-center justify-center">
-                        <span className="text-white font-bold text-base">
-                          {doctor.name.charAt(0)}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  {/* Follow indicator */}
-                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white">
-                    +
-                  </div>
-                </div>
-              </Link>
+              <p className="text-white font-bold text-[13px] [text-shadow:_0_1px_3px_rgb(0_0_0_/_100%),_0_0_8px_rgb(0_0_0_/_80%)]">
+                @dr.{doctor.name.toLowerCase().replace(' ', '')}
+              </p>
             )}
-
-            {/* Discover button */}
-            <Link
-              href="/discover"
-              className="flex items-center justify-center w-12 h-12 rounded-full"
-              aria-label="Discover Doctors"
-              tabIndex={0}
-            >
-              <Search className="w-7 h-7 text-white [filter:_drop-shadow(0_1px_4px_rgb(0_0_0_/_80%))]" />
-            </Link>
-
-            {/* Share button */}
-            {!isPersonalized && (
-              <button
-                onClick={handleShare}
-                className="flex items-center justify-center w-12 h-12 rounded-full pointer-events-auto"
-                aria-label="Share video"
-              >
-                <Share2 className="w-7 h-7 text-white [filter:_drop-shadow(0_1px_4px_rgb(0_0_0_/_80%))]" />
-              </button>
-            )}
+            <p className="text-white text-[13px] [text-shadow:_0_1px_3px_rgb(0_0_0_/_100%),_0_0_8px_rgb(0_0_0_/_80%)] line-clamp-1">
+              {video.title}{video.description ? ` - ${video.description}` : ''} <span className="font-semibold">...more</span>
+            </p>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

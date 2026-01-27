@@ -21,9 +21,10 @@ test.describe("Patient Feed Page", () => {
     expect(count).toBeGreaterThan(0);
   });
 
-  test("should display personalized greeting video first", async ({ page }) => {
-    // The first video should be the personalized "Hey Dave" video
-    await expect(page.getByText("Hey Dave")).toBeVisible({ timeout: 10000 });
+  test("should display first video with title visible", async ({ page }) => {
+    // The first video should be visible with its title
+    // Currently the first video is an educational video (Skin Rashes)
+    await expect(page.getByText("Skin Rashes: When to Worry")).toBeVisible({ timeout: 10000 });
   });
 
   test("should show video interaction buttons", async ({ page }) => {

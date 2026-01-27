@@ -412,8 +412,7 @@ export const VideoCard = ({
         </div>
       )}
 
-      {/* Overlay gradient */}
-      <div className="video-overlay" />
+      {/* No overlay - TikTok style clean look */}
 
       {/* 1A Logo Watermark */}
       <div className="absolute top-5 left-5 z-10 pointer-events-none">
@@ -444,46 +443,38 @@ export const VideoCard = ({
         </button>
       )}
 
-      {/* Content overlay */}
-      <div className="absolute inset-0 flex flex-col justify-between p-6 pointer-events-none">
-        {/* Top section - Empty for cleaner look */}
-        <div className="flex justify-between items-start pointer-events-auto"></div>
-
-        {/* Middle section - Empty */}
-        <div className="flex items-center justify-center pointer-events-auto"></div>
-
-        {/* Bottom section - extra bottom padding on mobile for bottom nav */}
-        <div className="flex justify-between items-end pointer-events-auto pb-16 md:pb-8">
+      {/* Bottom content - TikTok style, positioned at very bottom */}
+      <div className="absolute bottom-0 left-0 right-0 px-4 pb-20 md:pb-6 pointer-events-none">
+        <div className="flex justify-between items-end">
           {/* Left side - Video info */}
           <div className="flex-1 pr-4">
             {isPersonalized ? (
-              <div className="space-y-2">
-                <h3 className="text-white font-bold text-xl drop-shadow-lg">
+              <div className="space-y-1">
+                <p className="text-white font-semibold text-sm [text-shadow:_0_1px_8px_rgb(0_0_0_/_90%)]">
+                  @dr.{doctor?.name?.toLowerCase().replace(' ', '') || "doctor"}
+                </p>
+                <p className="text-white text-sm [text-shadow:_0_1px_8px_rgb(0_0_0_/_90%)]">
                   Hey {patientName || "Dave"} — here&apos;s what to do next for
                   your heart health
-                </h3>
-                <p className="text-white/80 text-sm drop-shadow-md">
-                  Dr. {doctor?.name || "Ryan Mitchell"} explains your upcoming
-                  follow-up and what to expect.
                 </p>
               </div>
             ) : (
-              <>
-                <h3 className="text-white font-bold text-xl mb-2 drop-shadow-lg">
-                  {video.title}
-                </h3>
-                {video.description && (
-                  <p className="text-white/90 text-base line-clamp-2 drop-shadow-md">
-                    {video.description}
+              <div className="space-y-1">
+                {doctor && (
+                  <p className="text-white font-semibold text-sm [text-shadow:_0_1px_8px_rgb(0_0_0_/_90%)]">
+                    @dr.{doctor.name.toLowerCase().replace(' ', '')}
                   </p>
                 )}
-              </>
+                <p className="text-white text-sm [text-shadow:_0_1px_8px_rgb(0_0_0_/_90%)] line-clamp-2">
+                  {video.title}{video.description ? ` - ${video.description}` : ''}
+                </p>
+              </div>
             )}
           </div>
 
           {/* Right side - Actions (mobile only, hidden on desktop) */}
-          <div className="flex flex-col gap-4 items-center md:hidden">
-            {/* Doctor avatar - FIRST (builds relationship) */}
+          <div className="flex flex-col gap-4 items-center md:hidden pointer-events-auto">
+            {/* Doctor avatar */}
             {doctor && (
               <Link
                 href={`/profile/${doctor.id}`}
@@ -491,13 +482,13 @@ export const VideoCard = ({
                 aria-label={`View Dr. ${doctor.name}'s profile`}
               >
                 <div className="relative">
-                  <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-white shadow-lg hover:scale-110 active:scale-95 transition-transform">
+                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-lg hover:scale-110 active:scale-95 transition-transform">
                     {doctor.avatarUrl ? (
                       <Image
                         src={doctor.avatarUrl}
                         alt={doctor.name}
-                        width={44}
-                        height={44}
+                        width={48}
+                        height={48}
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -509,31 +500,31 @@ export const VideoCard = ({
                     )}
                   </div>
                   {/* Follow indicator */}
-                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-4 bg-primary-500 rounded-full flex items-center justify-center text-white text-[10px] font-bold border-2 border-white">
+                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white">
                     +
                   </div>
                 </div>
               </Link>
             )}
 
-            {/* Discover button - SECOND */}
+            {/* Discover button */}
             <Link
               href="/discover"
-              className="flex items-center justify-center w-11 h-11 bg-white/40 backdrop-blur-sm rounded-full shadow-lg hover:bg-white/60 active:bg-white/70 hover:scale-110 active:scale-95 transition-all duration-200"
+              className="flex items-center justify-center w-12 h-12 rounded-full"
               aria-label="Discover Doctors"
               tabIndex={0}
             >
-              <Search className="w-5 h-5 text-white" />
+              <Search className="w-7 h-7 text-white [filter:_drop-shadow(0_1px_4px_rgb(0_0_0_/_80%))]" />
             </Link>
 
-            {/* Share button - only show for non-personalized videos */}
+            {/* Share button */}
             {!isPersonalized && (
               <button
                 onClick={handleShare}
-                className="flex items-center justify-center w-11 h-11 bg-white/40 backdrop-blur-sm rounded-full shadow-lg hover:bg-white/60 active:bg-white/70 hover:scale-110 active:scale-95 transition-all duration-200"
+                className="flex items-center justify-center w-12 h-12 rounded-full pointer-events-auto"
                 aria-label="Share video"
               >
-                <Share2 className="w-5 h-5 text-white" />
+                <Share2 className="w-7 h-7 text-white [filter:_drop-shadow(0_1px_4px_rgb(0_0_0_/_80%))]" />
               </button>
             )}
           </div>

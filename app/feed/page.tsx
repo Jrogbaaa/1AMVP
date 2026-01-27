@@ -51,11 +51,34 @@ const MOCK_DOCTORS: Record<string, Doctor> = {
     clinicName: "1Another Cardiology",
     createdAt: new Date().toISOString(),
   },
+  "550e8400-e29b-41d4-a716-446655440013": {
+    id: "550e8400-e29b-41d4-a716-446655440013",
+    name: "Rachel Martinez",
+    specialty: "Dermatology",
+    avatarUrl: "https://images.unsplash.com/photo-1614608682850-e0d6ed316d47?w=400&h=400&fit=crop&q=80",
+    clinicName: "Skin Health Clinic",
+    createdAt: new Date().toISOString(),
+  },
 };
 
 const MOCK_DOCTOR = MOCK_DOCTORS["550e8400-e29b-41d4-a716-446655440004"]; // Dr. Jack Ellis as default
 
 const MOCK_VIDEOS: Video[] = [
+  // Skin Rashes video: Dr. Rachel Martinez
+  {
+    id: "750e8400-e29b-41d4-a716-446655440011",
+    title: "Skin Rashes: When to Worry",
+    description: "Dr. Martinez explains common skin rashes, what causes them, and when you should see a dermatologist.",
+    videoUrl: "/videos/education/Skin Rashes Advice.mp4",
+    thumbnailUrl: "https://images.unsplash.com/photo-1614608682850-e0d6ed316d47?w=400&h=600&fit=crop&q=80",
+    posterUrl: "https://images.unsplash.com/photo-1614608682850-e0d6ed316d47?w=400&h=600&fit=crop&q=80",
+    duration: 60,
+    category: "Dermatology",
+    tags: ["skin", "rashes", "dermatology"],
+    doctorId: "550e8400-e29b-41d4-a716-446655440013",
+    isPersonalized: false,
+    createdAt: new Date().toISOString(),
+  },
   // First video: Dr. Jack Ellis
   {
     id: "750e8400-e29b-41d4-a716-446655440006",
@@ -163,6 +186,7 @@ const FeedContent = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const watchTimeRef = useRef<number>(0);
   const watchTimeIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const isShareInProgress = useRef(false);
 
   // Handle global mute change - persists across all videos
   const handleMuteChange = useCallback((muted: boolean) => {
@@ -315,14 +339,17 @@ const FeedContent = () => {
   };
 
   const handleShare = async () => {
-    trackInteraction();
-    
+    // Prevent multiple simultaneous share calls
+    if (isShareInProgress.current) return;
+
     const feedItem = combinedFeed[currentIndex];
     if (!feedItem || feedItem.type !== 'video') return;
 
     const video = feedItem.data;
+    isShareInProgress.current = true;
 
     try {
+      trackInteraction();
       if (navigator.share) {
         await navigator.share({
           title: video.title,
@@ -334,7 +361,12 @@ const FeedContent = () => {
         alert("Link copied to clipboard!");
       }
     } catch (error) {
-      console.error("Error sharing:", error);
+      // Ignore AbortError (user cancelled) and InvalidStateError (share already in progress)
+      if (error instanceof Error && error.name !== 'AbortError') {
+        console.error("Error sharing:", error);
+      }
+    } finally {
+      isShareInProgress.current = false;
     }
   };
 

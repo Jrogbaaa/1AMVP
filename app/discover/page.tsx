@@ -140,6 +140,15 @@ const MOCK_DOCTORS: ExtendedDoctor[] = [
     insurer: "Blue Cross",
     createdAt: new Date().toISOString(),
   },
+  {
+    id: "550e8400-e29b-41d4-a716-446655440013",
+    name: "Rachel Martinez",
+    specialty: "Dermatology",
+    avatarUrl: "https://images.unsplash.com/photo-1614608682850-e0d6ed316d47?w=400&h=400&fit=crop&q=80",
+    clinicName: "Skin Health Clinic",
+    insurer: "Kaiser",
+    createdAt: new Date().toISOString(),
+  },
 ];
 
 // Trending vertical video previews for TikTok-style display
@@ -228,6 +237,20 @@ const TRENDING_VIDEOS: Video[] = [
     isPersonalized: false,
     createdAt: new Date().toISOString(),
   },
+  {
+    id: "trend-007",
+    title: "Skin Rashes: When to Worry",
+    description: "Dr. Martinez explains common skin rashes, what causes them, and when you should see a dermatologist.",
+    videoUrl: "/videos/education/Skin Rashes Advice.mp4",
+    thumbnailUrl: "https://images.unsplash.com/photo-1614608682850-e0d6ed316d47?w=400&h=600&fit=crop&q=80",
+    posterUrl: "https://images.unsplash.com/photo-1614608682850-e0d6ed316d47?w=400&h=600&fit=crop&q=80",
+    duration: 60,
+    category: "Dermatology",
+    tags: ["skin", "rashes", "dermatology", "skin health"],
+    doctorId: "550e8400-e29b-41d4-a716-446655440013",
+    isPersonalized: false,
+    createdAt: new Date().toISOString(),
+  },
 ];
 
 export default function DiscoverPage() {
@@ -260,7 +283,7 @@ export default function DiscoverPage() {
 
   const [searchQuery, setSearchQuery] = useState("");
   
-  const specialties = ["all", "cardiology", "primary-care", "endocrinology", "gastroenterology", "pulmonology", "mental-health"];
+  const specialties = ["all", "cardiology", "dermatology", "primary-care", "endocrinology", "gastroenterology", "pulmonology", "mental-health"];
   
   // Filter specialties based on search query
   const filteredSpecialties = searchQuery 

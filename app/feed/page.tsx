@@ -16,6 +16,7 @@ import { MobileBottomNav } from "@/components/MobileBottomNav";
 import type { Video, Doctor } from "@/lib/types";
 import Image from "next/image";
 import { Logo } from "@/components/Logo";
+import { EDUCATIONAL_VIDEOS } from "@/data/educationalVideos";
 
 // Mock doctors data - removed Dr. Ryan Mitchell, keeping Dr. Jack and others
 const MOCK_DOCTORS: Record<string, Doctor> = {
@@ -75,6 +76,66 @@ const MOCK_VIDEOS: Video[] = [
     duration: 60,
     category: "Dermatology",
     tags: ["skin", "rashes", "dermatology"],
+    doctorId: "550e8400-e29b-41d4-a716-446655440013",
+    isPersonalized: false,
+    createdAt: new Date().toISOString(),
+  },
+  // Understanding Dizziness: Dr. Rachel Martinez
+  {
+    id: "750e8400-e29b-41d4-a716-446655440012",
+    title: "Understanding Dizziness",
+    description: "Dr. Martinez explains common causes of dizziness, when it's concerning, and what you can do about it.",
+    videoUrl: "/videos/education/Understanding Dizziness.mp4",
+    thumbnailUrl: "https://images.unsplash.com/photo-1614608682850-e0d6ed316d47?w=400&h=600&fit=crop&q=80",
+    posterUrl: "https://images.unsplash.com/photo-1614608682850-e0d6ed316d47?w=400&h=600&fit=crop&q=80",
+    duration: 60,
+    category: "Neurology",
+    tags: ["dizziness", "vertigo", "balance"],
+    doctorId: "550e8400-e29b-41d4-a716-446655440013",
+    isPersonalized: false,
+    createdAt: new Date().toISOString(),
+  },
+  // Understanding Fatigue: Dr. Rachel Martinez
+  {
+    id: "750e8400-e29b-41d4-a716-446655440014",
+    title: "Understanding Fatigue",
+    description: "Dr. Martinez discusses the common causes of fatigue and when you should talk to your doctor about it.",
+    videoUrl: "/videos/education/Understanding Fatigue.mp4",
+    thumbnailUrl: "https://images.unsplash.com/photo-1614608682850-e0d6ed316d47?w=400&h=600&fit=crop&q=80",
+    posterUrl: "https://images.unsplash.com/photo-1614608682850-e0d6ed316d47?w=400&h=600&fit=crop&q=80",
+    duration: 60,
+    category: "General Health",
+    tags: ["fatigue", "energy", "tiredness"],
+    doctorId: "550e8400-e29b-41d4-a716-446655440013",
+    isPersonalized: false,
+    createdAt: new Date().toISOString(),
+  },
+  // Chest Pain Advice: Dr. Rachel Martinez
+  {
+    id: "750e8400-e29b-41d4-a716-446655440015",
+    title: "Chest Pain Advice",
+    description: "Dr. Martinez explains different types of chest pain, when to seek emergency care, and what to expect.",
+    videoUrl: "/videos/education/Chest Pain Advice.mp4",
+    thumbnailUrl: "https://images.unsplash.com/photo-1614608682850-e0d6ed316d47?w=400&h=600&fit=crop&q=80",
+    posterUrl: "https://images.unsplash.com/photo-1614608682850-e0d6ed316d47?w=400&h=600&fit=crop&q=80",
+    duration: 60,
+    category: "Cardiology",
+    tags: ["chest pain", "heart", "symptoms"],
+    doctorId: "550e8400-e29b-41d4-a716-446655440013",
+    isPersonalized: false,
+    createdAt: new Date().toISOString(),
+  },
+  // Managing Constipation: Dr. Rachel Martinez
+  {
+    id: "750e8400-e29b-41d4-a716-446655440016",
+    title: "Managing Constipation",
+    description: "Dr. Martinez shares tips for managing constipation and when digestive issues need medical attention.",
+    videoUrl: "/videos/education/Managing Constipation.mp4",
+    thumbnailUrl: "https://images.unsplash.com/photo-1614608682850-e0d6ed316d47?w=400&h=600&fit=crop&q=80",
+    posterUrl: "https://images.unsplash.com/photo-1614608682850-e0d6ed316d47?w=400&h=600&fit=crop&q=80",
+    duration: 60,
+    category: "Gastroenterology",
+    tags: ["constipation", "digestion", "gut health"],
     doctorId: "550e8400-e29b-41d4-a716-446655440013",
     isPersonalized: false,
     createdAt: new Date().toISOString(),
@@ -348,16 +409,30 @@ const FeedContent = () => {
     const video = feedItem.data;
     isShareInProgress.current = true;
 
+    // Check if this is an educational video and get its shareable URL
+    let shareUrl = window.location.href;
+    if (video.videoUrl.includes('/videos/education/')) {
+      // Find the matching educational video by video path
+      const educationalVideo = EDUCATIONAL_VIDEOS.find(
+        (ev) => ev.videoPath === video.videoUrl
+      );
+      if (educationalVideo) {
+        // Generate the shareable /learn/[slug] URL
+        const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+        shareUrl = `${baseUrl}/learn/${educationalVideo.slug}`;
+      }
+    }
+
     try {
       trackInteraction();
       if (navigator.share) {
         await navigator.share({
           title: video.title,
           text: video.description || `Check out this video: ${video.title}`,
-          url: window.location.href,
+          url: shareUrl,
         });
       } else {
-        await navigator.clipboard.writeText(window.location.href);
+        await navigator.clipboard.writeText(shareUrl);
         alert("Link copied to clipboard!");
       }
     } catch (error) {

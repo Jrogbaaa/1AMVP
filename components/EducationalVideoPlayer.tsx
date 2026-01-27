@@ -75,7 +75,9 @@ export function EducationalVideoPlayer({ video }: EducationalVideoPlayerProps) {
   }, [isMuted]);
 
   const handleShare = useCallback(async () => {
-    const shareUrl = window.location.href;
+    // Generate shareable /learn/[slug] URL
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+    const shareUrl = `${baseUrl}/learn/${video.slug}`;
     const shareData = {
       title: video.title,
       text: video.description,
@@ -93,7 +95,7 @@ export function EducationalVideoPlayer({ video }: EducationalVideoPlayerProps) {
     } catch (error) {
       console.error("Error sharing:", error);
     }
-  }, [video.title, video.description]);
+  }, [video.title, video.description, video.slug]);
 
   // Sync React state with native video events
   useEffect(() => {

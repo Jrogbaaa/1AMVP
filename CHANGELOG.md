@@ -5,6 +5,32 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.62.0] - 2026-01-27
+
+### 📹 Educational Video Content Expansion
+
+**Added 4 New Educational Videos to Feed:**
+- Understanding Dizziness (`/learn/understanding-dizziness`)
+- Understanding Fatigue (`/learn/understanding-fatigue`)
+- Chest Pain Advice (`/learn/chest-pain-advice`)
+- Managing Constipation (`/learn/managing-constipation`)
+
+**Files Modified:**
+- `data/educationalVideos.ts`: Added 4 new educational video entries with slugs, titles, descriptions, categories, and tags
+- `app/feed/page.tsx`: Added 4 new videos to MOCK_VIDEOS array for feed display
+
+**Added Dr. Rachel Martinez Profile Page Support:**
+- `app/profile/[id]/page.tsx`: Added Dr. Rachel Martinez to MOCK_DOCTORS and added all 5 educational videos to her profile
+
+**Improved Video Sharing with Shareable URLs:**
+- `app/feed/page.tsx`: Share button now generates `/learn/[slug]` URLs for educational videos instead of generic feed URL
+- `components/VideoCard.tsx`: Updated share functionality to use educational video slugs
+- `components/EducationalVideoPlayer.tsx`: Updated share functionality to use video slug for shareable links
+
+**Shareable Video URLs (Vercel):**
+- Educational videos can now be shared via URLs like: `https://[your-domain]/learn/understanding-dizziness`
+- Each educational video has its own shareable link with proper OpenGraph metadata for social sharing
+
 ## [1.61.0] - 2026-01-19
 
 ### 🧪 Test Fixes

@@ -15,6 +15,7 @@ import type { Video, Doctor } from "@/lib/types";
 import Image from "next/image";
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
+import { EDUCATIONAL_VIDEOS } from "@/data/educationalVideos";
 
 interface VideoCardProps {
   video: Video;
@@ -268,23 +269,35 @@ export const VideoCard = ({
   }, []);
 
   const handleShare = useCallback(async () => {
+    // Check if this is an educational video and get its shareable URL
+    let shareUrl = window.location.href;
+    if (video.videoUrl.includes('/videos/education/')) {
+      const educationalVideo = EDUCATIONAL_VIDEOS.find(
+        (ev) => ev.videoPath === video.videoUrl
+      );
+      if (educationalVideo) {
+        const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+        shareUrl = `${baseUrl}/learn/${educationalVideo.slug}`;
+      }
+    }
+
     const shareData = {
       title: video.title,
       text: video.description || `Check out this video: ${video.title}`,
-      url: window.location.href,
+      url: shareUrl,
     };
 
     try {
       if (navigator.share) {
         await navigator.share(shareData);
       } else {
-        await navigator.clipboard.writeText(window.location.href);
+        await navigator.clipboard.writeText(shareUrl);
         alert("Link copied to clipboard!");
       }
     } catch (error) {
       console.error("Error sharing:", error);
     }
-  }, [video.title, video.description]);
+  }, [video.title, video.description, video.videoUrl]);
 
   const imageSrc = video.posterUrl || video.thumbnailUrl || "";
 

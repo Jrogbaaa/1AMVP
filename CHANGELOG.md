@@ -5,6 +5,32 @@ All notable changes to the 1Another MVP project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.63.0] - 2026-01-29
+
+### 📹 Educational Video Library Update
+
+**Removed 4 Educational Videos:**
+- Skin Rashes Advice.mp4
+- Understanding Fatigue.mp4
+- Chest Pain Advice.mp4
+- Managing Constipation.mp4
+
+**Added 6 New Educational Videos:**
+- Blood Pressure Explained (`/learn/blood-pressure-explained`)
+- Breathlessness Advice (`/learn/breathlessness-advice`)
+- Heartburn Explained (`/learn/heartburn-explained`)
+- Understanding Allergies (`/learn/understanding-allergies`)
+- Understanding Blood Sugar Readings (`/learn/understanding-blood-sugar`)
+- Understanding Tummy Pain (`/learn/understanding-tummy-pain`)
+
+**Kept Existing:**
+- Understanding Dizziness (`/learn/understanding-dizziness`)
+
+**Files Modified:**
+- `data/educationalVideos.ts`: Updated video entries - removed 4, added 6 new videos
+- `app/feed/page.tsx`: Updated MOCK_VIDEOS array with new video entries
+- `app/profile/[id]/page.tsx`: Updated Dr. Rachel Martinez's video list
+
 ## [1.62.0] - 2026-01-27
 
 ### 📹 Educational Video Content Expansion

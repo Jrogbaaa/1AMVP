@@ -185,6 +185,10 @@ export const VideoCard = ({
     return () => {
       mounted = false;
       if (playAttemptTimeout) clearTimeout(playAttemptTimeout);
+      // Always pause video when effect cleans up (e.g., scrolling away)
+      if (videoElement && !videoElement.paused) {
+        videoElement.pause();
+      }
     };
   }, [isActive, onPlay, hasVideoError, isVideoReady, controlledMuted]);
 
@@ -209,18 +213,6 @@ export const VideoCard = ({
     }
   }, [isPlaying, onPause, onPlay]);
 
-  // Handle tap on video area (for mobile touch)
-  const handleTouchStart = useCallback(
-    (e: React.TouchEvent) => {
-      // Only handle single touch
-      if (e.touches.length === 1) {
-        e.preventDefault();
-        handlePlayPause();
-      }
-    },
-    [handlePlayPause]
-  );
-
   const handleToggleMute = useCallback(
     (e: React.MouseEvent | React.TouchEvent) => {
       e.stopPropagation();
@@ -234,11 +226,12 @@ export const VideoCard = ({
   );
 
   // Sync video muted state with controlled prop
+  // Also applies after video starts playing (since we start muted for autoplay)
   useEffect(() => {
-    if (videoRef.current) {
+    if (videoRef.current && isPlaying) {
       videoRef.current.muted = controlledMuted;
     }
-  }, [controlledMuted]);
+  }, [controlledMuted, isPlaying]);
 
   const handleVideoEnd = useCallback(() => {
     setIsPlaying(false);
@@ -311,11 +304,9 @@ export const VideoCard = ({
   const showVideo = video.videoUrl && !hasVideoError;
 
   // Show play button overlay when:
-  // 1. Video exists and is not playing
-  // 2. Autoplay was blocked (tap to play)
-  // 3. User paused the video
-  const showPlayOverlay =
-    showVideo && !isPlaying && (autoplayBlocked || !isLoading);
+  // 1. Video is active but paused (user can tap to resume)
+  // 2. Autoplay was blocked (user needs to tap to start)
+  const showPlayOverlay = showVideo && !isPlaying && isActive && !isLoading;
 
   return (
     <div className="video-card">
@@ -327,9 +318,9 @@ export const VideoCard = ({
           poster={imageSrc}
           className="absolute inset-0 w-full h-full object-cover"
           loop
-          muted={controlledMuted}
+          muted
           playsInline
-          preload="auto"
+          preload="metadata"
           webkit-playsinline="true"
           onLoadStart={handleLoadStart}
           onCanPlay={handleCanPlay}
@@ -338,7 +329,6 @@ export const VideoCard = ({
           onWaiting={handleWaiting}
           onEnded={handleVideoEnd}
           onClick={handlePlayPause}
-          onTouchStart={handleTouchStart}
           onError={handleVideoError}
           data-testid="video-element"
         />

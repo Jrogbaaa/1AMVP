@@ -70,9 +70,13 @@ export const VideoCard = ({
     setHasVideoError(false);
   }, []);
 
-  // Handle waiting (buffering)
+  // Handle waiting (buffering) - only show loading if video is actually playing
   const handleWaiting = useCallback(() => {
-    setIsLoading(true);
+    // Only show loading indicator if video is actively playing (not paused)
+    // This prevents the loading state from hiding play overlay when video is paused
+    if (videoRef.current && !videoRef.current.paused) {
+      setIsLoading(true);
+    }
   }, []);
 
   // Handle can play through (buffering complete)
@@ -267,7 +271,8 @@ export const VideoCard = ({
   // Show play button overlay when:
   // 1. Video is active but paused (user can tap to resume)
   // 2. Autoplay was blocked (user needs to tap to start)
-  const showPlayOverlay = showVideo && !isPlaying && isActive && !isLoading;
+  // Note: Show when video is ready OR autoplay was blocked, not hidden by loading state
+  const showPlayOverlay = showVideo && !isPlaying && isActive && (isVideoReady || autoplayBlocked);
 
   return (
     <div className="video-card">

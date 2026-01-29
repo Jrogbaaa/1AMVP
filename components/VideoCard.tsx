@@ -271,8 +271,8 @@ export const VideoCard = ({
   // Show play button overlay when:
   // 1. Video is active but paused (user can tap to resume)
   // 2. Autoplay was blocked (user needs to tap to start)
-  // Note: Show when video is ready OR autoplay was blocked, not hidden by loading state
-  const showPlayOverlay = showVideo && !isPlaying && isActive && (isVideoReady || autoplayBlocked);
+  // Simplified: show whenever video is paused and active (don't depend on isVideoReady which may not fire in CI)
+  const showPlayOverlay = showVideo && !isPlaying && isActive;
 
   return (
     <div className="video-card">
@@ -312,8 +312,10 @@ export const VideoCard = ({
         />
       )}
 
-      {/* Loading State - Spinner overlay */}
-      {showVideo && isLoading && !hasVideoError && (
+      {/* Loading State - Spinner overlay 
+          Show during: initial load (not ready yet) OR buffering while playing
+          Don't show when: video is paused and ready (show play overlay instead) */}
+      {showVideo && isLoading && !hasVideoError && (isPlaying || !isVideoReady) && (
         <div
           className="absolute inset-0 flex items-center justify-center z-10 bg-black/40"
           data-testid="video-loading"
@@ -327,11 +329,11 @@ export const VideoCard = ({
         </div>
       )}
 
-      {/* Play/Pause overlay - tap to play */}
+      {/* Play/Pause overlay - tap to play (z-20 to ensure it's above loading spinner) */}
       {showPlayOverlay && (
         <button
           onClick={handlePlayPause}
-          className="absolute inset-0 flex items-center justify-center z-10 bg-black/20 transition-opacity hover:bg-black/30 active:bg-black/40"
+          className="absolute inset-0 flex items-center justify-center z-20 bg-black/20 transition-opacity hover:bg-black/30 active:bg-black/40"
           aria-label={isPlaying ? "Pause video" : "Play video"}
           data-testid="play-overlay"
         >

@@ -95,19 +95,15 @@ export const VideoCard = ({
     if (!videoElement || hasVideoError) return;
 
     let mounted = true;
-    let playAttemptTimeout: NodeJS.Timeout | null = null;
 
     const attemptPlay = async () => {
       if (!mounted || !videoElement || hasVideoError) return;
 
       try {
-        // Ensure video is muted for autoplay (required by Chrome policy)
+        // Ensure video is muted for autoplay (required by browser policy)
         videoElement.muted = true;
 
-        // Reset to beginning
-        videoElement.currentTime = 0;
-
-        // Use play() promise with proper error handling for mobile browsers
+        // Use play() promise with proper error handling
         const playPromise = videoElement.play();
 
         if (playPromise !== undefined) {
@@ -123,7 +119,6 @@ export const VideoCard = ({
       } catch (error) {
         if (!mounted) return;
 
-        // Handle specific error types
         if (error instanceof Error) {
           if (error.name === "NotAllowedError") {
             // Autoplay blocked - show tap to play UI
@@ -131,66 +126,32 @@ export const VideoCard = ({
             setIsPlaying(false);
             setAutoplayBlocked(true);
           } else if (error.name === "NotSupportedError") {
-            // Source not supported
             console.error("Video format not supported");
             setHasVideoError(true);
           } else if (error.name === "AbortError") {
-            // Play was interrupted (e.g., by scrolling away)
-            console.log("Video play interrupted");
-          } else {
-            console.log("Video play error:", error.message);
+            // Play was interrupted - ignore
           }
         }
       }
     };
 
     if (isActive) {
-      // Wait for video to be ready before attempting to play
-      if (isVideoReady || videoElement.readyState >= 2) {
-        attemptPlay();
-      } else {
-        // Set up listener for when video becomes ready
-        const onCanPlayThrough = () => {
-          if (mounted && isActive) {
-            attemptPlay();
-          }
-        };
-        videoElement.addEventListener("canplaythrough", onCanPlayThrough, {
-          once: true,
-        });
-
-        // Also try after a short delay as fallback
-        playAttemptTimeout = setTimeout(() => {
-          if (mounted && isActive && videoElement.readyState >= 1) {
-            attemptPlay();
-          }
-        }, 500);
-
-        return () => {
-          mounted = false;
-          videoElement.removeEventListener("canplaythrough", onCanPlayThrough);
-          if (playAttemptTimeout) clearTimeout(playAttemptTimeout);
-        };
-      }
+      // Active video - attempt to play
+      attemptPlay();
     } else {
-      // Not active - pause the video
-      if (videoElement.isConnected && !videoElement.paused) {
-        videoElement.pause();
-      }
-      if (mounted) {
-        setIsPlaying(false);
-      }
+      // Not active - immediately pause the video
+      videoElement.pause();
+      setIsPlaying(false);
     }
 
     return () => {
       mounted = false;
-      if (playAttemptTimeout) clearTimeout(playAttemptTimeout);
-      // Always pause video when effect cleans up (e.g., scrolling away)
+      // Always pause when unmounting or isActive changes
       if (videoElement && !videoElement.paused) {
         videoElement.pause();
       }
     };
-  }, [isActive, onPlay, hasVideoError, isVideoReady, controlledMuted]);
+  }, [isActive, onPlay, hasVideoError, controlledMuted]);
 
   const handlePlayPause = useCallback(() => {
     if (!videoRef.current) return;
@@ -317,10 +278,11 @@ export const VideoCard = ({
           src={video.videoUrl}
           poster={imageSrc}
           className="absolute inset-0 w-full h-full object-cover"
+          autoPlay
           loop
           muted
           playsInline
-          preload="metadata"
+          preload="auto"
           webkit-playsinline="true"
           onLoadStart={handleLoadStart}
           onCanPlay={handleCanPlay}
@@ -364,10 +326,6 @@ export const VideoCard = ({
       {showPlayOverlay && (
         <button
           onClick={handlePlayPause}
-          onTouchStart={(e) => {
-            e.stopPropagation();
-            handlePlayPause();
-          }}
           className="absolute inset-0 flex items-center justify-center z-10 bg-black/20 transition-opacity hover:bg-black/30 active:bg-black/40"
           aria-label={isPlaying ? "Pause video" : "Play video"}
           data-testid="play-overlay"

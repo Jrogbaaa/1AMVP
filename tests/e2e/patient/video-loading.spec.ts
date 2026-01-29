@@ -88,6 +88,8 @@ test.describe("Video Loading - Mobile Chrome", () => {
     viewport: { width: 375, height: 667 },
     userAgent:
       "Mozilla/5.0 (Linux; Android 10; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
+    hasTouch: true,
+    isMobile: true,
   });
 
   test("should load video on mobile Chrome viewport", async ({ page }) => {
@@ -130,13 +132,20 @@ test.describe("Video Loading - Mobile Chrome", () => {
     const videoExists = await video.isVisible({ timeout: 15000 }).catch(() => false);
 
     if (videoExists) {
-      // Try tapping video
-      await video.tap().catch(() => {});
+      // Try tapping video (or click as fallback)
+      await video.tap().catch(async () => {
+        // Fallback to click if tap fails
+        await video.click().catch(() => {});
+      });
       await page.waitForTimeout(500);
 
       // Video should respond (either playing or paused)
-      const isPaused = await video.evaluate((v: HTMLVideoElement) => v.paused);
-      expect(typeof isPaused).toBe("boolean");
+      // Use page.evaluate to avoid stale element issues
+      const isPaused = await page.evaluate(() => {
+        const vid = document.querySelector("video");
+        return vid ? vid.paused : null;
+      });
+      expect(isPaused === true || isPaused === false).toBeTruthy();
     } else {
       // Feed should still be visible even without video
       await expect(page.locator(".snap-container, .feed-container")).toBeVisible();

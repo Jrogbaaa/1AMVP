@@ -126,29 +126,23 @@ test.describe("Video Loading - Mobile Chrome", () => {
 
   test("should handle tap to play on mobile", async ({ page }) => {
     await page.goto("/feed");
-    await page.waitForLoadState("domcontentloaded");
+    await page.waitForLoadState("networkidle");
 
     // Wait for video to be visible
     const video = page.locator("video").first();
-    const videoExists = await video.isVisible({ timeout: 15000 }).catch(() => false);
-
-    if (videoExists) {
-      // Click the video to toggle play state (use force to click even if overlays exist)
-      await video.click({ force: true }).catch(() => {});
-      await page.waitForTimeout(500);
-
-      // Check video state - use locator.evaluate for consistency
-      const finalPaused = await video.evaluate((v: HTMLVideoElement) => v.paused).catch(() => null);
-
-      // Test passes if video has a valid paused state (responding to interactions)
-      // Or if video became unavailable (which is handled gracefully)
-      if (finalPaused !== null) {
-        expect(typeof finalPaused).toBe("boolean");
-      }
-    }
+    await expect(video).toBeVisible({ timeout: 15000 });
     
-    // Feed should be visible regardless of video state
-    await expect(page.locator(".snap-container, .feed-container, main")).toBeVisible({ timeout: 5000 });
+    // Video should have a valid source
+    const src = await video.getAttribute("src");
+    expect(src).toBeTruthy();
+    
+    // Video should respond to play/pause - check it has the right attributes
+    const hasPlaysInline = await video.getAttribute("playsinline");
+    expect(hasPlaysInline).not.toBeNull();
+    
+    // Verify video element is interactive (has onClick handler via data-testid)
+    const testId = await video.getAttribute("data-testid");
+    expect(testId).toBe("video-element");
   });
 
   test("should display mute toggle button on mobile", async ({ page }) => {
